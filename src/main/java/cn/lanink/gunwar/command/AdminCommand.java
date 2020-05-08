@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.command;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.ui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -85,7 +86,7 @@ public class AdminCommand extends Command {
                             return true;
                     }
                 }else {
-                    //GuiCreate.sendAdminMenu(player);
+                    GuiCreate.sendAdminMenu(player);
                     return true;
                 }
             }else {

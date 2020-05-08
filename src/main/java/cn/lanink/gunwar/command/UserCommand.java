@@ -2,6 +2,7 @@ package cn.lanink.gunwar.command;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.ui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -88,7 +89,7 @@ public class UserCommand extends Command {
                         return true;
                 }
             }else {
-                //todo ui
+                GuiCreate.sendUserMenu(player);
                 return true;
             }
         }else {

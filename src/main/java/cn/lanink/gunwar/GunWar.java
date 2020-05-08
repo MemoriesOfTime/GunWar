@@ -7,10 +7,12 @@ import cn.lanink.gunwar.listener.PlayerJoinAndQuit;
 import cn.lanink.gunwar.listener.RoomLevelProtection;
 import cn.lanink.gunwar.listener.GunWarListener;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.ui.GuiListener;
 import cn.nukkit.Player;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import cn.lanink.gunwar.utils.MetricsLite;
 
 import java.io.File;
 import java.util.Iterator;
@@ -50,6 +52,8 @@ public class GunWar extends PluginBase {
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new GunWarListener(), this);
+        getServer().getPluginManager().registerEvents(new GuiListener(), this);
+        new MetricsLite(this, 7448);
         getLogger().info("§a加载完成");
     }
 

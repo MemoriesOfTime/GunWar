@@ -1,4 +1,4 @@
-package org.bstats.nukkit;
+package cn.lanink.gunwar.utils;
 
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
