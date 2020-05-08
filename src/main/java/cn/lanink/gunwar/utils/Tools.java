@@ -3,7 +3,11 @@ package cn.lanink.gunwar.utils;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.item.EntityFirework;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
+import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -13,12 +17,62 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import tip.messages.BossBarMessage;
+import tip.messages.NameTagMessage;
+import tip.messages.ScoreBoardMessage;
+import tip.messages.TipMessage;
+import tip.utils.Api;
 
+import java.util.LinkedList;
 import java.util.Random;
 
 
 public class Tools {
+
+    /**
+     * 给装备
+     * @param player 玩家
+     * @param team 所属队伍
+     */
+    public static void giveItem(Player player, int team) {
+        ItemColorArmor helmet = (ItemColorArmor) Item.get(298, 0, 1);
+        ItemColorArmor chestPlate = (ItemColorArmor) Item.get(299, 0, 1);
+        ItemColorArmor leggings = (ItemColorArmor) Item.get(300, 0, 1);
+        ItemColorArmor boots = (ItemColorArmor) Item.get(301, 0, 1);
+        BlockColor color;
+        if (team == 1) {
+            color = new BlockColor(255, 0, 0);
+        }else {
+            color = new BlockColor(0, 0, 255);
+        }
+        Item[] armor = new Item[4];
+        armor[0] = helmet.setColor(color);
+        armor[1] = chestPlate.setColor(color);
+        armor[2] = leggings.setColor(color);
+        armor[3] = boots.setColor(color);
+        player.getInventory().setArmorContents(armor);
+        player.getInventory().addItem(Item.get(272, 0, 1),
+                Item.get(261, 0, 1),
+                Item.get(262, 0, 10),
+                Item.get(322, 0, 64));
+    }
+
+    /**
+     * 移除显示信息(Tips)
+     * @param level 地图
+     */
+    public static void removePlayerShowMessage(String level, Player player) {
+        Api.removePlayerShowMessage(player.getName(),
+                new NameTagMessage(level, true, ""));
+        Api.removePlayerShowMessage(player.getName(),
+                new TipMessage(level, true, 0, ""));
+        Api.removePlayerShowMessage(player.getName(),
+                new ScoreBoardMessage(level, true, "", new LinkedList<>()));
+        Api.removePlayerShowMessage(player.getName(),
+                new BossBarMessage(level, false, 5, false, new LinkedList<>()));
+    }
 
     /**
      * 重置玩家状态
@@ -37,7 +91,7 @@ public class Tools {
         }else {
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            //player.setAllowModifyWorld(true);
+            player.setAllowModifyWorld(true);
         }
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
     }
@@ -65,6 +119,26 @@ public class Tools {
         packet.y = player.getFloorY();
         packet.z = player.getFloorZ();
         player.dataPacket(packet);
+    }
+
+    /**
+     * 获取底部 Y
+     * 调用前应判断非空
+     * @param player 玩家
+     * @return Y
+     */
+    public static double getFloorY(Player player) {
+        for (int y = 0; y < 10; y++) {
+            Level level = player.getLevel();
+            Block block = level.getBlock(player.getFloorX(), player.getFloorY() - y, player.getFloorZ());
+            if (block.getId() != 0) {
+                if (block.getBoundingBox() != null) {
+                    return block.getBoundingBox().getMaxY() + 0.2;
+                }
+                return block.getMinY() + 0.2;
+            }
+        }
+        return player.getFloorY();
     }
 
     /**

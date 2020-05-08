@@ -22,10 +22,18 @@ public class PlayerGameListener implements Listener {
                 return;
             }
             Room room = GunWar.getInstance().getRooms().getOrDefault(player1.getLevel().getName(), null);
-            if (room != null) {
-
-                event.setCancelled(true);
+            if (room == null) {
+                return;
             }
+            if (room.getPlayerMode(player1) != room.getPlayerMode(player2)) {
+                int id = event.getChild().getNetworkId();
+                if (id == 80) {
+                    room.lessHealth(player2, 10F);
+                }else if (id == 81){
+                    room.lessHealth(player2, 1F);
+                }
+            }
+            event.setDamage(0);
         }
     }
 

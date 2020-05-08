@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.room;
 
+import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -7,10 +8,12 @@ import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
+import tip.messages.BossBarMessage;
 import tip.messages.NameTagMessage;
 import tip.utils.Api;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 /**
  * 房间
@@ -23,7 +26,7 @@ public class Room {
     private final int setWaitTime, setGameTime;
     public int waitTime, gameTime;
     private LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1红队 2蓝队
-    private LinkedHashMap<Player, Integer> playerHealth = new LinkedHashMap<>(); //玩家血量
+    private LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
 
     /**
      * 初始化
@@ -72,6 +75,8 @@ public class Room {
         player.teleport(this.getWaitSpawn());
         NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, "");
         Api.setPlayerShowMessage(player.getName(), nameTagMessage);
+        BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());
+        Api.setPlayerShowMessage(player.getName(), bossBarMessage);
         player.sendMessage("§a你已加入房间: " + this.level);
     }
 
@@ -82,6 +87,7 @@ public class Room {
     public void quitRoom(Player player, boolean online) {
         this.players.remove(player);
         if (online) {
+            Tools.removePlayerShowMessage(this.level, player);
             player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
             Tools.rePlayerState(player, false);
             SavePlayerInventory.savePlayerInventory(player, true);
@@ -98,6 +104,42 @@ public class Room {
      */
     public LinkedHashMap<Player, Integer> getPlayers() {
         return this.players;
+    }
+
+    /**
+     * 获取玩家血量Map
+     * @return 玩家血量Map
+     */
+    public LinkedHashMap<Player, Float> getPlayerHealth() {
+        return playerHealth;
+    }
+
+    /**
+     * 增加玩家血量
+     * @param player 玩家
+     * @param health 血量
+     */
+    public void addHealth(Player player, float health) {
+        float nowHealth = this.playerHealth.get(player) + health;
+        if (nowHealth > 20) {
+            this.playerHealth.put(player, 20F);
+        }else {
+            this.playerHealth.put(player, nowHealth);
+        }
+    }
+
+    /**
+     * 减少玩家血量
+     * @param player 玩家
+     * @param health 血量
+     */
+    public void lessHealth(Player player, float health) {
+        float nowHealth = this.playerHealth.get(player) - health;
+        if (nowHealth <= 0) {
+            Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent(this, player));
+        }else {
+            this.playerHealth.put(player, nowHealth);
+        }
     }
 
     /**
