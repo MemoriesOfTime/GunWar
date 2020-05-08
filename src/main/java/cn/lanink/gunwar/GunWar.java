@@ -3,6 +3,7 @@ package cn.lanink.gunwar;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.listener.PlayerGameListener;
+import cn.lanink.gunwar.listener.PlayerJoinAndQuit;
 import cn.lanink.gunwar.listener.RoomLevelProtection;
 import cn.lanink.gunwar.listener.GunWarListener;
 import cn.lanink.gunwar.room.Room;
@@ -18,6 +19,7 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
+    public static String VERSION = "0.0.1-SNAPSHOT";
     private static GunWar gunWar;
     private Config config;
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
@@ -27,7 +29,9 @@ public class GunWar extends PluginBase {
 
     @Override
     public void onEnable() {
+        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         if (gunWar == null) gunWar = this;
+        getLogger().info("§l§e版本: " + VERSION);
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         File file1 = new File(this.getDataFolder() + "/Rooms");
@@ -43,6 +47,7 @@ public class GunWar extends PluginBase {
         getServer().getCommandMap().register("", new UserCommand(this.config.getString("插件命令", "gunwar")));
         getServer().getCommandMap().register("", new AdminCommand(this.config.getString("管理命令", "gunwaradmin")));
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new GunWarListener(), this);
         getLogger().info("§a加载完成");

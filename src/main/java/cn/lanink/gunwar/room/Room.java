@@ -15,9 +15,7 @@ import tip.messages.BossBarMessage;
 import tip.messages.NameTagMessage;
 import tip.utils.Api;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * 房间
@@ -57,7 +55,7 @@ public class Room {
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 20);
+                GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 10);
     }
 
     /**
@@ -84,10 +82,18 @@ public class Room {
      */
     public void endGame() {
         this.mode = 0;
-        this.players.keySet().forEach(player -> this.quitRoom(player, true));
+        Tools.cleanEntity(this.getLevel(), true);
+        if (this.players.size() > 0) {
+            Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
+            while(it.hasNext()) {
+                Map.Entry<Player, Integer> entry = it.next();
+                it.remove();
+                this.quitRoom(entry.getKey(), true);
+            }
+        }
         this.playerHealth.clear();
         this.initTime();
-        this.task.clear();
+        this.task = new ArrayList<>();
     }
 
     /**
@@ -115,7 +121,9 @@ public class Room {
      * @param player 玩家
      */
     public void quitRoom(Player player, boolean online) {
-        this.players.remove(player);
+        if (this.isPlaying(player)) {
+            this.players.remove(player);
+        }
         if (online) {
             Tools.removePlayerShowMessage(this.level, player);
             player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
@@ -179,7 +187,7 @@ public class Room {
      * @return 所属队伍
      */
     public int getPlayerMode(Player player) {
-        if (this.players.containsKey(player)) {
+        if (this.isPlaying(player)) {
             return this.players.get(player);
         }
         return 0;

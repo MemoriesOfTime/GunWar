@@ -76,7 +76,7 @@ public class Tools {
         player.getInventory().setArmorContents(armor);
         player.getInventory().addItem(Item.get(272, 0, 1),
                 Item.get(261, 0, 1),
-                Item.get(262, 0, 10),
+                Item.get(262, 0, 5),
                 Item.get(332, 0, 64));
     }
 

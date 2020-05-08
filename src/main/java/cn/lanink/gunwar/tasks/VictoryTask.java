@@ -20,6 +20,13 @@ public class VictoryTask extends PluginTask<GunWar> {
         this.room = room;
         this.victoryTime = 10;
         this.room.victory = victory;
+        for (Player player : room.getPlayers().keySet()) {
+            if (victory == 1) {
+                player.sendTitle("§c红队获得胜利", "", 10, 30, 20);
+            }else if (victory == 2) {
+                player.sendTitle("§9蓝队获得胜利", "", 10, 30, 20);
+            }
+        }
     }
 
     @Override

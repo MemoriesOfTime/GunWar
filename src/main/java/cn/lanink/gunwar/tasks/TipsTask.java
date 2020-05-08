@@ -78,19 +78,22 @@ public class TipsTask extends PluginTask<GunWar> {
                             }
                             for (Player player : room.getPlayers().keySet()) {
                                 if (bottom) {
-                                    tipMessage.setMessage("§l§c血量： " + room.getPlayerHealth().get(player));
-                                    Api.setPlayerShowMessage(player.getName(), tipMessage);
+                                    TipMessage tip = new TipMessage(room.getLevel().getName(), true, 0, null);
+                                    tip.setMessage("§l§c血量： " + room.getPlayerHealth().get(player));
+                                    Api.setPlayerShowMessage(player.getName(), tip);
                                 }
                                 if (scoreBoard) {
+                                    ScoreBoardMessage score = new ScoreBoardMessage(
+                                            room.getLevel().getName(), true, "§eGunWar", new LinkedList<>());
                                     LinkedList<String> ms = new LinkedList<>();
                                     ms.add("§l§a当前血量： §e" + room.getPlayerHealth().get(player) + " ");
                                     ms.add("§l§a剩余时间： §e" + room.gameTime + " §a秒 ");
                                     ms.add("§l§a队伍存活人数：");
-                                    ms.add("§l§c红: " + red + " 人 §9蓝: " + blue + "人 ");
+                                    ms.add("§l§c红: " + red + " 人 §9蓝: " + blue + " 人 ");
                                     ms.add("§l§a队伍胜利：");
-                                    ms.add("§l§c红: " + room.redRound + " 回合 §9蓝: " + room.blueRound + "回合 ");
-                                    scoreBoardMessage.setMessages(ms);
-                                    Api.setPlayerShowMessage(player.getName(), scoreBoardMessage);
+                                    ms.add("§l§c红: " + room.redRound + " 回合 §9蓝: " + room.blueRound + " 回合 ");
+                                    score.setMessages(ms);
+                                    Api.setPlayerShowMessage(player.getName(), score);
                                 }
                             }
                         }else if (room.getMode() == 3) {
@@ -107,8 +110,8 @@ public class TipsTask extends PluginTask<GunWar> {
                             }
                             this.sendMessage();
                         }
-                        room.task.remove(taskName);
                     }
+                    room.task.remove(taskName);
                 }
 
                 private void sendMessage() {

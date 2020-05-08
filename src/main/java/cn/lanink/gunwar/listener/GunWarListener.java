@@ -67,7 +67,6 @@ public class GunWarListener implements Listener {
     @EventHandler
     public void onRoundStart(GunWarRoomRoundStartEvent event) {
         Room room = event.getRoom();
-        Tools.cleanEntity(room.getLevel(), true);
         for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
             Tools.rePlayerState(entry.getKey(), true);
             entry.getKey().getInventory().clearAll();
@@ -110,15 +109,20 @@ public class GunWarListener implements Listener {
             if (red == blue) {
                 room.redRound++;
                 room.blueRound++;
+                this.sendTitle(room, 0);
             }else if (red > blue) {
                 room.redRound++;
+                this.sendTitle(room, 1);
             }else {
                 room.blueRound++;
+                this.sendTitle(room, 2);
             }
         }else if (v == 1) {
             room.redRound++;
+            this.sendTitle(room, 1);
         }else {
             room.blueRound++;
+            this.sendTitle(room, 2);
         }
         //房间胜利计算
         int round = room.redRound + room.blueRound;
@@ -135,7 +139,20 @@ public class GunWarListener implements Listener {
                 return;
             }
         }
+        Tools.cleanEntity(room.getLevel(), true);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
+    }
+
+    private void sendTitle(Room room, int v) {
+        for (Player player : room.getPlayers().keySet()) {
+            if (v == 1) {
+                player.sendTitle("§c红队获得本轮胜利", "", 10, 20, 10);
+            }else if (v == 2) {
+                player.sendTitle("§9蓝队获得本轮胜利", "", 10, 20, 10);
+            }else {
+                player.sendTitle("平局", "", 10, 20, 10);
+            }
+        }
     }
 
     /**
