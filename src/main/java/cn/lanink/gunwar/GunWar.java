@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT";
+    public static String VERSION = "0.0.1-SNAPSHOT git-50efcc9";
     private static GunWar gunWar;
     private Config config;
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
