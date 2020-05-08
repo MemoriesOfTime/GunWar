@@ -4,6 +4,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.AdventureSettings;
@@ -49,18 +50,43 @@ public class GunWarListener implements Listener {
                 //红
                 entry.setValue(1);
                 player.sendTitle("§c红队", "", 10, 30, 10);
-                player.teleport(room.getRedSpawn());
-                Tools.giveItem(player, 1);
             }else {
                 //蓝
                 entry.setValue(2);
                 player.sendTitle("§9蓝队", "", 10, 30, 10);
-                player.teleport(room.getBlueSpawn());
-                Tools.giveItem(player, 2);
             }
             flag = !flag;
         }
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }
+
+    /**
+     * 回合开始事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onRoundStart(GunWarRoomRoundStartEvent event) {
+        Room room = event.getRoom();
+        Tools.cleanEntity(room.getLevel(), true);
+        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            Tools.rePlayerState(entry.getKey(), true);
+            entry.getKey().getInventory().clearAll();
+            room.getPlayerHealth().put(entry.getKey(), 20F);
+            if (entry.getValue() == 11) {
+                entry.setValue(1);
+            }else if (entry.getValue() == 12) {
+                entry.setValue(2);
+            }
+            if (entry.getValue() == 1) {
+                entry.getKey().teleport(room.getRedSpawn());
+                Tools.giveItem(entry.getKey(), 1);
+            }else {
+                entry.getKey().teleport(room.getBlueSpawn());
+                Tools.giveItem(entry.getKey(), 2);
+            }
+        }
+    }
+
 
     /**
      * 房间回合结束事件
@@ -68,7 +94,48 @@ public class GunWarListener implements Listener {
      */
     @EventHandler
     public void onRoundEnd(GunWarRoomRoundEndEvent event) {
-
+        if (event.isCancelled()) return;
+        Room room = event.getRoom();
+        int v = event.getVictory();
+        //本回合胜利计算
+        if (v == 0) {
+            int red = 0, blue = 0;
+            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                if (entry.getValue() == 1) {
+                    red++;
+                }else if (entry.getValue() == 2) {
+                    blue++;
+                }
+            }
+            if (red == blue) {
+                room.redRound++;
+                room.blueRound++;
+            }else if (red > blue) {
+                room.redRound++;
+            }else {
+                room.blueRound++;
+            }
+        }else if (v == 1) {
+            room.redRound++;
+        }else {
+            room.blueRound++;
+        }
+        //房间胜利计算
+        int round = room.redRound + room.blueRound;
+        if (round >= 5) {
+            if ((room.redRound - room.blueRound) > 0) {
+                room.setMode(3);
+                Server.getInstance().getScheduler().scheduleRepeatingTask(
+                        GunWar.getInstance(), new VictoryTask(GunWar.getInstance(), room, 1), 20);
+                return;
+            }else if ((room.blueRound - room.redRound) > 0) {
+                room.setMode(3);
+                Server.getInstance().getScheduler().scheduleRepeatingTask(
+                        GunWar.getInstance(), new VictoryTask(GunWar.getInstance(), room, 2), 20);
+                return;
+            }
+        }
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }
 
     /**
@@ -87,9 +154,9 @@ public class GunWarListener implements Listener {
                 int snowball = 0;
                 for (Item item : player.getInventory().getContents().values()) {
                     if (item.getId() == 262) {
-                        arrow++;
+                        arrow += item.getCount();
                     }else if (item.getId() == 332) {
-                        snowball++;
+                        snowball += item.getCount();
                     }
                 }
                 if (arrow > 0) {
@@ -104,8 +171,12 @@ public class GunWarListener implements Listener {
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(3);
-        room.getPlayers().put(player, 0);
-        Server.getInstance().getPluginManager().callEvent(new GunWarPlayerCorpseSpawnEvent(room, player));
+        if (room.getPlayerMode(player) == 1) {
+            room.getPlayers().put(player, 11);
+        }else {
+            room.getPlayers().put(player, 12);
+        }
+        //Server.getInstance().getPluginManager().callEvent(new GunWarPlayerCorpseSpawnEvent(room, player));
     }
 
     /**
@@ -115,7 +186,6 @@ public class GunWarListener implements Listener {
     @EventHandler
     public void onCorpseSpawn(GunWarPlayerCorpseSpawnEvent event) {
         if (event.isCancelled()) return;
-        Room room = event.getRoom();
         Player player = event.getPlayer();
         CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
         nbt.putCompound("Skin", new CompoundTag()

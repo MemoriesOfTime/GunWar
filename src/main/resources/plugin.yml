@@ -1,0 +1,16 @@
+name: GunWar
+main: cn.lanink.gunwar.GunWar
+version: "0.0.1-SNAPSHOT"
+api:
+  - 1.0.0
+load: POSTWORLD
+author: "LT_Name"
+loadbefore:
+  - EconomyAPI
+  - Tips
+
+permissions:
+  GunWar.all:
+    default: true
+  GunWar.op:
+    default: op

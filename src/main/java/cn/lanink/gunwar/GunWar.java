@@ -40,8 +40,8 @@ public class GunWar extends PluginBase {
         }
         getLogger().info("§e开始加载房间");
         this.loadRooms();
-        getServer().getCommandMap().register("", new UserCommand(this.config.getString("插件命令", "GunWar")));
-        getServer().getCommandMap().register("", new AdminCommand(this.config.getString("管理命令", "SnowballWarAdmin")));
+        getServer().getCommandMap().register("", new UserCommand(this.config.getString("插件命令", "gunwar")));
+        getServer().getCommandMap().register("", new AdminCommand(this.config.getString("管理命令", "gunwaradmin")));
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
         getServer().getPluginManager().registerEvents(new GunWarListener(), this);

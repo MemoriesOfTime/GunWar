@@ -29,7 +29,7 @@ public class PlayerGameListener implements Listener {
                 int id = event.getChild().getNetworkId();
                 if (id == 80) {
                     room.lessHealth(player2, 10F);
-                }else if (id == 81){
+                }else if (id == 81) {
                     room.lessHealth(player2, 1F);
                 }
             }

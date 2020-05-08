@@ -22,7 +22,7 @@ public class WaitTask extends PluginTask<GunWar> {
         if (this.room.getMode() != 1) {
             this.cancel();
         }
-        if (this.room.getPlayers().size() >= 2) {
+        if (this.room.getPlayers().size() > 1) {
             if (this.room.waitTime > 0) {
                 this.room.waitTime--;
                 if (this.room.waitTime <= 5) {

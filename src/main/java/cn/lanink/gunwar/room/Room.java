@@ -1,6 +1,9 @@
 package cn.lanink.gunwar.room;
 
+import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
+import cn.lanink.gunwar.tasks.TipsTask;
+import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -12,6 +15,7 @@ import tip.messages.BossBarMessage;
 import tip.messages.NameTagMessage;
 import tip.utils.Api;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
@@ -20,13 +24,15 @@ import java.util.LinkedList;
  */
 public class Room {
 
-    private int mode; //0未初始化 1等待 2游戏 3胜利结算
-    private int round; //游戏回合
+    private int mode; //0未初始化 1等待 2游戏 3胜利结算 4等待下一回合
     private final String level, waitSpawn, redSpawn, blueSpawn;
     private final int setWaitTime, setGameTime;
     public int waitTime, gameTime;
-    private LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1红队 2蓝队
+    private LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1 11红队 2 12蓝队
     private LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
+    public int redRound, blueRound; //队伍胜利次数
+    public int victory;
+    public ArrayList<String> task = new ArrayList<>();
 
     /**
      * 初始化
@@ -43,9 +49,26 @@ public class Room {
         this.mode = 0;
     }
 
+    /**
+     * 初始化Task
+     */
+    private void initTask() {
+        this.setMode(1);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 20);
+    }
+
+    /**
+     * 初始化部分参数
+     */
     private void initTime() {
         this.waitTime = this.setWaitTime;
         this.gameTime = this.setGameTime;
+        this.redRound = 0;
+        this.blueRound = 0;
+        this.victory = 0;
     }
 
     public void setMode(int mode) {
@@ -60,8 +83,11 @@ public class Room {
      * 结束房间
      */
     public void endGame() {
-        this.players.keySet().forEach(player -> this.quitRoom(player, true));
         this.mode = 0;
+        this.players.keySet().forEach(player -> this.quitRoom(player, true));
+        this.playerHealth.clear();
+        this.initTime();
+        this.task.clear();
     }
 
     /**
@@ -69,7 +95,11 @@ public class Room {
      * @param player 玩家
      */
     public void joinRoom(Player player) {
+        if (this.mode == 0) {
+            this.initTask();
+        }
         this.players.put(player, 0);
+        this.playerHealth.put(player, 20F);
         SavePlayerInventory.savePlayerInventory(player, false);
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
@@ -136,6 +166,7 @@ public class Room {
     public void lessHealth(Player player, float health) {
         float nowHealth = this.playerHealth.get(player) - health;
         if (nowHealth <= 0) {
+            this.playerHealth.put(player, 0F);
             Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent(this, player));
         }else {
             this.playerHealth.put(player, nowHealth);

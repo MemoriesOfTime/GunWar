@@ -1,9 +1,11 @@
 package cn.lanink.gunwar.utils;
 
+import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemArmor;
@@ -32,6 +34,25 @@ import java.util.Random;
 public class Tools {
 
     /**
+     * 清理实体
+     * @param level 世界
+     * @param cleanAll 是否清理全部
+     */
+    public static void cleanEntity(Level level, boolean cleanAll) {
+        for (Entity entity : level.getEntities()) {
+            if (!(entity instanceof Player)) {
+                if (entity instanceof EntityPlayerCorpse) {
+                    if (cleanAll) {
+                        entity.close();
+                    }
+                } else {
+                    entity.close();
+                }
+            }
+        }
+    }
+
+    /**
      * 给装备
      * @param player 玩家
      * @param team 所属队伍
@@ -56,7 +77,7 @@ public class Tools {
         player.getInventory().addItem(Item.get(272, 0, 1),
                 Item.get(261, 0, 1),
                 Item.get(262, 0, 10),
-                Item.get(322, 0, 64));
+                Item.get(332, 0, 64));
     }
 
     /**
