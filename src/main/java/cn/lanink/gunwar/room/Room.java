@@ -82,7 +82,6 @@ public class Room {
      */
     public void endGame() {
         this.mode = 0;
-        Tools.cleanEntity(this.getLevel(), true);
         if (this.players.size() > 0) {
             Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
             while(it.hasNext()) {
@@ -94,6 +93,7 @@ public class Room {
         this.playerHealth.clear();
         this.initTime();
         this.task = new ArrayList<>();
+        Tools.cleanEntity(this.getLevel(), true);
     }
 
     /**

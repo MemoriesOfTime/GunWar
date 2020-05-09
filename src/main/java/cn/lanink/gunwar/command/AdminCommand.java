@@ -80,7 +80,7 @@ public class AdminCommand extends Command {
                             commandSender.sendMessage("§a/" + name + " setredspawn §e将当前位置设置为红队出生点");
                             commandSender.sendMessage("§a/" + name + " setbluespawn §e将当前位置设置为蓝队出生点");
                             commandSender.sendMessage("§a/" + name + " setwaittime 数字 §e设置游戏人数足够后的等待时间");
-                            commandSender.sendMessage("§a/" + name + " setgametime 数字 §e设置每轮游戏最长时间");
+                            commandSender.sendMessage("§a/" + name + " setgametime 数字 §e设置每回合游戏最长时间");
                             commandSender.sendMessage("§a/" + name + " reload §e重载所有房间");
                             commandSender.sendMessage("§a/" + name + " unload §e关闭所有房间,卸载配置");
                             return true;
