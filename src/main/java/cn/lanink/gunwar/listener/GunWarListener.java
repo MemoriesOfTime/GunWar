@@ -139,7 +139,7 @@ public class GunWarListener implements Listener {
                 return;
             }
         }
-        Tools.cleanEntity(room.getLevel(), true);
+        Tools.cleanEntity(room.getLevel());
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }
 

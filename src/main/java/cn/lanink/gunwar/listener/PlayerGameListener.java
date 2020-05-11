@@ -9,6 +9,9 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.item.Item;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 public class PlayerGameListener implements Listener {
 
@@ -72,6 +75,31 @@ public class PlayerGameListener implements Listener {
                 }
             }
             event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 玩家点击事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        Item item = event.getItem();
+        if (player == null || item == null || !item.hasCompoundTag()) {
+            return;
+        }
+        Room room = GunWar.getInstance().getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        if (room.getMode() == 1) {
+            CompoundTag tag = item.getNamedTag();
+            if (tag.getBoolean("isGunWarItem") && tag.getInt("GunWarType") == 10) {
+                event.setCancelled(true);
+                room.quitRoom(player, true);
+                player.sendMessage("§a你已退出房间");
+            }
         }
     }
 

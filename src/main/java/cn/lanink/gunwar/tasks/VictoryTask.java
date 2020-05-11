@@ -39,7 +39,7 @@ public class VictoryTask extends PluginTask<GunWar> {
             this.cancel();
         }else {
             this.victoryTime--;
-            owner.getServer().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
+/*            owner.getServer().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
                 @Override
                 public void onRun() {
                     for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
@@ -52,7 +52,7 @@ public class VictoryTask extends PluginTask<GunWar> {
                         }
                     }
                 }
-            });
+            });*/
         }
     }
 

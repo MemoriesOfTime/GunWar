@@ -8,9 +8,11 @@ import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import tip.messages.BossBarMessage;
 import tip.messages.NameTagMessage;
@@ -45,7 +47,9 @@ public class Room {
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.initTime();
-        this.loadChuck();
+        if (this.getLevel() == null) {
+            Server.getInstance().loadLevel(this.level);
+        }
         this.mode = 0;
     }
 
@@ -58,15 +62,6 @@ public class Room {
                 GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 10);
-    }
-
-    /**
-     * 加载区块
-     */
-    private void loadChuck() {
-        this.getLevel().loadChunk(this.getWaitSpawn().getChunkX(), this.getWaitSpawn().getChunkZ());
-        this.getLevel().loadChunk(this.getRedSpawn().getChunkX(), this.getRedSpawn().getChunkZ());
-        this.getLevel().loadChunk(this.getBlueSpawn().getChunkX(), this.getBlueSpawn().getChunkZ());
     }
 
     /**
@@ -93,18 +88,18 @@ public class Room {
      */
     public void endGame() {
         this.mode = 0;
-        if (this.players.size() > 0) {
+        if (this.players.values().size() > 0) {
             Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
             while(it.hasNext()) {
                 Map.Entry<Player, Integer> entry = it.next();
                 it.remove();
-                this.quitRoom(entry.getKey(), true);
+                this.quitRoomOnline(entry.getKey());
             }
         }
         this.playerHealth.clear();
         this.initTime();
         this.task = new ArrayList<>();
-        Tools.cleanEntity(this.getLevel(), true);
+        Tools.cleanEntity(this.getLevel());
     }
 
     /**
@@ -112,7 +107,6 @@ public class Room {
      * @param player 玩家
      */
     public void joinRoom(Player player) {
-        this.loadChuck();
         if (this.mode == 0) {
             this.initTask();
         }
@@ -121,6 +115,13 @@ public class Room {
         SavePlayerInventory.save(player);
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
+        Item item = Item.get(324, 0, 1);
+        item.setNamedTag(new CompoundTag()
+                .putBoolean("isGunWarItem", true)
+                .putInt("GunWarType", 10));
+        item.setCustomName("§c退出房间");
+        item.setLore("手持点击,即可退出房间");
+        player.getInventory().setItem(8, item);
         NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, "");
         Api.setPlayerShowMessage(player.getName(), nameTagMessage);
         BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());
@@ -137,11 +138,15 @@ public class Room {
             this.players.remove(player);
         }
         if (online) {
-            Tools.removePlayerShowMessage(this.level, player);
-            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-            Tools.rePlayerState(player, false);
-            SavePlayerInventory.restore(player);
+            this.quitRoomOnline(player);
         }
+    }
+
+    private void quitRoomOnline(Player player) {
+        Tools.removePlayerShowMessage(this.level, player);
+        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        Tools.rePlayerState(player, false);
+        SavePlayerInventory.restore(player);
     }
 
     public boolean isPlaying(Player player) {
