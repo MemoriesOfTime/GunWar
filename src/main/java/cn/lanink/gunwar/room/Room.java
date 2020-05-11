@@ -45,6 +45,7 @@ public class Room {
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.initTime();
+        this.loadChuck();
         this.mode = 0;
     }
 
@@ -57,6 +58,15 @@ public class Room {
                 GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 10);
+    }
+
+    /**
+     * 加载区块
+     */
+    private void loadChuck() {
+        this.getLevel().loadChunk(this.getWaitSpawn().getChunkX(), this.getWaitSpawn().getChunkZ());
+        this.getLevel().loadChunk(this.getRedSpawn().getChunkX(), this.getRedSpawn().getChunkZ());
+        this.getLevel().loadChunk(this.getBlueSpawn().getChunkX(), this.getBlueSpawn().getChunkZ());
     }
 
     /**
@@ -102,6 +112,7 @@ public class Room {
      * @param player 玩家
      */
     public void joinRoom(Player player) {
+        this.loadChuck();
         if (this.mode == 0) {
             this.initTask();
         }

@@ -49,14 +49,14 @@ public class SavePlayerInventory {
             Item item = player.getInventory().getItem(i);
             list.add(item.getId() + ":" + item.getDamage());
             list.add(item.getCount() + "");
-            String tag = item.hasCompoundTag() ? bytesToHexString(item.getCompoundTag()) : "not";
+            String tag = item.hasCompoundTag() ? bytesToBase64(item.getCompoundTag()) : "not";
             list.add(tag);
             Inventory.put(i + "", list);
         }
         return Inventory;
     }
 
-    public static String bytesToHexString(byte[] src) {
+    public static String bytesToBase64(byte[] src) {
         if (src == null || src.length <= 0) {
             return "not";
         }
@@ -72,7 +72,7 @@ public class SavePlayerInventory {
             Item item = Item.fromString((String) list.get(0));
             item.setCount(Integer.parseInt((String) list.get(1)));
             if (!String.valueOf(list.get(2)).equals("not")) {
-                CompoundTag tag = Item.parseCompoundTag(hexStringToBytes((String) list.get(2)));
+                CompoundTag tag = Item.parseCompoundTag(base64ToBytes((String) list.get(2)));
                 item.setNamedTag(tag);
             }
             if (player.getInventory().getSize() + 4 < i) {
@@ -83,7 +83,7 @@ public class SavePlayerInventory {
         }
     }
 
-    public static byte[] hexStringToBytes(String hexString) {
+    public static byte[] base64ToBytes(String hexString) {
         if (hexString == null || hexString.equals("")) {
             return null;
         }
