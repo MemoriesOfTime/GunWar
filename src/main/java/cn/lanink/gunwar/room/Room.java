@@ -10,6 +10,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import tip.messages.BossBarMessage;
 import tip.messages.NameTagMessage;
@@ -106,7 +107,7 @@ public class Room {
         }
         this.players.put(player, 0);
         this.playerHealth.put(player, 20F);
-        SavePlayerInventory.savePlayerInventory(player, false);
+        SavePlayerInventory.save(player);
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
         NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, "");
@@ -128,7 +129,7 @@ public class Room {
             Tools.removePlayerShowMessage(this.level, player);
             player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
             Tools.rePlayerState(player, false);
-            SavePlayerInventory.savePlayerInventory(player, true);
+            SavePlayerInventory.restore(player);
         }
     }
 

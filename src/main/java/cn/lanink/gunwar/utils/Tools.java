@@ -39,17 +39,14 @@ public class Tools {
      * @param cleanAll 是否清理全部
      */
     public static void cleanEntity(Level level, boolean cleanAll) {
-        for (int i = 0; i < level.getEntities().length ; i++) {
-            Entity entity = level.getEntities()[i];
+        for (Entity entity : level.getEntities()) {
             if (!(entity instanceof Player)) {
                 if (entity instanceof EntityPlayerCorpse) {
                     if (cleanAll) {
                         entity.close();
-                        i--;
                     }
                 } else {
                     entity.close();
-                    i--;
                 }
             }
         }

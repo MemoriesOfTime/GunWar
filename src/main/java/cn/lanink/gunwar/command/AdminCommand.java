@@ -74,7 +74,7 @@ public class AdminCommand extends Command {
                             commandSender.sendMessage("§a已卸载所有房间！请在后台查看信息！");
                             return true;
                         default:
-                            commandSender.sendMessage("§eSnowballWar--命令帮助");
+                            commandSender.sendMessage("§eGunWar--命令帮助");
                             commandSender.sendMessage("§a/" + name + " §e打开ui");
                             commandSender.sendMessage("§a/" + name + " setwaitspawn §e设置当前位置为等待点");
                             commandSender.sendMessage("§a/" + name + " setredspawn §e将当前位置设置为红队出生点");

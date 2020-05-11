@@ -28,7 +28,7 @@ public class PlayerJoinAndQuit implements Listener {
                 public void onRun(int i) {
                     if (player.isOnline()) {
                         Tools.rePlayerState(player ,false);
-                        SavePlayerInventory.savePlayerInventory(player, true);
+                        SavePlayerInventory.restore(player);
                         player.teleport(GunWar.getInstance().getServer().getDefaultLevel().getSafeSpawn());
                     }
                 }
