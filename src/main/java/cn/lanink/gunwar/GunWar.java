@@ -71,15 +71,15 @@ public class GunWar extends PluginBase {
                 String[] fileName = file1.getName().split("\\.");
                 if (fileName.length > 0) {
                     Config config = getRoomConfig(fileName[0]);
-                    /*if (config.getInt("等待时间", 0) == 0 ||
-                            config.getInt("游戏时间", 0) == 0 ||
-                            config.getString("出生点", null) == null ||
-                            config.getStringList("goldSpawn").size() < 1 ||
-                            config.getInt("goldSpawnTime", 0) == 0 ||
-                            config.getString("World", null) == null) {
+                    if (config.getInt("waitTime", 0) == 0 ||
+                            config.getInt("gameTime", 0) == 0 ||
+                            config.getString("World", null) == null ||
+                            config.getString("waitSpawn", null) == null ||
+                            config.getString("redSpawn", null) == null ||
+                            config.getString("blueSpawn", null) == null) {
                         getLogger().warning("§c房间：" + fileName[0] + " 配置不完整，加载失败！");
                         continue;
-                    }*/
+                    }
                     Room room = new Room(config);
                     this.rooms.put(fileName[0], room);
                     getLogger().info("§a房间：" + fileName[0] + " 已加载！");
