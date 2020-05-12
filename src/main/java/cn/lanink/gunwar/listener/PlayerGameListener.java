@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.listener;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -25,21 +26,22 @@ public class PlayerGameListener implements Listener {
             return;
         }
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
-            Player player1 = (Player) event.getDamager();
-            Player player2 = (Player) event.getEntity();
-            if (player1 == null || player2 == null) {
+            Player damagePlayer = (Player) event.getDamager();
+            Player player = (Player) event.getEntity();
+            if (damagePlayer == null || player == null) {
                 return;
             }
-            Room room = GunWar.getInstance().getRooms().getOrDefault(player1.getLevel().getName(), null);
-            if (room == null || !room.isPlaying(player1) || !room.isPlaying(player2)) {
+            Room room = GunWar.getInstance().getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
+            if (room == null || !room.isPlaying(damagePlayer) || !room.isPlaying(player)) {
                 return;
             }
             if (room.getMode() == 2) {
-                if (room.isPlaying(player1) && room.isPlaying(player2) &&
-                        room.getPlayerMode(player1) != room.getPlayerMode(player2)) {
-                    int id = player1.getInventory().getItemInHand() == null ? 0 : player1.getInventory().getItemInHand().getId();
+                if (room.isPlaying(damagePlayer) && room.isPlaying(player) &&
+                        room.getPlayerMode(damagePlayer) != room.getPlayerMode(player)) {
+                    int id = damagePlayer.getInventory().getItemInHand() == null ? 0 : damagePlayer.getInventory().getItemInHand().getId();
                     if (id == 272) {
-                        room.lessHealth(player2, 2F);
+                        Server.getInstance().getPluginManager().callEvent(
+                                new GunWarPlayerDamageEvent(room, player, damagePlayer, 2F));
                         return;
                     }
                 }
@@ -55,22 +57,24 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onDamageByChild(EntityDamageByChildEntityEvent event) {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-            Player player1 = ((Player) event.getDamager()).getPlayer();
-            Player player2 = ((Player) event.getEntity()).getPlayer();
-            if (player1 == player2 || event.getChild() == null) {
+            Player damagePlayer = ((Player) event.getDamager()).getPlayer();
+            Player player = ((Player) event.getEntity()).getPlayer();
+            if (damagePlayer == player || event.getChild() == null) {
                 return;
             }
-            Room room = GunWar.getInstance().getRooms().getOrDefault(player1.getLevel().getName(), null);
-            if (room == null || !room.isPlaying(player1) || !room.isPlaying(player2)) {
+            Room room = GunWar.getInstance().getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
+            if (room == null || !room.isPlaying(damagePlayer) || !room.isPlaying(player)) {
                 return;
             }
-            if (room.getMode() == 2 && room.getPlayerMode(player1) != room.getPlayerMode(player2)) {
+            if (room.getMode() == 2 && room.getPlayerMode(damagePlayer) != room.getPlayerMode(player)) {
                 int id = event.getChild().getNetworkId();
                 if (id == 80) {
-                    room.lessHealth(player2, 10F);
+                    Server.getInstance().getPluginManager().callEvent(
+                            new GunWarPlayerDamageEvent(room, player, damagePlayer, 10F));
                     return;
                 } else if (id == 81) {
-                    room.lessHealth(player2, 1F);
+                    Server.getInstance().getPluginManager().callEvent(
+                            new GunWarPlayerDamageEvent(room, player, damagePlayer, 1F));
                     return;
                 }
             }
@@ -92,6 +96,10 @@ public class PlayerGameListener implements Listener {
         Room room = GunWar.getInstance().getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || !room.isPlaying(player)) {
             return;
+        }
+        if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
+            event.setCancelled(true);
+            player.setAllowModifyWorld(false);
         }
         if (room.getMode() == 1) {
             CompoundTag tag = item.getNamedTag();

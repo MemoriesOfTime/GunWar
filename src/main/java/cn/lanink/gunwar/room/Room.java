@@ -188,11 +188,10 @@ public class Room {
      * @param player 玩家
      * @param health 血量
      */
-    public void lessHealth(Player player, float health) {
+    public void lessHealth(Player player, Player damage, float health) {
         float nowHealth = this.playerHealth.get(player) - health;
         if (nowHealth <= 0) {
             this.playerHealth.put(player, 0F);
-            Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent(this, player));
         }else {
             this.playerHealth.put(player, nowHealth);
         }

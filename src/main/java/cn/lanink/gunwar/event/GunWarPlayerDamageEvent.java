@@ -5,23 +5,33 @@ import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
-public class GunWarPlayerDeathEvent extends GunWarRoomPlayerEvent  implements Cancellable {
+public class GunWarPlayerDamageEvent extends GunWarRoomPlayerEvent  implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private Player damagePlayer;
+    private float damage;
 
     public static HandlerList getHandlers() {
         return handlers;
     }
 
-    public GunWarPlayerDeathEvent(Room room, Player player, Player damagePlayer) {
+    public GunWarPlayerDamageEvent(Room room, Player player, Player damagePlayer, float damage) {
         this.room = room;
         this.player = player;
         this.damagePlayer = damagePlayer;
+        this.damage = damage;
     }
 
     public Player getDamagePlayer() {
         return this.damagePlayer;
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
+    }
+
+    public float getDamage() {
+        return  this.damage;
     }
 
 }

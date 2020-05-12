@@ -156,6 +156,27 @@ public class GunWarListener implements Listener {
     }
 
     /**
+     * 玩家伤害事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onPlayerDamage(GunWarPlayerDamageEvent event) {
+        if (event.isCancelled()) return;
+        Room room = event.getRoom();
+        Player player = event.getPlayer();
+        Player damagePlayer = event.getDamagePlayer();
+        float damage = event.getDamage();
+        float health = room.getPlayerHealth().get(player);
+        float nowHealth = health - damage;
+        if (nowHealth <= 0) {
+            room.getPlayerHealth().put(player, 0F);
+            Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent(room, player, damagePlayer));
+        }else {
+            room.getPlayerHealth().put(player, nowHealth);
+        }
+    }
+
+    /**
      * 玩家死亡事件
      * @param event 事件
      */
@@ -164,9 +185,14 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         Player player = event.getPlayer();
+        Player damagePlayer = event.getDamagePlayer();
+        player.sendTitle("死亡", "你被" + damagePlayer.getName() + "击杀了", 10, 30, 10);
         Server.getInstance().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
             @Override
             public void onRun() {
+                for (Player p : room.getPlayers().keySet()) {
+                    p.sendMessage(damagePlayer.getName() + " 杀死了 " + player.getName());
+                }
                 int arrow = 0;
                 int snowball = 0;
                 for (Item item : player.getInventory().getContents().values()) {

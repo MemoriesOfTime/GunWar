@@ -55,7 +55,7 @@ public class TipsTask extends PluginTask<GunWar> {
                                 tipMessage.setMessage("§a当前已有: " + room.getPlayers().size() + " 位玩家" +
                                         "\n§a游戏还有: " + room.waitTime + " 秒开始！");
                                 LinkedList<String> ms = new LinkedList<>();
-                                ms.add("玩家: §a" + room.getPlayers().size() + "/16 ");
+                                ms.add("玩家: §a" + room.getPlayers().size() + "/10 ");
                                 ms.add("§a开始倒计时： §l§e" + room.waitTime + " ");
                                 scoreBoardMessage.setMessages(ms);
                             }else {

@@ -1,15 +1,12 @@
 package cn.lanink.gunwar.utils;
 
-import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
-import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
