@@ -36,9 +36,9 @@ public class GunWar extends PluginBase {
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         if (gunWar == null) gunWar = this;
         getLogger().info("§l§e版本: " + VERSION);
-        this.loadResources();
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.loadResources();
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         if (!file1.exists() && !file1.mkdirs()) {
@@ -127,9 +127,9 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         getLogger().info("§e开始加载资源文件");
         //语言文件
-        saveResource("Resources/Language/zh_CN.yml", "/Resources/Language/zh_CN.yml", false);
+        saveResource("Language/zh_CN.yml", "/Language/zh_CN.yml", false);
         String s = this.config.getString("language", "zh_CN");
-        File languageFile = new File(getDataFolder() + "/Resources/Language/" + s + ".yml");
+        File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
             getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, 2));
@@ -147,9 +147,6 @@ public class GunWar extends PluginBase {
     private Config getRoomConfig(String level) {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
-        }
-        if (!new File(getDataFolder() + "/Rooms/" + level + ".yml").exists()) {
-            saveResource("room.yml", "/Rooms/" + level + ".yml", false);
         }
         Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
         this.roomConfigs.put(level, config);

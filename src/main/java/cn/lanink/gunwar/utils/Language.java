@@ -42,8 +42,8 @@ public class Language {
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
-    public String roomSafeKick = "\n§c房间非正常关闭!\n为了您的背包安全，请稍后重进服务器！";
     //游戏提示
+    public String roomSafeKick = "\n§c房间非正常关闭!\n为了您的背包安全，请稍后重进服务器！";
     public String teamNameRed = "§c红队";
     public String teamNameBlue = "§9蓝队";
     public String roundVictoryRed = "§c红队获得本轮胜利";
@@ -90,7 +90,72 @@ public class Language {
     public String buttonReturn = "§c返回";
 
     public Language(Config config) {
-
+        this.cmdHelp = config.getString("cmdHelp", this.cmdHelp);
+        this.userHelp = config.getString("userHelp", this.userHelp);
+        this.noPermission = config.getString("noPermission", this.noPermission);
+        this.joinRoom = config.getString("joinRoom", this.joinRoom);
+        this.joinRoomOnRoom = config.getString("joinRoomOnRoom", this.joinRoomOnRoom);
+        this.joinRoomOnRiding = config.getString("joinRoomOnRiding", this.joinRoomOnRiding);
+        this.joinRandomRoom = config.getString("joinRandomRoom", this.joinRandomRoom);
+        this.joinRoomIsPlaying = config.getString("joinRoomIsPlaying", this.joinRoomIsPlaying);
+        this.joinRoomIsFull = config.getString("joinRoomIsFull", this.joinRoomIsFull);
+        this.joinRoomIsNotFound = config.getString("joinRoomIsNotFound", this.joinRoomIsNotFound);
+        this.joinRoomNotAvailable = config.getString("joinRoomNotAvailable", this.joinRoomNotAvailable);
+        this.quitRoom = config.getString("quitRoom", this.quitRoom);
+        this.quitRoomNotInRoom = config.getString("quitRoomNotInRoom", this.quitRoomNotInRoom);
+        this.listRoom = config.getString("listRoom", this.listRoom);
+        this.useCmdInCon = config.getString("useCmdInCon", this.useCmdInCon);
+        this.adminHelp = config.getString("adminHelp", this.adminHelp);
+        this.adminSetWaitSpawn = config.getString("adminSetWaitSpawn", this.adminSetWaitSpawn);
+        this.adminSetRedSpawn = config.getString("adminSetRedSpawn", this.adminSetRedSpawn);
+        this.adminSetBlueSpawn = config.getString("adminSetBlueSpawn", this.adminSetBlueSpawn);
+        this.adminNotNumber = config.getString("adminNotNumber", this.adminNotNumber);
+        this.adminSetWaitTime = config.getString("adminSetWaitTime", this.adminSetWaitTime);
+        this.adminSetGameTime = config.getString("adminSetGameTime", this.adminSetGameTime);
+        this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
+        this.adminReload = config.getString("adminReload", this.adminReload);
+        this.adminUnload = config.getString("adminUnload", this.adminUnload);
+        //提示信息
+        this.roomSafeKick = config.getString("roomSafeKick", this.roomSafeKick);
+        this.teamNameRed = config.getString("teamNameRed", this.teamNameRed);
+        this.teamNameBlue = config.getString("teamNameBlue", this.teamNameBlue);
+        this.roundVictoryRed = config.getString("roundVictoryRed", this.roundVictoryRed);
+        this.roundVictoryBlue = config.getString("roundVictoryBlue", this.roundVictoryBlue);
+        this.victoryRed = config.getString("victoryRed", this.victoryRed);
+        this.victoryBlue = config.getString("victoryBlue", this.victoryBlue);
+        this.roundVictoryDraw = config.getString("roundVictoryDraw", this.roundVictoryDraw);
+        this.titleDeathTitle = config.getString("titleDeathTitle", this.titleDeathTitle);
+        this.titleDeathSubtitle = config.getString("titleDeathSubtitle", this.titleDeathSubtitle);
+        this.killMessage = config.getString("killMessage", this.killMessage);
+        this.tpJoinRoomLevel = config.getString("tpJoinRoomLevel", this.tpJoinRoomLevel);
+        this.tpQuitRoomLevel = config.getString("tpQuitRoomLevel", this.tpQuitRoomLevel);
+        this.gameArmor = config.getString("gameArmor", this.gameArmor);
+        this.playerTeamChat = config.getString("playerTeamChat", this.playerTeamChat);
+        //tips
+        this.scoreBoardTitle = config.getString("scoreBoardTitle", this.scoreBoardTitle);
+        this.waitTimeScoreBoard = config.getString("waitTimeScoreBoard", this.waitTimeScoreBoard);
+        this.waitScoreBoard = config.getString("waitScoreBoard", this.waitScoreBoard);
+        this.waitTimeBottom = config.getString("waitTimeBottom", this.waitTimeBottom);
+        this.waitBottom = config.getString("waitBottom", this.waitBottom);
+        this.gameTimeScoreBoard = config.getString("gameTimeScoreBoard", this.gameTimeScoreBoard);
+        this.gameTimeBottom = config.getString("gameTimeBottom", this.gameTimeBottom);
+        this.victoryMessage = config.getString("victoryMessage", this.victoryMessage);
+        //ui
+        this.userMenuButton1 = config.getString("userMenuButton1", this.userMenuButton1);
+        this.userMenuButton2 = config.getString("userMenuButton2", this.userMenuButton2);
+        this.userMenuButton3 = config.getString("userMenuButton3", this.userMenuButton3);
+        this.adminMenuSetLevel = config.getString("adminMenuSetLevel", this.adminMenuSetLevel);
+        this.adminMenuButton1 = config.getString("adminMenuButton1", this.adminMenuButton1);
+        this.adminMenuButton2 = config.getString("adminMenuButton2", this.adminMenuButton2);
+        this.adminMenuButton3 = config.getString("adminMenuButton3", this.adminMenuButton3);
+        this.adminMenuButton4 = config.getString("adminMenuButton4", this.adminMenuButton4);
+        this.adminMenuButton5 = config.getString("adminMenuButton5", this.adminMenuButton5);
+        this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
+        this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
+        this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
+        this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
+        this.buttonOK = config.getString("buttonOK", this.buttonOK);
+        this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
     }
 
 }
