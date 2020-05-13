@@ -56,7 +56,7 @@ public class AdminCommand extends Command {
                                 if (strings[1].matches("[0-9]*")) {
                                     if (Integer.parseInt(strings[1]) > 60) {
                                         gunWar.roomSetGameTime(Integer.valueOf(strings[1]), gunWar.getRoomConfig(player.getLevel()));
-                                        commandSender.sendMessage(this.language.adminSetWaitTime.replace("%time%", strings[1]));
+                                        commandSender.sendMessage(this.language.adminSetGameTime.replace("%time%", strings[1]));
                                     } else {
                                         commandSender.sendMessage(this.language.adminSetGameTimeShort);
                                     }

@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -22,6 +23,7 @@ public class GuiListener implements Listener {
         if (player == null || event.getWindow() == null || event.getResponse() == null) {
             return;
         }
+        Language language = GunWar.getInstance().getLanguage();
         String uName = GunWar.getInstance().getConfig().getString("插件命令", "gunwar");
         String aName = GunWar.getInstance().getConfig().getString("管理命令", "gunwaradmin");
         if (event.getWindow() instanceof FormWindowSimple) {
@@ -39,7 +41,7 @@ public class GuiListener implements Listener {
                         break;
                 }
             }else if (event.getFormID() == GuiCreate.ROOM_LIST_MENU) {
-                if (simple.getResponse().getClickedButton().getText().equals("§c返回")) {
+                if (simple.getResponse().getClickedButton().getText().equals(language.buttonReturn)) {
                     GuiCreate.sendUserMenu(player);
                 }else {
                     GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText());
@@ -75,7 +77,7 @@ public class GuiListener implements Listener {
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();
             if (event.getFormID() == GuiCreate.ROOM_JOIN_OK) {
-                if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals("§c返回")) {
+                if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(language.buttonReturn)) {
                     String[] s = modal.getContent().split("\"");
                     GunWar.getInstance().getServer().dispatchCommand(
                             player, uName + " join " + s[1].replace("§e", "").trim());

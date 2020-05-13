@@ -1,9 +1,9 @@
 package cn.lanink.gunwar.room;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
 import cn.lanink.gunwar.tasks.TipsTask;
 import cn.lanink.gunwar.tasks.WaitTask;
+import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -11,7 +11,6 @@ import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import tip.messages.BossBarMessage;
@@ -25,6 +24,7 @@ import java.util.*;
  */
 public class Room {
 
+    private final Language language = GunWar.getInstance().getLanguage();
     private int mode; //0未初始化 1等待 2游戏 3胜利结算 4等待下一回合
     private final String level, waitSpawn, redSpawn, blueSpawn;
     private final int setWaitTime, setGameTime;
@@ -126,7 +126,7 @@ public class Room {
         Api.setPlayerShowMessage(player.getName(), nameTagMessage);
         BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());
         Api.setPlayerShowMessage(player.getName(), bossBarMessage);
-        player.sendMessage("§a你已加入房间: " + this.level);
+        player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
     }
 
     /**
@@ -147,6 +147,7 @@ public class Room {
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(player);
+        player.sendMessage(this.language.quitRoom);
     }
 
     public boolean isPlaying(Player player) {

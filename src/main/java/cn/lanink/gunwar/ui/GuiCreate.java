@@ -2,6 +2,7 @@ package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementButtonImageData;
@@ -27,10 +28,11 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendUserMenu(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton("§e随机加入房间", new ElementButtonImageData("path", "textures/ui/switch_start_button")));
-        simple.addButton(new ElementButton("§e退出当前房间", new ElementButtonImageData("path", "textures/ui/switch_select_button")));
-        simple.addButton(new ElementButton("§e查看房间列表", new ElementButtonImageData("path", "textures/ui/servers")));
+        simple.addButton(new ElementButton(language.userMenuButton1, new ElementButtonImageData("path", "textures/ui/switch_start_button")));
+        simple.addButton(new ElementButton(language.userMenuButton2, new ElementButtonImageData("path", "textures/ui/switch_select_button")));
+        simple.addButton(new ElementButton(language.userMenuButton3, new ElementButtonImageData("path", "textures/ui/servers")));
         player.showFormWindow(simple, USER_MENU);
     }
 
@@ -39,13 +41,14 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminMenu(Player player) {
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "当前设置地图: " + player.getLevel().getName());
-        simple.addButton(new ElementButton("§e设置等待出生点", new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton("§e设置红队出生点", new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton("§e设置蓝队出生点", new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton("§e设置时间参数", new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton("§e重载所有房间",  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton("§c卸载所有房间", new ElementButtonImageData("path", "textures/ui/redX1")));
+        Language language = GunWar.getInstance().getLanguage();
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()));
+        simple.addButton(new ElementButton(language.adminMenuButton1, new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
+        simple.addButton(new ElementButton(language.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
+        simple.addButton(new ElementButton(language.adminMenuButton5,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(language.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/redX1")));
         player.showFormWindow(simple, ADMIN_MENU);
     }
 
@@ -54,9 +57,10 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminTimeMenu(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput("等待时间（秒）", "", "60"));
-        custom.addElement(new ElementInput("游戏时间（秒）", "", "300"));
+        custom.addElement(new ElementInput(language.adminTimeMenuInputText1, "", "60"));
+        custom.addElement(new ElementInput(language.adminTimeMenuInputText2, "", "300"));
         player.showFormWindow(custom, ADMIN_TIME_MENU);
     }
 
@@ -65,11 +69,12 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendRoomListMenu(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         for (Map.Entry<String, Room> entry : GunWar.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e" + entry.getKey(), new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
-        simple.addButton(new ElementButton("§c返回", new ElementButtonImageData("path", "textures/ui/cancel")));
+        simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
         player.showFormWindow(simple, ROOM_LIST_MENU);
     }
 
@@ -78,26 +83,28 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
+        Language language = GunWar.getInstance().getLanguage();
         if (GunWar.getInstance().getRooms().containsKey(roomName.replace("§e", "").trim())) {
             Room room = GunWar.getInstance().getRooms().get(roomName.replace("§e", "").trim());
             if (room.getMode() == 2 || room.getMode() == 3) {
                 FormWindowModal modal = new FormWindowModal(
-                        PLUGIN_NAME, "§a该房间正在游戏中，请稍后", "§c返回", "§c返回");
+                        PLUGIN_NAME, language.joinRoomIsPlaying, language.buttonReturn, language.buttonReturn);
                 player.showFormWindow(modal, ROOM_JOIN_OK);
             }else if (room.getPlayers().size() > 15){
                 FormWindowModal modal = new FormWindowModal(
-                        PLUGIN_NAME, "§a该房间已满人，请稍后", "§c返回", "§c返回");
+                        PLUGIN_NAME, language.joinRoomIsFull, language.buttonReturn, language.buttonReturn);
                 player.showFormWindow(modal, ROOM_JOIN_OK);
             }else {
                 FormWindowModal modal = new FormWindowModal(
-                        PLUGIN_NAME, "§l§a确认要加入房间: \"" + roomName + "\" §l§a？", "§a确认", "§c返回");
+                        PLUGIN_NAME, language.joinRoomOK.replace("%name%", "\"" + roomName + "\""), language.buttonOK, language.buttonReturn);
                 player.showFormWindow(modal, ROOM_JOIN_OK);
             }
         }else {
             FormWindowModal modal = new FormWindowModal(
-                    PLUGIN_NAME, "§a该房间不存在！", "§c返回", "§c返回");
+                    PLUGIN_NAME, language.joinRoomIsNotFound, language.buttonReturn, language.buttonReturn);
             player.showFormWindow(modal, ROOM_JOIN_OK);
         }
+
     }
 
 }
