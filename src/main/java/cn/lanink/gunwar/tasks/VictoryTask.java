@@ -2,6 +2,7 @@ package cn.lanink.gunwar.tasks;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.AsyncTask;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 public class VictoryTask extends PluginTask<GunWar> {
 
+    private final Language language = GunWar.getInstance().getLanguage();
     private final Room room;
     private int victoryTime;
 
@@ -22,9 +24,9 @@ public class VictoryTask extends PluginTask<GunWar> {
         this.room.victory = victory;
         for (Player player : room.getPlayers().keySet()) {
             if (victory == 1) {
-                player.sendTitle("§c红队获得胜利", "", 10, 30, 20);
+                player.sendTitle(this.language.victoryRed, "", 10, 30, 20);
             }else if (victory == 2) {
-                player.sendTitle("§9蓝队获得胜利", "", 10, 30, 20);
+                player.sendTitle(this.language.victoryBlue, "", 10, 30, 20);
             }
         }
     }

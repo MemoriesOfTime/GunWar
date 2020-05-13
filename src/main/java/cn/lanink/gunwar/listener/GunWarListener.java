@@ -6,6 +6,7 @@ import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.TimeTask;
+import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -21,6 +22,8 @@ import cn.nukkit.scheduler.AsyncTask;
 import java.util.Map;
 
 public class GunWarListener implements Listener {
+
+    private final Language language = GunWar.getInstance().getLanguage();
 
     /**
      * 房间开始事件
@@ -49,11 +52,11 @@ public class GunWarListener implements Listener {
             if (flag) {
                 //红
                 entry.setValue(1);
-                player.sendTitle("§c红队", "", 10, 30, 10);
+                player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
             }else {
                 //蓝
                 entry.setValue(2);
-                player.sendTitle("§9蓝队", "", 10, 30, 10);
+                player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
             }
             flag = !flag;
         }
@@ -146,11 +149,11 @@ public class GunWarListener implements Listener {
     private void sendTitle(Room room, int v) {
         for (Player player : room.getPlayers().keySet()) {
             if (v == 1) {
-                player.sendTitle("§c红队获得本轮胜利", "", 10, 20, 10);
+                player.sendTitle(this.language.roundVictoryRed, "", 10, 20, 10);
             }else if (v == 2) {
-                player.sendTitle("§9蓝队获得本轮胜利", "", 10, 20, 10);
+                player.sendTitle(this.language.roundVictoryBlue, "", 10, 20, 10);
             }else {
-                player.sendTitle("平局", "", 10, 20, 10);
+                player.sendTitle(this.language.roundVictoryDraw, "", 10, 20, 10);
             }
         }
     }
@@ -186,12 +189,15 @@ public class GunWarListener implements Listener {
         Room room = event.getRoom();
         Player player = event.getPlayer();
         Player damagePlayer = event.getDamagePlayer();
-        player.sendTitle("死亡", "你被" + damagePlayer.getName() + "击杀了", 10, 30, 10);
+        player.sendTitle(this.language.titleDeathTitle,
+                this.language.titleDeathSubtitle.replace("%player%", damagePlayer.getName()),
+                10, 30, 10);
         Server.getInstance().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
             @Override
             public void onRun() {
                 for (Player p : room.getPlayers().keySet()) {
-                    p.sendMessage(damagePlayer.getName() + " 杀死了 " + player.getName());
+                    p.sendMessage(language.killMessage.replace("damagePlayer", damagePlayer.getName())
+                            .replace("%player%", player.getName()));
                 }
                 int arrow = 0;
                 int snowball = 0;

@@ -2,6 +2,7 @@ package cn.lanink.gunwar.tasks;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.PluginTask;
@@ -17,6 +18,7 @@ import java.util.LinkedList;
  */
 public class TipsTask extends PluginTask<GunWar> {
 
+    private final Language language = GunWar.getInstance().getLanguage();
     private final String taskName = "TipsTask";
     private final Room room;
     private final boolean bottom, scoreBoard;
@@ -30,7 +32,7 @@ public class TipsTask extends PluginTask<GunWar> {
         this.scoreBoard = owner.getConfig().getBoolean("计分板显示信息", true);
         this.tipMessage = new TipMessage(room.getLevel().getName(), true, 0, null);
         this.scoreBoardMessage = new ScoreBoardMessage(
-                room.getLevel().getName(), true, "§eGunWar", new LinkedList<>());
+                room.getLevel().getName(), true, this.language.scoreBoardTitle, new LinkedList<>());
     }
 
     @Override
@@ -52,18 +54,22 @@ public class TipsTask extends PluginTask<GunWar> {
                     if (room.getPlayers().values().size() > 0) {
                         if (room.getMode() == 1) {
                             if (room.getPlayers().values().size() > 1) {
-                                tipMessage.setMessage("§a当前已有: " + room.getPlayers().size() + " 位玩家" +
-                                        "\n§a游戏还有: " + room.waitTime + " 秒开始！");
+                                tipMessage.setMessage(language.waitTimeBottom
+                                        .replace("%playerNumber%", room.getPlayers().size() + "")
+                                        .replace("%time%", room.waitTime + ""));
                                 LinkedList<String> ms = new LinkedList<>();
-                                ms.add("玩家: §a" + room.getPlayers().size() + "/10 ");
-                                ms.add("§a开始倒计时： §l§e" + room.waitTime + " ");
+                                for (String string : language.waitTimeScoreBoard.split("\n")) {
+                                    ms.add(string.replace("%playerNumber%", room.getPlayers().size() + "")
+                                            .replace("%time%", room.waitTime + ""));
+                                }
                                 scoreBoardMessage.setMessages(ms);
                             }else {
-                                tipMessage.setMessage("§c等待玩家加入中,当前已有: " + room.getPlayers().size() + " 位玩家");
+                                tipMessage.setMessage(language.waitBottom
+                                        .replace("%playerNumber%", room.getPlayers().size() + ""));
                                 LinkedList<String> ms = new LinkedList<>();
-                                ms.add("玩家: §a" + room.getPlayers().size() + "/10 ");
-                                ms.add("最低游戏人数为 2 人 ");
-                                ms.add("等待玩家加入中 ");
+                                for (String string : language.waitScoreBoard.split("\n")) {
+                                    ms.add(string.replace("%playerNumber%", room.getPlayers().size() + ""));
+                                }
                                 scoreBoardMessage.setMessages(ms);
                             }
                             this.sendMessage();
@@ -79,33 +85,38 @@ public class TipsTask extends PluginTask<GunWar> {
                             for (Player player : room.getPlayers().keySet()) {
                                 if (bottom) {
                                     TipMessage tip = new TipMessage(room.getLevel().getName(), true, 0, null);
-                                    tip.setMessage("§l§c血量： " + room.getPlayerHealth().get(player));
+                                    tip.setMessage(language.gameTimeBottom
+                                            .replace("%health%", room.getPlayerHealth().get(player) + ""));
                                     Api.setPlayerShowMessage(player.getName(), tip);
                                 }
                                 if (scoreBoard) {
                                     ScoreBoardMessage score = new ScoreBoardMessage(
                                             room.getLevel().getName(), true, "§eGunWar", new LinkedList<>());
                                     LinkedList<String> ms = new LinkedList<>();
-                                    ms.add("§l§a当前血量： §e" + room.getPlayerHealth().get(player) + " ");
-                                    ms.add("§l§a剩余时间： §e" + room.gameTime + " §a秒 ");
-                                    ms.add("§l§a队伍存活人数：");
-                                    ms.add("§l§c红: " + red + " 人 §9蓝: " + blue + " 人 ");
-                                    ms.add("§l§a队伍胜利：");
-                                    ms.add("§l§c红: " + room.redRound + " 回合 §9蓝: " + room.blueRound + " 回合 ");
+
+                                    for (String string : language.gameTimeScoreBoard.split("\n")) {
+                                        ms.add(string
+                                                .replace("%health%", room.getPlayerHealth().get(player) + "")
+                                                .replace("%time%", room.gameTime + "")
+                                                .replace("%red%", red + "")
+                                                .replace("%blue%", blue + "")
+                                                .replace("%redRound%", room.redRound + "")
+                                                .replace("%blueRound%", room.blueRound + ""));
+                                    }
                                     score.setMessages(ms);
                                     Api.setPlayerShowMessage(player.getName(), score);
                                 }
                             }
                         }else if (room.getMode() == 3) {
                             if (room.victory == 1) {
-                                tipMessage.setMessage("§e恭喜红队获得胜利");
+                                tipMessage.setMessage(language.victoryMessage.replace("%teamName%", language.teamNameRed));
                                 LinkedList<String> ms = new LinkedList<>();
-                                ms.add("§e恭喜红队获得胜利! ");
+                                ms.add(language.victoryMessage.replace("%teamName%", language.teamNameRed));
                                 scoreBoardMessage.setMessages(ms);
                             } else {
-                                tipMessage.setMessage("§e恭喜蓝队获得胜利！");
+                                tipMessage.setMessage(language.victoryMessage.replace("%teamName%", language.teamNameBlue));
                                 LinkedList<String> ms = new LinkedList<>();
-                                ms.add("§e恭喜蓝队获得胜利! ");
+                                ms.add(language.victoryMessage.replace("%teamName%", language.teamNameBlue));
                                 scoreBoardMessage.setMessages(ms);
                             }
                             this.sendMessage();

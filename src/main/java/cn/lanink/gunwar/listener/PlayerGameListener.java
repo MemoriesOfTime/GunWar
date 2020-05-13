@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
@@ -16,6 +17,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class PlayerGameListener implements Listener {
+
+    private final Language language = GunWar.getInstance().getLanguage();
 
     /**
      * 实体受到另一实体伤害事件
@@ -107,7 +110,6 @@ public class PlayerGameListener implements Listener {
             if (tag.getBoolean("isGunWarItem") && tag.getInt("GunWarType") == 10) {
                 event.setCancelled(true);
                 room.quitRoom(player, true);
-                player.sendMessage("§a你已退出房间");
             }
         }
     }
@@ -129,7 +131,7 @@ public class PlayerGameListener implements Listener {
         int size = event.getInventory().getSize();
         if (event.getSlot() >= size) {
             event.setCancelled(true);
-            player.sendMessage("游戏中无法脱下护甲！");
+            player.sendMessage(this.language.gameArmor);
         }
     }
 

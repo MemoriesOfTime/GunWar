@@ -8,6 +8,7 @@ import cn.lanink.gunwar.listener.RoomLevelProtection;
 import cn.lanink.gunwar.listener.GunWarListener;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
+import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -21,8 +22,9 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-3816d52";
+    public static String VERSION = "0.0.1-SNAPSHOT git-1ba3c28";
     private static GunWar gunWar;
+    private Language language;
     private Config config;
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
@@ -36,6 +38,7 @@ public class GunWar extends PluginBase {
         getLogger().info("§l§e版本: " + VERSION);
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.loadResources();
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         if (!file1.exists() && !file1.mkdirs()) {
@@ -55,6 +58,10 @@ public class GunWar extends PluginBase {
         getServer().getPluginManager().registerEvents(new GuiListener(), this);
         new MetricsLite(this, 7448);
         getLogger().info("§a加载完成");
+    }
+
+    public Language getLanguage() {
+        return this.language;
     }
 
     public LinkedHashMap<String, Room> getRooms() {
@@ -117,6 +124,22 @@ public class GunWar extends PluginBase {
         this.loadRooms();
     }
 
+    private void loadResources() {
+        getLogger().info("§e开始加载资源文件");
+        //语言文件
+        saveResource("Language/zh_CN.yml", "/Language/zh_CN.yml", false);
+        String s = this.config.getString("language", "zh_CN");
+        File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
+        if (languageFile.exists()) {
+            getLogger().info("§aLanguage: " + s + " loaded !");
+            this.language = new Language(new Config(languageFile, 2));
+        }else {
+            getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
+            this.language = new Language(new Config());
+        }
+        getLogger().info("§e资源文件加载完成");
+    }
+
     public Config getRoomConfig(Level level) {
         return getRoomConfig(level.getName());
     }
@@ -124,9 +147,6 @@ public class GunWar extends PluginBase {
     private Config getRoomConfig(String level) {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
-        }
-        if (!new File(getDataFolder() + "/Rooms/" + level + ".yml").exists()) {
-            saveResource("room.yml", "/Rooms/" + level + ".yml", false);
         }
         Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
         this.roomConfigs.put(level, config);
