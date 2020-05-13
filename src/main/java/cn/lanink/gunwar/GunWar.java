@@ -8,6 +8,7 @@ import cn.lanink.gunwar.listener.RoomLevelProtection;
 import cn.lanink.gunwar.listener.GunWarListener;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
+import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -21,8 +22,9 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-3816d52";
+    public static String VERSION = "0.0.1-SNAPSHOT git-1ba3c28";
     private static GunWar gunWar;
+    private Language language;
     private Config config;
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
@@ -34,6 +36,7 @@ public class GunWar extends PluginBase {
         getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         if (gunWar == null) gunWar = this;
         getLogger().info("§l§e版本: " + VERSION);
+        this.loadResources();
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         File file1 = new File(this.getDataFolder() + "/Rooms");
@@ -55,6 +58,10 @@ public class GunWar extends PluginBase {
         getServer().getPluginManager().registerEvents(new GuiListener(), this);
         new MetricsLite(this, 7448);
         getLogger().info("§a加载完成");
+    }
+
+    public Language getLanguage() {
+        return this.language;
     }
 
     public LinkedHashMap<String, Room> getRooms() {
@@ -115,6 +122,22 @@ public class GunWar extends PluginBase {
     public void reLoadRooms() {
         this.unloadRooms();
         this.loadRooms();
+    }
+
+    private void loadResources() {
+        getLogger().info("§e开始加载资源文件");
+        //语言文件
+        saveResource("Resources/Language/zh_CN.yml", "/Resources/Language/zh_CN.yml", false);
+        String s = this.config.getString("language", "zh_CN");
+        File languageFile = new File(getDataFolder() + "/Resources/Language/" + s + ".yml");
+        if (languageFile.exists()) {
+            getLogger().info("§aLanguage: " + s + " loaded !");
+            this.language = new Language(new Config(languageFile, 2));
+        }else {
+            getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
+            this.language = new Language(new Config());
+        }
+        getLogger().info("§e资源文件加载完成");
     }
 
     public Config getRoomConfig(Level level) {

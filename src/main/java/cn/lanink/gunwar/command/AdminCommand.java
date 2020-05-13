@@ -2,6 +2,7 @@ package cn.lanink.gunwar.command;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.ui.GuiCreate;
+import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -9,13 +10,14 @@ import cn.nukkit.command.CommandSender;
 public class AdminCommand extends Command {
 
     private final GunWar gunWar = GunWar.getInstance();
+    private final Language language = gunWar.getLanguage();
     private final String name;
 
     public AdminCommand(String name) {
         super(name, "GunWar 管理命令", "/" + name + " help");
         this.name = name;
         this.setPermission("GunWar.op");
-        this.setPermissionMessage("§c你没有权限");
+        this.setPermissionMessage(language.noPermission);
     }
 
     @Override
@@ -27,26 +29,26 @@ public class AdminCommand extends Command {
                     switch (strings[0]) {
                         case "setwaitspawn":
                             gunWar.roomSetWaitSpawn(player, gunWar.getRoomConfig(player.getLevel()));
-                            commandSender.sendMessage("§a等待点设置成功！");
+                            commandSender.sendMessage(this.language.adminSetWaitSpawn);
                             return true;
                         case "setredspawn":
                             gunWar.roomSetRedSpawn(player, gunWar.getRoomConfig(player.getLevel()));
-                            commandSender.sendMessage("§a红队出生点设置成功！");
+                            commandSender.sendMessage(this.language.adminSetRedSpawn);
                             return true;
                         case "setbluespawn":
                             gunWar.roomSetBlueSpawn(player, gunWar.getRoomConfig(player.getLevel()));
-                            commandSender.sendMessage("§a蓝队出生点设置成功！");
+                            commandSender.sendMessage(this.language.adminSetBlueSpawn);
                             return true;
                         case "setwaittime":
                             if (strings.length == 2) {
                                 if (strings[1].matches("[0-9]*")) {
                                     gunWar.roomSetWaitTime(Integer.valueOf(strings[1]), gunWar.getRoomConfig(player.getLevel()));
-                                    commandSender.sendMessage("§a等待时间已设置为：" + Integer.valueOf(strings[1]));
+                                    commandSender.sendMessage(this.language.adminSetWaitTime.replace("%time%", strings[1]));
                                 }else {
-                                    commandSender.sendMessage("§a时间只能设置为正整数！");
+                                    commandSender.sendMessage(this.language.adminNotNumber);
                                 }
                             }else {
-                                commandSender.sendMessage("§a查看帮助：/" + name + " help");
+                                commandSender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.name));
                             }
                             return true;
                         case "setgametime":
@@ -54,35 +56,28 @@ public class AdminCommand extends Command {
                                 if (strings[1].matches("[0-9]*")) {
                                     if (Integer.parseInt(strings[1]) > 60) {
                                         gunWar.roomSetGameTime(Integer.valueOf(strings[1]), gunWar.getRoomConfig(player.getLevel()));
-                                        commandSender.sendMessage("§a游戏时间已设置为：" + Integer.valueOf(strings[1]));
+                                        commandSender.sendMessage(this.language.adminSetWaitTime.replace("%time%", strings[1]));
                                     } else {
-                                        commandSender.sendMessage("§a游戏时间最小不能低于1分钟！");
+                                        commandSender.sendMessage(this.language.adminSetGameTimeShort);
                                     }
                                 }else {
-                                    commandSender.sendMessage("§a时间只能设置为正整数！");
+                                    commandSender.sendMessage(this.language.adminNotNumber);
                                 }
                             }else {
-                                commandSender.sendMessage("§a查看帮助：/" + name + " help");
+                                commandSender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.name));
                             }
                             return true;
                         case "reload": case "重载":
                             gunWar.reLoadRooms();
-                            commandSender.sendMessage("§a配置重载完成！请在后台查看信息！");
+                            commandSender.sendMessage(this.language.adminReload);
                             return true;
                         case "unload":
                             gunWar.unloadRooms();
-                            commandSender.sendMessage("§a已卸载所有房间！请在后台查看信息！");
+                            commandSender.sendMessage(this.language.adminUnload);
                             return true;
                         default:
-                            commandSender.sendMessage("§eGunWar--命令帮助");
-                            commandSender.sendMessage("§a/" + name + " §e打开ui");
-                            commandSender.sendMessage("§a/" + name + " setwaitspawn §e设置当前位置为等待点");
-                            commandSender.sendMessage("§a/" + name + " setredspawn §e将当前位置设置为红队出生点");
-                            commandSender.sendMessage("§a/" + name + " setbluespawn §e将当前位置设置为蓝队出生点");
-                            commandSender.sendMessage("§a/" + name + " setwaittime 数字 §e设置游戏人数足够后的等待时间");
-                            commandSender.sendMessage("§a/" + name + " setgametime 数字 §e设置每回合游戏最长时间");
-                            commandSender.sendMessage("§a/" + name + " reload §e重载所有房间");
-                            commandSender.sendMessage("§a/" + name + " unload §e关闭所有房间,卸载配置");
+                            commandSender.sendMessage(
+                                    this.language.adminHelp.replace("%cmdName%", this.name));
                             return true;
                     }
                 }else {
@@ -90,20 +85,20 @@ public class AdminCommand extends Command {
                     return true;
                 }
             }else {
-                commandSender.sendMessage("§c你没有权限！");
+                commandSender.sendMessage(this.language.noPermission);
                 return true;
             }
         }else {
             if(strings.length > 0 && strings[0].equals("reload")) {
                 gunWar.reLoadRooms();
-                commandSender.sendMessage("§a配置重载完成！");
+                commandSender.sendMessage(this.language.adminReload);
                 return true;
             }else if(strings.length > 0 && strings[0].equals("unload")) {
                 gunWar.unloadRooms();
-                commandSender.sendMessage("§a已卸载所有房间！");
+                commandSender.sendMessage(this.language.adminUnload);
                 return true;
             }else {
-                commandSender.sendMessage("§a请在游戏内输入！");
+                commandSender.sendMessage(this.language.useCmdInCon);
             }
             return true;
         }
