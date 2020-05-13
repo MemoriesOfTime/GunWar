@@ -10,6 +10,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -108,6 +109,27 @@ public class PlayerGameListener implements Listener {
                 room.quitRoom(player, true);
                 player.sendMessage("§a你已退出房间");
             }
+        }
+    }
+
+    /**
+     * 玩家点击背包栏格子事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = event.getPlayer();
+        if (player == null || event.getInventory() == null) {
+            return;
+        }
+        Room room = GunWar.getInstance().getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        int size = event.getInventory().getSize();
+        if (event.getSlot() >= size) {
+            event.setCancelled(true);
+            player.sendMessage("游戏中无法脱下护甲！");
         }
     }
 
