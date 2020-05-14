@@ -83,18 +83,27 @@ public class Room {
         return this.mode;
     }
 
+    public void endGame() {
+        this.endGame(true);
+    }
+
     /**
      * 结束房间
      */
-    public void endGame() {
+    public void endGame(boolean normal) {
         this.mode = 0;
-        if (this.players.values().size() > 0) {
-            Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
-            while(it.hasNext()) {
-                Map.Entry<Player, Integer> entry = it.next();
-                it.remove();
-                this.quitRoomOnline(entry.getKey());
+        if (normal) {
+            if (this.players.values().size() > 0) {
+                Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
+                while(it.hasNext()) {
+                    Map.Entry<Player, Integer> entry = it.next();
+                    it.remove();
+                    this.quitRoomOnline(entry.getKey());
+                }
             }
+        }else {
+            this.getLevel().getPlayers().values().forEach(
+                    player -> player.kick(this.language.roomSafeKick));
         }
         this.playerHealth.clear();
         this.initTime();

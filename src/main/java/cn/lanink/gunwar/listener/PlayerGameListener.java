@@ -94,7 +94,7 @@ public class PlayerGameListener implements Listener {
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Item item = event.getItem();
-        if (player == null || item == null || !item.hasCompoundTag()) {
+        if (player == null || item == null) {
             return;
         }
         Room room = GunWar.getInstance().getRooms().getOrDefault(player.getLevel().getName(), null);
@@ -106,6 +106,7 @@ public class PlayerGameListener implements Listener {
             player.setAllowModifyWorld(false);
         }
         if (room.getMode() == 1) {
+            if (!item.hasCompoundTag()) return;
             CompoundTag tag = item.getNamedTag();
             if (tag.getBoolean("isGunWarItem") && tag.getInt("GunWarType") == 10) {
                 event.setCancelled(true);

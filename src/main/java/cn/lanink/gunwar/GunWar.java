@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-508fa0b";
+    public static String VERSION = "0.0.1-SNAPSHOT git-7d251bb";
     private static GunWar gunWar;
     private Language language;
     private Config config;
@@ -58,6 +58,27 @@ public class GunWar extends PluginBase {
         getServer().getPluginManager().registerEvents(new GuiListener(), this);
         new MetricsLite(this, 7448);
         getLogger().info("§a加载完成");
+    }
+
+    @Override
+    public void onDisable() {
+        if (this.rooms.values().size() > 0) {
+            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+            while(it.hasNext()){
+                Map.Entry<String, Room> entry = it.next();
+                if (entry.getValue().getPlayers().size() > 0) {
+                    entry.getValue().endGame(false);
+                    getLogger().info("§c房间：" + entry.getKey() + " 非正常结束！");
+                }else {
+                    getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
+                }
+                it.remove();
+            }
+        }
+        this.rooms.clear();
+        this.roomConfigs.clear();
+        getServer().getScheduler().cancelTask(this);
+        getLogger().info("§c插件卸载完成！");
     }
 
     public Language getLanguage() {
