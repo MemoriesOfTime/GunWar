@@ -3,3 +3,9 @@ language: zh_CN
 管理命令: gunwaradmin
 计分板显示信息: true
 底部显示信息: true
+胜利执行命令:
+  - me 我胜利了
+  - tell @p 恭喜获得胜利！&con
+失败执行命令:
+  - me 我失败了
+  - tell @p 很遗憾你失败了！&con

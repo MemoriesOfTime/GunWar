@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-1ba3c28";
+    public static String VERSION = "0.0.1-SNAPSHOT git-508fa0b";
     private static GunWar gunWar;
     private Language language;
     private Config config;
@@ -38,7 +38,6 @@ public class GunWar extends PluginBase {
         getLogger().info("§l§e版本: " + VERSION);
         saveDefaultConfig();
         this.config = new Config(getDataFolder() + "/config.yml", 2);
-        this.loadResources();
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         if (!file1.exists() && !file1.mkdirs()) {
@@ -47,6 +46,7 @@ public class GunWar extends PluginBase {
         if (!file2.exists() && !file2.mkdirs()) {
             getLogger().error("PlayerInventory 文件夹初始化失败");
         }
+        this.loadResources();
         getLogger().info("§e开始加载房间");
         this.loadRooms();
         getServer().getCommandMap().register("", new UserCommand(this.config.getString("插件命令", "gunwar")));
@@ -138,6 +138,11 @@ public class GunWar extends PluginBase {
             this.language = new Language(new Config());
         }
         getLogger().info("§e资源文件加载完成");
+    }
+
+    @Override
+    public Config getConfig() {
+        return this.config;
     }
 
     public Config getRoomConfig(Level level) {
