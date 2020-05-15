@@ -4,6 +4,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.Server;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
@@ -28,21 +29,26 @@ public class TimeTask extends PluginTask<GunWar> {
             Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 0));
             this.room.gameTime = this.room.getGameTime();
         }
-        int red = 0, blue = 0;
-        for (int team : room.getPlayers().values()) {
-            if (team == 1) {
-                red++;
-            }else if (team == 2) {
-                blue++;
+        owner.getServer().getScheduler().scheduleAsyncTask(owner, new AsyncTask() {
+            @Override
+            public void onRun() {
+                int red = 0, blue = 0;
+                for (int team : room.getPlayers().values()) {
+                    if (team == 1) {
+                        red++;
+                    }else if (team == 2) {
+                        blue++;
+                    }
+                }
+                if (red == 0) {
+                    Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 2));
+                    room.gameTime = room.getGameTime();
+                }else if (blue == 0) {
+                    Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 1));
+                    room.gameTime = room.getGameTime();
+                }
             }
-        }
-        if (red == 0) {
-            Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 2));
-            room.gameTime = room.getGameTime();
-        }else if (blue == 0) {
-            Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 1));
-            room.gameTime = room.getGameTime();
-        }
+        });
     }
 
 }

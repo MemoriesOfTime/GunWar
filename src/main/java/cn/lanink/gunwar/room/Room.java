@@ -59,7 +59,7 @@ public class Room {
     private void initTask() {
         this.setMode(1);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20);
+                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 10);
     }
