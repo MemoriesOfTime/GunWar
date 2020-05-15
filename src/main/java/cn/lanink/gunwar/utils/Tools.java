@@ -10,6 +10,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -156,10 +157,10 @@ public class Tools {
     /**
      * 放烟花
      * GitHub：https://github.com/SmallasWater/LuckDraw/blob/master/src/main/java/smallaswater/luckdraw/utils/Tools.java
-     * @param player 玩家
+     * @param position 位置
      */
-    public static void spawnFirework(Player player) {
-        Level level = player.getLevel();
+    public static void spawnFirework(Position position) {
+        Level level = position.getLevel();
         ItemFirework item = new ItemFirework();
         CompoundTag tag = new CompoundTag();
         Random random = new Random();
@@ -176,9 +177,9 @@ public class Tools {
         item.setNamedTag(tag);
         CompoundTag nbt = new CompoundTag();
         nbt.putList(new ListTag<DoubleTag>("Pos")
-                .add(new DoubleTag("",player.x+0.5D))
-                .add(new DoubleTag("",player.y+0.5D))
-                .add(new DoubleTag("",player.z+0.5D))
+                .add(new DoubleTag("",position.x+0.5D))
+                .add(new DoubleTag("",position.y+0.5D))
+                .add(new DoubleTag("",position.z+0.5D))
         );
         nbt.putList(new ListTag<DoubleTag>("Motion")
                 .add(new DoubleTag("",0.0D))
@@ -191,7 +192,7 @@ public class Tools {
 
         );
         nbt.putCompound("FireworkItem", NBTIO.putItemHelper(item));
-        EntityFirework entity = new EntityFirework(level.getChunk((int)player.x >> 4, (int)player.z >> 4), nbt);
+        EntityFirework entity = new EntityFirework(level.getChunk((int)position.x >> 4, (int)position.z >> 4), nbt);
         entity.spawnToAll();
     }
 

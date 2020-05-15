@@ -2,6 +2,7 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
+import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.listener.PlayerGameListener;
 import cn.lanink.gunwar.listener.PlayerJoinAndQuit;
 import cn.lanink.gunwar.listener.RoomLevelProtection;
@@ -22,7 +23,7 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-7d251bb";
+    public static String VERSION = "0.0.1-SNAPSHOT git-992e3f2";
     private static GunWar gunWar;
     private Language language;
     private Config config;
@@ -40,11 +41,15 @@ public class GunWar extends PluginBase {
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
+        File file3 = new File(this.getDataFolder() + "/Language");
         if (!file1.exists() && !file1.mkdirs()) {
             getLogger().error("Rooms 文件夹初始化失败");
         }
         if (!file2.exists() && !file2.mkdirs()) {
             getLogger().error("PlayerInventory 文件夹初始化失败");
+        }
+        if (!file3.exists() && !file3.mkdirs()) {
+            getLogger().warning("Language 文件夹初始化失败");
         }
         this.loadResources();
         getLogger().info("§e开始加载房间");
@@ -57,7 +62,7 @@ public class GunWar extends PluginBase {
         getServer().getPluginManager().registerEvents(new GunWarListener(), this);
         getServer().getPluginManager().registerEvents(new GuiListener(), this);
         new MetricsLite(this, 7448);
-        getLogger().info("§a加载完成");
+        getLogger().info("§e插件加载完成！欢迎使用！");
     }
 
     @Override

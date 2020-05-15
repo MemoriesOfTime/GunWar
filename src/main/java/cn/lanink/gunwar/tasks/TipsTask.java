@@ -22,8 +22,8 @@ public class TipsTask extends PluginTask<GunWar> {
     private final String taskName = "TipsTask";
     private final Room room;
     private final boolean bottom, scoreBoard;
-    private TipMessage tipMessage;
-    private ScoreBoardMessage scoreBoardMessage;
+    private final TipMessage tipMessage;
+    private final ScoreBoardMessage scoreBoardMessage;
 
     public TipsTask(GunWar owner, Room room) {
         super(owner);
@@ -93,7 +93,6 @@ public class TipsTask extends PluginTask<GunWar> {
                                     ScoreBoardMessage score = new ScoreBoardMessage(
                                             room.getLevel().getName(), true, "§eGunWar", new LinkedList<>());
                                     LinkedList<String> ms = new LinkedList<>();
-
                                     for (String string : language.gameTimeScoreBoard.split("\n")) {
                                         ms.add(string
                                                 .replace("%health%", room.getPlayerHealth().get(player) + "")

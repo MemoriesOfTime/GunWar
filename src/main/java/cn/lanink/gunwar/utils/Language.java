@@ -53,23 +53,23 @@ public class Language {
     public String roundVictoryDraw = "平局";
     public String titleDeathTitle = "死亡";
     public String titleDeathSubtitle = "你被 %player% 击杀了";
-    public String killMessage = "%damagePlayer% 杀死了 %%player";
+    public String killMessage = "§e >> §c%damagePlayer% 杀死了 %player%";
     public String tpJoinRoomLevel = "§e >> §c要进入游戏地图，请先加入游戏！";
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
-    public String gameArmor = "游戏中无法脱下护甲！";
+    public String gameArmor = "§e >> §c游戏中无法脱下护甲！";
     public String playerTeamChat = "§c[队伍] %player% + §b >>> %message%";
     //TipsTask
     public String scoreBoardTitle = "§eGunWar";
-    public String waitTimeScoreBoard = " 玩家: §a %playerNumber%/10 \n §a开始倒计时： §l§e %time%";
-    public String waitScoreBoard = " 玩家: §a %playerNumber%/10 \n 最低游戏人数为 2 人 \n 等待玩家加入中";
+    public String waitTimeScoreBoard = " 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";
+    public String waitScoreBoard = " 玩家: §a%playerNumber%/10 \n 最低游戏人数为 2 人 \n 等待玩家加入中 ";
     public String waitTimeBottom = "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！";
     public String waitBottom = "§c等待玩家加入中,当前已有: %playerNumber% 位玩家";
-    public String gameTimeScoreBoard = "§l§a当前血量:§e %health% \n " +
+    public String gameTimeScoreBoard = " §l§a当前血量:§e %health% \n " +
             "§l§a剩余时间:§e %time% 秒 \n " +
             "§l§a队伍存活人数: \n " +
-            "§l§c红:  + %red% +  人 §9蓝:  + %blue% +  人 \n " +
+            "§l§c红: %red% 人 §9蓝: %blue% 人 \n " +
             "§l§a队伍胜利：\n " +
-            "§l§c红:  + %redRound% +  回合 §9蓝:  + %blueRound% +  回合 ";
+            "§l§c红: %redRound% 回合 §9蓝: %blueRound% 回合 ";
     public String gameTimeBottom = "§l§c血量： %health%";
     public String victoryMessage = "§e恭喜 %teamName% §e获得胜利";
     //ui相关

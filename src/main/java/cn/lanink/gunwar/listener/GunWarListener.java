@@ -196,7 +196,7 @@ public class GunWarListener implements Listener {
             @Override
             public void onRun() {
                 for (Player p : room.getPlayers().keySet()) {
-                    p.sendMessage(language.killMessage.replace("damagePlayer", damagePlayer.getName())
+                    p.sendMessage(language.killMessage.replace("%damagePlayer%", damagePlayer.getName())
                             .replace("%player%", player.getName()));
                 }
                 int arrow = 0;

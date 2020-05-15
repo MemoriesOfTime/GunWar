@@ -59,7 +59,7 @@ public class Room {
     private void initTask() {
         this.setMode(1);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
+                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 10);
     }
@@ -93,14 +93,10 @@ public class Room {
     public void endGame(boolean normal) {
         this.mode = 0;
         if (normal) {
-            if (this.players.values().size() > 0) {
-                Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
-                while(it.hasNext()) {
-                    Map.Entry<Player, Integer> entry = it.next();
-                    it.remove();
-                    this.quitRoomOnline(entry.getKey());
-                }
+            if (this.players.size() > 0) {
+                this.players.keySet().forEach(this::quitRoomOnline);
             }
+            this.players.clear();
         }else {
             this.getLevel().getPlayers().values().forEach(
                     player -> player.kick(this.language.roomSafeKick));
