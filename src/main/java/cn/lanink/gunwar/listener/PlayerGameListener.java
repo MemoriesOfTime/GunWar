@@ -12,13 +12,20 @@ import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 public class PlayerGameListener implements Listener {
 
-    private final Language language = GunWar.getInstance().getLanguage();
+    private final GunWar gunWar;
+    private final Language language;
+
+    public PlayerGameListener(GunWar gunWar) {
+        this.gunWar = gunWar;
+        this.language = gunWar.getLanguage();
+    }
 
     /**
      * 实体受到另一实体伤害事件
@@ -35,7 +42,7 @@ public class PlayerGameListener implements Listener {
             if (damagePlayer == null || player == null) {
                 return;
             }
-            Room room = GunWar.getInstance().getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
+            Room room = this.gunWar.getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
             if (room == null || !room.isPlaying(damagePlayer) || !room.isPlaying(player)) {
                 return;
             }
@@ -66,7 +73,7 @@ public class PlayerGameListener implements Listener {
             if (damagePlayer == player || event.getChild() == null) {
                 return;
             }
-            Room room = GunWar.getInstance().getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
+            Room room = this.gunWar.getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
             if (room == null || !room.isPlaying(damagePlayer) || !room.isPlaying(player)) {
                 return;
             }
@@ -97,7 +104,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null) {
             return;
         }
-        Room room = GunWar.getInstance().getRooms().getOrDefault(player.getLevel().getName(), null);
+        Room room = this.gunWar.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -125,7 +132,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || event.getInventory() == null) {
             return;
         }
-        Room room = GunWar.getInstance().getRooms().getOrDefault(player.getLevel().getName(), null);
+        Room room = this.gunWar.getRooms().getOrDefault(player.getLevel().getName(), null);
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -133,6 +140,25 @@ public class PlayerGameListener implements Listener {
         if (event.getSlot() >= size) {
             event.setCancelled(true);
             player.sendMessage(this.language.gameArmor);
+        }
+    }
+
+    /**
+     * 玩家执行命令事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        if (player == null || event.getMessage() == null) return;
+        Room room = this.gunWar.getRooms().getOrDefault(player.getLevel().getName(), null);
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        if (!event.getMessage().startsWith(GunWar.CMD_USER, 1) ||
+                !event.getMessage().startsWith(GunWar.CMD_ADMIN, 1)) {
+            event.setCancelled(true);
+            player.sendMessage(this.language.useCmdInRoom);
         }
     }
 

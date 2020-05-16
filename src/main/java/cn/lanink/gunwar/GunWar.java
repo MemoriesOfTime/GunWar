@@ -23,12 +23,13 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-992e3f2";
+    public static String VERSION = "0.0.1-SNAPSHOT git-0852616";
     private static GunWar gunWar;
     private Language language;
     private Config config;
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
+    public static String CMD_USER, CMD_ADMIN;
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -54,11 +55,13 @@ public class GunWar extends PluginBase {
         this.loadResources();
         getLogger().info("§e开始加载房间");
         this.loadRooms();
-        getServer().getCommandMap().register("", new UserCommand(this.config.getString("插件命令", "gunwar")));
-        getServer().getCommandMap().register("", new AdminCommand(this.config.getString("管理命令", "gunwaradmin")));
+        CMD_USER = this.config.getString("插件命令", "gunwar");
+        CMD_ADMIN = this.config.getString("管理命令", "gunwaradmin");
+        getServer().getCommandMap().register("", new UserCommand(CMD_USER));
+        getServer().getCommandMap().register("", new AdminCommand(CMD_ADMIN));
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
-        getServer().getPluginManager().registerEvents(new PlayerGameListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
         getServer().getPluginManager().registerEvents(new GunWarListener(), this);
         getServer().getPluginManager().registerEvents(new GuiListener(), this);
         new MetricsLite(this, 7448);

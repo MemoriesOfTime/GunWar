@@ -5,6 +5,7 @@ import cn.nukkit.utils.Config;
 public class Language {
 
     //命令
+    public String useCmdInRoom = "§e >> §c游戏中无法使用其他命令";
     public String cmdHelp = "§a查看帮助：/%cmdName% help";
     public String userHelp = "§eGunWar--命令帮助 \n " +
             "§a/%cmdName% §e打开ui \n " +
@@ -13,8 +14,8 @@ public class Language {
             "§a/%cmdName% list §e查看房间列表";
     public String noPermission = "§c你没有权限！";
     public String joinRoom = "§a你已加入房间: %name%";
-    public String joinRoomOnRoom = "§c你已经在一个房间中了!";
-    public String joinRoomOnRiding = "§a请勿在骑乘状态下进入房间！";
+    public String joinRoomIsInRoom = "§c你已经在一个房间中了!";
+    public String joinRoomIsRiding = "§a请勿在骑乘状态下进入房间！";
     public String joinRandomRoom = "§a已为你随机分配房间！";
     public String joinRoomIsPlaying = "§a该房间正在游戏中，请稍后";
     public String joinRoomIsFull = "§a该房间已满人，请稍后";
@@ -90,12 +91,13 @@ public class Language {
     public String buttonReturn = "§c返回";
 
     public Language(Config config) {
+        this.useCmdInRoom = config.getString("useCmdInRoom", this.useCmdInRoom);
         this.cmdHelp = config.getString("cmdHelp", this.cmdHelp);
         this.userHelp = config.getString("userHelp", this.userHelp);
         this.noPermission = config.getString("noPermission", this.noPermission);
         this.joinRoom = config.getString("joinRoom", this.joinRoom);
-        this.joinRoomOnRoom = config.getString("joinRoomOnRoom", this.joinRoomOnRoom);
-        this.joinRoomOnRiding = config.getString("joinRoomOnRiding", this.joinRoomOnRiding);
+        this.joinRoomIsInRoom = config.getString("joinRoomIsInRoom", this.joinRoomIsInRoom);
+        this.joinRoomIsRiding = config.getString("joinRoomIsRiding", this.joinRoomIsRiding);
         this.joinRandomRoom = config.getString("joinRandomRoom", this.joinRandomRoom);
         this.joinRoomIsPlaying = config.getString("joinRoomIsPlaying", this.joinRoomIsPlaying);
         this.joinRoomIsFull = config.getString("joinRoomIsFull", this.joinRoomIsFull);
