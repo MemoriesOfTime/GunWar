@@ -96,7 +96,7 @@ public class Language {
         this.userHelp = config.getString("userHelp", this.userHelp);
         this.noPermission = config.getString("noPermission", this.noPermission);
         this.joinRoom = config.getString("joinRoom", this.joinRoom);
-        this.joinRoomIsInRoom = config.getString("joinRoomOnRoom", this.joinRoomIsInRoom);
+        this.joinRoomIsInRoom = config.getString("joinRoomIsInRoom", this.joinRoomIsInRoom);
         this.joinRoomIsRiding = config.getString("joinRoomIsRiding", this.joinRoomIsRiding);
         this.joinRandomRoom = config.getString("joinRandomRoom", this.joinRandomRoom);
         this.joinRoomIsPlaying = config.getString("joinRoomIsPlaying", this.joinRoomIsPlaying);
