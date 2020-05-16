@@ -5,9 +5,10 @@ api:
   - 1.0.0
 load: POSTWORLD
 author: "LT_Name"
+depend:
+  - "Tips"
 loadbefore:
   - EconomyAPI
-  - Tips
 
 permissions:
   GunWar.all:

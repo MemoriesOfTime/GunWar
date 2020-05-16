@@ -30,12 +30,12 @@ public class UserCommand extends Command {
                         if (gunWar.getRooms().size() > 0) {
                             for (Room room : gunWar.getRooms().values()) {
                                 if (room.isPlaying(player)) {
-                                    commandSender.sendMessage(this.language.joinRoomOnRoom);
+                                    commandSender.sendMessage(this.language.joinRoomIsInRoom);
                                     return true;
                                 }
                             }
                             if (player.riding != null) {
-                                commandSender.sendMessage(this.language.joinRoomOnRiding);
+                                commandSender.sendMessage(this.language.joinRoomIsRiding);
                                 return true;
                             }
                             if (strings.length < 2) {
