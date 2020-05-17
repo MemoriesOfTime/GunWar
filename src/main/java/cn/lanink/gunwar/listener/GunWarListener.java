@@ -188,7 +188,7 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         Player player = event.getPlayer();
-        String damagePlayer = event.getDamagePlayer() != null ? event.getDamagePlayer().getName() : "手榴弹";
+        String damagePlayer = event.getDamagePlayer() != null ? event.getDamagePlayer().getName() : this.language.itemGrenade;
         player.sendTitle(this.language.titleDeathTitle,
                 this.language.titleDeathSubtitle.replace("%player%", damagePlayer),
                 10, 30, 10);

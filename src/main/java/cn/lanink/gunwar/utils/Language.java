@@ -89,6 +89,9 @@ public class Language {
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
+    //物品
+    public String itemGrenade = "§a手榴弹";
+    public String itemGrenadeLore = "伤害: 2-10 \n 伤害半径: 5";
 
     public Language(Config config) {
         this.useCmdInRoom = config.getString("useCmdInRoom", this.useCmdInRoom);
@@ -158,6 +161,9 @@ public class Language {
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
+        //物品
+        this.itemGrenade = config.getString("itemGrenade", this.itemGrenade);
+        this.itemGrenadeLore = config.getString("itemGrenadeLore", this.itemGrenadeLore);
     }
 
 }
