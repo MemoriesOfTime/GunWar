@@ -169,7 +169,7 @@ public class GunWarListener implements Listener {
         Player player = event.getPlayer();
         Player damagePlayer = event.getDamagePlayer();
         float damage = event.getDamage();
-        float health = room.getPlayerHealth().get(player);
+        float health = room.getPlayerHealth().getOrDefault(player, 0F);
         float nowHealth = health - damage;
         if (nowHealth <= 0) {
             room.getPlayerHealth().put(player, 0F);

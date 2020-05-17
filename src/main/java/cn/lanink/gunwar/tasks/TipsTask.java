@@ -86,7 +86,7 @@ public class TipsTask extends PluginTask<GunWar> {
                                 if (bottom) {
                                     TipMessage tip = new TipMessage(room.getLevel().getName(), true, 0, null);
                                     tip.setMessage(language.gameTimeBottom
-                                            .replace("%health%", room.getPlayerHealth().get(player) + ""));
+                                            .replace("%health%", this.getStringHealth(room.getPlayerHealth().getOrDefault(player, 0F))));
                                     Api.setPlayerShowMessage(player.getName(), tip);
                                 }
                                 if (scoreBoard) {
@@ -95,7 +95,7 @@ public class TipsTask extends PluginTask<GunWar> {
                                     LinkedList<String> ms = new LinkedList<>();
                                     for (String string : language.gameTimeScoreBoard.split("\n")) {
                                         ms.add(string
-                                                .replace("%health%", room.getPlayerHealth().get(player) + "")
+                                                .replace("%health%", room.getPlayerHealth().getOrDefault(player, 0F) + "")
                                                 .replace("%time%", room.gameTime + "")
                                                 .replace("%red%", red + "")
                                                 .replace("%blue%", blue + "")
@@ -122,6 +122,18 @@ public class TipsTask extends PluginTask<GunWar> {
                         }
                     }
                     room.task.remove(taskName);
+                }
+
+                private String getStringHealth(float health) {
+                    StringBuilder string = new StringBuilder("§c" + health + "/20  ");
+                    for (int j = 0; j < 20; j++) {
+                        if (j < health) {
+                            string.append("§a▋");
+                        }else {
+                            string.append("§c▋");
+                        }
+                    }
+                    return string.toString();
                 }
 
                 private void sendMessage() {
