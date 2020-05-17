@@ -65,11 +65,22 @@ public class Tools {
         armor[1] = chestPlate.setColor(color);
         armor[2] = leggings.setColor(color);
         armor[3] = boots.setColor(color);
+        Item grenade = Item.get(344, 0, 1);
+        grenade.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
+                .putInt("GunWarItemType", 4));
+        grenade.setCustomName("§a手榴弹");
+        grenade.setLore("暂无介绍");
+        Item flashBang = Item.get(344, 0, 1);
+        flashBang.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
+                .putInt("GunWarItemType", 5));
+        flashBang.setCustomName("§a闪光弹");
+        flashBang.setLore("暂无介绍");
         player.getInventory().setArmorContents(armor);
         player.getInventory().addItem(Item.get(272, 0, 1),
                 Item.get(261, 0, 1),
                 Item.get(262, 0, 5),
-                Item.get(332, 0, 64));
+                Item.get(332, 0, 64),
+                grenade, flashBang);
     }
 
     /**

@@ -6,16 +6,22 @@ import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.particle.HugeExplodeSeedParticle;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
+import cn.nukkit.scheduler.AsyncTask;
 
 public class PlayerGameListener implements Listener {
 
@@ -159,6 +165,75 @@ public class PlayerGameListener implements Listener {
                 !event.getMessage().startsWith(GunWar.CMD_ADMIN, 1)) {
             event.setCancelled(true);
             player.sendMessage(this.language.useCmdInRoom);
+        }
+    }
+
+    /**
+     * 抛射物击中物体事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onProjectileHit(ProjectileHitEvent event) {
+        Entity entity = event.getEntity();
+        Server.getInstance().getLogger().info(entity.getName());
+        if (entity instanceof EntityEgg) {
+            Level level = entity.getLevel();
+            Room room = this.gunWar.getRooms().getOrDefault(level.getName(), null);
+            if (room == null || room.getMode() != 2) {
+                return;
+            }
+            //if (entity.namedTag.getInt("GunWarItemType") == 4) {
+                level.addParticle(new HugeExplodeSeedParticle(entity));
+                level.addSound(entity, Sound.RANDOM_EXPLODE);
+            /*}else if (entity.namedTag.getInt("GunWarItemType") == 5) {
+                level.addSound(entity, Sound.FIREWORK_BLAST);
+            }*/
+            this.gunWar.getServer().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
+                @Override
+                public void onRun() {
+                    for (Player player : room.getPlayers().keySet()) {
+                        int x, y, z;
+                        if (player.getFloorX() > entity.getFloorX()) {
+                            x = player.getFloorX() - entity.getFloorX();
+                        }else {
+                            x = entity.getFloorX() - player.getFloorX();
+                        }
+                        if (player.getFloorY() > entity.getFloorY()) {
+                            y = player.getFloorY() - entity.getFloorY();
+                        }else {
+                            y = entity.getFloorY() - player.getFloorY();
+                        }
+                        if (player.getFloorZ() > entity.getFloorZ()) {
+                            z = player.getFloorZ() - entity.getFloorZ();
+                        }else {
+                            z = entity.getFloorZ() - player.getFloorZ();
+                        }
+                        if (x > 5 && y > 5 && z > 5) {
+                            break;
+                        }
+                        for (int r = 1; r <= 5; r++) {
+                            if (x <= r && y <= r && z <= r) {
+                                //if (entity.namedTag.getInt("GunWarItemType") == 4) {
+                                    player.attack(0F);
+                                    float damage = 12F - (r * 2);
+                                    if (damage == 0) {
+                                        damage++;
+                                    }
+                                    Server.getInstance().getPluginManager().callEvent(
+                                            new GunWarPlayerDamageEvent(room, player, null, damage));
+                               /* }else if (entity.namedTag.getInt("GunWarItemType") == 5) {
+                                    Effect effect = Effect.getEffect(15);
+                                    int tick = 90 - (r * 10);
+                                    effect.setDuration(tick);
+                                    player.addEffect(effect);
+                                }*/
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+
         }
     }
 
