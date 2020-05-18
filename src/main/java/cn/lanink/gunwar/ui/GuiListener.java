@@ -12,6 +12,14 @@ import cn.nukkit.form.window.FormWindowSimple;
 
 public class GuiListener implements Listener {
 
+    private final GunWar gunWar;
+    private final Language language;
+
+    public GuiListener(GunWar gunWar) {
+        this.gunWar = gunWar;
+        this.language = gunWar.getLanguage();
+    }
+
     /**
      * 玩家操作ui事件
      * 直接执行现有命令，减小代码重复量，也便于维护
@@ -23,16 +31,16 @@ public class GuiListener implements Listener {
         if (player == null || event.getWindow() == null || event.getResponse() == null) {
             return;
         }
-        Language language = GunWar.getInstance().getLanguage();
+
         if (event.getWindow() instanceof FormWindowSimple) {
             FormWindowSimple simple = (FormWindowSimple) event.getWindow();
             if (event.getFormID() == GuiCreate.USER_MENU) {
                 switch (simple.getResponse().getClickedButtonId()) {
                     case 0:
-                        GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_USER + " join");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdUser() + " join");
                         break;
                     case 1:
-                        GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_USER + " quit");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdUser() + " quit");
                         break;
                     case 2:
                         GuiCreate.sendRoomListMenu(player);
@@ -47,30 +55,30 @@ public class GuiListener implements Listener {
             }else if (event.getFormID() == GuiCreate.ADMIN_MENU) {
                 switch (simple.getResponse().getClickedButtonId()) {
                     case 0:
-                        GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_ADMIN + " setwaitspawn");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaitspawn");
                         break;
                     case 1:
-                        GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_ADMIN + " setredspawn");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setredspawn");
                         break;
                     case 2:
-                        GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_ADMIN + " setbluespawn");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setbluespawn");
                         break;
                     case 3:
                         GuiCreate.sendAdminTimeMenu(player);
                         break;
                     case 4:
-                        GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_ADMIN + " reload");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " reload");
                         break;
                     case 5:
-                        GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_ADMIN + " unload");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " unload");
                         break;
                 }
             }
         }else if (event.getWindow() instanceof FormWindowCustom) {
             FormWindowCustom custom = (FormWindowCustom) event.getWindow();
             if (event.getFormID() == GuiCreate.ADMIN_TIME_MENU) {
-                GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_ADMIN + " setwaittime " + custom.getResponse().getInputResponse(0));
-                GunWar.getInstance().getServer().dispatchCommand(player, GunWar.CMD_ADMIN + " setgametime " + custom.getResponse().getInputResponse(1));
+                GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaittime " + custom.getResponse().getInputResponse(0));
+                GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgametime " + custom.getResponse().getInputResponse(1));
             }
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();
@@ -78,7 +86,7 @@ public class GuiListener implements Listener {
                 if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(language.buttonReturn)) {
                     String[] s = modal.getContent().split("\"");
                     GunWar.getInstance().getServer().dispatchCommand(
-                            player, GunWar.CMD_USER + " join " + s[1].replace("§e", "").trim());
+                            player, this.gunWar.getCmdUser() + " join " + s[1].replace("§e", "").trim());
                 }else {
                     GuiCreate.sendRoomListMenu(player);
                 }

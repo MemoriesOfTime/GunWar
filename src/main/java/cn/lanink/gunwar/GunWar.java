@@ -2,7 +2,6 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
-import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.listener.PlayerGameListener;
 import cn.lanink.gunwar.listener.PlayerJoinAndQuit;
 import cn.lanink.gunwar.listener.RoomLevelProtection;
@@ -23,13 +22,13 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-0852616";
+    public static String VERSION = "0.0.1-SNAPSHOT git-fd7ac10";
     private static GunWar gunWar;
     private Language language;
     private Config config;
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
-    public static String CMD_USER, CMD_ADMIN;
+    private String cmdUser, cmdAdmin;
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -55,15 +54,15 @@ public class GunWar extends PluginBase {
         this.loadResources();
         getLogger().info("§e开始加载房间");
         this.loadRooms();
-        CMD_USER = this.config.getString("插件命令", "gunwar");
-        CMD_ADMIN = this.config.getString("管理命令", "gunwaradmin");
-        getServer().getCommandMap().register("", new UserCommand(CMD_USER));
-        getServer().getCommandMap().register("", new AdminCommand(CMD_ADMIN));
+        this.cmdUser = this.config.getString("插件命令", "gunwar");
+        this.cmdAdmin = this.config.getString("管理命令", "gunwaradmin");
+        getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
+        getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
         getServer().getPluginManager().registerEvents(new GunWarListener(), this);
-        getServer().getPluginManager().registerEvents(new GuiListener(), this);
+        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         new MetricsLite(this, 7448);
         getLogger().info("§e插件加载完成！欢迎使用！");
     }
@@ -172,6 +171,14 @@ public class GunWar extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public String getCmdUser() {
+        return this.cmdUser;
+    }
+
+    public String getCmdAdmin() {
+        return this.cmdAdmin;
     }
 
     public Config getRoomConfig(Level level) {

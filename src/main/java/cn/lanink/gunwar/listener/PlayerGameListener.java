@@ -162,11 +162,12 @@ public class PlayerGameListener implements Listener {
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (!event.getMessage().startsWith(GunWar.CMD_USER, 1) ||
-                !event.getMessage().startsWith(GunWar.CMD_ADMIN, 1)) {
-            event.setCancelled(true);
-            player.sendMessage(this.language.useCmdInRoom);
+        if (event.getMessage().startsWith(this.gunWar.getCmdUser(), 1) ||
+                event.getMessage().startsWith(this.gunWar.getCmdAdmin(), 1)) {
+            return;
         }
+        event.setCancelled(true);
+        player.sendMessage(this.language.useCmdInRoom);
     }
 
     /**
