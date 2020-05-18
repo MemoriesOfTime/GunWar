@@ -1,7 +1,6 @@
 package cn.lanink.gunwar.room;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.tasks.TipsTask;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
@@ -60,8 +59,6 @@ public class Room {
         this.setMode(1);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new TipsTask(GunWar.getInstance(), this), 10);
     }
 
     /**

@@ -4,8 +4,10 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.TimeTask;
+import cn.lanink.gunwar.tasks.game.TipTask;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.AdventureSettings;
@@ -37,6 +39,10 @@ public class GunWarListener implements Listener {
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomAssignTeamEvent(room));
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new TimeTask(GunWar.getInstance(), room), 20, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                GunWar.getInstance(), new ScoreBoardTask(GunWar.getInstance(), room), 10, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                GunWar.getInstance(), new TipTask(GunWar.getInstance(), room), 10, true);
     }
 
     /**

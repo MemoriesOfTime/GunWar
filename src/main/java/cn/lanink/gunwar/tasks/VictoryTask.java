@@ -7,7 +7,11 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.scheduler.PluginTask;
+import tip.messages.ScoreBoardMessage;
+import tip.messages.TipMessage;
+import tip.utils.Api;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,11 +28,31 @@ public class VictoryTask extends PluginTask<GunWar> {
         this.room = room;
         this.victoryTime = 10;
         this.room.victory = victory;
+        TipMessage tipMessage = new TipMessage(room.getLevel().getName(), true, 0, null);
+        ScoreBoardMessage scoreBoardMessage = new ScoreBoardMessage(
+                room.getLevel().getName(), true, this.language.scoreBoardTitle, new LinkedList<>());
+        if (room.victory == 1) {
+            tipMessage.setMessage(language.victoryMessage.replace("%teamName%", language.teamNameRed));
+            LinkedList<String> ms = new LinkedList<>();
+            ms.add(language.victoryMessage.replace("%teamName%", language.teamNameRed));
+            scoreBoardMessage.setMessages(ms);
+        } else {
+            tipMessage.setMessage(language.victoryMessage.replace("%teamName%", language.teamNameBlue));
+            LinkedList<String> ms = new LinkedList<>();
+            ms.add(language.victoryMessage.replace("%teamName%", language.teamNameBlue));
+            scoreBoardMessage.setMessages(ms);
+        }
         for (Player player: room.getPlayers().keySet()) {
             if (this.room.victory == 1) {
-                player.sendTitle(this.language.victoryRed, "", 10, 30, 20);
+                player.sendTitle(this.language.victoryRed, "", 10, 40, 20);
             }else if (this.room.victory == 2) {
-                player.sendTitle(this.language.victoryBlue, "", 10, 30, 20);
+                player.sendTitle(this.language.victoryBlue, "", 10, 40, 20);
+            }
+            if (owner.getConfig().getBoolean("底部显示信息", true)) {
+                Api.setPlayerShowMessage(player.getName(), tipMessage);
+            }
+            if (owner.getConfig().getBoolean("计分板显示信息", true)) {
+                Api.setPlayerShowMessage(player.getName(), scoreBoardMessage);
             }
         }
     }

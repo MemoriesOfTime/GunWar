@@ -59,7 +59,7 @@ public class Language {
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     public String gameArmor = "§e >> §c游戏中无法脱下护甲！";
     public String playerTeamChat = "§c[队伍] %player% + §b >>> %message%";
-    //TipsTask
+    //ScoreBoardTask
     public String scoreBoardTitle = "§eGunWar";
     public String waitTimeScoreBoard = " 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";
     public String waitScoreBoard = " 玩家: §a%playerNumber%/10 \n 最低游戏人数为 2 人 \n 等待玩家加入中 ";
