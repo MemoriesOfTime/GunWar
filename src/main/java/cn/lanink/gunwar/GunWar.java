@@ -171,13 +171,16 @@ public class GunWar extends PluginBase {
             this.language = new Language(new Config());
         }
         //加载默认尸体皮肤
+        BufferedImage skinData = null;
         try {
-            BufferedImage skinData = ImageIO.read(this.getResource("skin.png"));
-            this.corpseSkin.setSkinData(skinData);
-            this.corpseSkin.setSkinId("defaultSkin");
-        } catch (IOException ignored) {
-            getLogger().error("资源加载失败！");
+            skinData = ImageIO.read(this.getResource("skin.png"));
+        } catch (IOException ignored) { }
+        if (skinData == null) {
+            getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
+            return;
         }
+        this.corpseSkin.setSkinData(skinData);
+        this.corpseSkin.setSkinId("defaultSkin");
         getLogger().info("§e资源文件加载完成");
     }
 
