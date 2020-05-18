@@ -186,13 +186,13 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         EntityProjectile entity = event.getEntity();
-        if (!this.gunWar.getRooms().containsKey(entity.getLevel().getName())) {
+        if (entity == null || !this.gunWar.getRooms().containsKey(entity.getLevel().getName())) {
             return;
         }
         if (entity.shootingEntity instanceof Player) {
             PlayerInventory playerInventory = ((Player) entity.shootingEntity).getInventory();
             if (playerInventory != null) {
-                CompoundTag tag = playerInventory.getItemInHand().getNamedTag();
+                CompoundTag tag = playerInventory.getItemInHand() != null ? playerInventory.getItemInHand().getNamedTag() : null;
                 if (tag != null && tag.getBoolean("isGunWarItem")) {
                     entity.namedTag.putBoolean("isGunWarItem", true);
                     entity.namedTag.putInt("GunWarItemType", tag.getInt("GunWarItemType"));
@@ -208,18 +208,21 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         EntityProjectile entity = (EntityProjectile) event.getEntity();
-        if (entity.namedTag == null || !entity.namedTag.getBoolean("isGunWarItem")) return;
+        if (entity == null || entity.namedTag == null || !entity.namedTag.getBoolean("isGunWarItem")) return;
         if (entity instanceof EntityEgg && entity.shootingEntity instanceof Player) {
             Level level = entity.getLevel();
             Room room = this.gunWar.getRooms().getOrDefault(level.getName(), null);
             if (room == null || room.getMode() != 2) {
                 return;
             }
-            if (entity.namedTag.getInt("GunWarItemType") == 4) {
-                level.addParticle(new HugeExplodeSeedParticle(entity));
-                level.addSound(entity, Sound.RANDOM_EXPLODE);
-            }else if (entity.namedTag.getInt("GunWarItemType") == 5) {
-                level.addSound(entity, Sound.FIREWORK_BLAST);
+            switch (entity.namedTag.getInt("GunWarItemType")) {
+                case 4:
+                    level.addParticle(new HugeExplodeSeedParticle(entity));
+                    level.addSound(entity, Sound.RANDOM_EXPLODE);
+                    break;
+                case 5:
+                    level.addSound(entity, Sound.FIREWORK_BLAST);
+                    break;
             }
             this.gunWar.getServer().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
                 @Override
@@ -246,16 +249,19 @@ public class PlayerGameListener implements Listener {
                         }
                         for (int r = 1; r <= 5; r++) {
                             if (x <= r && y <= r && z <= r) {
-                                if (entity.namedTag.getInt("GunWarItemType") == 4) {
-                                    player.attack(0F);
-                                    float damage = 12F - (r * 2);
-                                    Server.getInstance().getPluginManager().callEvent(
-                                            new GunWarPlayerDamageEvent(room, player, (Player) entity.shootingEntity, damage));
-                                }else if (entity.namedTag.getInt("GunWarItemType") == 5) {
-                                    Effect effect = Effect.getEffect(15);
-                                    int tick = 90 - (r * 10);
-                                    effect.setDuration(tick);
-                                    player.addEffect(effect);
+                                switch (entity.namedTag.getInt("GunWarItemType")) {
+                                    case 4:
+                                        player.attack(0F);
+                                        float damage = 12F - (r * 2);
+                                        Server.getInstance().getPluginManager().callEvent(
+                                                new GunWarPlayerDamageEvent(room, player, (Player) entity.shootingEntity, damage));
+                                        break;
+                                    case 5:
+                                        Effect effect = Effect.getEffect(15);
+                                        int tick = 90 - (r * 10);
+                                        effect.setDuration(tick);
+                                        player.addEffect(effect);
+                                        break;
                                 }
                                 break;
                             }

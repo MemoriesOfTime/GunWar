@@ -75,8 +75,8 @@ public class Tools {
         Item flashBang = Item.get(344, 0, 1);
         flashBang.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
                 .putInt("GunWarItemType", 5));
-        flashBang.setCustomName("§a闪光弹");
-        flashBang.setLore("暂无介绍");
+        flashBang.setCustomName(language.itemFlashBang);
+        flashBang.setLore(language.itemFlashBangLore.split("\n"));
         player.getInventory().setArmorContents(armor);
         player.getInventory().addItem(Item.get(272, 0, 1),
                 Item.get(261, 0, 1),
