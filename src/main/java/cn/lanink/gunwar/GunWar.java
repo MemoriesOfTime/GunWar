@@ -10,12 +10,16 @@ import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.lanink.gunwar.utils.MetricsLite;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,6 +33,7 @@ public class GunWar extends PluginBase {
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
     private String cmdUser, cmdAdmin;
+    private final Skin corpseSkin = new Skin();
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -165,6 +170,17 @@ public class GunWar extends PluginBase {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
             this.language = new Language(new Config());
         }
+        //加载默认尸体皮肤
+        BufferedImage skinData = null;
+        try {
+            skinData = ImageIO.read(this.getResource("skin.png"));
+        } catch (IOException ignored) { }
+        if (skinData == null) {
+            getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
+            return;
+        }
+        this.corpseSkin.setSkinData(skinData);
+        this.corpseSkin.setSkinId("defaultSkin");
         getLogger().info("§e资源文件加载完成");
     }
 
@@ -179,6 +195,10 @@ public class GunWar extends PluginBase {
 
     public String getCmdAdmin() {
         return this.cmdAdmin;
+    }
+
+    public Skin getCorpseSkin() {
+        return this.corpseSkin;
     }
 
     public Config getRoomConfig(Level level) {

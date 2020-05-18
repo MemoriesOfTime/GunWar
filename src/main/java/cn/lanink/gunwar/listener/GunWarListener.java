@@ -11,6 +11,7 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.item.Item;
@@ -225,7 +226,7 @@ public class GunWarListener implements Listener {
         }else {
             room.getPlayers().put(player, 12);
         }
-        //Server.getInstance().getPluginManager().callEvent(new GunWarPlayerCorpseSpawnEvent(room, player));
+        Server.getInstance().getPluginManager().callEvent(new GunWarPlayerCorpseSpawnEvent(room, player));
     }
 
     /**
@@ -235,14 +236,25 @@ public class GunWarListener implements Listener {
     @EventHandler
     public void onCorpseSpawn(GunWarPlayerCorpseSpawnEvent event) {
         if (event.isCancelled()) return;
+        Room room = event.getRoom();
         Player player = event.getPlayer();
         CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
+        Skin skin = player.getSkin();
+        switch(skin.getSkinData().data.length) {
+            case 8192:
+            case 16384:
+            case 32768:
+            case 65536:
+                break;
+            default:
+                skin = GunWar.getInstance().getCorpseSkin();
+        }
         nbt.putCompound("Skin", new CompoundTag()
-                .putByteArray("Data", player.getSkin().getSkinData().data)
-                .putString("ModelId", player.getSkin().getSkinId()));
+                .putByteArray("Data", skin.getSkinData().data)
+                .putString("ModelId", skin.getSkinId()));
         nbt.putFloat("Scale", -1.0F);
-        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt);
-        ent.setSkin(player.getSkin());
+        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt, room.getPlayerMode(player));
+        ent.setSkin(skin);
         ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
         ent.setGliding(true);
         ent.setRotation(player.getYaw(), 0);
