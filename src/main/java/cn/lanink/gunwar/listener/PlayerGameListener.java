@@ -9,11 +9,13 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
+import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -261,6 +263,33 @@ public class PlayerGameListener implements Listener {
                 }
             });
 
+        }
+    }
+
+    /**
+     * 玩家重生事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        for (Room room : this.gunWar.getRooms().values()) {
+            if (room.isPlaying(player)) {
+                switch (room.getPlayerMode(player)) {
+                    case 1:
+                    case 11:
+                        event.setRespawnPosition(room.getRedSpawn());
+                        break;
+                    case 2:
+                    case 12:
+                        event.setRespawnPosition(room.getBlueSpawn());
+                        break;
+                    default:
+                        event.setRespawnPosition(room.getWaitSpawn());
+                        break;
+                }
+                break;
+            }
         }
     }
 
