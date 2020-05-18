@@ -52,21 +52,6 @@ public class Tools {
      */
     public static void giveItem(Player player, int team) {
         Language language = GunWar.getInstance().getLanguage();
-        ItemColorArmor helmet = (ItemColorArmor) Item.get(298, 0, 1);
-        ItemColorArmor chestPlate = (ItemColorArmor) Item.get(299, 0, 1);
-        ItemColorArmor leggings = (ItemColorArmor) Item.get(300, 0, 1);
-        ItemColorArmor boots = (ItemColorArmor) Item.get(301, 0, 1);
-        BlockColor color;
-        if (team == 1) {
-            color = new BlockColor(255, 0, 0);
-        }else {
-            color = new BlockColor(0, 0, 255);
-        }
-        Item[] armor = new Item[4];
-        armor[0] = helmet.setColor(color);
-        armor[1] = chestPlate.setColor(color);
-        armor[2] = leggings.setColor(color);
-        armor[3] = boots.setColor(color);
         Item grenade = Item.get(344, 0, 1);
         grenade.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
                 .putInt("GunWarItemType", 4));
@@ -77,12 +62,36 @@ public class Tools {
                 .putInt("GunWarItemType", 5));
         flashBang.setCustomName(language.itemFlashBang);
         flashBang.setLore(language.itemFlashBangLore.split("\n"));
-        player.getInventory().setArmorContents(armor);
+        player.getInventory().setArmorContents(getArmors(team));
         player.getInventory().addItem(Item.get(272, 0, 1),
                 Item.get(261, 0, 1),
                 Item.get(262, 0, 5),
                 Item.get(332, 0, 64),
                 grenade, flashBang);
+    }
+
+    /**
+     * 获取盔甲
+     * @param team 队伍
+     * @return 盔甲
+     */
+    public static Item[] getArmors(int team) {
+        ItemColorArmor helmet = (ItemColorArmor) Item.get(298, 0, 1);
+        ItemColorArmor chestPlate = (ItemColorArmor) Item.get(299, 0, 1);
+        ItemColorArmor leggings = (ItemColorArmor) Item.get(300, 0, 1);
+        ItemColorArmor boots = (ItemColorArmor) Item.get(301, 0, 1);
+        BlockColor color;
+        if (team == 1 || team == 11) {
+            color = new BlockColor(255, 0, 0);
+        }else {
+            color = new BlockColor(0, 0, 255);
+        }
+        Item[] armor = new Item[4];
+        armor[0] = helmet.setColor(color);
+        armor[1] = chestPlate.setColor(color);
+        armor[2] = leggings.setColor(color);
+        armor[3] = boots.setColor(color);
+        return armor;
     }
 
     /**

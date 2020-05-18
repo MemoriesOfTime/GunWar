@@ -236,6 +236,7 @@ public class GunWarListener implements Listener {
     @EventHandler
     public void onCorpseSpawn(GunWarPlayerCorpseSpawnEvent event) {
         if (event.isCancelled()) return;
+        Room room = event.getRoom();
         Player player = event.getPlayer();
         CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
         Skin skin = player.getSkin();
@@ -252,7 +253,7 @@ public class GunWarListener implements Listener {
                 .putByteArray("Data", skin.getSkinData().data)
                 .putString("ModelId", skin.getSkinId()));
         nbt.putFloat("Scale", -1.0F);
-        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt);
+        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt, room.getPlayerMode(player));
         ent.setSkin(skin);
         ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
         ent.setGliding(true);
