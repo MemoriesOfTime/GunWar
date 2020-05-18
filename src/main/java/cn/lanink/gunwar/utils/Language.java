@@ -166,6 +166,8 @@ public class Language {
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
         //物品
+        this.itemQuitRoom = config.getString("itemQuitRoom", this.itemQuitRoom);
+        this.itemQuitRoomLore = config.getString("itemQuitRoomLore", this.itemQuitRoomLore);
         this.itemGrenade = config.getString("itemGrenade", this.itemGrenade);
         this.itemGrenadeLore = config.getString("itemGrenadeLore", this.itemGrenadeLore);
         this.itemFlashBang = config.getString("itemFlashBang", this.itemFlashBang);
