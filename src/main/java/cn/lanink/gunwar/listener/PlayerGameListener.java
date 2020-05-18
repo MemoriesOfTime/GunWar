@@ -19,6 +19,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
+import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
@@ -215,18 +216,18 @@ public class PlayerGameListener implements Listener {
             if (room == null || room.getMode() != 2) {
                 return;
             }
-            switch (entity.namedTag.getInt("GunWarItemType")) {
-                case 4:
-                    level.addParticle(new HugeExplodeSeedParticle(entity));
-                    level.addSound(entity, Sound.RANDOM_EXPLODE);
-                    break;
-                case 5:
-                    level.addSound(entity, Sound.FIREWORK_BLAST);
-                    break;
-            }
             this.gunWar.getServer().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
                 @Override
                 public void onRun() {
+                    level.addSound(entity, Sound.RANDOM_EXPLODE);
+                    switch (entity.namedTag.getInt("GunWarItemType")) {
+                        case 4:
+                            level.addParticle(new HugeExplodeSeedParticle(entity));
+                            break;
+                        case 5:
+                            level.addParticle(new SpellParticle(entity, 255, 255, 255));
+                            break;
+                    }
                     for (Player player : room.getPlayers().keySet()) {
                         int x, y, z;
                         if (player.getFloorX() > entity.getFloorX()) {
