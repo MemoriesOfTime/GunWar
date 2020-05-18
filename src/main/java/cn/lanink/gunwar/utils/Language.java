@@ -89,6 +89,13 @@ public class Language {
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
+    //物品
+    public String itemQuitRoom = "§c退出房间";
+    public String itemQuitRoomLore = "手持点击,即可退出房间";
+    public String itemGrenade = "§a手榴弹";
+    public String itemGrenadeLore = "伤害: 2-10 \n 伤害半径: 5";
+    public String itemFlashBang = "§a闪光弹";
+    public String itemFlashBangLore = "造成短暂失明效果 \n 有效半径: 5";
 
     public Language(Config config) {
         this.useCmdInRoom = config.getString("useCmdInRoom", this.useCmdInRoom);
@@ -158,6 +165,13 @@ public class Language {
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
+        //物品
+        this.itemQuitRoom = config.getString("itemQuitRoom", this.itemQuitRoom);
+        this.itemQuitRoomLore = config.getString("itemQuitRoomLore", this.itemQuitRoomLore);
+        this.itemGrenade = config.getString("itemGrenade", this.itemGrenade);
+        this.itemGrenadeLore = config.getString("itemGrenadeLore", this.itemGrenadeLore);
+        this.itemFlashBang = config.getString("itemFlashBang", this.itemFlashBang);
+        this.itemFlashBangLore = config.getString("itemFlashBangLore", this.itemFlashBangLore);
     }
 
 }

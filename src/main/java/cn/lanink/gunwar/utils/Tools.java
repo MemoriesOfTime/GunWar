@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.utils;
 
+import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -50,6 +51,7 @@ public class Tools {
      * @param team 所属队伍
      */
     public static void giveItem(Player player, int team) {
+        Language language = GunWar.getInstance().getLanguage();
         ItemColorArmor helmet = (ItemColorArmor) Item.get(298, 0, 1);
         ItemColorArmor chestPlate = (ItemColorArmor) Item.get(299, 0, 1);
         ItemColorArmor leggings = (ItemColorArmor) Item.get(300, 0, 1);
@@ -65,11 +67,22 @@ public class Tools {
         armor[1] = chestPlate.setColor(color);
         armor[2] = leggings.setColor(color);
         armor[3] = boots.setColor(color);
+        Item grenade = Item.get(344, 0, 1);
+        grenade.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
+                .putInt("GunWarItemType", 4));
+        grenade.setCustomName(language.itemGrenade);
+        grenade.setLore(language.itemGrenadeLore.split("\n"));
+        Item flashBang = Item.get(344, 0, 1);
+        flashBang.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
+                .putInt("GunWarItemType", 5));
+        flashBang.setCustomName(language.itemFlashBang);
+        flashBang.setLore(language.itemFlashBangLore.split("\n"));
         player.getInventory().setArmorContents(armor);
         player.getInventory().addItem(Item.get(272, 0, 1),
                 Item.get(261, 0, 1),
                 Item.get(262, 0, 5),
-                Item.get(332, 0, 64));
+                Item.get(332, 0, 64),
+                grenade, flashBang);
     }
 
     /**

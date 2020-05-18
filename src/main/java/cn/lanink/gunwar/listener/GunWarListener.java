@@ -188,15 +188,15 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         Player player = event.getPlayer();
-        Player damagePlayer = event.getDamagePlayer();
+        String damagePlayer = event.getDamagePlayer() != null ? event.getDamagePlayer().getName() : this.language.itemGrenade;
         player.sendTitle(this.language.titleDeathTitle,
-                this.language.titleDeathSubtitle.replace("%player%", damagePlayer.getName()),
+                this.language.titleDeathSubtitle.replace("%player%", damagePlayer),
                 10, 30, 10);
         Server.getInstance().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
             @Override
             public void onRun() {
                 for (Player p : room.getPlayers().keySet()) {
-                    p.sendMessage(language.killMessage.replace("%damagePlayer%", damagePlayer.getName())
+                    p.sendMessage(language.killMessage.replace("%damagePlayer%", damagePlayer)
                             .replace("%player%", player.getName()));
                 }
                 int arrow = 0;

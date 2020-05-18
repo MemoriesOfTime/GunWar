@@ -123,9 +123,9 @@ public class Room {
         Item item = Item.get(324, 0, 1);
         item.setNamedTag(new CompoundTag()
                 .putBoolean("isGunWarItem", true)
-                .putInt("GunWarType", 10));
-        item.setCustomName("§c退出房间");
-        item.setLore("手持点击,即可退出房间");
+                .putInt("GunWarItemType", 10));
+        item.setCustomName(this.language.itemQuitRoom);
+        item.setLore(this.language.itemQuitRoomLore.split("\n"));
         player.getInventory().setItem(8, item);
         NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, "");
         Api.setPlayerShowMessage(player.getName(), nameTagMessage);
