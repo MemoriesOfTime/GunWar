@@ -126,17 +126,6 @@ public class PlayerGameListener implements Listener {
                 event.setCancelled(true);
                 room.quitRoom(player, true);
             }
-        }else if (room.getMode() == 2) {
-            switch (tag.getInt("GunWarItemType")) {
-                case 4:
-
-                    break;
-                case 5:
-                    //EntityFlashBang flashBang = new EntityFlashBang(player.getChunk(), EntityFlashBang.getDefaultNBT(player));
-                   // flashBang.setMotion();
-                    //flashBang.onUpdate(1);
-                    break;
-            }
         }
     }
 
