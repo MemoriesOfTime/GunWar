@@ -51,23 +51,12 @@ public class Tools {
      * @param team 所属队伍
      */
     public static void giveItem(Player player, int team) {
-        Language language = GunWar.getInstance().getLanguage();
-        Item grenade = Item.get(344, 0, 1);
-        grenade.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
-                .putInt("GunWarItemType", 4));
-        grenade.setCustomName(language.itemGrenade);
-        grenade.setLore(language.itemGrenadeLore.split("\n"));
-        Item flashBang = Item.get(344, 0, 1);
-        flashBang.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
-                .putInt("GunWarItemType", 5));
-        flashBang.setCustomName(language.itemFlashBang);
-        flashBang.setLore(language.itemFlashBangLore.split("\n"));
         player.getInventory().setArmorContents(getArmors(team));
         player.getInventory().addItem(Item.get(272, 0, 1),
                 Item.get(261, 0, 1),
                 Item.get(262, 0, 5),
                 Item.get(332, 0, 64),
-                grenade, flashBang);
+                getItem(4), getItem(5));
     }
 
     /**
