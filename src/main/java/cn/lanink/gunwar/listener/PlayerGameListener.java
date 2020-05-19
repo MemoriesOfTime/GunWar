@@ -4,6 +4,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.projectile.EntityEgg;
@@ -124,10 +125,22 @@ public class PlayerGameListener implements Listener {
         CompoundTag tag = item.getNamedTag();
         if (tag == null || !tag.getBoolean("isGunWarItem")) return;
         if (room.getMode() == 1) {
-            if (tag.getInt("GunWarItemType") == 10) {
-                event.setCancelled(true);
-                room.quitRoom(player, true);
+            switch (tag.getInt("GunWarItemType")) {
+                case 10:
+                    room.quitRoom(player, true);
+                    break;
+                case 11:
+                    room.getPlayers().put(player, 1);
+                    player.getInventory().setArmorContents(Tools.getArmors(1));
+                    player.sendTitle(this.language.teamNameRed, this.language.playerTeamSelect, 10, 40, 20);
+                    break;
+                case 12:
+                    room.getPlayers().put(player, 2);
+                    player.getInventory().setArmorContents(Tools.getArmors(2));
+                    player.sendTitle(this.language.teamNameBlue, this.language.playerTeamSelect, 10, 40, 20);
+                    break;
             }
+            event.setCancelled(true);
         }
     }
 

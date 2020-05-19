@@ -117,13 +117,9 @@ public class Room {
         SavePlayerInventory.save(player);
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
-        Item item = Item.get(324, 0, 1);
-        item.setNamedTag(new CompoundTag()
-                .putBoolean("isGunWarItem", true)
-                .putInt("GunWarItemType", 10));
-        item.setCustomName(this.language.itemQuitRoom);
-        item.setLore(this.language.itemQuitRoomLore.split("\n"));
-        player.getInventory().setItem(8, item);
+        player.getInventory().setItem(3, Tools.getItem(11));
+        player.getInventory().setItem(5, Tools.getItem(12));
+        player.getInventory().setItem(8, Tools.getItem(10));
         NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, "");
         Api.setPlayerShowMessage(player.getName(), nameTagMessage);
         BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());

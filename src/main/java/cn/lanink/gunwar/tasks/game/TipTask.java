@@ -8,8 +8,6 @@ import cn.nukkit.scheduler.PluginTask;
 import tip.messages.TipMessage;
 import tip.utils.Api;
 
-import java.util.LinkedList;
-
 public class TipTask extends PluginTask<GunWar> {
 
     private final String taskName = "ScoreBoardTask";

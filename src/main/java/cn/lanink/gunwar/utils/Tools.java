@@ -95,6 +95,55 @@ public class Tools {
     }
 
     /**
+     * 获取物品
+     * @return 物品
+     */
+    public static Item getItem(int type) {
+        Language language = GunWar.getInstance().getLanguage();
+        Item item = Item.get(0);
+        switch (type) {
+            case 4:
+                item = Item.get(344, 0, 1);
+                item.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 4));
+                item.setCustomName(language.itemGrenade);
+                item.setLore(language.itemGrenadeLore.split("\n"));
+                return item;
+            case 5:
+                item = Item.get(344, 0, 1);
+                item.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 5));
+                item.setCustomName(language.itemFlashBang);
+                item.setLore(language.itemFlashBangLore.split("\n"));
+                return item;
+            case 10:
+                item = Item.get(324, 0, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 10));
+                item.setCustomName(language.itemQuitRoom);
+                item.setLore(language.itemQuitRoomLore.split("\n"));
+                return item;
+            case 11:
+                item = Item.get(241, 14, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 11));
+                item.setCustomName(language.itemTeamSelectRed);
+                return item;
+            case 12:
+                item = Item.get(241, 11, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 12));
+                item.setCustomName(language.itemTeamSelectBlue);
+                return item;
+            default:
+                return item;
+        }
+    }
+
+    /**
      * 移除显示信息(Tips)
      * @param level 地图
      */
