@@ -149,6 +149,7 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         int v = event.getVictory();
+        Tools.cleanEntity(room.getLevel());
         //本回合胜利计算
         if (v == 0) {
             int red = 0, blue = 0;
@@ -192,7 +193,6 @@ public class GunWarListener implements Listener {
                 return;
             }
         }
-        Tools.cleanEntity(room.getLevel());
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }
 

@@ -27,6 +27,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 
+import java.util.Map;
+
 public class PlayerGameListener implements Listener {
 
     private final GunWar gunWar;
@@ -233,22 +235,25 @@ public class PlayerGameListener implements Listener {
                             level.addParticle(new SpellParticle(entity, 255, 255, 255));
                             break;
                     }
-                    for (Player player : room.getPlayers().keySet()) {
+                    for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                        if (entry.getValue() != 1 && entry.getValue() != 2) {
+                            continue;
+                        }
                         int x, y, z;
-                        if (player.getFloorX() > entity.getFloorX()) {
-                            x = player.getFloorX() - entity.getFloorX();
+                        if (entry.getKey().getFloorX() > entity.getFloorX()) {
+                            x = entry.getKey().getFloorX() - entity.getFloorX();
                         }else {
-                            x = entity.getFloorX() - player.getFloorX();
+                            x = entity.getFloorX() - entry.getKey().getFloorX();
                         }
-                        if (player.getFloorY() > entity.getFloorY()) {
-                            y = player.getFloorY() - entity.getFloorY();
+                        if (entry.getKey().getFloorY() > entity.getFloorY()) {
+                            y = entry.getKey().getFloorY() - entity.getFloorY();
                         }else {
-                            y = entity.getFloorY() - player.getFloorY();
+                            y = entity.getFloorY() - entry.getKey().getFloorY();
                         }
-                        if (player.getFloorZ() > entity.getFloorZ()) {
-                            z = player.getFloorZ() - entity.getFloorZ();
+                        if (entry.getKey().getFloorZ() > entity.getFloorZ()) {
+                            z = entry.getKey().getFloorZ() - entity.getFloorZ();
                         }else {
-                            z = entity.getFloorZ() - player.getFloorZ();
+                            z = entity.getFloorZ() - entry.getKey().getFloorZ();
                         }
                         if (x > 5 && y > 5 && z > 5) {
                             break;
@@ -257,16 +262,16 @@ public class PlayerGameListener implements Listener {
                             if (x <= r && y <= r && z <= r) {
                                 switch (entity.namedTag.getInt("GunWarItemType")) {
                                     case 4:
-                                        player.attack(0F);
+                                        entry.getKey().attack(0F);
                                         float damage = 12F - (r * 2);
                                         Server.getInstance().getPluginManager().callEvent(
-                                                new GunWarPlayerDamageEvent(room, player, (Player) entity.shootingEntity, damage));
+                                                new GunWarPlayerDamageEvent(room, entry.getKey(), (Player) entity.shootingEntity, damage));
                                         break;
                                     case 5:
                                         Effect effect = Effect.getEffect(15);
                                         int tick = 90 - (r * 10);
                                         effect.setDuration(tick);
-                                        player.addEffect(effect);
+                                        entry.getKey().addEffect(effect);
                                         break;
                                 }
                                 break;
