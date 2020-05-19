@@ -8,11 +8,11 @@ public class Language {
     public String useCmdInRoom = "§e >> §c游戏中无法使用其他命令";
     public String cmdHelp = "§a查看帮助：/%cmdName% help";
     public String userHelp = "§eGunWar--命令帮助 \n " +
-            "§a/%cmdName% §e打开ui \n " +
+            "§a/%cmdName% ui §e打开ui \n " +
             "§a/%cmdName% join 房间名称 §e加入游戏 \n " +
             "§a/%cmdName% quit §e退出游戏 \n " +
             "§a/%cmdName% list §e查看房间列表";
-    public String noPermission = "§c你没有权限！";
+    public String noPermission = "§c你没有权限使用这个命令！";
     public String joinRoom = "§a你已加入房间: %name%";
     public String joinRoomIsInRoom = "§c你已经在一个房间中了!";
     public String joinRoomIsRiding = "§a请勿在骑乘状态下进入房间！";
@@ -24,9 +24,9 @@ public class Language {
     public String quitRoom = "§a你已退出房间";
     public String quitRoomNotInRoom = "§a你本来就不在游戏房间！";
     public String listRoom = "§e房间列表： §a %list%";
-    public String useCmdInCon = "请在游戏内输入！";
+    public String useCmdInCon = "请不要在控制台执行此指令!";
     public String adminHelp = "§eGunWar--命令帮助 \n " +
-            "§a/%cmdName% §e打开ui \n " +
+            "§a/%cmdName% ui §e打开ui \n " +
             "§a/%cmdName% setwaitspawn §e设置当前位置为等待点 \n " +
             "§a/%cmdName% setredspawn §e将当前位置设置为红队出生点 \n " +
             "§a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点 \n " +

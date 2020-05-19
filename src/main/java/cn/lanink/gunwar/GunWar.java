@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "0.0.1-SNAPSHOT git-fd7ac10";
+    public static String VERSION = "0.0.1-SNAPSHOT git-b572a10";
     private static GunWar gunWar;
     private Language language;
     private Config config;

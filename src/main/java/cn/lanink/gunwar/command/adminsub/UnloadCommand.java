@@ -1,0 +1,30 @@
+package cn.lanink.gunwar.command.adminsub;
+
+import cn.lanink.gunwar.command.base.BaseSubCommand;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParameter;
+
+public class UnloadCommand extends BaseSubCommand {
+
+    public UnloadCommand(String name) {
+        super(name);
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[0];
+    }
+
+    @Override
+    public boolean execute(CommandSender sender, String label, String[] args) {
+        this.gunWar.unloadRooms();
+        sender.sendMessage(this.language.adminUnload);
+        return true;
+    }
+
+    @Override
+    public CommandParameter[] getParameters() {
+        return new CommandParameter[0];
+    }
+
+}

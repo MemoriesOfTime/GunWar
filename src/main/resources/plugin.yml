@@ -11,7 +11,9 @@ loadbefore:
   - EconomyAPI
 
 permissions:
-  GunWar.all:
+  GunWar.command.user:
+    description: "GunWar 命令"
     default: true
-  GunWar.op:
+  GunWar.command.admin:
+    description: "GunWar 管理命令"
     default: op
