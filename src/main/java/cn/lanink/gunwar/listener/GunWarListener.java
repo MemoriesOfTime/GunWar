@@ -23,6 +23,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -209,6 +210,31 @@ public class GunWarListener implements Listener {
     }
 
     /**
+     * 房间结束事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onRoomEnd(GunWarRoomEndEvent event) {
+        if (event.isCancelled()) return;
+        Room room = event.getRoom();
+        int victory = event.getVictory();
+        if (room.getPlayers().size() > 0) {
+            List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
+            List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
+            if (event.getVictoryPlayers().size() > 0 && vCmds.size() > 0) {
+                for (Player player : event.getVictoryPlayers()) {
+                    Tools.cmd(player, vCmds);
+                }
+            }
+            if (event.getDefeatPlayers().size() > 0 && dCmds.size() > 0) {
+                for (Player player : event.getDefeatPlayers()) {
+                    Tools.cmd(player, dCmds);
+                }
+            }
+        }
+    }
+
+    /**
      * 玩家伤害事件
      * @param event 事件
      */
@@ -272,7 +298,7 @@ public class GunWarListener implements Listener {
         player.setGamemode(3);
         if (room.getPlayerMode(player) == 1) {
             room.getPlayers().put(player, 11);
-        }else {
+        }else if (room.getPlayerMode(player) == 2) {
             room.getPlayers().put(player, 12);
         }
         Server.getInstance().getPluginManager().callEvent(new GunWarPlayerCorpseSpawnEvent(room, player));

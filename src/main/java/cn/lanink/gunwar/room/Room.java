@@ -31,7 +31,6 @@ public class Room {
     private LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1 11红队 2 12蓝队
     private LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
     public int redRound, blueRound; //队伍胜利次数
-    public int victory;
     public ArrayList<String> task = new ArrayList<>();
 
     /**
@@ -69,7 +68,6 @@ public class Room {
         this.gameTime = this.setGameTime;
         this.redRound = 0;
         this.blueRound = 0;
-        this.victory = 0;
     }
 
     public void setMode(int mode) {

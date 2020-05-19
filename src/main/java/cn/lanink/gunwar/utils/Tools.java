@@ -4,7 +4,9 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
@@ -28,10 +30,30 @@ import tip.messages.TipMessage;
 import tip.utils.Api;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 
 public class Tools {
+
+    /**
+     * 执行命令
+     * @param player 玩家
+     * @param cmds 命令
+     */
+    public static void cmd(Player player, List<String> cmds) {
+        if (player == null || cmds == null || cmds.size() < 1) {
+            return;
+        }
+        for (String s : cmds) {
+            String[] cmd = s.split("&");
+            if ((cmd.length > 1) && (cmd[1].equals("con"))) {
+                Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
+            } else {
+                Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
+            }
+        }
+    }
 
     /**
      * 清理实体
