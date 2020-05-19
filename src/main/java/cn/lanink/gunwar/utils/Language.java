@@ -132,6 +132,7 @@ public class Language {
         //提示信息
         this.playerTeamSelect = config.getString("playerTeamSelect", this.playerTeamSelect);
         this.roomSafeKick = config.getString("roomSafeKick", this.roomSafeKick);
+        this.noTeamSelect = config.getString("noTeamSelect", this.noTeamSelect);
         this.teamNameRed = config.getString("teamNameRed", this.teamNameRed);
         this.teamNameBlue = config.getString("teamNameBlue", this.teamNameBlue);
         this.roundVictoryRed = config.getString("roundVictoryRed", this.roundVictoryRed);
