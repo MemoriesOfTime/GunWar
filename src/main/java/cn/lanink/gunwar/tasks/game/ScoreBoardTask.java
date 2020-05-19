@@ -7,7 +7,6 @@ import cn.nukkit.Player;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.PluginTask;
 import tip.messages.ScoreBoardMessage;
-import tip.messages.TipMessage;
 import tip.utils.Api;
 
 import java.util.LinkedList;
@@ -52,8 +51,18 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                                 ScoreBoardMessage score = new ScoreBoardMessage(
                                         room.getLevel().getName(), true, "§eGunWar", new LinkedList<>());
                                 LinkedList<String> ms = new LinkedList<>();
+                                String team;
+                                switch (room.getPlayerMode(player)) {
+                                    case 1:
+                                    case 11:
+                                        team = language.teamNameRed;
+                                        break;
+                                    default:
+                                        team = language.teamNameBlue;
+                                        break;
+                                }
                                 for (String string : language.gameTimeScoreBoard.split("\n")) {
-                                    ms.add(string
+                                    ms.add(string.replace("%team%", team)
                                             .replace("%health%", room.getPlayerHealth().getOrDefault(player, 0F) + "")
                                             .replace("%time%", room.gameTime + "")
                                             .replace("%red%", red + "")

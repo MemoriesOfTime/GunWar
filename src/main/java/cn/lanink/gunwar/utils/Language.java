@@ -44,7 +44,9 @@ public class Language {
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
     //游戏提示
+    public String playerTeamSelect = "你已选择队伍";
     public String roomSafeKick = "\n§c房间非正常关闭!\n为了您的背包安全，请稍后重进服务器！";
+    public String noTeamSelect = "未选择队伍";
     public String teamNameRed = "§c红队";
     public String teamNameBlue = "§9蓝队";
     public String roundVictoryRed = "§c红队获得本轮胜利";
@@ -61,11 +63,12 @@ public class Language {
     public String playerTeamChat = "§c[队伍] %player% + §b >>> %message%";
     //ScoreBoardTask
     public String scoreBoardTitle = "§eGunWar";
-    public String waitTimeScoreBoard = " 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";
-    public String waitScoreBoard = " 玩家: §a%playerNumber%/10 \n 最低游戏人数为 2 人 \n 等待玩家加入中 ";
+    public String waitTimeScoreBoard = " 所属队伍: %team% \n 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";
+    public String waitScoreBoard = " 所属队伍: %team% \n 玩家: §a%playerNumber%/10 \n 最低游戏人数为 2 人 \n 等待玩家加入中 ";
     public String waitTimeBottom = "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！";
     public String waitBottom = "§c等待玩家加入中,当前已有: %playerNumber% 位玩家";
-    public String gameTimeScoreBoard = " §l§a当前血量:§e %health% \n " +
+    public String gameTimeScoreBoard = " §l§a所属队伍: %team% \n " +
+            "§l§a当前血量:§e %health% \n " +
             "§l§a剩余时间:§e %time% 秒 \n " +
             "§l§a队伍存活人数: \n " +
             "§l§c红: %red% 人 §9蓝: %blue% 人 \n " +
@@ -92,6 +95,8 @@ public class Language {
     //物品
     public String itemQuitRoom = "§c退出房间";
     public String itemQuitRoomLore = "手持点击,即可退出房间";
+    public String itemTeamSelectRed = "§c选择红队";
+    public String itemTeamSelectBlue = "§9选择蓝队";
     public String itemGrenade = "§a手榴弹";
     public String itemGrenadeLore = "伤害: 2-10 \n 伤害半径: 5";
     public String itemFlashBang = "§a闪光弹";
@@ -125,7 +130,9 @@ public class Language {
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         //提示信息
+        this.playerTeamSelect = config.getString("playerTeamSelect", this.playerTeamSelect);
         this.roomSafeKick = config.getString("roomSafeKick", this.roomSafeKick);
+        this.noTeamSelect = config.getString("noTeamSelect", this.noTeamSelect);
         this.teamNameRed = config.getString("teamNameRed", this.teamNameRed);
         this.teamNameBlue = config.getString("teamNameBlue", this.teamNameBlue);
         this.roundVictoryRed = config.getString("roundVictoryRed", this.roundVictoryRed);
@@ -168,6 +175,8 @@ public class Language {
         //物品
         this.itemQuitRoom = config.getString("itemQuitRoom", this.itemQuitRoom);
         this.itemQuitRoomLore = config.getString("itemQuitRoomLore", this.itemQuitRoomLore);
+        this.itemTeamSelectRed = config.getString("itemTeamSelectRed", this.itemTeamSelectRed);
+        this.itemTeamSelectBlue = config.getString("itemTeamSelectBlue", this.itemTeamSelectBlue);
         this.itemGrenade = config.getString("itemGrenade", this.itemGrenade);
         this.itemGrenadeLore = config.getString("itemGrenadeLore", this.itemGrenadeLore);
         this.itemFlashBang = config.getString("itemFlashBang", this.itemFlashBang);

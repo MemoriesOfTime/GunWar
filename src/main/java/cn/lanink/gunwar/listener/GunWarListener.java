@@ -22,7 +22,9 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Random;
 
 public class GunWarListener implements Listener {
 
@@ -53,19 +55,60 @@ public class GunWarListener implements Listener {
     public void onAssignTeam(GunWarRoomAssignTeamEvent event) {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
-        boolean flag = true;
+        ArrayList<Player> redTeam = new ArrayList<>();
+        ArrayList<Player> blueTeam = new ArrayList<>();
+        ArrayList<Player> noTeam = new ArrayList<>();
         for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-            Player player = entry.getKey();
-            if (flag) {
-                //红
-                entry.setValue(1);
-                player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
-            }else {
-                //蓝
-                entry.setValue(2);
-                player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
+            switch (entry.getValue()) {
+                case 1:
+                    redTeam.add(entry.getKey());
+                    break;
+                case 2:
+                    blueTeam.add(entry.getKey());
+                    break;
+                default:
+                    noTeam.add(entry.getKey());
+                    break;
             }
-            flag = !flag;
+        }
+        //队伍平衡
+        Random random = new Random();
+        Player cache;
+        while (true) {
+            if (noTeam.size() > 0) {
+                for (Player player : noTeam) {
+                    if (redTeam.size() > blueTeam.size()) {
+                        blueTeam.add(player);
+                    }else {
+                        redTeam.add(player);
+                    }
+                }
+                noTeam.clear();
+            }
+            if (redTeam.size() != blueTeam.size()) {
+                if ((redTeam.size() - blueTeam.size()) == 1 || (blueTeam.size() - redTeam.size() == 1)) {
+                    break;
+                }
+                if (redTeam.size() > blueTeam.size()) {
+                    cache = redTeam.get(random.nextInt(redTeam.size()));
+                    redTeam.remove(cache);
+                    blueTeam.add(cache);
+                }else {
+                    cache = blueTeam.get(random.nextInt(blueTeam.size()));
+                    blueTeam.remove(cache);
+                    redTeam.add(cache);
+                }
+            }else {
+                break;
+            }
+        }
+        for (Player player : redTeam) {
+            room.getPlayers().put(player, 1);
+            player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
+        }
+        for (Player player : blueTeam) {
+            room.getPlayers().put(player, 2);
+            player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
         }
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }

@@ -14,6 +14,7 @@ import tip.messages.TipMessage;
 import tip.utils.Api;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 
 public class WaitTask extends PluginTask<GunWar> {
@@ -23,7 +24,6 @@ public class WaitTask extends PluginTask<GunWar> {
     private final Room room;
     private final boolean bottom, scoreBoard;
     private final TipMessage tipMessage;
-    private final ScoreBoardMessage scoreBoardMessage;
 
     public WaitTask(GunWar owner, Room room) {
         super(owner);
@@ -32,8 +32,6 @@ public class WaitTask extends PluginTask<GunWar> {
         this.bottom = owner.getConfig().getBoolean("底部显示信息", true);
         this.scoreBoard = owner.getConfig().getBoolean("计分板显示信息", true);
         this.tipMessage = new TipMessage(room.getLevel().getName(), true, 0, null);
-        this.scoreBoardMessage = new ScoreBoardMessage(
-                room.getLevel().getName(), true, this.language.scoreBoardTitle, new LinkedList<>());
     }
 
     @Override
@@ -55,13 +53,36 @@ public class WaitTask extends PluginTask<GunWar> {
                             tipMessage.setMessage(language.waitTimeBottom
                                     .replace("%playerNumber%", room.getPlayers().size() + "")
                                     .replace("%time%", room.waitTime + ""));
-                            LinkedList<String> ms = new LinkedList<>();
-                            for (String string : language.waitTimeScoreBoard.split("\n")) {
-                                ms.add(string.replace("%playerNumber%", room.getPlayers().size() + "")
-                                        .replace("%time%", room.waitTime + ""));
+                            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                                if (bottom) {
+                                    Api.setPlayerShowMessage(entry.getKey().getName(), tipMessage);
+                                }
+                                if (scoreBoard) {
+                                    String team;
+                                    switch (entry.getValue()) {
+                                        case 1:
+                                        case 11:
+                                            team = language.teamNameRed;
+                                            break;
+                                        case 2:
+                                        case 12:
+                                            team = language.teamNameBlue;
+                                            break;
+                                        default:
+                                            team = language.noTeamSelect;
+                                            break;
+                                    }
+                                    LinkedList<String> ms = new LinkedList<>();
+                                    for (String string : language.waitTimeScoreBoard.split("\n")) {
+                                        ms.add(string.replace("%team%", team)
+                                                .replace("%playerNumber%", room.getPlayers().size() + "")
+                                                .replace("%time%", room.waitTime + ""));
+                                    }
+                                    ScoreBoardMessage score = new ScoreBoardMessage(
+                                            room.getLevel().getName(), true, language.scoreBoardTitle, ms);
+                                    Api.setPlayerShowMessage(entry.getKey().getName(), score);
+                                }
                             }
-                            scoreBoardMessage.setMessages(ms);
-                            sendMessage();
                             room.task.remove(taskName);
                         }
                     });
@@ -81,12 +102,35 @@ public class WaitTask extends PluginTask<GunWar> {
                     public void onRun() {
                         tipMessage.setMessage(language.waitBottom
                                 .replace("%playerNumber%", room.getPlayers().size() + ""));
-                        LinkedList<String> ms = new LinkedList<>();
-                        for (String string : language.waitScoreBoard.split("\n")) {
-                            ms.add(string.replace("%playerNumber%", room.getPlayers().size() + ""));
+                        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                            if (bottom) {
+                                Api.setPlayerShowMessage(entry.getKey().getName(), tipMessage);
+                            }
+                            if (scoreBoard) {
+                                String team;
+                                switch (entry.getValue()) {
+                                    case 1:
+                                    case 11:
+                                        team = language.teamNameRed;
+                                        break;
+                                    case 2:
+                                    case 12:
+                                        team = language.teamNameBlue;
+                                        break;
+                                    default:
+                                        team = language.noTeamSelect;
+                                        break;
+                                }
+                                LinkedList<String> ms = new LinkedList<>();
+                                for (String string : language.waitScoreBoard.split("\n")) {
+                                    ms.add(string.replace("%team%", team)
+                                            .replace("%playerNumber%", room.getPlayers().size() + ""));
+                                }
+                                ScoreBoardMessage score = new ScoreBoardMessage(
+                                        room.getLevel().getName(), true, language.scoreBoardTitle, ms);
+                                Api.setPlayerShowMessage(entry.getKey().getName(), score);
+                            }
                         }
-                        scoreBoardMessage.setMessages(ms);
-                        sendMessage();
                         room.task.remove(taskName);
                     }
                 });
@@ -94,17 +138,6 @@ public class WaitTask extends PluginTask<GunWar> {
         }else {
             this.room.endGame();
             this.cancel();
-        }
-    }
-
-    private void sendMessage() {
-        for (Player player : room.getPlayers().keySet()) {
-            if (bottom) {
-                Api.setPlayerShowMessage(player.getName(), tipMessage);
-            }
-            if (scoreBoard) {
-                Api.setPlayerShowMessage(player.getName(), scoreBoardMessage);
-            }
         }
     }
 
