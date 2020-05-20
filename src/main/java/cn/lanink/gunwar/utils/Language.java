@@ -32,8 +32,8 @@ public class Language {
             "§a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点 \n " +
             "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n " +
             "§a/%cmdName% setgametime 数字 §e设置每回合游戏最长时间 \n " +
-            "§a/%cmdName% reload §e重载所有房间 \n " +
-            "§a/%cmdName% unload §e关闭所有房间,并卸载配置";
+            "§a/%cmdName% reloadroom §e重载所有房间 \n " +
+            "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetWaitSpawn = "§a等待出生点设置成功！";
     public String adminSetRedSpawn = "§a红队出生点设置成功！";
     public String adminSetBlueSpawn = "§a蓝队出生点设置成功！";

@@ -16,8 +16,8 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetBlueSpawnCommand("setbluespawn"));
         this.addSubCommand(new SetWaitTimeCommand("setwaittime"));
         this.addSubCommand(new SetGameTimeCommand("setgametime"));
-        this.addSubCommand(new ReloadCommand("reload"));
-        this.addSubCommand(new UnloadCommand("unload"));
+        this.addSubCommand(new ReloadCommand("reloadroom"));
+        this.addSubCommand(new UnloadCommand("unloadroom"));
         this.loadCommandBase();
     }
 
