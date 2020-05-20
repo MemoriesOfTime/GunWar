@@ -67,10 +67,10 @@ public class GuiListener implements Listener {
                         GuiCreate.sendAdminTimeMenu(player);
                         break;
                     case 4:
-                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " reload");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " reloadroom");
                         break;
                     case 5:
-                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " unload");
+                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " unloadroom");
                         break;
                 }
             }
