@@ -32,6 +32,7 @@ public class Room {
     private LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
     public int redRound, blueRound; //队伍胜利次数
     public ArrayList<String> task = new ArrayList<>();
+    public LinkedList<Player> swordAttackCD = new LinkedList<>();
 
     /**
      * 初始化

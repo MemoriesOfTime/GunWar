@@ -26,6 +26,7 @@ import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.scheduler.Task;
 
 import java.util.Map;
 
@@ -62,9 +63,18 @@ public class PlayerGameListener implements Listener {
                 if (room.isPlaying(damagePlayer) && room.isPlaying(player) &&
                         room.getPlayerMode(damagePlayer) != room.getPlayerMode(player)) {
                     int id = damagePlayer.getInventory().getItemInHand() == null ? 0 : damagePlayer.getInventory().getItemInHand().getId();
-                    if (id == 272) {
-                        Server.getInstance().getPluginManager().callEvent(
+                    if (id == 272 && !room.swordAttackCD.contains(player)) {
+                        room.swordAttackCD.add(player);
+                        this.gunWar.getServer().getPluginManager().callEvent(
                                 new GunWarPlayerDamageEvent(room, player, damagePlayer, 2F));
+                        this.gunWar.getServer().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
+                            @Override
+                            public void onRun(int i) {
+                                while (room.swordAttackCD.contains(player)) {
+                                    room.swordAttackCD.remove(player);
+                                }
+                            }
+                        }, 20);
                         return;
                     }
                 }
