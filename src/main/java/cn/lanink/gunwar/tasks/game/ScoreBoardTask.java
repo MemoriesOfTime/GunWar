@@ -75,7 +75,9 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                             }
                         }
                     }
-                    room.task.remove(taskName);
+                    while (room.task.contains(taskName)) {
+                        room.task.remove(taskName);
+                    }
                 }
             });
         }

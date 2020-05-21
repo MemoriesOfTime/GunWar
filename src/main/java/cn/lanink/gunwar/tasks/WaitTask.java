@@ -131,7 +131,9 @@ public class WaitTask extends PluginTask<GunWar> {
                                 Api.setPlayerShowMessage(entry.getKey().getName(), score);
                             }
                         }
-                        room.task.remove(taskName);
+                        while (room.task.contains(taskName)) {
+                            room.task.remove(taskName);
+                        }
                     }
                 });
             }

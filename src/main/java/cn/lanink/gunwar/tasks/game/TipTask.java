@@ -25,11 +25,17 @@ public class TipTask extends PluginTask<GunWar> {
         if (this.room.getMode() != 2) {
             this.cancel();
         }
-        for (Player player : room.getPlayers().keySet()) {
-            TipMessage tip = new TipMessage(room.getLevel().getName(), true, 0, null);
-            tip.setMessage(language.gameTimeBottom
-                    .replace("%health%", this.getStringHealth(room.getPlayerHealth().getOrDefault(player, 0F))));
-            Api.setPlayerShowMessage(player.getName(), tip);
+        if (!this.room.task.contains(this.taskName)) {
+            this.room.task.add(this.taskName);
+            for (Player player : room.getPlayers().keySet()) {
+                TipMessage tip = new TipMessage(room.getLevel().getName(), true, 0, null);
+                tip.setMessage(language.gameTimeBottom
+                        .replace("%health%", this.getStringHealth(room.getPlayerHealth().getOrDefault(player, 0F))));
+                Api.setPlayerShowMessage(player.getName(), tip);
+            }
+            while (this.room.task.contains(this.taskName)) {
+                this.room.task.remove(this.taskName);
+            }
         }
     }
 

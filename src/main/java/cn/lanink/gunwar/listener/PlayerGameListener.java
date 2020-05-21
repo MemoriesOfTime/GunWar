@@ -107,7 +107,7 @@ public class PlayerGameListener implements Listener {
                     return;
                 } else if (id == 81) {
                     Server.getInstance().getPluginManager().callEvent(
-                            new GunWarPlayerDamageEvent(room, player, damagePlayer, 1F));
+                            new GunWarPlayerDamageEvent(room, player, damagePlayer, 2F));
                     return;
                 }
             }

@@ -50,7 +50,9 @@ public class TimeTask extends PluginTask<GunWar> {
                         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 1));
                         room.gameTime = room.getGameTime();
                     }
-                    room.task.remove(taskName);
+                    while (room.task.contains(taskName)) {
+                        room.task.remove(taskName);
+                    }
                 }
             });
         }
