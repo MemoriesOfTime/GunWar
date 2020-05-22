@@ -20,16 +20,6 @@ public class UserCommand extends BaseCommand {
     }
 
     @Override
-    public boolean hasPermission(CommandSender sender) {
-        return sender.hasPermission(this.getPermission());
-    }
-
-    @Override
-    public boolean execute(CommandSender commandSender, String label, String[] args) {
-        return super.execute(commandSender, label, args);
-    }
-
-    @Override
     public void sendHelp(CommandSender sender) {
         sender.sendMessage(this.language.userHelp.replace("%cmdName%", this.getName()));
     }

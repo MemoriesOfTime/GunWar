@@ -31,27 +31,31 @@ abstract public class BaseCommand extends Command {
      * @param sender 玩家
      * @return 是否拥有权限
      */
-    abstract public boolean hasPermission(CommandSender sender);
+    public boolean hasPermission(CommandSender sender) {
+        return sender.hasPermission(this.getPermission());
+    }
 
     @Override
     public boolean execute(CommandSender sender, String s, String[] args) {
         if(hasPermission(sender)) {
-            if (sender instanceof Player) {
-                if(args.length > 0) {
-                    String subCommand = args[0].toLowerCase();
-                    if (subCommands.containsKey(subCommand)) {
-                        BaseSubCommand command = this.subCommand.get(this.subCommands.get(subCommand));
+            if(args.length > 0) {
+                String subCommand = args[0].toLowerCase();
+                if (subCommands.containsKey(subCommand)) {
+                    BaseSubCommand command = this.subCommand.get(this.subCommands.get(subCommand));
+                    if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
-                    } else {
-                        sendHelp(sender);
+                    }else if (sender.isPlayer()) {
+                        sender.sendMessage(this.language.noPermission);
+                    }else {
+                        sender.sendMessage(this.language.useCmdInCon);
                         return true;
                     }
                 }else {
                     sendHelp(sender);
                     return true;
                 }
-            } else {
-                sender.sendMessage(this.language.useCmdInCon);
+            }else {
+                sendHelp(sender);
                 return true;
             }
         }
@@ -63,7 +67,7 @@ abstract public class BaseCommand extends Command {
      * 发送帮助
      * @param sender 玩家
      * */
-    abstract public void sendHelp(CommandSender sender);
+    public abstract void sendHelp(CommandSender sender);
 
     protected void addSubCommand(BaseSubCommand cmd) {
         this.subCommand.add(cmd);

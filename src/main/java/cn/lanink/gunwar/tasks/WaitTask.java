@@ -92,8 +92,8 @@ public class WaitTask extends PluginTask<GunWar> {
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {
-            if (this.room.waitTime != this.room.getWaitTime()) {
-                this.room.waitTime = this.room.getWaitTime();
+            if (this.room.waitTime != this.room.getSetWaitTime()) {
+                this.room.waitTime = this.room.getSetWaitTime();
             }
             if (!this.room.task.contains(this.taskName)) {
                 this.room.task.add(this.taskName);

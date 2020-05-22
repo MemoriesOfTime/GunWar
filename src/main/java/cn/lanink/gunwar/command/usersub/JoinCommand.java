@@ -14,6 +14,11 @@ public class JoinCommand extends BaseSubCommand {
     }
 
     @Override
+    public boolean canUser(CommandSender sender) {
+        return sender.isPlayer();
+    }
+
+    @Override
     public String[] getAliases() {
         return new String[] { "加入" };
     }

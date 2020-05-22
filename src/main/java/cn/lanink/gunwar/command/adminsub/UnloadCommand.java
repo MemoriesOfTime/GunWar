@@ -11,6 +11,11 @@ public class UnloadCommand extends BaseSubCommand {
     }
 
     @Override
+    public boolean canUser(CommandSender sender) {
+        return sender.isOp();
+    }
+
+    @Override
     public String[] getAliases() {
         return new String[0];
     }

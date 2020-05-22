@@ -2,15 +2,11 @@ package cn.lanink.gunwar.room;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.tasks.WaitTask;
-import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 import tip.messages.BossBarMessage;
 import tip.messages.NameTagMessage;
@@ -21,17 +17,11 @@ import java.util.*;
 /**
  * 房间
  */
-public class Room {
+public class Room extends BaseRoom {
 
-    private final Language language = GunWar.getInstance().getLanguage();
-    private int mode; //0未初始化 1等待 2游戏 3胜利结算 4等待下一回合
-    private final String level, waitSpawn, redSpawn, blueSpawn;
-    private final int setWaitTime, setGameTime;
-    public int waitTime, gameTime;
-    private LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1 11红队 2 12蓝队
+    private final String redSpawn, blueSpawn;
     private LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
     public int redRound, blueRound; //队伍胜利次数
-    public ArrayList<String> task = new ArrayList<>();
     public LinkedList<Player> swordAttackCD = new LinkedList<>();
 
     /**
@@ -55,7 +45,8 @@ public class Room {
     /**
      * 初始化Task
      */
-    private void initTask() {
+    @Override
+    protected void initTask() {
         this.setMode(1);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
@@ -64,21 +55,14 @@ public class Room {
     /**
      * 初始化部分参数
      */
-    private void initTime() {
-        this.waitTime = this.setWaitTime;
-        this.gameTime = this.setGameTime;
+    @Override
+    protected void initTime() {
+        super.initTime();
         this.redRound = 0;
         this.blueRound = 0;
     }
 
-    public void setMode(int mode) {
-        this.mode = mode;
-    }
-
-    public int getMode() {
-        return this.mode;
-    }
-
+    @Override
     public void endGame() {
         this.endGame(true);
     }
@@ -107,6 +91,7 @@ public class Room {
      * 加入房间
      * @param player 玩家
      */
+    @Override
     public void joinRoom(Player player) {
         if (this.mode == 0) {
             this.initTask();
@@ -126,37 +111,13 @@ public class Room {
         player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
     }
 
-    /**
-     * 退出房间
-     * @param player 玩家
-     */
-    public void quitRoom(Player player, boolean online) {
-        if (this.isPlaying(player)) {
-            this.players.remove(player);
-        }
-        if (online) {
-            this.quitRoomOnline(player);
-        }
-    }
-
-    private void quitRoomOnline(Player player) {
+    @Override
+    public void quitRoomOnline(Player player) {
         Tools.removePlayerShowMessage(this.level, player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(player);
         player.sendMessage(this.language.quitRoom);
-    }
-
-    public boolean isPlaying(Player player) {
-        return this.players.containsKey(player);
-    }
-
-    /**
-     * 获取玩家列表
-     * @return 玩家列表
-     */
-    public LinkedHashMap<Player, Integer> getPlayers() {
-        return this.players;
     }
 
     /**
@@ -193,46 +154,6 @@ public class Room {
         }else {
             this.playerHealth.put(player, nowHealth);
         }
-    }
-
-    /**
-     * 获取玩家队伍
-     * @param player 玩家
-     * @return 所属队伍
-     */
-    public int getPlayerMode(Player player) {
-        if (this.isPlaying(player)) {
-            return this.players.get(player);
-        }
-        return 0;
-    }
-
-    public int getWaitTime() {
-        return this.setWaitTime;
-    }
-
-    public int getGameTime() {
-        return this.setGameTime;
-    }
-
-    /**
-     * 获取世界
-     * @return 世界
-     */
-    public Level getLevel() {
-        return Server.getInstance().getLevelByName(this.level);
-    }
-
-    /**
-     * 获取等待出生点
-     * @return 出生点
-     */
-    public Position getWaitSpawn() {
-        String[] s = this.waitSpawn.split(":");
-        return new Position(Integer.parseInt(s[0]),
-                Integer.parseInt(s[1]),
-                Integer.parseInt(s[2]),
-                this.getLevel());
     }
 
     /**

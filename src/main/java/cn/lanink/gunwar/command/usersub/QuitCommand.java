@@ -13,6 +13,11 @@ public class QuitCommand extends BaseSubCommand {
     }
 
     @Override
+    public boolean canUser(CommandSender sender) {
+        return sender.isPlayer();
+    }
+
+    @Override
     public String[] getAliases() {
         return new String[] { "退出" };
     }

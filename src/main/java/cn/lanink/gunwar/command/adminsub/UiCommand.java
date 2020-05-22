@@ -13,6 +13,11 @@ public class UiCommand extends BaseSubCommand {
     }
 
     @Override
+    public boolean canUser(CommandSender sender) {
+        return sender.isPlayer() && sender.isOp();
+    }
+
+    @Override
     public String[] getAliases() {
         return new String[0];
     }

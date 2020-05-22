@@ -28,7 +28,7 @@ public class TimeTask extends PluginTask<GunWar> {
             this.room.gameTime--;
         }else {
             Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 0));
-            this.room.gameTime = this.room.getGameTime();
+            this.room.gameTime = this.room.getSetGameTime();
         }
         if (!this.room.task.contains(this.taskName)) {
             this.room.task.add(this.taskName);
@@ -45,10 +45,10 @@ public class TimeTask extends PluginTask<GunWar> {
                     }
                     if (red == 0) {
                         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 2));
-                        room.gameTime = room.getGameTime();
+                        room.gameTime = room.getSetGameTime();
                     } else if (blue == 0) {
                         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 1));
-                        room.gameTime = room.getGameTime();
+                        room.gameTime = room.getSetGameTime();
                     }
                     while (room.task.contains(taskName)) {
                         room.task.remove(taskName);

@@ -9,7 +9,7 @@ import cn.nukkit.command.data.CommandParameter;
 /**
  * @author SmallasWater
  */
-abstract public class BaseSubCommand {
+public abstract class BaseSubCommand {
 
     protected GunWar gunWar = GunWar.getInstance();
 
@@ -25,9 +25,7 @@ abstract public class BaseSubCommand {
      * @param sender CommandSender
      * @return boolean
      */
-    boolean isPlayer(CommandSender sender){
-        return sender.isPlayer();
-    }
+    public abstract boolean canUser(CommandSender sender);
 
     public String getDescription(){
         return "";

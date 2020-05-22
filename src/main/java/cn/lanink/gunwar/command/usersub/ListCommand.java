@@ -11,6 +11,11 @@ public class ListCommand extends BaseSubCommand {
     }
 
     @Override
+    public boolean canUser(CommandSender sender) {
+        return sender.isPlayer();
+    }
+
+    @Override
     public String[] getAliases() {
         return new String[] { "列表" };
     }
