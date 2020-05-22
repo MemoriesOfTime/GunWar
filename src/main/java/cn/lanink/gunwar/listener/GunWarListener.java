@@ -29,6 +29,7 @@ import java.util.Random;
 
 public class GunWarListener implements Listener {
 
+    private final GunWar gunWar = GunWar.getInstance();
     private final Language language = GunWar.getInstance().getLanguage();
 
     /**
@@ -42,10 +43,14 @@ public class GunWarListener implements Listener {
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomAssignTeamEvent(room));
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new TimeTask(GunWar.getInstance(), room), 20, true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new ScoreBoardTask(GunWar.getInstance(), room), 10, true);
-        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new TipTask(GunWar.getInstance(), room), 10, true);
+        if (this.gunWar.getConfig().getBoolean("计分板显示信息", true)) {
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    GunWar.getInstance(), new ScoreBoardTask(GunWar.getInstance(), room), 10, true);
+        }
+        if (this.gunWar.getConfig().getBoolean("底部显示信息", true)) {
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    GunWar.getInstance(), new TipTask(GunWar.getInstance(), room), 10, true);
+        }
     }
 
     /**
