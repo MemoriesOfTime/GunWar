@@ -80,6 +80,7 @@ public class Language {
     public String userMenuButton1 = "§e随机加入房间";
     public String userMenuButton2 = "§e退出当前房间";
     public String userMenuButton3 = "§e查看房间列表";
+    public String userMenuButton4 = "§e查看个人战绩";
     public String adminMenuSetLevel = "当前设置地图：%name%";
     public String adminMenuButton1 = "§e设置等待出生点";
     public String adminMenuButton2 = "§e设置红队出生点";
@@ -92,6 +93,7 @@ public class Language {
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
+    public String playerGameRecord = " 击杀数: %kills% \n 死亡数: %deaths% \n 胜利次数: %victory% \n 失败次数: %defeat%";
     //物品
     public String itemQuitRoom = "§c退出房间";
     public String itemQuitRoomLore = "手持点击,即可退出房间";
@@ -160,6 +162,7 @@ public class Language {
         this.userMenuButton1 = config.getString("userMenuButton1", this.userMenuButton1);
         this.userMenuButton2 = config.getString("userMenuButton2", this.userMenuButton2);
         this.userMenuButton3 = config.getString("userMenuButton3", this.userMenuButton3);
+        this.userMenuButton4 = config.getString("userMenuButton4", this.userMenuButton4);
         this.adminMenuSetLevel = config.getString("adminMenuSetLevel", this.adminMenuSetLevel);
         this.adminMenuButton1 = config.getString("adminMenuButton1", this.adminMenuButton1);
         this.adminMenuButton2 = config.getString("adminMenuButton2", this.adminMenuButton2);
@@ -172,6 +175,7 @@ public class Language {
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
+        this.playerGameRecord = config.getString("playerGameRecord", this.playerGameRecord);
         //物品
         this.itemQuitRoom = config.getString("itemQuitRoom", this.itemQuitRoom);
         this.itemQuitRoomLore = config.getString("itemQuitRoomLore", this.itemQuitRoomLore);

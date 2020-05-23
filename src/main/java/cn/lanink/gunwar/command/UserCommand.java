@@ -1,10 +1,7 @@
 package cn.lanink.gunwar.command;
 
 import cn.lanink.gunwar.command.base.BaseCommand;
-import cn.lanink.gunwar.command.usersub.JoinCommand;
-import cn.lanink.gunwar.command.usersub.ListCommand;
-import cn.lanink.gunwar.command.usersub.QuitCommand;
-import cn.lanink.gunwar.command.usersub.UiCommand;
+import cn.lanink.gunwar.command.usersub.*;
 import cn.nukkit.command.CommandSender;
 
 public class UserCommand extends BaseCommand {
@@ -16,6 +13,7 @@ public class UserCommand extends BaseCommand {
         this.addSubCommand(new JoinCommand("join"));
         this.addSubCommand(new QuitCommand("quit"));
         this.addSubCommand(new ListCommand("list"));
+        this.addSubCommand(new RecordCommand("record"));
         this.loadCommandBase();
     }
 

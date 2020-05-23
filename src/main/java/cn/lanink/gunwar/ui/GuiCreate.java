@@ -2,6 +2,7 @@ package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementButton;
@@ -22,6 +23,7 @@ public class GuiCreate {
     public static final int ADMIN_TIME_MENU = 128894313;
     public static final int ROOM_LIST_MENU = 128894314;
     public static final int ROOM_JOIN_OK = 128894315;
+    public static final int GAMERECORD = 128894316;
 
     /**
      * 显示用户菜单
@@ -33,6 +35,7 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.userMenuButton1, new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         simple.addButton(new ElementButton(language.userMenuButton2, new ElementButtonImageData("path", "textures/ui/switch_select_button")));
         simple.addButton(new ElementButton(language.userMenuButton3, new ElementButtonImageData("path", "textures/ui/servers")));
+        simple.addButton(new ElementButton(language.userMenuButton4, new ElementButtonImageData("path", "textures/ui/creative_icon")));
         player.showFormWindow(simple, USER_MENU);
     }
 
@@ -105,6 +108,21 @@ public class GuiCreate {
             player.showFormWindow(modal, ROOM_JOIN_OK);
         }
 
+    }
+
+    /**
+     * 显示个人战绩
+     * @param player 玩家
+     */
+    public static void sendGameRecord(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
+        String s = language.playerGameRecord.replace("%kills%", GameRecord.getKills(player) + "")
+                .replace("%deaths%", GameRecord.getDeaths(player) + "")
+                .replace("%victory%", GameRecord.getVictory(player) + "")
+                .replace("%defeat%", GameRecord.getDefeat(player) + "");
+        FormWindowModal modal = new FormWindowModal(
+                PLUGIN_NAME, s, language.buttonOK, language.buttonReturn);
+        player.showFormWindow(modal, GAMERECORD);
     }
 
 }

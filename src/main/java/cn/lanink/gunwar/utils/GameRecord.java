@@ -19,12 +19,12 @@ public class GameRecord {
      * @param player 玩家
      * @return 记录集合
      */
-    public static LinkedHashMap<String, Long> getPlayerRecord(Player player) {
+    public static LinkedHashMap<String, Integer> getPlayerRecord(Player player) {
         Config config = GunWar.getInstance().getGameRecord();
         Map<String, Object> map = config.getAll();
-        LinkedHashMap<String, Long> record;
+        LinkedHashMap<String, Integer> record;
         if (map.containsKey(player.getName())) {
-            record = (LinkedHashMap<String, Long>) map.get(player.getName());
+            record = (LinkedHashMap<String, Integer>) map.get(player.getName());
         }else {
             record = new LinkedHashMap<>();
         }
@@ -37,8 +37,8 @@ public class GameRecord {
      */
     public static void addKills(Player player) {
         Config config = GunWar.getInstance().getGameRecord();
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        long number = record.getOrDefault(KILLS, 0L) + 1;
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        int number = record.getOrDefault(KILLS, 0) + 1;
         record.put(KILLS, number);
         config.set(player.getName(), record);
         config.save();
@@ -49,9 +49,9 @@ public class GameRecord {
      * @param player 玩家
      * @return 击杀数
      */
-    public static long getKills(Player player) {
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        return record.getOrDefault(KILLS, 0L);
+    public static int getKills(Player player) {
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        return record.getOrDefault(KILLS, 0);
     }
 
     /**
@@ -60,8 +60,8 @@ public class GameRecord {
      */
     public static void addDeaths(Player player) {
         Config config = GunWar.getInstance().getGameRecord();
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        long number = record.getOrDefault(DEATHS, 0L) + 1;
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        int number = record.getOrDefault(DEATHS, 0) + 1;
         record.put(DEATHS, number);
         config.set(player.getName(), record);
         config.save();
@@ -73,8 +73,8 @@ public class GameRecord {
      * @return 死亡数
      */
     public static long getDeaths(Player player) {
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        return record.getOrDefault(DEATHS, 0L);
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        return record.getOrDefault(DEATHS, 0);
     }
 
     /**
@@ -83,8 +83,8 @@ public class GameRecord {
      */
     public static void addVictory(Player player) {
         Config config = GunWar.getInstance().getGameRecord();
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        long number = record.getOrDefault(VICTORY, 0L) + 1;
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        int number = record.getOrDefault(VICTORY, 0) + 1;
         record.put(VICTORY, number);
         config.set(player.getName(), record);
         config.save();
@@ -96,8 +96,8 @@ public class GameRecord {
      * @return 胜利次数
      */
     public static long getVictory(Player player) {
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        return record.getOrDefault(VICTORY, 0L);
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        return record.getOrDefault(VICTORY, 0);
     }
 
     /**
@@ -106,8 +106,8 @@ public class GameRecord {
      */
     public static void addDefeat(Player player) {
         Config config = GunWar.getInstance().getGameRecord();
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        long number = record.getOrDefault(DEFEAT, 0L) + 1;
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        int number = record.getOrDefault(DEFEAT, 0) + 1;
         record.put(DEFEAT, number);
         config.set(player.getName(), record);
         config.save();
@@ -119,8 +119,8 @@ public class GameRecord {
      * @return 失败次数
      */
     public static long getDefeat(Player player) {
-        LinkedHashMap<String, Long> record = getPlayerRecord(player);
-        return record.getOrDefault(VICTORY, 0L);
+        LinkedHashMap<String, Integer> record = getPlayerRecord(player);
+        return record.getOrDefault(DEFEAT, 0);
     }
 
 }
