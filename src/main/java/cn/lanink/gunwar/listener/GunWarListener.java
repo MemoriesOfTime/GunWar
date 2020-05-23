@@ -8,6 +8,7 @@ import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.tasks.game.TipTask;
+import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.AdventureSettings;
@@ -269,15 +270,17 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         Player player = event.getPlayer();
-        String damagePlayer = event.getDamagePlayer() != null ? event.getDamagePlayer().getName() : "unknown";
+        Player damagePlayer = event.getDamagePlayer();
+        GameRecord.addDeaths(player);
+        GameRecord.addKills(damagePlayer);
         player.sendTitle(this.language.titleDeathTitle,
-                this.language.titleDeathSubtitle.replace("%player%", damagePlayer),
+                this.language.titleDeathSubtitle.replace("%player%", damagePlayer.getName()),
                 10, 30, 10);
         Server.getInstance().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
             @Override
             public void onRun() {
                 for (Player p : room.getPlayers().keySet()) {
-                    p.sendMessage(language.killMessage.replace("%damagePlayer%", damagePlayer)
+                    p.sendMessage(language.killMessage.replace("%damagePlayer%", damagePlayer.getName())
                             .replace("%player%", player.getName()));
                 }
                 int arrow = 0;

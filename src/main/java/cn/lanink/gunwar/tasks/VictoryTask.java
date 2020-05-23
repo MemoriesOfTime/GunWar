@@ -3,6 +3,7 @@ package cn.lanink.gunwar.tasks;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarRoomEndEvent;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -42,17 +43,27 @@ public class VictoryTask extends PluginTask<GunWar> {
             ms.add(language.victoryMessage.replace("%teamName%", language.teamNameBlue));
             scoreBoardMessage.setMessages(ms);
         }
-        for (Player player: room.getPlayers().keySet()) {
+        for (Map.Entry<Player, Integer> entry: room.getPlayers().entrySet()) {
             if (this.victory == 1) {
-                player.sendTitle(this.language.victoryRed, "", 10, 40, 20);
+                if (entry.getValue() == 1) {
+                    GameRecord.addVictory(entry.getKey());
+                }else {
+                    GameRecord.addDefeat(entry.getKey());
+                }
+                entry.getKey().sendTitle(this.language.victoryRed, "", 10, 40, 20);
             }else if (this.victory == 2) {
-                player.sendTitle(this.language.victoryBlue, "", 10, 40, 20);
+                if (entry.getValue() == 2) {
+                    GameRecord.addVictory(entry.getKey());
+                }else {
+                    GameRecord.addDefeat(entry.getKey());
+                }
+                entry.getKey().sendTitle(this.language.victoryBlue, "", 10, 40, 20);
             }
             if (owner.getConfig().getBoolean("底部显示信息", true)) {
-                Api.setPlayerShowMessage(player.getName(), tipMessage);
+                Api.setPlayerShowMessage(entry.getKey().getName(), tipMessage);
             }
             if (owner.getConfig().getBoolean("计分板显示信息", true)) {
-                Api.setPlayerShowMessage(player.getName(), scoreBoardMessage);
+                Api.setPlayerShowMessage(entry.getKey().getName(), scoreBoardMessage);
             }
         }
     }

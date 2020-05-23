@@ -26,10 +26,10 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "1.0.0-SNAPSHOT git-ad0bf8a";
+    public static String VERSION = "1.0.0-SNAPSHOT git-4cdc699";
     private static GunWar gunWar;
     private Language language;
-    private Config config;
+    private Config config, gameRecord;
     private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
     private String cmdUser, cmdAdmin;
@@ -43,7 +43,6 @@ public class GunWar extends PluginBase {
         if (gunWar == null) gunWar = this;
         getLogger().info("§l§e版本: " + VERSION);
         saveDefaultConfig();
-        this.config = new Config(getDataFolder() + "/config.yml", 2);
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         File file3 = new File(this.getDataFolder() + "/Language");
@@ -56,6 +55,8 @@ public class GunWar extends PluginBase {
         if (!file3.exists() && !file3.mkdirs()) {
             getLogger().warning("Language 文件夹初始化失败");
         }
+        this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
         this.loadResources();
         getLogger().info("§e开始加载房间");
         this.loadRooms();
@@ -74,6 +75,7 @@ public class GunWar extends PluginBase {
 
     @Override
     public void onDisable() {
+        this.gameRecord.save();
         if (this.rooms.values().size() > 0) {
             Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
@@ -187,6 +189,10 @@ public class GunWar extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public Config getGameRecord() {
+        return this.gameRecord;
     }
 
     public String getCmdUser() {
