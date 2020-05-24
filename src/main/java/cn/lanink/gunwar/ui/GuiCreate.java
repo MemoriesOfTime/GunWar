@@ -2,6 +2,7 @@ package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.form.element.ElementButton;
@@ -11,6 +12,7 @@ import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -22,6 +24,9 @@ public class GuiCreate {
     public static final int ADMIN_TIME_MENU = 128894313;
     public static final int ROOM_LIST_MENU = 128894314;
     public static final int ROOM_JOIN_OK = 128894315;
+    public static final int GAME_RECORD = 128894316;
+    public static final int RECORD_LIST = 128894317;
+    public static final int RANKING_LIST = 128894318;
 
     /**
      * 显示用户菜单
@@ -33,6 +38,7 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.userMenuButton1, new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         simple.addButton(new ElementButton(language.userMenuButton2, new ElementButtonImageData("path", "textures/ui/switch_select_button")));
         simple.addButton(new ElementButton(language.userMenuButton3, new ElementButtonImageData("path", "textures/ui/servers")));
+        simple.addButton(new ElementButton(language.userMenuButton4, new ElementButtonImageData("path", "textures/ui/creative_icon")));
         player.showFormWindow(simple, USER_MENU);
     }
 
@@ -105,6 +111,74 @@ public class GuiCreate {
             player.showFormWindow(modal, ROOM_JOIN_OK);
         }
 
+    }
+
+    /**
+     * 显示战绩列表
+     * @param player 玩家
+     */
+    public static void sendRecordList(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()));
+        simple.addButton(new ElementButton(language.recordListButton1, new ElementButtonImageData("path", "textures/ui/copy")));
+        simple.addButton(new ElementButton(language.recordListButton2, new ElementButtonImageData("path", "textures/ui/creative_icon")));
+        simple.addButton(new ElementButton(language.recordListButton3, new ElementButtonImageData("path", "textures/ui/creative_icon")));
+        simple.addButton(new ElementButton(language.recordListButton4, new ElementButtonImageData("path", "textures/ui/creative_icon")));
+        simple.addButton(new ElementButton(language.recordListButton5,  new ElementButtonImageData("path", "textures/ui/creative_icon")));
+        simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
+        player.showFormWindow(simple, RECORD_LIST);
+    }
+
+    /**
+     * 显示个人战绩
+     * @param player 玩家
+     */
+    public static void sendGameRecord(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
+        String s = language.playerGameRecord.replace("%kills%", GameRecord.getKills(player) + "")
+                .replace("%deaths%", GameRecord.getDeaths(player) + "")
+                .replace("%victory%", GameRecord.getVictory(player) + "")
+                .replace("%defeat%", GameRecord.getDefeat(player) + "");
+        FormWindowModal modal = new FormWindowModal(
+                PLUGIN_NAME, s, language.buttonOK, language.buttonReturn);
+        player.showFormWindow(modal, GAME_RECORD);
+    }
+
+    /**
+     * 显示排行榜
+     * @param player 玩家
+     */
+    public static void sendRankingList(Player player, GameRecord.type type) {
+        Language language = GunWar.getInstance().getLanguage();
+        LinkedHashMap<String,Integer> list = GameRecord.getRankingList(type);
+        StringBuilder s = new StringBuilder();
+        switch (type) {
+            case KILLS:
+                s.append(language.killsRanking).append("\n");
+                break;
+            case DEATHS:
+                s.append(language.deathsRanking).append("\n");
+                break;
+            case VICTORY:
+                s.append(language.victoryRanking).append("\n");
+                break;
+            case DEFEAT:
+                s.append(language.defeatRanking).append("\n");
+                break;
+        }
+        int i = 1;
+        for (Map.Entry<String, Integer> entry : list.entrySet()) {
+            s.append(language.ranking.replace("%ranking%", i + "")
+                    .replace("%player%", entry.getKey())
+                    .replace("%number%", entry.getValue() + "")).append("\n");
+            i++;
+            if (i > 10) {
+                break;
+            }
+        }
+        FormWindowModal modal = new FormWindowModal(
+                PLUGIN_NAME, s.toString(), language.buttonOK, language.buttonReturn);
+        player.showFormWindow(modal, RANKING_LIST);
     }
 
 }
