@@ -8,11 +8,6 @@ import java.util.*;
 
 public class GameRecord {
 
-    public static String KILLS = "kills";
-    public static String DEATHS = "deaths";
-    public static String VICTORY = "victory";
-    public static String DEFEAT = "defeat";
-
     /**
      * 获取字符串格式类型
      * @param type 类型
