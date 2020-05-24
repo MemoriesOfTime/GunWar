@@ -10,7 +10,6 @@ import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
-import com.sun.javaws.exceptions.CacheAccessException;
 
 public class GuiListener implements Listener {
 
