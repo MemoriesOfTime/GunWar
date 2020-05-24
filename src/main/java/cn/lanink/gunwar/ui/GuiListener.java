@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -9,6 +10,7 @@ import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
+import com.sun.javaws.exceptions.CacheAccessException;
 
 public class GuiListener implements Listener {
 
@@ -46,7 +48,7 @@ public class GuiListener implements Listener {
                             GuiCreate.sendRoomListMenu(player);
                             break;
                         case 3:
-                            GuiCreate.sendGameRecord(player);
+                            GuiCreate.sendRecordList(player);
                             break;
                     }
                     break;
@@ -55,6 +57,28 @@ public class GuiListener implements Listener {
                         GuiCreate.sendUserMenu(player);
                     }else {
                         GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText());
+                    }
+                    break;
+                case GuiCreate.RECORD_LIST:
+                    switch (simple.getResponse().getClickedButtonId()) {
+                        case 0:
+                            GuiCreate.sendGameRecord(player);
+                            break;
+                        case 1:
+                            GuiCreate.sendRankingList(player, GameRecord.type.KILLS);
+                            break;
+                        case 2:
+                            GuiCreate.sendRankingList(player, GameRecord.type.DEATHS);
+                            break;
+                        case 3:
+                            GuiCreate.sendRankingList(player, GameRecord.type.VICTORY);
+                            break;
+                        case 4:
+                            GuiCreate.sendRankingList(player, GameRecord.type.DEFEAT);
+                            break;
+                        case 5:
+                            GuiCreate.sendUserMenu(player);
+                            break;
                     }
                     break;
                 case GuiCreate.ADMIN_MENU:
@@ -98,9 +122,10 @@ public class GuiListener implements Listener {
                         GuiCreate.sendRoomListMenu(player);
                     }
                     break;
-                case GuiCreate.GAMERECORD:
+                case GuiCreate.GAME_RECORD:
+                case GuiCreate.RANKING_LIST:
                     if (modal.getResponse().getClickedButtonId() == 1) {
-                        GuiCreate.sendUserMenu(player);
+                        GuiCreate.sendRecordList(player);
                     }
                     break;
             }

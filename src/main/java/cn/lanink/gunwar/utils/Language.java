@@ -11,7 +11,8 @@ public class Language {
             "§a/%cmdName% ui §e打开ui \n " +
             "§a/%cmdName% join 房间名称 §e加入游戏 \n " +
             "§a/%cmdName% quit §e退出游戏 \n " +
-            "§a/%cmdName% list §e查看房间列表";
+            "§a/%cmdName% list §e查看房间列表 \n " +
+            "§a/%cmdName% record §e查看战绩(排行榜)";
     public String noPermission = "§c你没有权限使用这个命令！";
     public String joinRoom = "§a你已加入房间: %name%";
     public String joinRoomIsInRoom = "§c你已经在一个房间中了!";
@@ -80,7 +81,7 @@ public class Language {
     public String userMenuButton1 = "§e随机加入房间";
     public String userMenuButton2 = "§e退出当前房间";
     public String userMenuButton3 = "§e查看房间列表";
-    public String userMenuButton4 = "§e查看个人战绩";
+    public String userMenuButton4 = "§e查看战绩排行榜";
     public String adminMenuSetLevel = "当前设置地图：%name%";
     public String adminMenuButton1 = "§e设置等待出生点";
     public String adminMenuButton2 = "§e设置红队出生点";
@@ -93,6 +94,16 @@ public class Language {
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
+    public String recordListButton1 = "§e查看个人战绩";
+    public String recordListButton2 = "§e查看击杀排行榜";
+    public String recordListButton3 = "§e查看死亡排行榜";
+    public String recordListButton4 = "§e查看胜利排行榜";
+    public String recordListButton5 = "§e查看失败排行榜";
+    public String killsRanking = "击杀排行榜： ";
+    public String deathsRanking = "死亡排行榜： ";
+    public String victoryRanking = "胜利次数排行榜： ";
+    public String defeatRanking = "失败次数排行榜： ";
+    public String ranking = "Top%ranking% 玩家: %player% 次数: %number%";
     public String playerGameRecord = " 击杀数: %kills% \n 死亡数: %deaths% \n 胜利次数: %victory% \n 失败次数: %defeat%";
     //物品
     public String itemQuitRoom = "§c退出房间";
@@ -175,6 +186,16 @@ public class Language {
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
+        this.recordListButton1 = config.getString("recordListButton1", this.recordListButton1);
+        this.recordListButton2 = config.getString("recordListButton2", this.recordListButton2);
+        this.recordListButton3 = config.getString("recordListButton3", this.recordListButton3);
+        this.recordListButton4 = config.getString("recordListButton4", this.recordListButton4);
+        this.recordListButton5 = config.getString("recordListButton5", this.recordListButton5);
+        this.killsRanking = config.getString("killsRanking", this.killsRanking);
+        this.deathsRanking = config.getString("deathsRanking", this.deathsRanking);
+        this.victoryRanking = config.getString("victoryRanking", this.victoryRanking);
+        this.defeatRanking = config.getString("defeatRanking", this.defeatRanking);
+        this.ranking = config.getString("ranking", this.ranking);
         this.playerGameRecord = config.getString("playerGameRecord", this.playerGameRecord);
         //物品
         this.itemQuitRoom = config.getString("itemQuitRoom", this.itemQuitRoom);
