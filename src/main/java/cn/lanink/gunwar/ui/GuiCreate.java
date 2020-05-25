@@ -119,7 +119,7 @@ public class GuiCreate {
      */
     public static void sendRecordList(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()));
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         simple.addButton(new ElementButton(language.recordListButton1, new ElementButtonImageData("path", "textures/ui/copy")));
         simple.addButton(new ElementButton(language.recordListButton2, new ElementButtonImageData("path", "textures/ui/creative_icon")));
         simple.addButton(new ElementButton(language.recordListButton3, new ElementButtonImageData("path", "textures/ui/creative_icon")));

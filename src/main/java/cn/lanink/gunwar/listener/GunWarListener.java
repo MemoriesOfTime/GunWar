@@ -22,11 +22,9 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.scheduler.Task;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class GunWarListener implements Listener {
 
@@ -224,19 +222,41 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         int victory = event.getVictory();
+        LinkedList<Player> victoryPlayers = new LinkedList<>();
+        LinkedList<Player> defeatPlayers = new LinkedList<>();
         if (room.getPlayers().size() > 0) {
-            List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
-            List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
-            if (event.getVictoryPlayers().size() > 0 && vCmds.size() > 0) {
-                for (Player player : event.getVictoryPlayers()) {
-                    Tools.cmd(player, vCmds);
+            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                if (victory == 1) {
+                    if (entry.getValue() == 1 || entry.getValue() == 11) {
+                        victoryPlayers.add(entry.getKey());
+                    }else {
+                        defeatPlayers.add(entry.getKey());
+                    }
+                }else if (victory == 2) {
+                    if (entry.getValue() == 2 || entry.getValue() == 12) {
+                        victoryPlayers.add(entry.getKey());
+                    }else {
+                        defeatPlayers.add(entry.getKey());
+                    }
                 }
             }
-            if (event.getDefeatPlayers().size() > 0 && dCmds.size() > 0) {
-                for (Player player : event.getDefeatPlayers()) {
-                    Tools.cmd(player, dCmds);
+            this.gunWar.getServer().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
+                @Override
+                public void onRun(int i) {
+                    List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
+                    List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
+                    if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
+                        for (Player player : victoryPlayers) {
+                            Tools.cmd(player, vCmds);
+                        }
+                    }
+                    if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
+                        for (Player player : defeatPlayers) {
+                            Tools.cmd(player, dCmds);
+                        }
+                    }
                 }
-            }
+            }, 40);
         }
     }
 
