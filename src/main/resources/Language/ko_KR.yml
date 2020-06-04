@@ -1,6 +1,6 @@
 useCmdInRoom: "§e >>§c게임에 참가 중일 땐 명령어를 사용 하실 수 없습니다."
 cmdHelp: "§a도움말 보기 : /%cmdName% help"
-userHelp: "§eGunWar--도움말 목록\n §a/%cmdName% ui §eUI 열기 \n §a/%cmdName% join 게임이름 §e 해당 게임에 참여합니다. \n § a/%cmdName% quit 참여한 게임에서 나갑니다. \n §a/%cmdName% list 게임 목록 보기
+userHelp: "§eGunWar--도움말 목록\n §a/%cmdName% ui §eUI 열기 \n §a/%cmdName% join 게임이름 §e 해당 게임에 참여합니다. \n § a/%cmdName% quit 참여한 게임에서 나갑니다. \n §a/%cmdName% list 게임 목록 보기"
 noPermission: "§c 권한이 없습니다!"
 joinRoom: "§a%name%님이 게임에 참여 하셨습니다!"
 joinRoomIsInRoom: "§c이미 게임에 참가 하셨습니다!"
@@ -44,9 +44,9 @@ playerTeamChat: "§c[팀] %player% + §b >> %message%"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: " 소속 팀: %team% \n 플레이어: §a %playerNumber%/10 \n §a 시작카운트다운: §e%time% "
 waitScoreBoard: " 소속 팀: %team%\n 플레이어: §a %playerNumber%/10 \n 최소 게임인원 2인 \n 다른 플레이어를 기다리는 중.. "
-waitTimeBottom: "§a가 현재 이미 있습니다: %playerNumber% 플레이어 \n §a 게임 그리고 다음과 같이 %time% 초 시작!
+waitTimeBottom: "§a가 현재 이미 있습니다: %playerNumber% 플레이어 \n §a 게임 그리고 다음과 같이 %time% 초 시작!"
 waitBottom: "§c는 플레이어가 가입하기를 기다리는 중이고 현재 이미 있습니다: %playerNumber% 플레이어"
-gameTimeScoreBoard: " §l§a에 속한 행렬: %team% \n §l§a 현재 혈량:: e %health% \n §l§a남은 시간: §e %time% 초 \n 의 행렬 생존 인원: \n §l§c红: %red%인 99청: %blue%
+gameTimeScoreBoard: " §l§a에 속한 행렬: %team% \n §l§a 현재 혈량:: e %health% \n §l§a남은 시간: §e %time% 초 \n 의 행렬 생존 인원: \n §l§c红: %red%인 99청: %blue%"
 gameTimeBottom: "§l§c 혈량: %health%"
 victoryMessage: "§e 축하 %teamName% §e획득승리하다"
 userMenuButton1 : "§e 랜덤으로 방에 가입"
