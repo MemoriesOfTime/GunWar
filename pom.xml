@@ -128,9 +128,9 @@
         <dependency>
             <groupId>tip.Main</groupId>
             <artifactId>Tips</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.8</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Tips_v1.6.1.jar</systemPath>
+            <systemPath>${project.basedir}/lib/Tips_v1.6.8.jar</systemPath>
         </dependency>
     </dependencies>
 
