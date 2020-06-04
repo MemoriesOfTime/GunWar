@@ -17,12 +17,13 @@ import java.util.LinkedList;
  */
 public class ScoreBoardTask extends PluginTask<GunWar> {
 
-    private final String taskName = "ScoreBoardTask";
     private final Language language;
     private final Room room;
+    private boolean use = false;
 
     public ScoreBoardTask(GunWar owner, Room room) {
         super(owner);
+        owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
     }
@@ -32,55 +33,53 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
         if (this.room.getMode() != 2) {
             this.cancel();
         }
-        if (!this.room.task.contains(this.taskName)) {
-            this.room.task.add(this.taskName);
-            owner.getServer().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
-                @Override
-                public void onRun() {
-                    if (room.getPlayers().values().size() > 0) {
-                        if (room.getMode() == 2) {
-                            int red = 0, blue = 0;
-                            for (int team : room.getPlayers().values()) {
-                                if (team == 1) {
-                                    red++;
-                                }else if (team == 2) {
-                                    blue++;
-                                }
-                            }
-                            for (Player player : room.getPlayers().keySet()) {
-                                ScoreBoardMessage score = new ScoreBoardMessage(
-                                        room.getLevel().getName(), true, "§eGunWar", new LinkedList<>());
-                                LinkedList<String> ms = new LinkedList<>();
-                                String team;
-                                switch (room.getPlayerMode(player)) {
-                                    case 1:
-                                    case 11:
-                                        team = language.teamNameRed;
-                                        break;
-                                    default:
-                                        team = language.teamNameBlue;
-                                        break;
-                                }
-                                for (String string : language.gameTimeScoreBoard.split("\n")) {
-                                    ms.add(string.replace("%team%", team)
-                                            .replace("%health%", room.getPlayerHealth().getOrDefault(player, 0F) + "")
-                                            .replace("%time%", room.gameTime + "")
-                                            .replace("%red%", red + "")
-                                            .replace("%blue%", blue + "")
-                                            .replace("%redRound%", room.redRound + "")
-                                            .replace("%blueRound%", room.blueRound + ""));
-                                }
-                                score.setMessages(ms);
-                                Api.setPlayerShowMessage(player.getName(), score);
-                            }
-                        }
-                    }
-                    while (room.task.contains(taskName)) {
-                        room.task.remove(taskName);
+        if (!use) {
+            use = true;
+            if (room.getPlayers().values().size() > 0) {
+                int red = 0, blue = 0;
+                for (int team : room.getPlayers().values()) {
+                    if (team == 1) {
+                        red++;
+                    }else if (team == 2) {
+                        blue++;
                     }
                 }
-            });
+                for (Player player : room.getPlayers().keySet()) {
+                    LinkedList<String> ms = new LinkedList<>();
+                    String team;
+                    switch (room.getPlayerMode(player)) {
+                        case 1:
+                        case 11:
+                            team = language.teamNameRed;
+                            break;
+                        default:
+                            team = language.teamNameBlue;
+                            break;
+                    }
+                    for (String string : language.gameTimeScoreBoard.split("\n")) {
+                        ms.add(string.replace("%team%", team)
+                                .replace("%health%", room.getPlayerHealth().getOrDefault(player, 0F) + "")
+                                .replace("%time%", room.gameTime + "")
+                                .replace("%red%", red + "")
+                                .replace("%blue%", blue + "")
+                                .replace("%redRound%", room.redRound + "")
+                                .replace("%blueRound%", room.blueRound + ""));
+                    }
+                    ScoreBoardMessage score = new ScoreBoardMessage(
+                            room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
+                    Api.setPlayerShowMessage(player.getName(), score);
+                }
+            }
+            use = false;
         }
+    }
+
+    @Override
+    public void cancel() {
+        while (owner.taskList.contains(this.getTaskId())) {
+            owner.taskList.remove(this.getTaskId());
+        }
+        super.cancel();
     }
 
 }

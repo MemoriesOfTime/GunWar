@@ -10,6 +10,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 import tip.messages.BossBarMessage;
 import tip.messages.NameTagMessage;
+import tip.messages.TipMessage;
 import tip.utils.Api;
 
 import java.util.*;
@@ -49,7 +50,7 @@ public class Room extends BaseRoom {
     protected void initTask() {
         this.setMode(1);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20, true);
+                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20);
     }
 
     /**
@@ -74,7 +75,12 @@ public class Room extends BaseRoom {
         this.mode = 0;
         if (normal) {
             if (this.players.size() > 0) {
-                this.players.keySet().forEach(this::quitRoomOnline);
+                Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<Player, Integer> entry = it.next();
+                    it.remove();
+                    this.quitRoomOnline(entry.getKey());
+                }
             }
             this.players.clear();
         }else {
@@ -83,7 +89,6 @@ public class Room extends BaseRoom {
         }
         this.playerHealth.clear();
         this.initTime();
-        this.task = new ArrayList<>();
         Tools.cleanEntity(this.getLevel());
     }
 
@@ -104,7 +109,9 @@ public class Room extends BaseRoom {
         player.getInventory().setItem(3, Tools.getItem(11));
         player.getInventory().setItem(5, Tools.getItem(12));
         player.getInventory().setItem(8, Tools.getItem(10));
-        NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, "");
+        TipMessage tipMessage = new TipMessage(this.level, false, 0, "");
+        Api.setPlayerShowMessage(player.getName(), tipMessage);
+        NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, player.getName());
         Api.setPlayerShowMessage(player.getName(), nameTagMessage);
         BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());
         Api.setPlayerShowMessage(player.getName(), bossBarMessage);

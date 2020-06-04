@@ -10,14 +10,18 @@ import tip.utils.Api;
 
 public class TipTask extends PluginTask<GunWar> {
 
-    private final String taskName = "ScoreBoardTask";
     private final Language language;
     private final Room room;
 
     public TipTask(GunWar owner, Room room) {
         super(owner);
+        owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
+        TipMessage tipMessage = new TipMessage(room.getLevel().getName(), false, 0, "");
+        for (Player player : room.getPlayers().keySet()) {
+            Api.setPlayerShowMessage(player.getName(), tipMessage);
+        }
     }
 
     @Override
@@ -25,17 +29,10 @@ public class TipTask extends PluginTask<GunWar> {
         if (this.room.getMode() != 2) {
             this.cancel();
         }
-        if (!this.room.task.contains(this.taskName)) {
-            this.room.task.add(this.taskName);
-            for (Player player : room.getPlayers().keySet()) {
-                TipMessage tip = new TipMessage(room.getLevel().getName(), true, 0, null);
-                tip.setMessage(language.gameTimeBottom
-                        .replace("%health%", this.getStringHealth(room.getPlayerHealth().getOrDefault(player, 0F))));
-                Api.setPlayerShowMessage(player.getName(), tip);
-            }
-            while (this.room.task.contains(this.taskName)) {
-                this.room.task.remove(this.taskName);
-            }
+        for (Player player : room.getPlayers().keySet()) {
+            player.sendTip(language.gameTimeBottom
+                    .replace("%health%",
+                            this.getStringHealth(room.getPlayerHealth().getOrDefault(player, 0F))));
         }
     }
 
@@ -49,6 +46,14 @@ public class TipTask extends PluginTask<GunWar> {
             }
         }
         return string.toString();
+    }
+
+    @Override
+    public void cancel() {
+        while (owner.taskList.contains(this.getTaskId())) {
+            owner.taskList.remove(this.getTaskId());
+        }
+        super.cancel();
     }
 
 }

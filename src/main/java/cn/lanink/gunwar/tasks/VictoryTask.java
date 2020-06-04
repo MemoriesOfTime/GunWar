@@ -18,14 +18,15 @@ import java.util.Map;
 
 public class VictoryTask extends PluginTask<GunWar> {
 
-    private final String taskName = "VictoryTask";
-    private final Language language = GunWar.getInstance().getLanguage();
+    private final Language language;
     private final Room room;
     private final int victory;
     private int victoryTime;
 
     public VictoryTask(GunWar owner, Room room, int victory) {
         super(owner);
+        owner.taskList.add(this.getTaskId());
+        this.language = owner.getLanguage();
         this.room = room;
         this.victoryTime = 10;
         this.victory = victory;
@@ -59,12 +60,8 @@ public class VictoryTask extends PluginTask<GunWar> {
                 }
                 entry.getKey().sendTitle(this.language.victoryBlue, "", 10, 40, 20);
             }
-            if (owner.getConfig().getBoolean("底部显示信息", true)) {
-                Api.setPlayerShowMessage(entry.getKey().getName(), tipMessage);
-            }
-            if (owner.getConfig().getBoolean("计分板显示信息", true)) {
-                Api.setPlayerShowMessage(entry.getKey().getName(), scoreBoardMessage);
-            }
+            Api.setPlayerShowMessage(entry.getKey().getName(), tipMessage);
+            Api.setPlayerShowMessage(entry.getKey().getName(), scoreBoardMessage);
         }
     }
 
@@ -91,6 +88,14 @@ public class VictoryTask extends PluginTask<GunWar> {
                 }
             }
         }
+    }
+
+    @Override
+    public void cancel() {
+        while (owner.taskList.contains(this.getTaskId())) {
+            owner.taskList.remove(this.getTaskId());
+        }
+        super.cancel();
     }
 
 }

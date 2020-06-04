@@ -23,13 +23,20 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
+import tip.messages.NameTagMessage;
+import tip.utils.Api;
 
 import java.util.*;
 
 public class GunWarListener implements Listener {
 
-    private final GunWar gunWar = GunWar.getInstance();
-    private final Language language = GunWar.getInstance().getLanguage();
+    private final GunWar gunWar;
+    private final Language language;
+
+    public GunWarListener(GunWar gunWar) {
+        this.gunWar = gunWar;
+        this.language = gunWar.getLanguage();
+    }
 
     /**
      * 房间开始事件
@@ -41,15 +48,11 @@ public class GunWarListener implements Listener {
         room.setMode(2);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomAssignTeamEvent(room));
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                GunWar.getInstance(), new TimeTask(GunWar.getInstance(), room), 20, true);
-        if (this.gunWar.getConfig().getBoolean("计分板显示信息", true)) {
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    GunWar.getInstance(), new ScoreBoardTask(GunWar.getInstance(), room), 10, true);
-        }
-        if (this.gunWar.getConfig().getBoolean("底部显示信息", true)) {
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    GunWar.getInstance(), new TipTask(GunWar.getInstance(), room), 10, true);
-        }
+                this.gunWar, new TimeTask(this.gunWar, room), 20, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                this.gunWar, new ScoreBoardTask(this.gunWar, room), 18, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                this.gunWar, new TipTask(this.gunWar, room), 10);
     }
 
     /**
@@ -110,10 +113,16 @@ public class GunWarListener implements Listener {
         for (Player player : redTeam) {
             room.getPlayers().put(player, 1);
             player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
+            NameTagMessage nameTagMessage =
+                    new NameTagMessage(player.getLevel().getName(), true, "§c" + player.getName());
+            Api.setPlayerShowMessage(player.getName(), nameTagMessage);
         }
         for (Player player : blueTeam) {
             room.getPlayers().put(player, 2);
             player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
+            NameTagMessage nameTagMessage =
+                    new NameTagMessage(player.getLevel().getName(), true, "§9" + player.getName());
+            Api.setPlayerShowMessage(player.getName(), nameTagMessage);
         }
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }
@@ -189,12 +198,12 @@ public class GunWarListener implements Listener {
             if ((room.redRound - room.blueRound) > 0) {
                 room.setMode(3);
                 Server.getInstance().getScheduler().scheduleRepeatingTask(
-                        GunWar.getInstance(), new VictoryTask(GunWar.getInstance(), room, 1), 20);
+                        this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
                 return;
             }else if ((room.blueRound - room.redRound) > 0) {
                 room.setMode(3);
                 Server.getInstance().getScheduler().scheduleRepeatingTask(
-                        GunWar.getInstance(), new VictoryTask(GunWar.getInstance(), room, 2), 20);
+                        this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
                 return;
             }
         }
@@ -296,7 +305,7 @@ public class GunWarListener implements Listener {
         player.sendTitle(this.language.titleDeathTitle,
                 this.language.titleDeathSubtitle.replace("%player%", damagePlayer.getName()),
                 10, 30, 10);
-        Server.getInstance().getScheduler().scheduleAsyncTask(GunWar.getInstance(), new AsyncTask() {
+        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override
             public void onRun() {
                 for (Player p : room.getPlayers().keySet()) {

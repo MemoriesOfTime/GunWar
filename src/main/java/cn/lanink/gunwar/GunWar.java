@@ -22,11 +22,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "1.0.0-SNAPSHOT git-30dbde1";
+    public static String VERSION = "?";
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
@@ -34,6 +35,7 @@ public class GunWar extends PluginBase {
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
+    public final LinkedList<Integer> taskList = new LinkedList<>();
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -67,7 +69,7 @@ public class GunWar extends PluginBase {
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
-        getServer().getPluginManager().registerEvents(new GunWarListener(), this);
+        getServer().getPluginManager().registerEvents(new GunWarListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         new MetricsLite(this, 7448);
         getLogger().info("§e插件加载完成！欢迎使用！");
@@ -91,7 +93,9 @@ public class GunWar extends PluginBase {
         }
         this.rooms.clear();
         this.roomConfigs.clear();
-        getServer().getScheduler().cancelTask(this);
+        for (int id : this.taskList) {
+            getServer().getScheduler().cancelTask(id);
+        }
         getLogger().info("§c插件卸载完成！");
     }
 
@@ -148,7 +152,9 @@ public class GunWar extends PluginBase {
         if (this.roomConfigs.values().size() > 0) {
             this.roomConfigs.clear();
         }
-        getServer().getScheduler().cancelTask(this);
+        for (int id : this.taskList) {
+            getServer().getScheduler().cancelTask(id);
+        }
     }
 
     /**

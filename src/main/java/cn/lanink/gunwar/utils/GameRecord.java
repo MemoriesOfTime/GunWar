@@ -9,6 +9,21 @@ import java.util.*;
 public class GameRecord {
 
     /**
+     * 获取排行
+     * @param type 排行榜类型
+     * @return 排行
+     */
+    public static LinkedHashMap<String,Integer> getRankingList(type type) {
+        Config config = GunWar.getInstance().getGameRecord();
+        Map<String, Object> map = config.getAll();
+        HashMap<String, Integer> list = new HashMap<>();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            list.put(entry.getKey(),  getPlayerRecord(entry.getKey()).getOrDefault(getTypeByEnum(type), 0));
+        }
+        return getRankingList(list);
+    }
+
+    /**
      * 获取字符串格式类型
      * @param type 类型
      * @return 字符串格式类型
@@ -166,27 +181,11 @@ public class GameRecord {
         return map1;
     }
 
-    /**
-     * 获取排行
-     * @param type 排行榜类型
-     * @return 击杀数排行
-     */
-    public static LinkedHashMap<String,Integer> getRankingList(type type) {
-        Config config = GunWar.getInstance().getGameRecord();
-        Map<String, Object> map = config.getAll();
-        HashMap<String, Integer> list = new HashMap<>();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            list.put(entry.getKey(),  getPlayerRecord(entry.getKey()).getOrDefault(getTypeByEnum(type), 0));
-        }
-        return getRankingList(list);
-    }
-
     public enum type {
         KILLS,
         DEATHS,
         VICTORY,
         DEFEAT
     }
-
 
 }
