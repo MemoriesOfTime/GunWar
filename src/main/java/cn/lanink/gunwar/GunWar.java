@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "1.0.0-SNAPSHOT git-5e48ae3";
+    public static String VERSION = "1.0.0-SNAPSHOT git-30dbde1";
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
@@ -162,7 +162,8 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         getLogger().info("§e开始加载资源文件");
         //语言文件
-        saveResource("Language/zh_CN.yml", "/Language/zh_CN.yml", false);
+        saveResource("Language/zh_CN.yml", false);
+        saveResource("Language/ko_KR.yml", false);
         String s = this.config.getString("language", "zh_CN");
         File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
