@@ -96,6 +96,7 @@ public class GunWar extends PluginBase {
         for (int id : this.taskList) {
             getServer().getScheduler().cancelTask(id);
         }
+        this.taskList.clear();
         getLogger().info("§c插件卸载完成！");
     }
 
@@ -119,10 +120,10 @@ public class GunWar extends PluginBase {
                     Config config = getRoomConfig(fileName[0]);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
-                            config.getString("World", null) == null ||
-                            config.getString("waitSpawn", null) == null ||
-                            config.getString("redSpawn", null) == null ||
-                            config.getString("blueSpawn", null) == null) {
+                            config.getString("World", "").trim().equals("") ||
+                            config.getString("waitSpawn", "").trim().equals("") ||
+                            config.getString("redSpawn", "").trim().equals("") ||
+                            config.getString("blueSpawn", "").trim().equals("")) {
                         getLogger().warning("§c房间：" + fileName[0] + " 配置不完整，加载失败！");
                         continue;
                     }
@@ -155,6 +156,7 @@ public class GunWar extends PluginBase {
         for (int id : this.taskList) {
             getServer().getScheduler().cancelTask(id);
         }
+        this.taskList.clear();
     }
 
     /**
