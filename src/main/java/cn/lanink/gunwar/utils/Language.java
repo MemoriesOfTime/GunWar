@@ -8,7 +8,7 @@ public class Language {
     public String useCmdInRoom = "§e >> §c游戏中无法使用其他命令";
     public String cmdHelp = "§a查看帮助：/%cmdName% help";
     public String userHelp = "§eGunWar--命令帮助 \n " +
-            "§a/%cmdName% ui §e打开ui \n " +
+            "§a/%cmdName% §e打开ui(仅游戏内可用) \n " +
             "§a/%cmdName% join 房间名称 §e加入游戏 \n " +
             "§a/%cmdName% quit §e退出游戏 \n " +
             "§a/%cmdName% list §e查看房间列表 \n " +
@@ -27,7 +27,7 @@ public class Language {
     public String listRoom = "§e房间列表： §a %list%";
     public String useCmdInCon = "请不要在控制台执行此指令!";
     public String adminHelp = "§eGunWar--命令帮助 \n " +
-            "§a/%cmdName% ui §e打开ui \n " +
+            "§a/%cmdName% §e打开ui(仅游戏内可用) \n " +
             "§a/%cmdName% setwaitspawn §e设置当前位置为等待点 \n " +
             "§a/%cmdName% setredspawn §e将当前位置设置为红队出生点 \n " +
             "§a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点 \n " +

@@ -12,7 +12,7 @@ public class ListCommand extends BaseSubCommand {
 
     @Override
     public boolean canUser(CommandSender sender) {
-        return sender.isPlayer();
+        return true;
     }
 
     @Override
