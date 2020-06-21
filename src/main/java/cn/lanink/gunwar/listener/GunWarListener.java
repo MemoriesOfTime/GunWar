@@ -47,6 +47,7 @@ public class GunWarListener implements Listener {
         Room room = event.getRoom();
         room.setMode(2);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomAssignTeamEvent(room));
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar, new TimeTask(this.gunWar, room), 20, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -124,7 +125,6 @@ public class GunWarListener implements Listener {
                     new NameTagMessage(player.getLevel().getName(), true, "§9" + player.getName());
             Api.setPlayerShowMessage(player.getName(), nameTagMessage);
         }
-        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }
 
     /**

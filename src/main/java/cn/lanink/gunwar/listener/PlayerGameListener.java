@@ -249,22 +249,9 @@ public class PlayerGameListener implements Listener {
                         if (entry.getValue() != 1 && entry.getValue() != 2) {
                             continue;
                         }
-                        int x, y, z;
-                        if (entry.getKey().getFloorX() > entity.getFloorX()) {
-                            x = entry.getKey().getFloorX() - entity.getFloorX();
-                        }else {
-                            x = entity.getFloorX() - entry.getKey().getFloorX();
-                        }
-                        if (entry.getKey().getFloorY() > entity.getFloorY()) {
-                            y = entry.getKey().getFloorY() - entity.getFloorY();
-                        }else {
-                            y = entity.getFloorY() - entry.getKey().getFloorY();
-                        }
-                        if (entry.getKey().getFloorZ() > entity.getFloorZ()) {
-                            z = entry.getKey().getFloorZ() - entity.getFloorZ();
-                        }else {
-                            z = entity.getFloorZ() - entry.getKey().getFloorZ();
-                        }
+                        int x = Math.abs(entry.getKey().getFloorX() - entity.getFloorX());
+                        int y = Math.abs(entry.getKey().getFloorY() - entity.getFloorY());
+                        int z = Math.abs(entry.getKey().getFloorZ() - entity.getFloorZ());
                         if (x > 5 && y > 5 && z > 5) {
                             break;
                         }
