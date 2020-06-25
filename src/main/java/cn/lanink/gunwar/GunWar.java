@@ -2,28 +2,26 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
+import cn.lanink.gunwar.listener.GunWarListener;
 import cn.lanink.gunwar.listener.PlayerGameListener;
 import cn.lanink.gunwar.listener.PlayerJoinAndQuit;
 import cn.lanink.gunwar.listener.RoomLevelProtection;
-import cn.lanink.gunwar.listener.GunWarListener;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
+import cn.lanink.gunwar.ui.GuiType;
 import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.MetricsLite;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
-import cn.lanink.gunwar.utils.MetricsLite;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class GunWar extends PluginBase {
 
@@ -36,6 +34,7 @@ public class GunWar extends PluginBase {
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
     public final LinkedList<Integer> taskList = new LinkedList<>();
+    private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -210,6 +209,10 @@ public class GunWar extends PluginBase {
 
     public String getCmdAdmin() {
         return this.cmdAdmin;
+    }
+
+    public HashMap<Integer, GuiType> getGuiCache() {
+        return this.guiCache;
     }
 
     public Skin getCorpseSkin() {

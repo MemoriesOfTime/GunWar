@@ -5,12 +5,15 @@ import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButton;
 import cn.nukkit.form.element.ElementButtonImageData;
 import cn.nukkit.form.element.ElementInput;
+import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
+import cn.nukkit.scheduler.Task;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -39,7 +42,7 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.userMenuButton2, new ElementButtonImageData("path", "textures/ui/switch_select_button")));
         simple.addButton(new ElementButton(language.userMenuButton3, new ElementButtonImageData("path", "textures/ui/servers")));
         simple.addButton(new ElementButton(language.userMenuButton4, new ElementButtonImageData("path", "textures/ui/creative_icon")));
-        player.showFormWindow(simple, USER_MENU);
+        showFormWindow(player, simple, GuiType.USER_MENU);
     }
 
     /**
@@ -55,7 +58,7 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
         simple.addButton(new ElementButton(language.adminMenuButton5,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
         simple.addButton(new ElementButton(language.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/redX1")));
-        player.showFormWindow(simple, ADMIN_MENU);
+        showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
     /**
@@ -67,7 +70,7 @@ public class GuiCreate {
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput(language.adminTimeMenuInputText1, "", "60"));
         custom.addElement(new ElementInput(language.adminTimeMenuInputText2, "", "300"));
-        player.showFormWindow(custom, ADMIN_TIME_MENU);
+        showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
     }
 
     /**
@@ -81,7 +84,7 @@ public class GuiCreate {
             simple.addButton(new ElementButton("§e" + entry.getKey(), new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
         simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
-        player.showFormWindow(simple, ROOM_LIST_MENU);
+        showFormWindow(player, simple, GuiType.ROOM_LIST_MENU);
     }
 
     /**
@@ -90,27 +93,24 @@ public class GuiCreate {
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         Language language = GunWar.getInstance().getLanguage();
+        FormWindowModal modal;
         if (GunWar.getInstance().getRooms().containsKey(roomName.replace("§e", "").trim())) {
             Room room = GunWar.getInstance().getRooms().get(roomName.replace("§e", "").trim());
             if (room.getMode() == 2 || room.getMode() == 3) {
-                FormWindowModal modal = new FormWindowModal(
+                modal = new FormWindowModal(
                         PLUGIN_NAME, language.joinRoomIsPlaying, language.buttonReturn, language.buttonReturn);
-                player.showFormWindow(modal, ROOM_JOIN_OK);
             }else if (room.getPlayers().size() > 15){
-                FormWindowModal modal = new FormWindowModal(
+                modal = new FormWindowModal(
                         PLUGIN_NAME, language.joinRoomIsFull, language.buttonReturn, language.buttonReturn);
-                player.showFormWindow(modal, ROOM_JOIN_OK);
             }else {
-                FormWindowModal modal = new FormWindowModal(
+                modal = new FormWindowModal(
                         PLUGIN_NAME, language.joinRoomOK.replace("%name%", "\"" + roomName + "\""), language.buttonOK, language.buttonReturn);
-                player.showFormWindow(modal, ROOM_JOIN_OK);
             }
         }else {
-            FormWindowModal modal = new FormWindowModal(
+            modal = new FormWindowModal(
                     PLUGIN_NAME, language.joinRoomIsNotFound, language.buttonReturn, language.buttonReturn);
-            player.showFormWindow(modal, ROOM_JOIN_OK);
         }
-
+        showFormWindow(player, modal, GuiType.ROOM_JOIN_OK);
     }
 
     /**
@@ -126,7 +126,7 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.recordListButton4, new ElementButtonImageData("path", "textures/ui/creative_icon")));
         simple.addButton(new ElementButton(language.recordListButton5,  new ElementButtonImageData("path", "textures/ui/creative_icon")));
         simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
-        player.showFormWindow(simple, RECORD_LIST);
+        showFormWindow(player, simple, GuiType.RECORD_LIST);
     }
 
     /**
@@ -141,7 +141,7 @@ public class GuiCreate {
                 .replace("%defeat%", GameRecord.getDefeat(player) + "");
         FormWindowModal modal = new FormWindowModal(
                 PLUGIN_NAME, s, language.buttonOK, language.buttonReturn);
-        player.showFormWindow(modal, GAME_RECORD);
+        showFormWindow(player, modal, GuiType.GAME_RECORD);
     }
 
     /**
@@ -178,7 +178,18 @@ public class GuiCreate {
         }
         FormWindowModal modal = new FormWindowModal(
                 PLUGIN_NAME, s.toString(), language.buttonOK, language.buttonReturn);
-        player.showFormWindow(modal, RANKING_LIST);
+        showFormWindow(player, modal, GuiType.RANKING_LIST);
+    }
+
+    public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
+        int id = player.showFormWindow(window);
+        GunWar.getInstance().getGuiCache().put(id, guiType);
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                GunWar.getInstance().getGuiCache().remove(id);
+            }
+        }, 2400);
     }
 
 }

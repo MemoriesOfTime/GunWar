@@ -32,10 +32,13 @@ public class GuiListener implements Listener {
         if (player == null || event.getWindow() == null || event.getResponse() == null) {
             return;
         }
+        GuiType cache = this.gunWar.getGuiCache().get(event.getFormID());
+        if (cache == null) return;
+        this.gunWar.getGuiCache().remove(event.getFormID());
         if (event.getWindow() instanceof FormWindowSimple) {
             FormWindowSimple simple = (FormWindowSimple) event.getWindow();
-            switch (event.getFormID()) {
-                case GuiCreate.USER_MENU:
+            switch (cache) {
+                case USER_MENU:
                     switch (simple.getResponse().getClickedButtonId()) {
                         case 0:
                             GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdUser() + " join");
@@ -51,14 +54,14 @@ public class GuiListener implements Listener {
                             break;
                     }
                     break;
-                case GuiCreate.ROOM_LIST_MENU:
+                case ROOM_LIST_MENU:
                     if (simple.getResponse().getClickedButton().getText().equals(language.buttonReturn)) {
                         GuiCreate.sendUserMenu(player);
                     }else {
                         GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText());
                     }
                     break;
-                case GuiCreate.RECORD_LIST:
+                case RECORD_LIST:
                     switch (simple.getResponse().getClickedButtonId()) {
                         case 0:
                             GuiCreate.sendGameRecord(player);
@@ -80,7 +83,7 @@ public class GuiListener implements Listener {
                             break;
                     }
                     break;
-                case GuiCreate.ADMIN_MENU:
+                case ADMIN_MENU:
                     switch (simple.getResponse().getClickedButtonId()) {
                         case 0:
                             GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaitspawn");
@@ -105,14 +108,14 @@ public class GuiListener implements Listener {
             }
         }else if (event.getWindow() instanceof FormWindowCustom) {
             FormWindowCustom custom = (FormWindowCustom) event.getWindow();
-            if (event.getFormID() == GuiCreate.ADMIN_TIME_MENU) {
+            if (cache == GuiType.ADMIN_TIME_MENU) {
                 GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaittime " + custom.getResponse().getInputResponse(0));
                 GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgametime " + custom.getResponse().getInputResponse(1));
             }
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();
-            switch (event.getFormID()) {
-                case GuiCreate.ROOM_JOIN_OK:
+            switch (cache) {
+                case ROOM_JOIN_OK:
                     if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(language.buttonReturn)) {
                         String[] s = modal.getContent().split("\"");
                         GunWar.getInstance().getServer().dispatchCommand(
@@ -121,8 +124,8 @@ public class GuiListener implements Listener {
                         GuiCreate.sendRoomListMenu(player);
                     }
                     break;
-                case GuiCreate.GAME_RECORD:
-                case GuiCreate.RANKING_LIST:
+                case GAME_RECORD:
+                case RANKING_LIST:
                     if (modal.getResponse().getClickedButtonId() == 1) {
                         GuiCreate.sendRecordList(player);
                     }
