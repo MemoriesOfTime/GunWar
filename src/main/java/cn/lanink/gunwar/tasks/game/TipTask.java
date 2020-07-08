@@ -30,9 +30,9 @@ public class TipTask extends PluginTask<GunWar> {
             this.cancel();
         }
         for (Player player : room.getPlayers().keySet()) {
-            player.sendTip(language.gameTimeBottom
+            player.sendTip(this.language.gameTimeBottom
                     .replace("%health%",
-                            this.getStringHealth(room.getPlayerHealth().getOrDefault(player, 0F))));
+                            this.getStringHealth(this.room.getPlayerHealth().getOrDefault(player, 0F))));
         }
     }
 

@@ -4,7 +4,6 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.PluginTask;
 import tip.messages.ScoreBoardMessage;
 import tip.utils.Api;
@@ -62,8 +61,8 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                                 .replace("%time%", room.gameTime + "")
                                 .replace("%red%", red + "")
                                 .replace("%blue%", blue + "")
-                                .replace("%redRound%", room.redRound + "")
-                                .replace("%blueRound%", room.blueRound + ""));
+                                .replace("%redRound%", room.redScore + "")
+                                .replace("%blueRound%", room.blueScore + ""));
                     }
                     ScoreBoardMessage score = new ScoreBoardMessage(
                             room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);

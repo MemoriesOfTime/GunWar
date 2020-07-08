@@ -1,10 +1,17 @@
 package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.event.GunWarPlayerRespawnEvent;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.utils.Tools;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
+import cn.nukkit.scheduler.Task;
+
+import java.util.Map;
 
 /**
  * 游戏时间计算
@@ -37,19 +44,53 @@ public class TimeTask extends PluginTask<GunWar> {
         if (!use) {
             use = true;
             int red = 0, blue = 0;
-            for (int team : room.getPlayers().values()) {
-                if (team == 1) {
-                    red++;
-                } else if (team == 2) {
-                    blue++;
-                }
+            switch (this.room.getGameMode()) {
+                case CTF:
+                    for (Map.Entry<Player, Integer> entry : this.room.getPlayerRespawnTime().entrySet()) {
+                        if (entry.getValue() > 0) {
+                            entry.setValue(entry.getValue() - 1);
+                            if (entry.getValue() == 0) {
+                                owner.getServer().getPluginManager().callEvent(
+                                        new GunWarPlayerRespawnEvent(this.room, entry.getKey()));
+                                owner.getServer().getScheduler().scheduleDelayedTask(owner, new Task() {
+                                    @Override
+                                    public void onRun(int i) {
+                                        Tools.addSound(entry.getKey(), Sound.RANDOM_ORB);
+                                    }
+                                }, 10, true);
+                            }
+                        }
+                    }
+                    for (int team : this.room.getPlayers().values()) {
+                        switch (team) {
+                            case 1:
+                            case 11:
+                                red++;
+                                break;
+                            case 2:
+                            case 12:
+                                blue++;
+                                break;
+                        }
+                    }
+                    break;
+                case CLASSIC:
+                default:
+                    for (int team : this.room.getPlayers().values()) {
+                        if (team == 1) {
+                            red++;
+                        } else if (team == 2) {
+                            blue++;
+                        }
+                    }
+                    break;
             }
             if (red == 0) {
-                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 2));
-                room.gameTime = room.getSetGameTime();
+                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 2));
+                this.room.gameTime = this.room.getSetGameTime();
             } else if (blue == 0) {
-                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, 1));
-                room.gameTime = room.getSetGameTime();
+                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 1));
+                this.room.gameTime = this.room.getSetGameTime();
             }
             use = false;
         }

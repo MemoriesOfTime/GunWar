@@ -38,12 +38,16 @@ public class Language {
     public String adminSetWaitSpawn = "§a等待出生点设置成功！";
     public String adminSetRedSpawn = "§a红队出生点设置成功！";
     public String adminSetBlueSpawn = "§a蓝队出生点设置成功！";
-    public String adminNotNumber = "§a时间只能设置为正整数！";
+    public String adminNotNumber = "§a输入的参数不是数字！";
     public String adminSetWaitTime = "§a等待时间已设置为：%time%";
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
+    public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
+    //房间模式
+    public String classic = "经典";
+    public String captureTheFlag = "夺旗";
     //游戏提示
     public String playerTeamSelect = "你已选择队伍";
     public String roomSafeKick = "\n§c房间非正常关闭!\n为了您的背包安全，请稍后重进服务器！";
@@ -142,6 +146,9 @@ public class Language {
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
+        //房间模式
+        this.classic = config.getString("classic", this.classic);
+        this.captureTheFlag = config.getString("captureTheFlag", this.captureTheFlag);
         //提示信息
         this.playerTeamSelect = config.getString("playerTeamSelect", this.playerTeamSelect);
         this.roomSafeKick = config.getString("roomSafeKick", this.roomSafeKick);

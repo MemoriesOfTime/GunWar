@@ -1,6 +1,8 @@
 package cn.lanink.gunwar.utils;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -60,8 +62,17 @@ public class Tools {
      * @param level 世界
      */
     public static void cleanEntity(Level level) {
+        cleanEntity(level, false);
+    }
+
+    public static void cleanEntity(Level level, boolean all) {
         for (Entity entity : level.getEntities()) {
             if (!(entity instanceof Player)) {
+                if (entity instanceof EntityPlayerCorpse || entity instanceof EntityFlag) {
+                    if (!all) {
+                        break;
+                    }
+                }
                 entity.close();
             }
         }
