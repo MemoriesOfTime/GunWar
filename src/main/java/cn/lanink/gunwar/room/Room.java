@@ -1,6 +1,8 @@
 package cn.lanink.gunwar.room;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tools;
@@ -23,11 +25,14 @@ public class Room extends BaseRoom {
 
     private final String redSpawn, blueSpawn;
     private final LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
+    public int redScore, blueScore; //队伍得分
     private final GameMode gameMode;
     public LinkedList<Player> swordAttackCD = new LinkedList<>();
     //夺旗模式数据
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
-    public int redScore, blueScore; //队伍得分
+    public Player haveRedFlag, haveBlueFlag;
+    public EntityFlagStand redFlagStand, blueFlagStand;
+    public EntityFlag redFlag, blueFlag;
 
     /**
      * 初始化
@@ -134,6 +139,14 @@ public class Room extends BaseRoom {
         BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());
         Api.setPlayerShowMessage(player.getName(), bossBarMessage);
         player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                if (player.getLevel() != getLevel()) {
+                    quitRoom(player, true);
+                }
+            }
+        }, 20);
     }
 
     @Override

@@ -69,6 +69,7 @@ public class VictoryTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (this.room.getMode() != 3) {
             this.cancel();
+            return;
         }
         if (this.victoryTime < 1) {
             owner.getServer().getPluginManager().callEvent(new GunWarRoomEndEvent(this.room, this.victory));

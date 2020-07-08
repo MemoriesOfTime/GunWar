@@ -2,11 +2,13 @@ package cn.lanink.gunwar.listener;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.room.GameMode;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.tasks.VictoryTask;
+import cn.lanink.gunwar.tasks.game.FlagTask;
 import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
 import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.tasks.game.TipTask;
@@ -56,6 +58,10 @@ public class GunWarListener implements Listener {
                 this.gunWar, new ScoreBoardTask(this.gunWar, room), 18, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar, new TipTask(this.gunWar, room), 10);
+        if (room.getGameMode() == GameMode.CTF) {
+            Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
+                    new FlagTask(this.gunWar, room), 10);
+        }
     }
 
     /**
@@ -168,19 +174,48 @@ public class GunWarListener implements Listener {
         if (room == null) return;
         if (room.getGameMode() == GameMode.CTF) {
             room.gameTime = room.getSetGameTime();
-            Skin skin = this.gunWar.getFlagSkin().get(1);
-            CompoundTag nbt = EntityFlag.getDefaultNBT(room.getRedSpawn());
+            //红方底座
+            Skin skin = this.gunWar.getFlagSkin(1);
+            CompoundTag nbt = EntityFlagStand.getDefaultNBT(room.getRedSpawn());
+            nbt.putFloat("Scale", 1.0F);
+            nbt.putCompound("Skin", new CompoundTag()
+                    .putByteArray("Data", skin.getSkinData().data)
+                    .putString("ModelId", skin.getSkinId()));
+            EntityFlagStand entityFlagStand = new EntityFlagStand(room.getRedSpawn().getChunk(), nbt);
+            entityFlagStand.setSkin(skin);
+            entityFlagStand.spawnToAll();
+            room.redFlagStand = entityFlagStand;
+            //红方旗帜
+            skin = this.gunWar.getFlagSkin(11);
+            nbt = EntityFlag.getDefaultNBT(new Vector3(room.getRedSpawn().getX(),
+                    room.getRedSpawn().getY() + 0.5D,
+                    room.getRedSpawn().getZ()));
             nbt.putCompound("Skin", new CompoundTag()
                     .putByteArray("Data", skin.getSkinData().data)
                     .putString("ModelId", skin.getSkinId()));
             nbt.putFloat("Scale", 1.0F);
             nbt.putInt("GunWarTeam", 1);
             EntityFlag entityFlag = new EntityFlag(room.getRedSpawn().getChunk(), nbt);
+            entityFlag.y += 0.5D;
             entityFlag.setSkin(skin);
             entityFlag.spawnToAll();
-
-            skin = this.gunWar.getFlagSkin().get(2);
-            nbt = EntityFlag.getDefaultNBT(room.getBlueSpawn());
+            room.redFlag = entityFlag;
+            //蓝方底座
+            skin = this.gunWar.getFlagSkin(2);
+            nbt = EntityFlagStand.getDefaultNBT(room.getBlueSpawn());
+            nbt.putFloat("Scale", 1.0F);
+            nbt.putCompound("Skin", new CompoundTag()
+                    .putByteArray("Data", skin.getSkinData().data)
+                    .putString("ModelId", skin.getSkinId()));
+            entityFlagStand = new EntityFlagStand(room.getRedSpawn().getChunk(), nbt);
+            entityFlagStand.setSkin(skin);
+            entityFlagStand.spawnToAll();
+            room.blueFlagStand = entityFlagStand;
+            //蓝方旗帜
+            skin = this.gunWar.getFlagSkin(12);
+            nbt = EntityFlag.getDefaultNBT(new Vector3(room.getBlueSpawn().getX(),
+                    room.getBlueSpawn().getY() + 0.5D,
+                    room.getBlueSpawn().getZ()));
             nbt.putCompound("Skin", new CompoundTag()
                     .putByteArray("Data", skin.getSkinData().data)
                     .putString("ModelId", skin.getSkinId()));
@@ -189,6 +224,7 @@ public class GunWarListener implements Listener {
             entityFlag = new EntityFlag(room.getRedSpawn().getChunk(), nbt);
             entityFlag.setSkin(skin);
             entityFlag.spawnToAll();
+            room.blueFlag = entityFlag;
         }
         for (Player player : room.getPlayers().keySet()) {
             this.gunWar.getServer().getPluginManager().callEvent(new GunWarPlayerRespawnEvent(room, player));
@@ -210,8 +246,20 @@ public class GunWarListener implements Listener {
         if (v == 0) {
             switch (room.getGameMode()) {
                 case CTF:
-                    //TODO 夺旗胜利判断
-                    break;
+                    if ((room.redScore - room.blueScore) > 0) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
+                        return;
+                    }else if ((room.blueScore - room.redScore) > 0) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
+                        return;
+                    } else {
+                        room.gameTime = room.getSetGameTime() / 5;
+                        return;
+                    }
                 case CLASSIC:
                 default:
                     int red = 0, blue = 0;
@@ -348,6 +396,9 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         Player player = event.getPlayer();
+        if (room.getGameMode() == GameMode.CTF) {
+            room.getPlayerRespawnTime().put(player, 20);
+        }
         Player damagePlayer = event.getDamagePlayer();
         GameRecord.addDeaths(player);
         GameRecord.addKills(damagePlayer);
@@ -414,6 +465,7 @@ public class GunWarListener implements Listener {
                 .putByteArray("Data", skin.getSkinData().data)
                 .putString("ModelId", skin.getSkinId()));
         nbt.putFloat("Scale", -1.0F);
+        nbt.putString("playerName", player.getName());
         EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt, room.getPlayerMode(player));
         ent.setSkin(skin);
         ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));

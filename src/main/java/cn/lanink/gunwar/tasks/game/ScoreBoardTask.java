@@ -31,6 +31,7 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (this.room.getMode() != 2) {
             this.cancel();
+            return;
         }
         if (!use) {
             use = true;

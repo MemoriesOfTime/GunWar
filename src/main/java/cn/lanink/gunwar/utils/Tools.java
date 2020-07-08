@@ -10,6 +10,8 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
@@ -23,6 +25,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
+import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import tip.messages.BossBarMessage;
@@ -178,6 +181,21 @@ public class Tools {
                 new ScoreBoardMessage(level, true, "", new LinkedList<>()));
         Api.removePlayerShowMessage(player.getName(),
                 new BossBarMessage(level, false, 5, false, new LinkedList<>()));
+    }
+
+    /**
+     * 设置实体皮肤
+     * @param human 实体
+     * @param skin 皮肤
+     */
+    public static void setPlayerSkin(EntityHuman human, Skin skin) {
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        human.setSkin(skin);
+        human.getLevel().getPlayers().values().forEach(player -> player.dataPacket(packet));
     }
 
     /**

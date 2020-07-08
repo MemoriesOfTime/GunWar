@@ -8,6 +8,8 @@ import cn.nukkit.scheduler.PluginTask;
 import tip.messages.TipMessage;
 import tip.utils.Api;
 
+import java.util.Map;
+
 public class TipTask extends PluginTask<GunWar> {
 
     private final Language language;
@@ -28,11 +30,21 @@ public class TipTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (this.room.getMode() != 2) {
             this.cancel();
+            return;
         }
-        for (Player player : room.getPlayers().keySet()) {
-            player.sendTip(this.language.gameTimeBottom
-                    .replace("%health%",
-                            this.getStringHealth(this.room.getPlayerHealth().getOrDefault(player, 0F))));
+        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            switch (entry.getValue()) {
+                case 11:
+                case 12:
+                    //TODO 等待复活提示
+                    break;
+                default:
+                    entry.getKey().sendTip(this.language.gameTimeBottom
+                            .replace("%health%",
+                                    this.getStringHealth(this.room.getPlayerHealth(entry.getKey()))));
+                    break;
+            }
+
         }
     }
 

@@ -30,10 +30,12 @@ public class TimeTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (this.room.getMode() != 2) {
             this.cancel();
+            return;
         }
         if (this.room.getPlayers().size() < 1) {
             this.room.endGame(true);
             this.cancel();
+            return;
         }
         if (this.room.gameTime > 0) {
             this.room.gameTime--;

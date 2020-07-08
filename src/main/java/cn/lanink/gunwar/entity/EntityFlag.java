@@ -12,19 +12,20 @@ public class EntityFlag extends EntityHuman {
         super(chunk, nbt);
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
-        this.yaw += 10;
     }
 
     @Override
     public boolean onUpdate(int currentTick) {
-        if (flag < 10) {
-            this.yaw++;
-        }else {
-            this.yaw--;
-        }
-        this.flag++;
-        if (this.flag >= 20) {
-            this.flag = 0;
+        if(currentTick%2 == 0) {
+            if (flag < 20) {
+                this.yaw++;
+            }else {
+                this.yaw--;
+            }
+            this.flag++;
+            if (this.flag >= 40) {
+                this.flag = 0;
+            }
         }
         return super.onUpdate(currentTick);
     }
