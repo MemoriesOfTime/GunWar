@@ -44,7 +44,7 @@ public class Language {
     public String adminSetWaitTime = "§a等待时间已设置为：%time%";
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
-    public String adminSetVictoryScore = "胜利分数已设置为: %score%";
+    public String adminSetVictoryScore = "§a胜利分数已设置为: %score%";
     public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
@@ -94,12 +94,13 @@ public class Language {
     public String adminMenuButton1 = "§e设置等待出生点";
     public String adminMenuButton2 = "§e设置红队出生点";
     public String adminMenuButton3 = "§e设置蓝队出生点";
-    public String adminMenuButton4 = "§e设置时间参数";
+    public String adminMenuButton4 = "§e设置更多参数";
     public String adminMenuButton5 = "§e设置房间模式";
     public String adminMenuButton6 = "§e重载所有房间";
     public String adminMenuButton7 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "等待时间（秒）";
     public String adminTimeMenuInputText2 = "游戏时间（秒）";
+    public String adminTimeMenuInputText3 = "胜利所需分数";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
@@ -197,6 +198,7 @@ public class Language {
         this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
+        this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);

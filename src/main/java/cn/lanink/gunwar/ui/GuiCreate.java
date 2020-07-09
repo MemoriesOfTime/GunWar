@@ -73,6 +73,7 @@ public class GuiCreate {
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput(language.adminTimeMenuInputText1, "", "60"));
         custom.addElement(new ElementInput(language.adminTimeMenuInputText2, "", "300"));
+        custom.addElement(new ElementInput(language.adminTimeMenuInputText3, "", "5"));
         showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
     }
 
