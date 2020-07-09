@@ -1,6 +1,12 @@
 useCmdInRoom: "§e >> §c游戏中无法使用其他命令"
 cmdHelp: "§a查看帮助：/%cmdName% help"
-userHelp: "§eGunWar--命令帮助 \n §a/%cmdName% §e打开ui(仅游戏内可用) \n §a/%cmdName% join 房间名称 §e加入游戏 \n §a/%cmdName% quit §e退出游戏 \n §a/%cmdName% list §e查看房间列表 \n §a/%cmdName% record §e查看战绩(排行榜)"
+userHelp: |-
+  §eGunWar--命令帮助
+  §a/%cmdName% §e打开ui(仅游戏内可用)
+  §a/%cmdName% join 房间名称 §e加入游戏
+  §a/%cmdName% quit §e退出游戏
+  §a/%cmdName% list §e查看房间列表
+  §a/%cmdName% record §e查看战绩(排行榜)
 noPermission: "§c你没有权限使用这个命令！"
 joinRoom: "§a你已加入房间: %name%"
 joinRoomIsInRoom: "§c你已经在一个房间中了!"
@@ -14,7 +20,18 @@ quitRoom: "§a你已退出房间"
 quitRoomNotInRoom: "§a你本来就不在游戏房间！"
 listRoom: "§e房间列表： §a %list%"
 useCmdInCon: "请不要在控制台执行此指令!"
-adminHelp: "§eGunWar--命令帮助 \n §a/%cmdName% §e打开ui(仅游戏内可用) \n §a/%cmdName% setwaitspawn §e设置当前位置为等待点 \n §a/%cmdName% setredspawn §e将当前位置设置为红队出生点 \n §a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点 \n §a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n §a/%cmdName% setgametime 数字 §e设置每回合游戏最长时间 \n §a/%cmdName% reloadroom §e重载所有房间 \n §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置"
+adminHelp: |-
+  §eGunWar--命令帮助
+  §a/%cmdName% §e打开ui(仅游戏内可用)
+  §a/%cmdName% setwaitspawn §e设置当前位置为等待点
+  §a/%cmdName% setredspawn §e将当前位置设置为红队出生点
+  §a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点
+  §a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间
+  §a/%cmdName% setgametime 数字 §e设置每回合游戏最长时间
+  §a/%cmdName% setVictoryScore 数字 §e设置胜利所需分数
+  §a/%cmdName% setgamemode 数字 §e设置房间模式
+  §a/%cmdName% reloadroom §e重载所有房间
+  §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
 adminSetWaitSpawn: "§a等待出生点设置成功！"
 adminSetRedSpawn: "§a红队出生点设置成功！"
 adminSetBlueSpawn: "§a蓝队出生点设置成功！"
@@ -46,11 +63,25 @@ tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 gameArmor: "§e >> §c游戏中无法脱下护甲！"
 playerTeamChat: "§c[队伍] %player% + §b >>> %message%"
 scoreBoardTitle: "§eGunWar"
-waitTimeScoreBoard: " 所属队伍: %team% \n 玩家: §a %playerNumber%/10 \n §a开始倒计时: §e%time% "
-waitScoreBoard: " 所属队伍: %team% \n 玩家: §a %playerNumber%/10 \n 最低游戏人数为 2 人 \n 等待玩家加入中 "
+waitTimeScoreBoard: |-
+  所属队伍: %team%
+  玩家: §a %playerNumber%/10
+  §a开始倒计时: §e%time%
+waitScoreBoard: |-
+  所属队伍: %team%
+  玩家: §a %playerNumber%/10
+  最低游戏人数为 2 人
+  等待玩家加入中
 waitTimeBottom: "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！"
 waitBottom: "§c等待玩家加入中,当前已有: %playerNumber% 位玩家"
-gameTimeScoreBoard: " §l§a所属队伍: %team% \n §l§a当前血量:§e %health% \n §l§a剩余时间:§e %time% 秒 \n §l§a队伍存活人数: \n §l§c红: %red% 人 §9蓝: %blue% 人 \n §l§a队伍胜利：\n §l§c红: %redRound% 回合 §9蓝: %blueRound% 回合 "
+gameTimeScoreBoard: |-
+  §l§a所属队伍: %team%
+  §l§a当前血量:§e %health%
+  §l§a剩余时间:§e %time% 秒
+  §l§a队伍存活人数:
+  §l§c红: %red% 人 §9蓝: %blue% 人
+  §l§a队伍胜利：
+  §l§c红: %redRound% 回合 §9蓝: %blueRound% 回合
 gameTimeBottom: "§l§c血量： %health%"
 gameTimeRespawnBottom: "§l§c复活倒计时: %time%"
 victoryMessage: "§e恭喜 %teamName% §e获得胜利"
@@ -63,8 +94,9 @@ adminMenuButton1: "§e设置等待出生点"
 adminMenuButton2: "§e设置红队出生点"
 adminMenuButton3: "§e设置蓝队出生点"
 adminMenuButton4: "§e设置时间参数"
-adminMenuButton5: "§e重载所有房间"
-adminMenuButton6: "§c卸载所有房间"
+adminMenuButton5: "§e设置房间模式"
+adminMenuButton6: "§e重载所有房间"
+adminMenuButton7: "§c卸载所有房间"
 adminTimeMenuInputText1: "等待时间（秒）"
 adminTimeMenuInputText2: "游戏时间（秒）"
 joinRoomOK: "§l§a确认要加入房间: %name% §l§a？"

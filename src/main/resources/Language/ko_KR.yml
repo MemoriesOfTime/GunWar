@@ -1,6 +1,11 @@
 useCmdInRoom: "§e >>§c게임에 참가 중일 땐 명령어를 사용 하실 수 없습니다."
 cmdHelp: "§a도움말 보기 : /%cmdName% help"
-userHelp: "§eGunWar--도움말 목록\n §a/%cmdName% §eUI 열기 \n §a/%cmdName% join 게임이름 §e 해당 게임에 참여합니다. \n § a/%cmdName% quit 참여한 게임에서 나갑니다. \n §a/%cmdName% list 게임 목록 보기"
+userHelp: |-
+  §eGunWar--도움말 목록
+  §a/%cmdName% §eUI 열기
+  §a/%cmdName% join 게임이름 §e 해당 게임에 참여합니다
+  §a/%cmdName% quit 참여한 게임에서 나갑니다
+  §a/%cmdName% list 게임 목록 보기
 noPermission: "§c 권한이 없습니다!"
 joinRoom: "§a%name%님이 게임에 참여 하셨습니다!"
 joinRoomIsInRoom: "§c이미 게임에 참가 하셨습니다!"
@@ -14,7 +19,18 @@ quitRoom: "§a게임에서 나가셨습니다."
 quitRoomNotInRoom: "§a게임에 참여하시지 않았습니다!"
 listRoom: "§e 게임 목록: §a %list%"
 useCmdInCon: "플레이어만 사용 가능한 명령어입니다!"
-adminHelp: "§eGunWar--도움말 목록 \n §a/%cmdName% §eUI 열기 \n §a/%cmdName% setwaitspawn §e대기 위치 설정 \n §a/%cmdName% setredspawn §e빨간팀 스폰 포인트 설정 §a/setgametime 숫자 §e한 게임 당 최대 시간 설정 \n §a/%cmdName% reloadroom §e게임 리로드 \n §a/%cmdName% unloadroom §e해당 게임 언로드"
+adminHelp: |-
+  §eGunWar--도움말 목록
+  §a/%cmdName% §eUI 열기
+  §a/%cmdName% setwaitspawn §e대기 위치 설정
+  §a/%cmdName% setredspawn §e빨간팀 스폰 포인트 설정
+  §a/%cmdName% setbluespawn §e
+  §a/%cmdName% setwaittime 숫자 §e no translation
+  §a/%cmdName% setgametime 숫자 §e한 게임 당 최대 시간 설정
+  §a/%cmdName% setVictoryScore 숫자 §e no translation
+  §a/%cmdName% setgamemode 숫자 §e no translation
+  §a/%cmdName% reloadroom §e게임 리로드
+  §a/%cmdName% unloadroom §e해당 게임 언로드
 adminSetWaitSpawn: "§a대기 위치 설정 성공!"
 adminSetRedSpawn: "§a 빨간 팀 출생점 설정 성공!"
 adminSetBlueSpawn: "§a파란 팀 출생점 설정 성공!"
@@ -42,11 +58,23 @@ tpQuitRoomLevel: "§e >> 게임에서 나가시려면 명령을 사용 해 주�
 gameArmor: "§e >> §c게임 중에는 갑옷을 벗을 수 없습니다!"
 playerTeamChat: "§c[팀] %player% + §b >> %message%"
 scoreBoardTitle: "§eGunWar"
-waitTimeScoreBoard: " 소속 팀: %team% \n 플레이어: §a %playerNumber%/10 \n §a 게임 시작까지: §e%time%초 남음 "
-waitScoreBoard: " 소속 팀: %team%\n 플레이어: §a %playerNumber%/10 \n 최소 게임인원 2인 \n 다른 플레이어를 기다리는 중.. "
+waitTimeScoreBoard: |-
+  소속 팀: %team%
+  플레이어: §a %playerNumber%/10
+  §a 게임 시작까지: §e%time%초 남음
+waitScoreBoard: |-
+  소속 팀: %team%
+  플레이어: §a %playerNumber%/10
+  최소 게임인원 2인
+  다른 플레이어를 기다리는 중..
 waitTimeBottom: "§a가 현재 이미 있습니다: %playerNumber% 플레이어 \n §a 게임 그리고 다음과 같이 %time% 초 시작!"
 waitBottom: "§c는 플레이어가 가입하기를 기다리는 중이고 현재 이미 있습니다: %playerNumber% 플레이어"
-gameTimeScoreBoard: " §l§a내 팀 : %team% \n §l§a 현재 체력 : %health% \n §l§a남은 시간 : §e %time% 초 \n 팀 당 생존 인원 수 : \n §l§c빨간팀 : %red%인 파란팀 : %blue%"
+gameTimeScoreBoard: |-
+  §l§a내 팀 : %team%
+  §l§a 현재 체력 : %health%
+  §l§a남은 시간 : §e %time% 초
+  팀 당 생존 인원 수 :
+  §l§c빨간팀 : %red%인 파란팀 : %blue%
 gameTimeBottom: "§l§c 체력 : %health%"
 victoryMessage: "§e 축하합니다! %teamName%§e이 승리하였습니다!"
 userMenuButton1 : "§e 무작위 참여"
@@ -58,8 +86,9 @@ adminMenuButton1: "§e게임 대기 포인트 설정"
 adminMenuButton2: "§e빨간팀 생성 포인트 설정"
 adminMenuButton3: "§e파란팀 생성 포인트 설정"
 adminMenuButton4: "§e게임 대기/진행 시간 설정"
-adminMenuButton5: "§e모든 게임 활성화"
-adminMenuButton6: "§c모든 게임 비활성화"
+adminMenuButton5: "§e no translation"
+adminMenuButton6: "§e모든 게임 활성화"
+adminMenuButton7: "§c모든 게임 비활성화"
 adminTimeMenuInputText1: "대기 시간(초)"
 adminTimeMenuInputText2: "게임 시간(초)"
 joinRoomOK: "§l§a%name%님이 게임에 초대하셨습니다, 수락 하시겠습니까?"

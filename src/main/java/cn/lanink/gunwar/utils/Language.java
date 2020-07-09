@@ -33,6 +33,8 @@ public class Language {
             "§a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点 \n " +
             "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n " +
             "§a/%cmdName% setgametime 数字 §e设置每回合游戏最长时间 \n " +
+            "§a/%cmdName% setVictoryScore 数字 §e设置胜利所需分数 \n " +
+            "§a/%cmdName% setgamemode 数字 §e设置房间模式 \n " +
             "§a/%cmdName% reloadroom §e重载所有房间 \n " +
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetWaitSpawn = "§a等待出生点设置成功！";
@@ -93,8 +95,9 @@ public class Language {
     public String adminMenuButton2 = "§e设置红队出生点";
     public String adminMenuButton3 = "§e设置蓝队出生点";
     public String adminMenuButton4 = "§e设置时间参数";
-    public String adminMenuButton5 = "§e重载所有房间";
-    public String adminMenuButton6 = "§c卸载所有房间";
+    public String adminMenuButton5 = "§e设置房间模式";
+    public String adminMenuButton6 = "§e重载所有房间";
+    public String adminMenuButton7 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "等待时间（秒）";
     public String adminTimeMenuInputText2 = "游戏时间（秒）";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";

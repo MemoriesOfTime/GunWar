@@ -482,6 +482,7 @@ public class GunWarListener implements Listener {
             default:
                 skin = GunWar.getInstance().getCorpseSkin();
         }
+        skin.setTrusted(true);
         nbt.putCompound("Skin", new CompoundTag()
                 .putByteArray("Data", skin.getSkinData().data)
                 .putString("ModelId", skin.getSkinId()));
