@@ -2,13 +2,13 @@ package cn.lanink.gunwar.listener;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
@@ -28,6 +28,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.level.particle.SpellParticle;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
@@ -58,39 +59,37 @@ public class PlayerGameListener implements Listener {
             if (room == null || !room.isPlaying(damagePlayer)) return;
             if (event.getEntity() instanceof EntityFlag) {
                 EntityFlag entityFlag = (EntityFlag) event.getEntity();
-                //TODO 分开底座和旗帜
                 int team = entityFlag.namedTag.getInt("GunWarTeam");
-                if (team != room.getPlayerMode(damagePlayer)) {
-                    Skin skin;
-                    EntityFlag entityFlag1;
-                    if (team == 1) {
-                        entityFlag.namedTag.putInt("GunWarTeam", 11);
-                        room.haveRedFlag = damagePlayer;
-                        skin = this.gunWar.getFlagSkin(11);
-                    }else if (team == 2) {
-                        entityFlag.namedTag.putInt("GunWarTeam", 12);
-                        room.haveBlueFlag = damagePlayer;
-                        skin = this.gunWar.getFlagSkin(12);
-                    }else {
-                        event.setCancelled(true);
-                        return;
+                if (team == 11 && room.getPlayerMode(damagePlayer) == 2) {
+                    room.haveRedFlag = damagePlayer;
+                }else if (team == 12 && room.getPlayerMode(damagePlayer) == 1) {
+                    room.haveBlueFlag = damagePlayer;
+                }
+            }else if (event.getEntity() instanceof EntityFlagStand) {
+                EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
+                int team = entityFlagStand.namedTag.getInt("GunWarTeam");
+                if (team == room.getPlayerMode(damagePlayer)) {
+                    switch (team) {
+                        case 1:
+                            if (room.haveBlueFlag == damagePlayer) {
+                                room.blueFlag.teleport(new Vector3(room.getBlueSpawn().getX(),
+                                        room.getBlueSpawn().getY() + 0.3D,
+                                        room.getBlueSpawn().getZ()));
+                                room.redScore++;
+                                room.haveBlueFlag = null;
+                            }
+                            break;
+                        case 2:
+                            if (room.haveRedFlag == damagePlayer) {
+                                room.redFlag.teleport(new Vector3(room.getRedSpawn().getX(),
+                                        room.getRedSpawn().getY() + 0.3D,
+                                        room.getRedSpawn().getZ()));
+                                room.blueScore++;
+                                room.haveRedFlag = null;
+                            }
+                            break;
                     }
-                    /*entityFlag.setSkin(this.gunWar.getFlagSkin(0));
-                    Tools.setPlayerSkin(entityFlag, this.gunWar.getFlagSkin(0));*/
-                    CompoundTag nbt = EntityFlag.getDefaultNBT(damagePlayer);
-                    nbt.putFloat("Scale", 1.0F);
-                    nbt.putCompound("Skin", new CompoundTag()
-                            .putByteArray("Data", skin.getSkinData().data)
-                            .putString("ModelId", skin.getSkinId()));
-                    entityFlag1 = new EntityFlag(damagePlayer.getChunk(), nbt);
-                    entityFlag1.setSkin(skin);
-                    entityFlag1.spawnToAll();
-                    if (team == 1) {
-                        room.redFlag = entityFlag1;
-                    }else {
-                        room.blueFlag = entityFlag1;
-                    }
-                    damagePlayer.getLevel().addSound(damagePlayer, Sound.RANDOM_ORB);
+                    Tools.addSound(room, Sound.RANDOM_LEVELUP);
                 }
             }else if ((event.getEntity() instanceof Player)) {
                 Player player = (Player) event.getEntity();

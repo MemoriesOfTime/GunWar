@@ -19,7 +19,7 @@ public class EntityFlagStand extends EntityHuman {
 
     @Override
     public float getHeight() {
-        return 0.3F;
+        return 0.5F;
     }
 
     @Override

@@ -63,6 +63,9 @@ public class TimeTask extends PluginTask<GunWar> {
                             }
                         }
                     }
+                    //TODO 判断得分
+
+
                     for (int team : this.room.getPlayers().values()) {
                         switch (team) {
                             case 1:

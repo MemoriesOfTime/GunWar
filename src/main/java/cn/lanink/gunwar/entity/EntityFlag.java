@@ -29,4 +29,15 @@ public class EntityFlag extends EntityHuman {
         }
         return super.onUpdate(currentTick);
     }
+
+    @Override
+    public float getHeight() {
+        return 1.6F;
+    }
+
+    @Override
+    public float getWidth() {
+        return 0.2F;
+    }
+
 }

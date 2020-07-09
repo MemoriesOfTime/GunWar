@@ -25,6 +25,11 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
         owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
+        for (Player player : room.getPlayers().keySet()) {
+            ScoreBoardMessage score = new ScoreBoardMessage(
+                    room.getLevel().getName(), false, this.language.scoreBoardTitle, new LinkedList<>());
+            Api.setPlayerShowMessage(player.getName(), score);
+        }
     }
 
     @Override
@@ -65,9 +70,7 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                                 .replace("%redRound%", room.redScore + "")
                                 .replace("%blueRound%", room.blueScore + ""));
                     }
-                    ScoreBoardMessage score = new ScoreBoardMessage(
-                            room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
-                    Api.setPlayerShowMessage(player.getName(), score);
+                    owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
                 }
             }
             use = false;
