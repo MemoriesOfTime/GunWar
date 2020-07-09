@@ -18,6 +18,7 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -145,6 +146,14 @@ public class GunWarListener implements Listener {
         Room room = event.getRoom();
         Player player = event.getPlayer();
         if (room == null || player == null) return;
+        for (Entity entity : room.getLevel().getEntities()) {
+            if (entity instanceof EntityPlayerCorpse) {
+                if (entity.namedTag != null &&
+                        entity.namedTag.getString("playerName").equals(player.getName())) {
+                    entity.close();
+                }
+            }
+        }
         Tools.rePlayerState(player, true);
         player.getInventory().clearAll();
         room.getPlayerHealth().put(player, 20F);

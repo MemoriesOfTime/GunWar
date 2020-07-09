@@ -81,6 +81,7 @@ public class Language {
             "§l§a队伍胜利：\n " +
             "§l§c红: %redRound% 回合 §9蓝: %blueRound% 回合 ";
     public String gameTimeBottom = "§l§c血量： %health%";
+    public String gameTimeRespawnBottom = "§l§c复活倒计时: %time%";
     public String victoryMessage = "§e恭喜 %teamName% §e获得胜利";
     //ui相关
     public String userMenuButton1 = "§e随机加入房间";
@@ -177,6 +178,7 @@ public class Language {
         this.waitBottom = config.getString("waitBottom", this.waitBottom);
         this.gameTimeScoreBoard = config.getString("gameTimeScoreBoard", this.gameTimeScoreBoard);
         this.gameTimeBottom = config.getString("gameTimeBottom", this.gameTimeBottom);
+        this.gameTimeRespawnBottom = config.getString("gameTimeRespawnBottom", this.gameTimeRespawnBottom);
         this.victoryMessage = config.getString("victoryMessage", this.victoryMessage);
         //ui
         this.userMenuButton1 = config.getString("userMenuButton1", this.userMenuButton1);

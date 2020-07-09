@@ -1,12 +1,11 @@
 package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.room.GameMode;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.TipMessage;
-import tip.utils.Api;
 
 import java.util.Map;
 
@@ -20,10 +19,6 @@ public class TipTask extends PluginTask<GunWar> {
         owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
-        TipMessage tipMessage = new TipMessage(room.getLevel().getName(), false, 0, "");
-        for (Player player : room.getPlayers().keySet()) {
-            Api.setPlayerShowMessage(player.getName(), tipMessage);
-        }
     }
 
     @Override
@@ -32,11 +27,15 @@ public class TipTask extends PluginTask<GunWar> {
             this.cancel();
             return;
         }
-        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
             switch (entry.getValue()) {
                 case 11:
                 case 12:
                     //TODO 等待复活提示
+                    if (this.room.getGameMode() == GameMode.CTF) {
+                        entry.getKey().sendTip(this.language.gameTimeRespawnBottom
+                                .replace("%time%", room.getPlayerRespawnTime(entry.getKey()) + ""));
+                    }
                     break;
                 default:
                     entry.getKey().sendTip(this.language.gameTimeBottom
@@ -44,7 +43,6 @@ public class TipTask extends PluginTask<GunWar> {
                                     this.getStringHealth(this.room.getPlayerHealth(entry.getKey()))));
                     break;
             }
-
         }
     }
 

@@ -5,8 +5,6 @@ import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.ScoreBoardMessage;
-import tip.utils.Api;
 
 import java.util.LinkedList;
 
@@ -25,11 +23,6 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
         owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
-        for (Player player : room.getPlayers().keySet()) {
-            ScoreBoardMessage score = new ScoreBoardMessage(
-                    room.getLevel().getName(), false, this.language.scoreBoardTitle, new LinkedList<>());
-            Api.setPlayerShowMessage(player.getName(), score);
-        }
     }
 
     @Override

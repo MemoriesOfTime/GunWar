@@ -64,7 +64,6 @@ public class TimeTask extends PluginTask<GunWar> {
                             }
                         }
                     }
-                    //TODO 判断得分
                     if (room.redScore >= room.victoryScore) {
                         room.setMode(3);
                         Server.getInstance().getScheduler().scheduleRepeatingTask(

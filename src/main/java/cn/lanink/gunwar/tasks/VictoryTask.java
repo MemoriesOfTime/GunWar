@@ -8,9 +8,6 @@ import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.ScoreBoardMessage;
-import tip.messages.TipMessage;
-import tip.utils.Api;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -30,20 +27,6 @@ public class VictoryTask extends PluginTask<GunWar> {
         this.room = room;
         this.victoryTime = 10;
         this.victory = victory;
-        TipMessage tipMessage = new TipMessage(room.getLevel().getName(), true, 0, null);
-        ScoreBoardMessage scoreBoardMessage = new ScoreBoardMessage(
-                room.getLevel().getName(), true, this.language.scoreBoardTitle, new LinkedList<>());
-        if (this.victory == 1) {
-            tipMessage.setMessage(language.victoryMessage.replace("%teamName%", language.teamNameRed));
-            LinkedList<String> ms = new LinkedList<>();
-            ms.add(language.victoryMessage.replace("%teamName%", language.teamNameRed));
-            scoreBoardMessage.setMessages(ms);
-        } else {
-            tipMessage.setMessage(language.victoryMessage.replace("%teamName%", language.teamNameBlue));
-            LinkedList<String> ms = new LinkedList<>();
-            ms.add(language.victoryMessage.replace("%teamName%", language.teamNameBlue));
-            scoreBoardMessage.setMessages(ms);
-        }
         for (Map.Entry<Player, Integer> entry: room.getPlayers().entrySet()) {
             if (this.victory == 1) {
                 if (entry.getValue() == 1) {
@@ -51,6 +34,9 @@ public class VictoryTask extends PluginTask<GunWar> {
                 }else {
                     GameRecord.addDefeat(entry.getKey());
                 }
+                LinkedList<String> ms = new LinkedList<>();
+                ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameRed));
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
                 entry.getKey().sendTitle(this.language.victoryRed, "", 10, 40, 20);
             }else if (this.victory == 2) {
                 if (entry.getValue() == 2) {
@@ -58,10 +44,11 @@ public class VictoryTask extends PluginTask<GunWar> {
                 }else {
                     GameRecord.addDefeat(entry.getKey());
                 }
+                LinkedList<String> ms = new LinkedList<>();
+                ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameBlue));
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
                 entry.getKey().sendTitle(this.language.victoryBlue, "", 10, 40, 20);
             }
-            Api.setPlayerShowMessage(entry.getKey().getName(), tipMessage);
-            Api.setPlayerShowMessage(entry.getKey().getName(), scoreBoardMessage);
         }
     }
 
@@ -80,10 +67,16 @@ public class VictoryTask extends PluginTask<GunWar> {
             if (room.getPlayers().size() > 0) {
                 for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                     if (entry.getValue() != 0) {
-                        if (this.victory == 1 && entry.getValue() == 1) {
-                            Tools.spawnFirework(entry.getKey());
-                        }else if (this.victory == 2 && entry.getValue() == 2) {
-                            Tools.spawnFirework(entry.getKey());
+                        if (this.victory == 1) {
+                            entry.getKey().sendTip(this.language.victoryMessage.replace("%teamName%", this.language.teamNameRed));
+                            if (entry.getValue() == 1) {
+                                Tools.spawnFirework(entry.getKey());
+                            }
+                        }else if (this.victory == 2) {
+                            entry.getKey().sendTip(this.language.victoryMessage.replace("%teamName%", this.language.teamNameBlue));
+                            if (entry.getValue() == 2) {
+                                Tools.spawnFirework(entry.getKey());
+                            }
                         }
                     }
                 }

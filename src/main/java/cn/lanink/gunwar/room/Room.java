@@ -5,16 +5,13 @@ import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
+import cn.lanink.gunwar.utils.Tips;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Position;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
-import tip.messages.BossBarMessage;
-import tip.messages.NameTagMessage;
-import tip.messages.TipMessage;
-import tip.utils.Api;
 
 import java.util.*;
 
@@ -134,12 +131,9 @@ public class Room extends BaseRoom {
         player.getInventory().setItem(3, Tools.getItem(11));
         player.getInventory().setItem(5, Tools.getItem(12));
         player.getInventory().setItem(8, Tools.getItem(10));
-        TipMessage tipMessage = new TipMessage(this.level, false, 0, "");
-        Api.setPlayerShowMessage(player.getName(), tipMessage);
-        NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, player.getName());
-        Api.setPlayerShowMessage(player.getName(), nameTagMessage);
-        BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());
-        Api.setPlayerShowMessage(player.getName(), bossBarMessage);
+        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+            Tips.closeTipsShow(this.level, player);
+        }
         player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
             @Override
@@ -153,7 +147,9 @@ public class Room extends BaseRoom {
 
     @Override
     public void quitRoomOnline(Player player) {
-        Tools.removePlayerShowMessage(this.level, player);
+        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+            Tips.removeTipsConfig(this.level, player);
+        }
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(player);
