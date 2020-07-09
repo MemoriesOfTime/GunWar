@@ -77,6 +77,7 @@ public class PlayerGameListener implements Listener {
                                         room.getBlueSpawn().getZ()));
                                 room.redScore++;
                                 room.haveBlueFlag = null;
+                                Tools.addSound(room, Sound.RANDOM_LEVELUP);
                             }
                             break;
                         case 2:
@@ -86,10 +87,10 @@ public class PlayerGameListener implements Listener {
                                         room.getRedSpawn().getZ()));
                                 room.blueScore++;
                                 room.haveRedFlag = null;
+                                Tools.addSound(room, Sound.RANDOM_LEVELUP);
                             }
                             break;
                     }
-                    Tools.addSound(room, Sound.RANDOM_LEVELUP);
                 }
             }else if ((event.getEntity() instanceof Player)) {
                 Player player = (Player) event.getEntity();

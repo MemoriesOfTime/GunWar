@@ -4,6 +4,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerRespawnEvent;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -64,8 +65,18 @@ public class TimeTask extends PluginTask<GunWar> {
                         }
                     }
                     //TODO 判断得分
-
-
+                    if (room.redScore >= room.victoryScore) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                owner, new VictoryTask(owner, room, 1), 20);
+                        return;
+                    }
+                    if (room.blueScore >= room.victoryScore) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                owner, new VictoryTask(owner, room, 2), 20);
+                        return;
+                    }
                     for (int team : this.room.getPlayers().values()) {
                         switch (team) {
                             case 1:

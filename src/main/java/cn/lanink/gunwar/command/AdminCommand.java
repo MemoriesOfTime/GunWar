@@ -17,6 +17,7 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetWaitTimeCommand("setwaittime"));
         this.addSubCommand(new SetGameTimeCommand("setgametime"));
         //TODO 设置胜利分数
+        this.addSubCommand(new SetVictoryScore("setVictoryScore"));
         this.addSubCommand(new SetGameMode("setgamemode"));
         this.addSubCommand(new ReloadCommand("reloadroom"));
         this.addSubCommand(new UnloadCommand("unloadroom"));

@@ -297,19 +297,17 @@ public class GunWarListener implements Listener {
             this.sendTitle(room, 2);
         }
         //房间胜利计算
-        int round = room.redScore + room.blueScore;
-        if (round >= 5) {
-            if ((room.redScore - room.blueScore) > 0) {
-                room.setMode(3);
-                Server.getInstance().getScheduler().scheduleRepeatingTask(
-                        this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
-                return;
-            }else if ((room.blueScore - room.redScore) > 0) {
-                room.setMode(3);
-                Server.getInstance().getScheduler().scheduleRepeatingTask(
-                        this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
-                return;
-            }
+        if (room.redScore >= room.victoryScore) {
+            room.setMode(3);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
+            return;
+        }
+        if (room.blueScore >= room.victoryScore) {
+            room.setMode(3);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
+            return;
         }
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }

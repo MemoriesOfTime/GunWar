@@ -5,10 +5,14 @@ import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.utils.Config;
 
-public class SetGameTimeCommand extends BaseSubCommand {
+/**
+ * @author lt_name
+ */
+public class SetVictoryScore extends BaseSubCommand {
 
-    public SetGameTimeCommand(String name) {
+    public SetVictoryScore(String name) {
         super(name);
     }
 
@@ -26,13 +30,11 @@ public class SetGameTimeCommand extends BaseSubCommand {
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (args.length == 2) {
             if (args[1].matches("[0-9]*")) {
-                if (Integer.parseInt(args[1]) > 60) {
-                    Player player = (Player) sender;
-                    this.gunWar.roomSetGameTime(Integer.parseInt(args[1]), this.gunWar.getRoomConfig(player.getLevel()));
-                    sender.sendMessage(this.language.adminSetGameTime.replace("%time%", args[1]));
-                } else {
-                    sender.sendMessage(this.language.adminSetGameTimeShort);
-                }
+                Player player = (Player) sender;
+                Config config = this.gunWar.getRoomConfig(player.getLevel());
+                config.set("victoryScore", Integer.parseInt(args[1]));
+                config.save();
+                sender.sendMessage(this.language.adminSetVictoryScore.replace("%score%", args[1]));
             }else {
                 sender.sendMessage(this.language.adminNotNumber);
             }
@@ -44,7 +46,7 @@ public class SetGameTimeCommand extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { new CommandParameter("time", CommandParamType.INT, false) };
+        return new CommandParameter[] { new CommandParameter("victoryScore", CommandParamType.INT, false) };
     }
 
 }

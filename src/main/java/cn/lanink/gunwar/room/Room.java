@@ -28,6 +28,7 @@ public class Room extends BaseRoom {
     public int redScore, blueScore; //队伍得分
     private final GameMode gameMode;
     public LinkedList<Player> swordAttackCD = new LinkedList<>();
+    public final int victoryScore; //胜利需要分数
     //夺旗模式数据
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
     public Player haveRedFlag, haveBlueFlag;
@@ -45,6 +46,7 @@ public class Room extends BaseRoom {
         this.blueSpawn = config.getString("blueSpawn");
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
+        this.victoryScore = config.getInt("victoryScore", 5);
         switch (config.getInt("gameMode", 0)) {
             case 1:
                 this.gameMode = GameMode.CTF;

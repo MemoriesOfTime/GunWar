@@ -42,6 +42,7 @@ public class Language {
     public String adminSetWaitTime = "§a等待时间已设置为：%time%";
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
+    public String adminSetVictoryScore = "胜利分数已设置为: %score%";
     public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
@@ -144,6 +145,7 @@ public class Language {
         this.adminSetWaitTime = config.getString("adminSetWaitTime", this.adminSetWaitTime);
         this.adminSetGameTime = config.getString("adminSetGameTime", this.adminSetGameTime);
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
+        this.adminSetVictoryScore = config.getString("adminSetVictoryScore", this.adminSetVictoryScore);
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         //房间模式
