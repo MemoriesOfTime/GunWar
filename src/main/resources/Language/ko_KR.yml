@@ -80,6 +80,7 @@ gameTimeScoreBoard: |-
   팀 당 생존 인원 수 :
   §l§c빨간팀 : %red%인 파란팀 : %blue%
 gameTimeBottom: "§l§c 체력 : %health%"
+gameTimeRespawnBottom: "§l§c no translation: %time%"
 victoryMessage: "§e 축하합니다! %teamName%§e이 승리하였습니다!"
 userMenuButton1 : "§e 무작위 참여"
 userMenuButton2: "§e현재 참여한 게임에서 나가기"

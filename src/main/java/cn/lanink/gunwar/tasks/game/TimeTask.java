@@ -61,6 +61,8 @@ public class TimeTask extends PluginTask<GunWar> {
                                         Tools.addSound(entry.getKey(), Sound.RANDOM_ORB);
                                     }
                                 }, 10, true);
+                            }else if (entry.getValue() <= 5) {
+                                Tools.addSound(entry.getKey(), Sound.RANDOM_CLICK);
                             }
                         }
                     }

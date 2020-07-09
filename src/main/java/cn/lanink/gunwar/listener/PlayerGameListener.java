@@ -14,10 +14,7 @@ import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.ProjectileHitEvent;
-import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
@@ -57,7 +54,7 @@ public class PlayerGameListener implements Listener {
             if (damagePlayer == null) return;
             Room room = this.gunWar.getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
             if (room == null || !room.isPlaying(damagePlayer)) return;
-            if (event.getEntity() instanceof EntityFlag) {
+            if (event.getEntity() instanceof EntityFlag && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlag entityFlag = (EntityFlag) event.getEntity();
                 int team = entityFlag.namedTag.getInt("GunWarTeam");
                 if (team == 11 && room.getPlayerMode(damagePlayer) == 2) {
@@ -65,7 +62,7 @@ public class PlayerGameListener implements Listener {
                 }else if (team == 12 && room.getPlayerMode(damagePlayer) == 1) {
                     room.haveBlueFlag = damagePlayer;
                 }
-            }else if (event.getEntity() instanceof EntityFlagStand) {
+            }else if (event.getEntity() instanceof EntityFlagStand && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
                 int team = entityFlagStand.namedTag.getInt("GunWarTeam");
                 if (team == room.getPlayerMode(damagePlayer)) {
