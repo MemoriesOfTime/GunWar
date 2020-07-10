@@ -6,10 +6,7 @@ import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.room.GameMode;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.tasks.VictoryTask;
-import cn.lanink.gunwar.tasks.game.FlagTask;
-import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
-import cn.lanink.gunwar.tasks.game.TimeTask;
-import cn.lanink.gunwar.tasks.game.TipTask;
+import cn.lanink.gunwar.tasks.game.*;
 import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
@@ -360,9 +357,13 @@ public class GunWarListener implements Listener {
             if (room.haveRedFlag == player) {
                 room.haveRedFlag = null;
                 room.redFlag.y -= 1.5;
+                Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
+                        new FlagPickupCheckTask(this.gunWar, room, room.redFlag), 20);
             }else if (room.haveBlueFlag == player) {
                 room.haveBlueFlag = null;
                 room.blueFlag.y -= 1.5;
+                Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
+                        new FlagPickupCheckTask(this.gunWar, room, room.blueFlag), 20);
             }
         }
         Player damagePlayer = event.getDamagePlayer();

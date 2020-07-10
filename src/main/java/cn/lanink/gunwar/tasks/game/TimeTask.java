@@ -90,6 +90,15 @@ public class TimeTask extends PluginTask<GunWar> {
                                 break;
                         }
                     }
+                    if (red == 0) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                owner, new VictoryTask(owner, room, 2), 20);
+                    } else if (blue == 0) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                owner, new VictoryTask(owner, room, 1), 20);
+                    }
                     break;
                 case CLASSIC:
                 default:
@@ -100,15 +109,16 @@ public class TimeTask extends PluginTask<GunWar> {
                             blue++;
                         }
                     }
+                    if (red == 0) {
+                        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 2));
+                        this.room.gameTime = this.room.getSetGameTime();
+                    } else if (blue == 0) {
+                        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 1));
+                        this.room.gameTime = this.room.getSetGameTime();
+                    }
                     break;
             }
-            if (red == 0) {
-                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 2));
-                this.room.gameTime = this.room.getSetGameTime();
-            } else if (blue == 0) {
-                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 1));
-                this.room.gameTime = this.room.getSetGameTime();
-            }
+
             use = false;
         }
     }
