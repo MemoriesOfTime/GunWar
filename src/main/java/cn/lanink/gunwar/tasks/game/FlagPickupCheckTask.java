@@ -29,7 +29,6 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        time--;
         if (time > 0) {
             entityFlag.setNameTag("§e" + time);
             if (team == 11 && room.haveRedFlag != null) {
@@ -37,6 +36,7 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
             }else if (team == 12 && room.haveBlueFlag != null) {
                 this.cancel();
             }
+            time--;
         }else {
             switch (team) {
                 case 11:

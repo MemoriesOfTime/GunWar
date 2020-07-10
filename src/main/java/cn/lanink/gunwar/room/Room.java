@@ -150,6 +150,7 @@ public class Room extends BaseRoom {
         if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
             Tips.removeTipsConfig(this.level, player);
         }
+        GunWar.getInstance().getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(player);

@@ -135,9 +135,9 @@
         <dependency>
             <groupId>gt.creeperface.nukkit.scoreboardapi</groupId>
             <artifactId>ScoreboardAPI</artifactId>
-            <version>1.3</version>
+            <version>1.4</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.3(creeperface).jar</systemPath>
+            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.4(creeperface).jar</systemPath>
         </dependency>
         <dependency>
             <groupId>tip.Main</groupId>
