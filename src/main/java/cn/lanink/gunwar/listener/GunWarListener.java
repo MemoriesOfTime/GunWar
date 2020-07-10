@@ -1,8 +1,6 @@
 package cn.lanink.gunwar.listener;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.room.GameMode;
@@ -187,61 +185,7 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         if (room == null) return;
-        if (room.getGameMode() == GameMode.CTF) {
-            room.gameTime = room.getSetGameTime();
-            //红方底座
-            Skin skin = this.gunWar.getFlagSkin(0);
-            CompoundTag nbt = EntityFlagStand.getDefaultNBT(room.getRedSpawn());
-            nbt.putFloat("Scale", 1.0F);
-            nbt.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", skin.getSkinData().data)
-                    .putString("ModelId", skin.getSkinId()));
-            nbt.putInt("GunWarTeam", 1);
-            EntityFlagStand entityFlagStand = new EntityFlagStand(room.getRedSpawn().getChunk(), nbt);
-            entityFlagStand.setSkin(skin);
-            entityFlagStand.spawnToAll();
-            room.redFlagStand = entityFlagStand;
-            //红方旗帜
-            skin = this.gunWar.getFlagSkin(11);
-            nbt = EntityFlag.getDefaultNBT(new Vector3(room.getRedSpawn().getX(),
-                    room.getRedSpawn().getY() + 0.3D,
-                    room.getRedSpawn().getZ()));
-            nbt.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", skin.getSkinData().data)
-                    .putString("ModelId", skin.getSkinId()));
-            nbt.putFloat("Scale", 1.0F);
-            nbt.putInt("GunWarTeam", 11);
-            EntityFlag entityFlag = new EntityFlag(room.getRedSpawn().getChunk(), nbt);
-            entityFlag.setSkin(skin);
-            entityFlag.spawnToAll();
-            room.redFlag = entityFlag;
-            //蓝方底座
-            skin = this.gunWar.getFlagSkin(0);
-            nbt = EntityFlagStand.getDefaultNBT(room.getBlueSpawn());
-            nbt.putFloat("Scale", 1.0F);
-            nbt.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", skin.getSkinData().data)
-                    .putString("ModelId", skin.getSkinId()));
-            nbt.putInt("GunWarTeam", 2);
-            entityFlagStand = new EntityFlagStand(room.getRedSpawn().getChunk(), nbt);
-            entityFlagStand.setSkin(skin);
-            entityFlagStand.spawnToAll();
-            room.blueFlagStand = entityFlagStand;
-            //蓝方旗帜
-            skin = this.gunWar.getFlagSkin(12);
-            nbt = EntityFlag.getDefaultNBT(new Vector3(room.getBlueSpawn().getX(),
-                    room.getBlueSpawn().getY() + 0.3D,
-                    room.getBlueSpawn().getZ()));
-            nbt.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", skin.getSkinData().data)
-                    .putString("ModelId", skin.getSkinId()));
-            nbt.putFloat("Scale", 1.0F);
-            nbt.putInt("GunWarTeam", 12);
-            entityFlag = new EntityFlag(room.getRedSpawn().getChunk(), nbt);
-            entityFlag.setSkin(skin);
-            entityFlag.spawnToAll();
-            room.blueFlag = entityFlag;
-        }
+        room.gameTime = room.getSetGameTime();
         for (Player player : room.getPlayers().keySet()) {
             this.gunWar.getServer().getPluginManager().callEvent(new GunWarPlayerRespawnEvent(room, player));
         }
