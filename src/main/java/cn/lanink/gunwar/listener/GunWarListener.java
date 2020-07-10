@@ -154,6 +154,7 @@ public class GunWarListener implements Listener {
         }
         Tools.rePlayerState(player, true);
         player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
         room.getPlayerHealth().put(player, 20F);
         switch (room.getPlayerMode(player)) {
             case 11:
@@ -358,10 +359,10 @@ public class GunWarListener implements Listener {
             room.getPlayerRespawnTime().put(player, 20);
             if (room.haveRedFlag == player) {
                 room.haveRedFlag = null;
-                room.redFlag.y -= 1;
+                room.redFlag.y -= 1.5;
             }else if (room.haveBlueFlag == player) {
                 room.haveBlueFlag = null;
-                room.blueFlag.y -= 1;
+                room.blueFlag.y -= 1.5;
             }
         }
         Player damagePlayer = event.getDamagePlayer();
