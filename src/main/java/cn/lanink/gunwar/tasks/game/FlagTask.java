@@ -31,7 +31,7 @@ public class FlagTask extends PluginTask<GunWar> {
         }
         //红方底座
         if (room.redFlagStand == null || room.redFlagStand.isClosed()) {
-            Skin skin = owner.getFlagSkin(0);
+            Skin skin = owner.getFlagSkin(1);
             CompoundTag nbt = EntityFlagStand.getDefaultNBT(room.getRedSpawn());
             nbt.putFloat("Scale", 1.0F);
             nbt.putCompound("Skin", new CompoundTag()
@@ -61,7 +61,7 @@ public class FlagTask extends PluginTask<GunWar> {
         }
         //蓝方底座
         if (room.blueFlagStand == null || room.blueFlagStand.isClosed()) {
-            Skin skin = owner.getFlagSkin(0);
+            Skin skin = owner.getFlagSkin(2);
             CompoundTag nbt = EntityFlagStand.getDefaultNBT(room.getBlueSpawn());
             nbt.putFloat("Scale", 1.0F);
             nbt.putCompound("Skin", new CompoundTag()

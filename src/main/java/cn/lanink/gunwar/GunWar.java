@@ -216,22 +216,19 @@ public class GunWar extends PluginBase {
         this.corpseSkin.setSkinData(skinData);
         this.corpseSkin.setSkinId("defaultSkin");
         //加载旗帜皮肤
-        saveResource("Resources/Flag/flag1.json", false);
-        saveResource("Resources/Flag/flag2.json", false);
-        saveResource("Resources/Flag/flag3.json", false);
+        saveResource("Resources/Flag/Flag.json", false);
+        saveResource("Resources/Flag/FlagStand.json", false);
         saveResource("Resources/Flag/RedFlag.png", false);
         saveResource("Resources/Flag/BlueFlag.png", false);
-        File fileJson = new File(getDataFolder() + "/Resources/Flag/flag1.json");
+        File fileJson = new File(getDataFolder() + "/Resources/Flag/FlagStand.json");
         File fileImg = new File(getDataFolder() + "/Resources/Flag/RedFlag.png");
         this.loadFlagSkin(fileImg, fileJson, 1);
-        fileJson = new File(getDataFolder() + "/Resources/Flag/flag2.json");
+        fileJson = new File(getDataFolder() + "/Resources/Flag/Flag.json");
         this.loadFlagSkin(fileImg, fileJson, 11);
         fileImg = new File(getDataFolder() + "/Resources/Flag/BlueFlag.png");
         this.loadFlagSkin(fileImg, fileJson, 12);
-        fileJson = new File(getDataFolder() + "/Resources/Flag/flag1.json");
+        fileJson = new File(getDataFolder() + "/Resources/Flag/FlagStand.json");
         this.loadFlagSkin(fileImg, fileJson, 2);
-        fileJson = new File(getDataFolder() + "/Resources/Flag/flag3.json");
-        this.loadFlagSkin(fileImg, fileJson, 0);
         getLogger().info("§e资源文件加载完成");
     }
 

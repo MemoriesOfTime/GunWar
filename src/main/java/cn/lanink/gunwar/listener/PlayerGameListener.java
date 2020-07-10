@@ -181,8 +181,7 @@ public class PlayerGameListener implements Listener {
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        int size = event.getInventory().getSize();
-        if (event.getSlot() >= size) {
+        if (event.getSlot() >= event.getInventory().getSize()) {
             event.setCancelled(true);
             player.sendMessage(this.language.gameArmor);
         }
