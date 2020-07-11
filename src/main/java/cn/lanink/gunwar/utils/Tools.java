@@ -246,7 +246,7 @@ public class Tools {
 
     /**
      * 放烟花
-     * GitHub：https://github.com/SmallasWater/LuckDraw/blob/master/src/main/java/smallaswater/luckdraw/utils/Tools.java
+     * GitHub：https://github.com/PetteriM1/FireworkShow
      * @param position 位置
      */
     public static void spawnFirework(Position position) {
