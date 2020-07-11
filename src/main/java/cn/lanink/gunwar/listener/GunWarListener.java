@@ -3,17 +3,17 @@ package cn.lanink.gunwar.listener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
+import cn.lanink.gunwar.room.GameMode;
 import cn.lanink.gunwar.room.Room;
-import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
 import cn.lanink.gunwar.tasks.VictoryTask;
-import cn.lanink.gunwar.tasks.game.TimeTask;
-import cn.lanink.gunwar.tasks.game.TipTask;
+import cn.lanink.gunwar.tasks.game.*;
 import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -54,6 +54,10 @@ public class GunWarListener implements Listener {
                 this.gunWar, new ScoreBoardTask(this.gunWar, room), 18, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar, new TipTask(this.gunWar, room), 10);
+        if (room.getGameMode() == GameMode.CTF) {
+            Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
+                    new FlagTask(this.gunWar, room), 5);
+        }
     }
 
     /**
@@ -128,28 +132,60 @@ public class GunWarListener implements Listener {
     }
 
     /**
+     * 玩家重生事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onPlayerRespawn(GunWarPlayerRespawnEvent event) {
+        if (event.isCancelled()) return;
+        Room room = event.getRoom();
+        Player player = event.getPlayer();
+        if (room == null || player == null) return;
+        for (Entity entity : room.getLevel().getEntities()) {
+            if (entity instanceof EntityPlayerCorpse) {
+                if (entity.namedTag != null &&
+                        entity.namedTag.getString("playerName").equals(player.getName())) {
+                    entity.close();
+                }
+            }
+        }
+        Tools.rePlayerState(player, true);
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
+        room.getPlayerHealth().put(player, 20F);
+        switch (room.getPlayerMode(player)) {
+            case 11:
+                room.getPlayers().put(player, 1);
+            case 1:
+                player.teleport(room.getRedSpawn());
+                Tools.giveItem(player, 1);
+                break;
+            case 12:
+                room.getPlayers().put(player, 2);
+            case 2:
+                player.teleport(room.getBlueSpawn());
+                Tools.giveItem(player, 2);
+        }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
+            @Override
+            public void onRun(int i) {
+                Tools.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
+            }
+        }, 10);
+    }
+
+    /**
      * 回合开始事件
      * @param event 事件
      */
     @EventHandler
     public void onRoundStart(GunWarRoomRoundStartEvent event) {
+        if (event.isCancelled()) return;
         Room room = event.getRoom();
-        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-            Tools.rePlayerState(entry.getKey(), true);
-            entry.getKey().getInventory().clearAll();
-            room.getPlayerHealth().put(entry.getKey(), 20F);
-            if (entry.getValue() == 11) {
-                entry.setValue(1);
-            }else if (entry.getValue() == 12) {
-                entry.setValue(2);
-            }
-            if (entry.getValue() == 1) {
-                entry.getKey().teleport(room.getRedSpawn());
-                Tools.giveItem(entry.getKey(), 1);
-            }else {
-                entry.getKey().teleport(room.getBlueSpawn());
-                Tools.giveItem(entry.getKey(), 2);
-            }
+        if (room == null) return;
+        room.gameTime = room.getSetGameTime();
+        for (Player player : room.getPlayers().keySet()) {
+            this.gunWar.getServer().getPluginManager().callEvent(new GunWarPlayerRespawnEvent(room, player));
         }
     }
 
@@ -163,49 +199,66 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         int v = event.getVictory();
-        Tools.cleanEntity(room.getLevel());
+        Tools.cleanEntity(room.getLevel(), true);
         //本回合胜利计算
         if (v == 0) {
-            int red = 0, blue = 0;
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                if (entry.getValue() == 1) {
-                    red++;
-                }else if (entry.getValue() == 2) {
-                    blue++;
-                }
-            }
-            if (red == blue) {
-                room.redRound++;
-                room.blueRound++;
-                this.sendTitle(room, 0);
-            }else if (red > blue) {
-                room.redRound++;
-                this.sendTitle(room, 1);
-            }else {
-                room.blueRound++;
-                this.sendTitle(room, 2);
+            switch (room.getGameMode()) {
+                case CTF:
+                    if ((room.redScore - room.blueScore) > 0) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
+                        return;
+                    }else if ((room.blueScore - room.redScore) > 0) {
+                        room.setMode(3);
+                        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                                this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
+                        return;
+                    } else {
+                        room.gameTime = room.getSetGameTime() / 5;
+                        return;
+                    }
+                case CLASSIC:
+                default:
+                    int red = 0, blue = 0;
+                    for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                        if (entry.getValue() == 1) {
+                            red++;
+                        }else if (entry.getValue() == 2) {
+                            blue++;
+                        }
+                    }
+                    if (red == blue) {
+                        room.redScore++;
+                        room.blueScore++;
+                        this.sendTitle(room, 0);
+                    }else if (red > blue) {
+                        room.redScore++;
+                        this.sendTitle(room, 1);
+                    }else {
+                        room.blueScore++;
+                        this.sendTitle(room, 2);
+                    }
             }
         }else if (v == 1) {
-            room.redRound++;
+            room.redScore++;
             this.sendTitle(room, 1);
         }else {
-            room.blueRound++;
+            room.blueScore++;
             this.sendTitle(room, 2);
         }
         //房间胜利计算
-        int round = room.redRound + room.blueRound;
-        if (round >= 5) {
-            if ((room.redRound - room.blueRound) > 0) {
-                room.setMode(3);
-                Server.getInstance().getScheduler().scheduleRepeatingTask(
-                        this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
-                return;
-            }else if ((room.blueRound - room.redRound) > 0) {
-                room.setMode(3);
-                Server.getInstance().getScheduler().scheduleRepeatingTask(
-                        this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
-                return;
-            }
+        if (room.redScore >= room.victoryScore) {
+            room.setMode(3);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
+            return;
+        }
+        if (room.blueScore >= room.victoryScore) {
+            room.setMode(3);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
+            return;
         }
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
     }
@@ -299,6 +352,20 @@ public class GunWarListener implements Listener {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
         Player player = event.getPlayer();
+        if (room.getGameMode() == GameMode.CTF) {
+            room.getPlayerRespawnTime().put(player, 20);
+            if (room.haveRedFlag == player) {
+                room.haveRedFlag = null;
+                room.redFlag.y -= 1.5;
+                Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
+                        new FlagPickupCheckTask(this.gunWar, room, room.redFlag), 20);
+            }else if (room.haveBlueFlag == player) {
+                room.haveBlueFlag = null;
+                room.blueFlag.y -= 1.5;
+                Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
+                        new FlagPickupCheckTask(this.gunWar, room, room.blueFlag), 20);
+            }
+        }
         Player damagePlayer = event.getDamagePlayer();
         GameRecord.addDeaths(player);
         GameRecord.addKills(damagePlayer);
@@ -361,10 +428,12 @@ public class GunWarListener implements Listener {
             default:
                 skin = GunWar.getInstance().getCorpseSkin();
         }
+        skin.setTrusted(true);
         nbt.putCompound("Skin", new CompoundTag()
                 .putByteArray("Data", skin.getSkinData().data)
                 .putString("ModelId", skin.getSkinId()));
         nbt.putFloat("Scale", -1.0F);
+        nbt.putString("playerName", player.getName());
         EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt, room.getPlayerMode(player));
         ent.setSkin(skin);
         ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));

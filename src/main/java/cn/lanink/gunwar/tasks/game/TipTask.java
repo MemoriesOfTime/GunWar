@@ -1,12 +1,13 @@
 package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.room.GameMode;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.TipMessage;
-import tip.utils.Api;
+
+import java.util.Map;
 
 public class TipTask extends PluginTask<GunWar> {
 
@@ -18,21 +19,30 @@ public class TipTask extends PluginTask<GunWar> {
         owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
-        TipMessage tipMessage = new TipMessage(room.getLevel().getName(), false, 0, "");
-        for (Player player : room.getPlayers().keySet()) {
-            Api.setPlayerShowMessage(player.getName(), tipMessage);
-        }
     }
 
     @Override
     public void onRun(int i) {
         if (this.room.getMode() != 2) {
             this.cancel();
+            return;
         }
-        for (Player player : room.getPlayers().keySet()) {
-            player.sendTip(language.gameTimeBottom
-                    .replace("%health%",
-                            this.getStringHealth(room.getPlayerHealth().getOrDefault(player, 0F))));
+        for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
+            switch (entry.getValue()) {
+                case 11:
+                case 12:
+                    //TODO 等待复活提示
+                    if (this.room.getGameMode() == GameMode.CTF) {
+                        entry.getKey().sendTip(this.language.gameTimeRespawnBottom
+                                .replace("%time%", room.getPlayerRespawnTime(entry.getKey()) + ""));
+                    }
+                    break;
+                default:
+                    entry.getKey().sendTip(this.language.gameTimeBottom
+                            .replace("%health%",
+                                    this.getStringHealth(this.room.getPlayerHealth(entry.getKey()))));
+                    break;
+            }
         }
     }
 

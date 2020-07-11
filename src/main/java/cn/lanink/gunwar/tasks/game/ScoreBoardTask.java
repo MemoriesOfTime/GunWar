@@ -4,10 +4,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.ScoreBoardMessage;
-import tip.utils.Api;
 
 import java.util.LinkedList;
 
@@ -32,6 +29,7 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (this.room.getMode() != 2) {
             this.cancel();
+            return;
         }
         if (!use) {
             use = true;
@@ -62,12 +60,10 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                                 .replace("%time%", room.gameTime + "")
                                 .replace("%red%", red + "")
                                 .replace("%blue%", blue + "")
-                                .replace("%redRound%", room.redRound + "")
-                                .replace("%blueRound%", room.blueRound + ""));
+                                .replace("%redRound%", room.redScore + "")
+                                .replace("%blueRound%", room.blueScore + ""));
                     }
-                    ScoreBoardMessage score = new ScoreBoardMessage(
-                            room.getLevel().getName(), true, this.language.scoreBoardTitle, ms);
-                    Api.setPlayerShowMessage(player.getName(), score);
+                    owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
                 }
             }
             use = false;

@@ -98,9 +98,12 @@ public class GuiListener implements Listener {
                             GuiCreate.sendAdminTimeMenu(player);
                             break;
                         case 4:
-                            GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " reloadroom");
+                            GuiCreate.sendAdminModeMenu(player);
                             break;
                         case 5:
+                            GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " reloadroom");
+                            break;
+                        case 6:
                             GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " unloadroom");
                             break;
                     }
@@ -108,9 +111,16 @@ public class GuiListener implements Listener {
             }
         }else if (event.getWindow() instanceof FormWindowCustom) {
             FormWindowCustom custom = (FormWindowCustom) event.getWindow();
-            if (cache == GuiType.ADMIN_TIME_MENU) {
-                GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaittime " + custom.getResponse().getInputResponse(0));
-                GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgametime " + custom.getResponse().getInputResponse(1));
+            switch (cache) {
+                case ADMIN_TIME_MENU:
+                    this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaittime " + custom.getResponse().getInputResponse(0));
+                    this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgametime " + custom.getResponse().getInputResponse(1));
+                    this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setvictoryscore " + custom.getResponse().getInputResponse(2));
+                    break;
+                case ADMIN_MODE_MENU:
+                    this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgamemode " +
+                        custom.getResponse().getDropdownResponse(0).getElementID());
+                    break;
             }
         }else if (event.getWindow() instanceof FormWindowModal) {
             FormWindowModal modal = (FormWindowModal) event.getWindow();

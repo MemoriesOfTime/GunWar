@@ -1,17 +1,17 @@
 package cn.lanink.gunwar.room;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
+import cn.lanink.gunwar.utils.Tips;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Position;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
-import tip.messages.BossBarMessage;
-import tip.messages.NameTagMessage;
-import tip.messages.TipMessage;
-import tip.utils.Api;
 
 import java.util.*;
 
@@ -21,9 +21,16 @@ import java.util.*;
 public class Room extends BaseRoom {
 
     private final String redSpawn, blueSpawn;
-    private LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
-    public int redRound, blueRound; //队伍胜利次数
+    private final LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
+    public int redScore, blueScore; //队伍得分
+    private final GameMode gameMode;
     public LinkedList<Player> swordAttackCD = new LinkedList<>();
+    public final int victoryScore; //胜利需要分数
+    //夺旗模式数据
+    private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
+    public Player haveRedFlag, haveBlueFlag;
+    public EntityFlagStand redFlagStand, blueFlagStand;
+    public EntityFlag redFlag, blueFlag;
 
     /**
      * 初始化
@@ -36,6 +43,16 @@ public class Room extends BaseRoom {
         this.blueSpawn = config.getString("blueSpawn");
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
+        this.victoryScore = config.getInt("victoryScore", 5);
+        switch (config.getInt("gameMode", 0)) {
+            case 1:
+                this.gameMode = GameMode.CTF;
+                break;
+            case 0:
+            default:
+                this.gameMode = GameMode.CLASSIC;
+                break;
+        }
         this.initTime();
         if (this.getLevel() == null) {
             Server.getInstance().loadLevel(this.level);
@@ -59,8 +76,8 @@ public class Room extends BaseRoom {
     @Override
     protected void initTime() {
         super.initTime();
-        this.redRound = 0;
-        this.blueRound = 0;
+        this.redScore = 0;
+        this.blueScore = 0;
     }
 
     @Override
@@ -72,24 +89,29 @@ public class Room extends BaseRoom {
      * 结束房间
      */
     public void endGame(boolean normal) {
-        this.mode = 0;
-        if (normal) {
-            if (this.players.size() > 0) {
-                Iterator<Map.Entry<Player, Integer>> it = this.players.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<Player, Integer> entry = it.next();
-                    it.remove();
-                    this.quitRoomOnline(entry.getKey());
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                mode = 0;
+                if (normal) {
+                    if (players.size() > 0) {
+                        Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+                        while (it.hasNext()) {
+                            Map.Entry<Player, Integer> entry = it.next();
+                            it.remove();
+                            quitRoomOnline(entry.getKey());
+                        }
+                    }
+                    players.clear();
+                }else {
+                    getLevel().getPlayers().values().forEach(
+                            player -> player.kick(language.roomSafeKick));
                 }
+                playerHealth.clear();
+                initTime();
+                Tools.cleanEntity(getLevel());
             }
-            this.players.clear();
-        }else {
-            this.getLevel().getPlayers().values().forEach(
-                    player -> player.kick(this.language.roomSafeKick));
-        }
-        this.playerHealth.clear();
-        this.initTime();
-        Tools.cleanEntity(this.getLevel());
+        }, 1);
     }
 
     /**
@@ -109,22 +131,34 @@ public class Room extends BaseRoom {
         player.getInventory().setItem(3, Tools.getItem(11));
         player.getInventory().setItem(5, Tools.getItem(12));
         player.getInventory().setItem(8, Tools.getItem(10));
-        TipMessage tipMessage = new TipMessage(this.level, false, 0, "");
-        Api.setPlayerShowMessage(player.getName(), tipMessage);
-        NameTagMessage nameTagMessage = new NameTagMessage(this.level, true, player.getName());
-        Api.setPlayerShowMessage(player.getName(), nameTagMessage);
-        BossBarMessage bossBarMessage = new BossBarMessage(this.level, false, 5, false, new LinkedList<>());
-        Api.setPlayerShowMessage(player.getName(), bossBarMessage);
+        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+            Tips.closeTipsShow(this.level, player);
+        }
         player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                if (player.getLevel() != getLevel()) {
+                    quitRoom(player, true);
+                }
+            }
+        }, 20);
     }
 
     @Override
     public void quitRoomOnline(Player player) {
-        Tools.removePlayerShowMessage(this.level, player);
+        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+            Tips.removeTipsConfig(this.level, player);
+        }
+        GunWar.getInstance().getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(player);
         player.sendMessage(this.language.quitRoom);
+    }
+
+    public GameMode getGameMode() {
+        return this.gameMode;
     }
 
     /**
@@ -132,7 +166,29 @@ public class Room extends BaseRoom {
      * @return 玩家血量Map
      */
     public LinkedHashMap<Player, Float> getPlayerHealth() {
-        return playerHealth;
+        return this.playerHealth;
+    }
+
+    public float getPlayerHealth(Player player) {
+        if (this.playerHealth.containsKey(player)) {
+            return this.playerHealth.get(player);
+        }
+        return 0;
+    }
+
+    /**
+     * 获取玩家重生时间
+     * @return 玩家重生时间Map
+     */
+    public HashMap<Player, Integer> getPlayerRespawnTime() {
+        return this.playerRespawnTime;
+    }
+
+    public int getPlayerRespawnTime(Player player) {
+        if (this.playerRespawnTime.containsKey(player)) {
+            return this.playerRespawnTime.get(player);
+        }
+        return 0;
     }
 
     /**

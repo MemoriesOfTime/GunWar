@@ -3,8 +3,10 @@ package cn.lanink.gunwar.listener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
+import cn.lanink.gunwar.utils.Tips;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
@@ -28,7 +30,9 @@ public class PlayerJoinAndQuit implements Listener {
                 public void onRun(int i) {
                     if (player.isOnline()) {
                         Tools.rePlayerState(player ,false);
-                        Tools.removePlayerShowMessage(player.getLevel().getName(), player);
+                        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+                            Tips.removeTipsConfig(player.getLevel().getName(), player);
+                        }
                         SavePlayerInventory.restore(player);
                         player.teleport(GunWar.getInstance().getServer().getDefaultLevel().getSafeSpawn());
                     }

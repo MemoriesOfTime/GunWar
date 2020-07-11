@@ -1,6 +1,8 @@
 package cn.lanink.gunwar.utils;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -8,6 +10,8 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
@@ -21,15 +25,10 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
+import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
-import tip.messages.BossBarMessage;
-import tip.messages.NameTagMessage;
-import tip.messages.ScoreBoardMessage;
-import tip.messages.TipMessage;
-import tip.utils.Api;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -60,8 +59,17 @@ public class Tools {
      * @param level 世界
      */
     public static void cleanEntity(Level level) {
+        cleanEntity(level, false);
+    }
+
+    public static void cleanEntity(Level level, boolean all) {
         for (Entity entity : level.getEntities()) {
             if (!(entity instanceof Player)) {
+                if (entity instanceof EntityPlayerCorpse || entity instanceof EntityFlag) {
+                    if (!all) {
+                        break;
+                    }
+                }
                 entity.close();
             }
         }
@@ -155,18 +163,18 @@ public class Tools {
     }
 
     /**
-     * 移除显示信息(Tips)
-     * @param level 地图
+     * 设置实体皮肤
+     * @param human 实体
+     * @param skin 皮肤
      */
-    public static void removePlayerShowMessage(String level, Player player) {
-        Api.removePlayerShowMessage(player.getName(),
-                new NameTagMessage(level, true, ""));
-        Api.removePlayerShowMessage(player.getName(),
-                new TipMessage(level, true, 0, ""));
-        Api.removePlayerShowMessage(player.getName(),
-                new ScoreBoardMessage(level, true, "", new LinkedList<>()));
-        Api.removePlayerShowMessage(player.getName(),
-                new BossBarMessage(level, false, 5, false, new LinkedList<>()));
+    public static void setPlayerSkin(EntityHuman human, Skin skin) {
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        human.setSkin(skin);
+        human.getLevel().getPlayers().values().forEach(player -> player.dataPacket(packet));
     }
 
     /**
@@ -238,7 +246,7 @@ public class Tools {
 
     /**
      * 放烟花
-     * GitHub：https://github.com/SmallasWater/LuckDraw/blob/master/src/main/java/smallaswater/luckdraw/utils/Tools.java
+     * GitHub：https://github.com/PetteriM1/FireworkShow
      * @param position 位置
      */
     public static void spawnFirework(Position position) {

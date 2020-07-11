@@ -33,17 +33,24 @@ public class Language {
             "§a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点 \n " +
             "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n " +
             "§a/%cmdName% setgametime 数字 §e设置每回合游戏最长时间 \n " +
+            "§a/%cmdName% setVictoryScore 数字 §e设置胜利所需分数 \n " +
+            "§a/%cmdName% setgamemode 数字 §e设置房间模式 \n " +
             "§a/%cmdName% reloadroom §e重载所有房间 \n " +
             "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
     public String adminSetWaitSpawn = "§a等待出生点设置成功！";
     public String adminSetRedSpawn = "§a红队出生点设置成功！";
     public String adminSetBlueSpawn = "§a蓝队出生点设置成功！";
-    public String adminNotNumber = "§a时间只能设置为正整数！";
+    public String adminNotNumber = "§a输入的参数不是数字！";
     public String adminSetWaitTime = "§a等待时间已设置为：%time%";
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
+    public String adminSetVictoryScore = "§a胜利分数已设置为: %score%";
+    public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
+    //房间模式
+    public String classic = "经典";
+    public String captureTheFlag = "夺旗";
     //游戏提示
     public String playerTeamSelect = "你已选择队伍";
     public String roomSafeKick = "\n§c房间非正常关闭!\n为了您的背包安全，请稍后重进服务器！";
@@ -76,6 +83,7 @@ public class Language {
             "§l§a队伍胜利：\n " +
             "§l§c红: %redRound% 回合 §9蓝: %blueRound% 回合 ";
     public String gameTimeBottom = "§l§c血量： %health%";
+    public String gameTimeRespawnBottom = "§l§c复活倒计时: %time%";
     public String victoryMessage = "§e恭喜 %teamName% §e获得胜利";
     //ui相关
     public String userMenuButton1 = "§e随机加入房间";
@@ -86,11 +94,13 @@ public class Language {
     public String adminMenuButton1 = "§e设置等待出生点";
     public String adminMenuButton2 = "§e设置红队出生点";
     public String adminMenuButton3 = "§e设置蓝队出生点";
-    public String adminMenuButton4 = "§e设置时间参数";
-    public String adminMenuButton5 = "§e重载所有房间";
-    public String adminMenuButton6 = "§c卸载所有房间";
+    public String adminMenuButton4 = "§e设置更多参数";
+    public String adminMenuButton5 = "§e设置房间模式";
+    public String adminMenuButton6 = "§e重载所有房间";
+    public String adminMenuButton7 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "等待时间（秒）";
     public String adminTimeMenuInputText2 = "游戏时间（秒）";
+    public String adminTimeMenuInputText3 = "胜利所需分数";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
@@ -140,8 +150,12 @@ public class Language {
         this.adminSetWaitTime = config.getString("adminSetWaitTime", this.adminSetWaitTime);
         this.adminSetGameTime = config.getString("adminSetGameTime", this.adminSetGameTime);
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
+        this.adminSetVictoryScore = config.getString("adminSetVictoryScore", this.adminSetVictoryScore);
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
+        //房间模式
+        this.classic = config.getString("classic", this.classic);
+        this.captureTheFlag = config.getString("captureTheFlag", this.captureTheFlag);
         //提示信息
         this.playerTeamSelect = config.getString("playerTeamSelect", this.playerTeamSelect);
         this.roomSafeKick = config.getString("roomSafeKick", this.roomSafeKick);
@@ -168,6 +182,7 @@ public class Language {
         this.waitBottom = config.getString("waitBottom", this.waitBottom);
         this.gameTimeScoreBoard = config.getString("gameTimeScoreBoard", this.gameTimeScoreBoard);
         this.gameTimeBottom = config.getString("gameTimeBottom", this.gameTimeBottom);
+        this.gameTimeRespawnBottom = config.getString("gameTimeRespawnBottom", this.gameTimeRespawnBottom);
         this.victoryMessage = config.getString("victoryMessage", this.victoryMessage);
         //ui
         this.userMenuButton1 = config.getString("userMenuButton1", this.userMenuButton1);
@@ -183,6 +198,7 @@ public class Language {
         this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
+        this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);

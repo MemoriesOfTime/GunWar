@@ -8,8 +8,6 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
-import tip.messages.ScoreBoardMessage;
-import tip.utils.Api;
 
 import java.util.LinkedList;
 import java.util.Map;
@@ -31,6 +29,7 @@ public class WaitTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (this.room.getMode() != 1) {
             this.cancel();
+            return;
         }
         if (this.room.getPlayers().size() > 1) {
             if (this.room.waitTime > 0) {
@@ -57,14 +56,12 @@ public class WaitTask extends PluginTask<GunWar> {
                             break;
                     }
                     LinkedList<String> ms = new LinkedList<>();
-                    for (String string : language.waitTimeScoreBoard.split("\n")) {
+                    for (String string : this.language.waitTimeScoreBoard.split("\n")) {
                         ms.add(string.replace("%team%", team)
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
-                    ScoreBoardMessage score = new ScoreBoardMessage(
-                            room.getLevel().getName(), true, language.scoreBoardTitle, ms);
-                    Api.setPlayerShowMessage(entry.getKey().getName(), score);
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
                 }
             }else {
                 owner.getServer().getPluginManager().callEvent(new GunWarRoomStartEvent(this.room));
@@ -96,9 +93,7 @@ public class WaitTask extends PluginTask<GunWar> {
                     ms.add(string.replace("%team%", team)
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                ScoreBoardMessage score = new ScoreBoardMessage(
-                        room.getLevel().getName(), true, language.scoreBoardTitle, ms);
-                Api.setPlayerShowMessage(entry.getKey().getName(), score);
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
             }
         }else {
             this.room.endGame();

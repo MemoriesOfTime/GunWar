@@ -11,11 +11,15 @@ import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.ui.GuiType;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
+import cn.lanink.lib.scoreboard.IScoreboard;
+import cn.lanink.lib.scoreboard.ScoreboardDe;
+import cn.lanink.lib.scoreboard.ScoreboardGt;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -33,8 +37,10 @@ public class GunWar extends PluginBase {
     private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
+    private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
+    private IScoreboard scoreboard;
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -55,6 +61,20 @@ public class GunWar extends PluginBase {
         }
         if (!file3.exists() && !file3.mkdirs()) {
             getLogger().warning("Language 文件夹初始化失败");
+        }
+        //加载计分板
+        try {
+            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
+            this.scoreboard = new ScoreboardDe();
+        } catch (ClassNotFoundException e) {
+            try {
+                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
+                this.scoreboard = new ScoreboardGt();
+            } catch (ClassNotFoundException ignored) {
+                getLogger().error("请安装ScoreboardAPI插件！");
+                getServer().getPluginManager().disablePlugin(this);
+                return;
+            }
         }
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
@@ -101,6 +121,10 @@ public class GunWar extends PluginBase {
 
     public Language getLanguage() {
         return this.language;
+    }
+
+    public IScoreboard getScoreboard() {
+        return this.scoreboard;
     }
 
     public LinkedHashMap<String, Room> getRooms() {
@@ -187,11 +211,55 @@ public class GunWar extends PluginBase {
         } catch (IOException ignored) { }
         if (skinData == null) {
             getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
-            return;
         }
+        this.corpseSkin.setTrusted(true);
         this.corpseSkin.setSkinData(skinData);
         this.corpseSkin.setSkinId("defaultSkin");
+        //加载旗帜皮肤
+        saveResource("Resources/Flag/Flag.json", false);
+        saveResource("Resources/Flag/FlagStand.json", false);
+        saveResource("Resources/Flag/RedFlag.png", false);
+        saveResource("Resources/Flag/BlueFlag.png", false);
+        File fileJson = new File(getDataFolder() + "/Resources/Flag/FlagStand.json");
+        File fileImg = new File(getDataFolder() + "/Resources/Flag/RedFlag.png");
+        this.loadFlagSkin(fileImg, fileJson, 1);
+        fileJson = new File(getDataFolder() + "/Resources/Flag/Flag.json");
+        this.loadFlagSkin(fileImg, fileJson, 11);
+        fileImg = new File(getDataFolder() + "/Resources/Flag/BlueFlag.png");
+        this.loadFlagSkin(fileImg, fileJson, 12);
+        fileJson = new File(getDataFolder() + "/Resources/Flag/FlagStand.json");
+        this.loadFlagSkin(fileImg, fileJson, 2);
         getLogger().info("§e资源文件加载完成");
+    }
+
+    private void loadFlagSkin(File img, File json, Integer id) {
+        BufferedImage skinData;
+        try {
+            skinData = ImageIO.read(img);
+            if (skinData != null) {
+                Skin skin = new Skin();
+                skin.setTrusted(true);
+                skin.setSkinData(skinData);
+                skin.setSkinId("flag" + id);
+                Map<String, Object> skinJson = new Config(json, 1).getAll();
+                String name = null;
+                for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
+                    if (name == null || name.trim().equals("")) {
+                        name = entry1.getKey();
+                    }else {
+                        break;
+                    }
+                }
+                skin.setGeometryName(name);
+                skin.setGeometryData(Utils.readFile(json));
+                this.flagSkinMap.put(id, skin);
+                getLogger().info("§a " + img.getName() + ":" + json.getName() + " 皮肤加载完成！");
+            }else {
+                getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
+            }
+        } catch (IOException e) {
+            getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
+        }
     }
 
     @Override
@@ -217,6 +285,14 @@ public class GunWar extends PluginBase {
 
     public Skin getCorpseSkin() {
         return this.corpseSkin;
+    }
+
+    public HashMap<Integer, Skin> getFlagSkin() {
+        return this.flagSkinMap;
+    }
+
+    public Skin getFlagSkin(Integer id) {
+        return this.flagSkinMap.get(id);
     }
 
     public Config getRoomConfig(Level level) {
