@@ -36,8 +36,13 @@ public class EntityFlag extends EntityHuman {
     }
 
     @Override
+    public float getLength() {
+        return 0.3F;
+    }
+
+    @Override
     public float getWidth() {
-        return 0.2F;
+        return 0.3F;
     }
 
 }

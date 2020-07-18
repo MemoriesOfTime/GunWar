@@ -23,6 +23,11 @@ public class EntityFlagStand extends EntityHuman {
     }
 
     @Override
+    public float getLength() {
+        return 1;
+    }
+
+    @Override
     public float getWidth() {
         return 1;
     }

@@ -99,7 +99,7 @@ public class GunWarListener implements Listener {
                 noTeam.clear();
             }
             if (redTeam.size() != blueTeam.size()) {
-                if ((redTeam.size() - blueTeam.size()) == 1 || (blueTeam.size() - redTeam.size() == 1)) {
+                if (Math.abs(redTeam.size() - blueTeam.size()) == 1) {
                     break;
                 }
                 if (redTeam.size() > blueTeam.size()) {
@@ -141,14 +141,19 @@ public class GunWarListener implements Listener {
         Room room = event.getRoom();
         Player player = event.getPlayer();
         if (room == null || player == null) return;
-        for (Entity entity : room.getLevel().getEntities()) {
-            if (entity instanceof EntityPlayerCorpse) {
-                if (entity.namedTag != null &&
-                        entity.namedTag.getString("playerName").equals(player.getName())) {
-                    entity.close();
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
+            @Override
+            public void onRun(int i) {
+                for (Entity entity : room.getLevel().getEntities()) {
+                    if (entity instanceof EntityPlayerCorpse) {
+                        if (entity.namedTag != null &&
+                                entity.namedTag.getString("playerName").equals(player.getName())) {
+                            entity.close();
+                        }
+                    }
                 }
             }
-        }
+        }, 1);
         Tools.rePlayerState(player, true);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();

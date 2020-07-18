@@ -89,10 +89,10 @@ public class Room extends BaseRoom {
      * 结束房间
      */
     public void endGame(boolean normal) {
+        this.mode = 0;
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
             @Override
             public void onRun(int i) {
-                mode = 0;
                 if (normal) {
                     if (players.size() > 0) {
                         Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
@@ -109,7 +109,7 @@ public class Room extends BaseRoom {
                 }
                 playerHealth.clear();
                 initTime();
-                Tools.cleanEntity(getLevel());
+                Tools.cleanEntity(getLevel(), true);
             }
         }, 1);
     }
