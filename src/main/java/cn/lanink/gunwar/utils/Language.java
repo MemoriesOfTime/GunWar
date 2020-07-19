@@ -46,7 +46,9 @@ public class Language {
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
     public String adminSetVictoryScore = "§a胜利分数已设置为: %score%";
     public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
-    public String adminStartNoPlayer = "§a房间人数不足两人,无法开始游戏！";
+    public String adminStartRoom = "§a已强制开启游戏！";
+    public String adminStartRoomNoPlayer = "§a房间人数不足两人,无法开始游戏！";
+    public String adminStartRoomIsPlaying = "§c房间已经开始了！";
     public String adminLevelNoRoom = "§c当前地图不是游戏房间！";
     public String adminStopRoom = "§a已强制结束房间！";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
@@ -155,7 +157,9 @@ public class Language {
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminSetVictoryScore = config.getString("adminSetVictoryScore", this.adminSetVictoryScore);
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
-        this.adminStartNoPlayer = config.getString("adminStartNoPlayer", this.adminStartNoPlayer);
+        this.adminStartRoom = config.getString("adminStartRoom", this.adminStartRoom);
+        this.adminStartRoomNoPlayer = config.getString("adminStartRoomNoPlayer", this.adminStartRoomNoPlayer);
+        this.adminStartRoomIsPlaying = config.getString("adminStartRoomIsPlaying", this.adminStartRoomIsPlaying);
         this.adminLevelNoRoom = config.getString("adminLevelNoRoom", this.adminLevelNoRoom);
         this.adminStopRoom = config.getString("adminStopRoom", this.adminStopRoom);
         this.adminReload = config.getString("adminReload", this.adminReload);
