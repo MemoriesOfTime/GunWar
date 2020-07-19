@@ -32,6 +32,9 @@ public class WaitTask extends PluginTask<GunWar> {
             return;
         }
         if (this.room.getPlayers().size() > 1) {
+            if (this.room.getPlayers().size() == 10 && this.room.waitTime > 10) {
+                this.room.waitTime = 10;
+            }
             if (this.room.waitTime > 0) {
                 this.room.waitTime--;
                 if (this.room.waitTime <= 5) {
