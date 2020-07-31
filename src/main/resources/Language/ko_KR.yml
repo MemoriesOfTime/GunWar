@@ -29,6 +29,8 @@ adminHelp: |-
   §a/%cmdName% setgametime 숫자 §e한 게임 당 최대 시간 설정
   §a/%cmdName% setVictoryScore 숫자 §e no translation
   §a/%cmdName% setgamemode 숫자 §e no translation
+  §a/%cmdName% startroom §e开始所在地图的房间游戏
+  §a/%cmdName% stoproom §e强制关闭所在地图的房间
   §a/%cmdName% reloadroom §e게임 리로드
   §a/%cmdName% unloadroom §e해당 게임 언로드
 adminSetWaitSpawn: "§a대기 위치 설정 성공!"
