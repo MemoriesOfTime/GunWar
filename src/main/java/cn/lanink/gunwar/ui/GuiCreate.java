@@ -2,8 +2,9 @@ package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.Room;
-import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.gamerecord.GameRecord;
+import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.form.element.ElementButton;
@@ -24,14 +25,6 @@ import java.util.Map;
 public class GuiCreate {
 
     public static final String PLUGIN_NAME = "§l§7[§1G§2u§3n§4W§5a§6r§7]";
-    public static final int USER_MENU = 128894311;
-    public static final int ADMIN_MENU = 128894312;
-    public static final int ADMIN_TIME_MENU = 128894313;
-    public static final int ROOM_LIST_MENU = 128894314;
-    public static final int ROOM_JOIN_OK = 128894315;
-    public static final int GAME_RECORD = 128894316;
-    public static final int RECORD_LIST = 128894317;
-    public static final int RANKING_LIST = 128894318;
 
     /**
      * 显示用户菜单
@@ -156,10 +149,10 @@ public class GuiCreate {
      */
     public static void sendGameRecord(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        String s = language.playerGameRecord.replace("%kills%", GameRecord.getKills(player) + "")
-                .replace("%deaths%", GameRecord.getDeaths(player) + "")
-                .replace("%victory%", GameRecord.getVictory(player) + "")
-                .replace("%defeat%", GameRecord.getDefeat(player) + "");
+        String s = language.playerGameRecord.replace("%kills%", GameRecord.getPlayerRecord(player, RecordType.KILLS) + "")
+                .replace("%deaths%", GameRecord.getPlayerRecord(player, RecordType.DEATHS) + "")
+                .replace("%victory%", GameRecord.getPlayerRecord(player, RecordType.VICTORY) + "")
+                .replace("%defeat%", GameRecord.getPlayerRecord(player, RecordType.DEFEAT) + "");
         FormWindowModal modal = new FormWindowModal(
                 PLUGIN_NAME, s, language.buttonOK, language.buttonReturn);
         showFormWindow(player, modal, GuiType.GAME_RECORD);
@@ -169,11 +162,11 @@ public class GuiCreate {
      * 显示排行榜
      * @param player 玩家
      */
-    public static void sendRankingList(Player player, GameRecord.type type) {
+    public static void sendRankingList(Player player, RecordType recordType) {
         Language language = GunWar.getInstance().getLanguage();
-        LinkedHashMap<String,Integer> list = GameRecord.getRankingList(type);
+        LinkedHashMap<String,Integer> list = GameRecord.getRankingList(recordType);
         StringBuilder s = new StringBuilder();
-        switch (type) {
+        switch (recordType) {
             case KILLS:
                 s.append(language.killsRanking).append("\n");
                 break;

@@ -1,8 +1,8 @@
 package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -67,16 +67,16 @@ public class GuiListener implements Listener {
                             GuiCreate.sendGameRecord(player);
                             break;
                         case 1:
-                            GuiCreate.sendRankingList(player, GameRecord.type.KILLS);
+                            GuiCreate.sendRankingList(player, RecordType.KILLS);
                             break;
                         case 2:
-                            GuiCreate.sendRankingList(player, GameRecord.type.DEATHS);
+                            GuiCreate.sendRankingList(player, RecordType.DEATHS);
                             break;
                         case 3:
-                            GuiCreate.sendRankingList(player, GameRecord.type.VICTORY);
+                            GuiCreate.sendRankingList(player, RecordType.VICTORY);
                             break;
                         case 4:
-                            GuiCreate.sendRankingList(player, GameRecord.type.DEFEAT);
+                            GuiCreate.sendRankingList(player, RecordType.DEFEAT);
                             break;
                         case 5:
                             GuiCreate.sendUserMenu(player);

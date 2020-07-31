@@ -7,9 +7,10 @@ import cn.lanink.gunwar.room.GameMode;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.*;
-import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
+import cn.lanink.gunwar.utils.gamerecord.GameRecord;
+import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -372,8 +373,8 @@ public class GunWarListener implements Listener {
             }
         }
         Player damagePlayer = event.getDamagePlayer();
-        GameRecord.addDeaths(player);
-        GameRecord.addKills(damagePlayer);
+        GameRecord.addPlayerRecord(player, RecordType.DEATHS);
+        GameRecord.addPlayerRecord(player, RecordType.KILLS);
         player.sendTitle(this.language.titleDeathTitle,
                 this.language.titleDeathSubtitle.replace("%player%", damagePlayer.getName()),
                 10, 30, 10);

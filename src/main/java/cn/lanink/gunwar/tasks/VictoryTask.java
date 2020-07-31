@@ -3,9 +3,10 @@ package cn.lanink.gunwar.tasks;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarRoomEndEvent;
 import cn.lanink.gunwar.room.Room;
-import cn.lanink.gunwar.utils.GameRecord;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
+import cn.lanink.gunwar.utils.gamerecord.GameRecord;
+import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -30,9 +31,9 @@ public class VictoryTask extends PluginTask<GunWar> {
         for (Map.Entry<Player, Integer> entry: room.getPlayers().entrySet()) {
             if (this.victory == 1) {
                 if (entry.getValue() == 1) {
-                    GameRecord.addVictory(entry.getKey());
+                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                 }else {
-                    GameRecord.addDefeat(entry.getKey());
+                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
                 }
                 LinkedList<String> ms = new LinkedList<>();
                 ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameRed));
@@ -40,9 +41,9 @@ public class VictoryTask extends PluginTask<GunWar> {
                 entry.getKey().sendTitle(this.language.victoryRed, "", 10, 40, 20);
             }else if (this.victory == 2) {
                 if (entry.getValue() == 2) {
-                    GameRecord.addVictory(entry.getKey());
+                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                 }else {
-                    GameRecord.addDefeat(entry.getKey());
+                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
                 }
                 LinkedList<String> ms = new LinkedList<>();
                 ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameBlue));
