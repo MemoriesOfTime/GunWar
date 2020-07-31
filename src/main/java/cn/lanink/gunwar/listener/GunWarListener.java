@@ -374,16 +374,22 @@ public class GunWarListener implements Listener {
         }
         Player damagePlayer = event.getDamagePlayer();
         GameRecord.addPlayerRecord(player, RecordType.DEATHS);
-        GameRecord.addPlayerRecord(player, RecordType.KILLS);
-        player.sendTitle(this.language.titleDeathTitle,
-                this.language.titleDeathSubtitle.replace("%player%", damagePlayer.getName()),
-                10, 30, 10);
+        if (player != damagePlayer) {
+            GameRecord.addPlayerRecord(player, RecordType.KILLS);
+        }
         Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override
             public void onRun() {
-                for (Player p : room.getPlayers().keySet()) {
-                    p.sendMessage(language.killMessage.replace("%damagePlayer%", damagePlayer.getName())
-                            .replace("%player%", player.getName()));
+                player.sendTitle(language.titleDeathTitle,
+                        language.titleDeathSubtitle.replace("%player%", damagePlayer.getName()),
+                        10, 30, 10);
+                if (player == damagePlayer) {
+                    room.getPlayers().keySet().forEach(p -> p.sendMessage(language.suicideMessage
+                            .replace("%player%", player.getName())));
+                }else {
+                    room.getPlayers().keySet().forEach(p -> p.sendMessage(language.killMessage
+                            .replace("%damagePlayer%", damagePlayer.getName())
+                            .replace("%player%", player.getName())));
                 }
                 int arrow = 0;
                 int snowball = 0;

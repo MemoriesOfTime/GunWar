@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener;
 import cn.lanink.gunwar.GunWar;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.block.BlockBreakEvent;
 import cn.nukkit.event.block.BlockPlaceEvent;
@@ -129,7 +130,7 @@ public class RoomLevelProtection implements Listener {
      * 伤害事件
      * @param event 事件
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
         if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
@@ -173,4 +174,5 @@ public class RoomLevelProtection implements Listener {
             event.setKeepExperience(true);
         }
     }
+
 }

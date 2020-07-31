@@ -2,10 +2,7 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
-import cn.lanink.gunwar.listener.GunWarListener;
-import cn.lanink.gunwar.listener.PlayerGameListener;
-import cn.lanink.gunwar.listener.PlayerJoinAndQuit;
-import cn.lanink.gunwar.listener.RoomLevelProtection;
+import cn.lanink.gunwar.listener.*;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.ui.GuiType;
@@ -88,6 +85,7 @@ public class GunWar extends PluginBase {
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
         getServer().getPluginManager().registerEvents(new GunWarListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         new MetricsLite(this, 7448);

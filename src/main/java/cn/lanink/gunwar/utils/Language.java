@@ -70,6 +70,7 @@ public class Language {
     public String titleDeathTitle = "死亡";
     public String titleDeathSubtitle = "你被 %player% 击杀了";
     public String killMessage = "§e >> §c%damagePlayer% 杀死了 %player%";
+    public String suicideMessage = "§e >> §c%player% 自杀了";
     public String tpJoinRoomLevel = "§e >> §c要进入游戏地图，请先加入游戏！";
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     public String gameArmor = "§e >> §c游戏中无法脱下护甲！";
@@ -181,6 +182,7 @@ public class Language {
         this.titleDeathTitle = config.getString("titleDeathTitle", this.titleDeathTitle);
         this.titleDeathSubtitle = config.getString("titleDeathSubtitle", this.titleDeathSubtitle);
         this.killMessage = config.getString("killMessage", this.killMessage);
+        this.suicideMessage = config.getString("suicideMessage", this.suicideMessage);
         this.tpJoinRoomLevel = config.getString("tpJoinRoomLevel", this.tpJoinRoomLevel);
         this.tpQuitRoomLevel = config.getString("tpQuitRoomLevel", this.tpQuitRoomLevel);
         this.gameArmor = config.getString("gameArmor", this.gameArmor);

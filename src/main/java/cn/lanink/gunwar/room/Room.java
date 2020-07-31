@@ -210,10 +210,14 @@ public class Room extends BaseRoom {
      * @param player 玩家
      * @param health 血量
      */
-    public void lessHealth(Player player, Player damage, float health) {
+    public void lessHealth(Player player, Player damager, float health) {
         float nowHealth = this.playerHealth.get(player) - health;
         if (nowHealth <= 0) {
-            this.playerHealth.put(player, 0F);
+            if (damager != null) {
+                this.playerHealth.put(player, 0F);
+            }else {
+                this.playerHealth.put(player, 1F);
+            }
         }else {
             this.playerHealth.put(player, nowHealth);
         }
