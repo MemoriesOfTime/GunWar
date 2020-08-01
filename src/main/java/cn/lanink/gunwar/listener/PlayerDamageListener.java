@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Tools;
@@ -127,6 +128,10 @@ public class PlayerDamageListener implements Listener {
                 this.gunWar.getServer().getPluginManager().callEvent(
                         new GunWarPlayerDamageEvent(room, player, player, event.getDamage()));
             }
+        }else if (event.getEntity() instanceof EntityPlayerCorpse ||
+                event.getEntity() instanceof EntityFlagStand ||
+                event.getEntity() instanceof EntityFlag) {
+            event.setCancelled(true);
         }
     }
 
