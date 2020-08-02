@@ -76,7 +76,7 @@ public class Language {
     public String tpJoinRoomLevel = "§e >> §c要进入游戏地图，请先加入游戏！";
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     public String gameArmor = "§e >> §c游戏中无法脱下护甲！";
-    public String playerTeamChat = "§c[队伍] %player% + §b >>> %message%";
+    public String playerTeamChat = "§a[队伍]§f %player% §b >>> %message%";
     //ScoreBoardTask
     public String scoreBoardTitle = "§eGunWar";
     public String waitTimeScoreBoard = " 所属队伍: %team% \n 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";

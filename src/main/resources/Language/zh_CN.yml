@@ -69,7 +69,7 @@ suicideMessage: "§e >> §c%player% 自杀了"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 gameArmor: "§e >> §c游戏中无法脱下护甲！"
-playerTeamChat: "§c[队伍] %player% + §b >>> %message%"
+playerTeamChat: "§a[队伍]§f %player% §b >>> %message%"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   所属队伍: %team%

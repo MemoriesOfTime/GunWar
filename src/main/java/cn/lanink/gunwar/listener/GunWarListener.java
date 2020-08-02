@@ -142,7 +142,7 @@ public class GunWarListener implements Listener {
         Room room = event.getRoom();
         Player player = event.getPlayer();
         if (room == null || player == null) return;
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
+        Server.getInstance().getScheduler().scheduleTask(this.gunWar, new Task() {
             @Override
             public void onRun(int i) {
                 for (Entity entity : room.getLevel().getEntities()) {
@@ -154,7 +154,7 @@ public class GunWarListener implements Listener {
                     }
                 }
             }
-        }, 1);
+        });
         Tools.rePlayerState(player, true);
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
@@ -222,6 +222,7 @@ public class GunWarListener implements Listener {
                         return;
                     } else {
                         room.gameTime = room.getSetGameTime() / 5;
+                        //TODO 添加加时赛提示
                         return;
                     }
                 case CLASSIC:

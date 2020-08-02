@@ -15,6 +15,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.player.PlayerChatEvent;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
@@ -109,7 +110,7 @@ public class PlayerGameListener implements Listener {
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
         if (player == null || event.getMessage() == null) return;
-        Room room = this.gunWar.getRooms().getOrDefault(player.getLevel().getName(), null);
+        Room room = this.gunWar.getRooms().get(player.getLevel().getName());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -119,6 +120,29 @@ public class PlayerGameListener implements Listener {
         }
         event.setCancelled(true);
         player.sendMessage(this.language.useCmdInRoom);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onChat(PlayerChatEvent event) {
+        Player player = event.getPlayer();
+        String message = event.getMessage();
+        if (player == null || message == null) return;
+        Room room = this.gunWar.getRooms().get(player.getLevel().getName());
+        if (room == null || !room.isPlaying(player) || room.getMode() != 2) {
+            return;
+        }
+        message = this.language.playerTeamChat.replace("%player%", player.getName())
+                .replace("%message%", message);
+        int team = room.getPlayerMode(player);
+        for (Player p : room.getPlayers().keySet()) {
+            if (room.getPlayerMode(p) == team ||
+                    (room.getPlayerMode(p) - 10 == team) ||
+                    (room.getPlayerMode(p) == team - 10)) {
+                p.sendMessage(message);
+            }
+        }
+        event.setMessage("");
+        event.setCancelled(true);
     }
 
     /**
