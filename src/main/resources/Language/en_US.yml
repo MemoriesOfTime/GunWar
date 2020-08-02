@@ -1,0 +1,137 @@
+# using Google Translate
+# You can help me modify the translation on github
+# https://github.com/lt-name/GunWar_Nukkit
+useCmdInRoom: "§e >> §cYou can't use this commands here!"
+cmdHelp: "§eFor more help,please type: §b/%cmdName% help"
+userHelp: |-
+  §eGunWar--Help
+  §a/%cmdName% §eOpen Game UI
+  §a/%cmdName% join <roomName> §eJoin a Game
+  §a/%cmdName% quit §eQuit a Game
+  §a/%cmdName% list §eSee Lists of All Game Rooms
+  §a/%cmdName% record §eSee record(ranking list)
+noPermission: "§cSORRY!But you don't have enough permission!"
+joinRoom: "§aYou joined the game room: %name%"
+joinRoomOnRoom: "§c You can't join a game because you've in a game room already!"
+joinRoomOnRiding: "§cYou can't join a game because you are riding something..."
+joinRandomRoom: "§a Randomly assigned rooms for you!"
+joinRoomIsPlaying: "§aThis room is playing, please wait!"
+joinRoomIsFull: "§aThe room is not vacant,please wait!"
+joinRoomIsNotFound: "§aCan't find this room!"
+joinRoomNotAvailable: "§aThere is no vacant room to use!"
+quitRoom: "§aYou have quit the room!"
+quitRoomNotInRoom: "§aYou are not in a room!"
+listRoom: "§eRoom list: §a %list%"
+useCmdInCon: "Please use command in the game!"
+adminHelp: |-
+  §eGunWar--Help
+  §a/%cmdName% §eOpen UI
+  §a/%cmdName% setwaitspawn §eSet the current position as the waiting point
+  §a/%cmdName% setredspawn §eSet the current location as the spawn point of the red team
+  §a/%cmdName% setbluespawn §eSet the current location as the spawn point of the blue team
+  §a/%cmdName% setwaittime time §eSet the waiting time after enough players
+  §a/%cmdName% setgametime time §eSet the maximum time for each round
+  §a/%cmdName% setVictoryScore score §eSet the required points for victory
+  §a/%cmdName% setgamemode mode §eSet room game mode
+  §a/%cmdName% startroom §eStart the room game of the location map
+  §a/%cmdName% stoproom §eForcibly close the room in the location map
+  §a/%cmdName% reloadroom §eReload all the rooms
+  §a/%cmdName% unloadroom §eClose all rooms and uninstall config
+adminSetWaitSpawn: "§aWait for the spawn point to be set successfully!"
+adminSetRedSpawn: "§aThe red team spawn point is set successfully!"
+adminSetBlueSpawn: "§aThe blue team's spawn point is set successfully!"
+adminNotNumber: "§aThe parameter entered is not a number!"
+adminSetWaitTime: "§aThe waiting time has been set to: %time%"
+adminSetGameTime: "§aThe game time has been set to: %time%"
+adminSetGameTimeShort: "§aThe minimum game time cannot be less than 1 minute!"
+adminSetVictoryScore: "§aThe victory score has been set to: %score%"
+adminSetGameMode: "§aThe room game mode has been set to: %roomMode%"
+adminStartRoom: "§aThe game has been forcibly started!"
+adminStartRoomNoPlayer: "§aThere are not enough people in the room to start the game!"
+adminStartRoomIsPlaying: "§cThe room has started!"
+adminLevelNoRoom: "§cThe current map is not a game room!"
+adminStopRoom: "§aThe room has been forcibly ended!"
+adminReload: "§aConfiguration reload is complete! Please check the information in the background!"
+adminUnload: "§aAll rooms have been unloaded! Please check the information in the background!"
+classic: "Classic"
+captureTheFlag: "CaptureTheFlag"
+playerTeamSelect: "You have selected a team"
+roomSafeKick: "\n§cThe room is closed abnormally!\nFor the safety of your backpack, please re-enter the server later!"
+noTeamSelect: "No team selected"
+teamNameRed: "§cRedTeam"
+teamNameBlue: "§9BlueTeam"
+roundVictoryRed: "§cThe red team won the round"
+roundVictoryBlue: "§9The blue team won the round"
+victoryRed: "§cRed team wins"
+victoryBlue: "§9The blue team wins"
+roundVictoryDraw: "Dram"
+titleDeathTitle: "Death"
+titleDeathSubtitle: "You were killed by %player%"
+killMessage: "§e >> §c%damagePlayer% killed %player%"
+suicideMessage: "§e >> §c%player% Committed suicide"
+tpJoinRoomLevel: "§e >> §cTo enter the game map, please join the game first!"
+tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room!"
+gameArmor: "§e >> §cThe armor cannot be taken off in the game!"
+playerTeamChat: "§a[Team]§f %player% §b >>> %message%"
+scoreBoardTitle: "§eGunWar"
+waitTimeScoreBoard: |-
+  Team: %team%
+  Players: §a %playerNumber%/10
+  §aCountdown: §e%time%
+waitScoreBoard: |-
+  Team: %team%
+  Players: §a %playerNumber%/10
+  Two players required
+  Waiting for players
+waitTimeBottom: "§aThe game still has: %time% seconds!"
+waitBottom: "§cWaiting for players to join, currently there are: %playerNumber% players"
+gameTimeScoreBoard: |-
+  §l§aTeam: %team%
+  §l§aHealth:§e %health%
+  §l§aTime:§e %time% (s)
+  §l§aTeam Survival:
+  §l§cRed: %red%
+  §l§9Blue: %blue%
+  §l§aTeam Score:
+  §l§cRed: %redRound%
+  §l§9Blue: %blueRound%
+gameTimeBottom: "§l§cHealth: %health%"
+gameTimeRespawnBottom: "§l§cResurrection countdown: %time%"
+victoryMessage: "§eCongratulations to %teamName% §e for winning"
+userMenuButton1: "§eJoin a room randomly"
+userMenuButton2: "§eQuit this room"
+userMenuButton3: "§eList all the rooms"
+userMenuButton4: "§eView the ranking list"
+adminMenuSetLevel: "Map:%name%"
+adminMenuButton1: "§eSet waiting point"
+adminMenuButton2: "§eSet the red team spawn point"
+adminMenuButton3: "§eSet the blue team spawn point"
+adminMenuButton4: "§eSet more parameters"
+adminMenuButton5: "§eSet room game mode"
+adminMenuButton6: "§eReload all the rooms"
+adminMenuButton7: "§cUninstall all the rooms"
+adminTimeMenuInputText1: "Waiting Time(s)"
+adminTimeMenuInputText2: "Playing Time(s)"
+adminTimeMenuInputText3: "Points required to win"
+joinRoomOK: "§l§aCofirm to join the room: %name% §l§a?"
+buttonOK: "§aConfirm"
+buttonReturn: "§cBack"
+recordListButton1: "§eView personal records"
+recordListButton2: "§eView the kill leaderboard"
+recordListButton3: "§eView death leaderboard"
+recordListButton4: "§eView the victory ranking"
+recordListButton5: "§eView the failed leaderboard"
+killsRanking: "Kill leaderboard: "
+deathsRanking: "Death ranking: "
+victoryRanking: "Ranking of wins: "
+defeatRanking: "Ranking of failures: "
+ranking: "Top%ranking% Player: %player% Frequency: %number%"
+playerGameRecord: "kills: %kills% \n deaths: %deaths% \n victories: %victory% \n failures: %defeat%"
+itemQuitRoom: "§cExit the room"
+itemQuitRoomLore: "Hold and click to exit the room"
+itemTeamSelectRed: "§cChoose the red team"
+itemTeamSelectBlue: "§9Choose Blue Team"
+itemGrenade: "§aGrenade"
+itemGrenadeLore: "Damage: 2-10 \n Damage radius: 5"
+itemFlashBang: "§aFlashBang"
+itemFlashBangLore: "Causes temporary blindness effect \n Effective radius: 5"
