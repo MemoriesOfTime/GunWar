@@ -5,10 +5,9 @@ api:
   - 1.0.0
 load: POSTWORLD
 author: "LT_Name"
-depend:
-  - "Tips"
 loadbefore:
-  - EconomyAPI
+  - "ScoreboardPlugin"
+  - "ScoreboardAPI"
 
 permissions:
   GunWar.command.user:
