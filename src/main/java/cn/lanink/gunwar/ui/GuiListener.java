@@ -32,9 +32,9 @@ public class GuiListener implements Listener {
         if (player == null || event.getWindow() == null || event.getResponse() == null) {
             return;
         }
-        GuiType cache = this.gunWar.getGuiCache().get(event.getFormID());
+        GuiType cache = GuiCreate.UI_CACHE.containsKey(player) ? GuiCreate.UI_CACHE.get(player).get(event.getFormID()) : null;
         if (cache == null) return;
-        this.gunWar.getGuiCache().remove(event.getFormID());
+        GuiCreate.UI_CACHE.get(player).remove(event.getFormID());
         if (event.getWindow() instanceof FormWindowSimple) {
             FormWindowSimple simple = (FormWindowSimple) event.getWindow();
             switch (cache) {

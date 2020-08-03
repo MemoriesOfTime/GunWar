@@ -17,6 +17,7 @@ import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.scheduler.Task;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class GuiCreate {
 
     public static final String PLUGIN_NAME = "§l§7[§1G§2u§3n§4W§5a§6r§7]";
+    public static final HashMap<Player, HashMap<Integer, GuiType>> UI_CACHE = new HashMap<>();
 
     /**
      * 显示用户菜单
@@ -196,12 +198,20 @@ public class GuiCreate {
     }
 
     public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
+        HashMap<Integer, GuiType> map;
+        if (!UI_CACHE.containsKey(player)) {
+            map = new HashMap<>();
+            UI_CACHE.put(player, map);
+        }else {
+            map = UI_CACHE.get(player);
+        }
         int id = player.showFormWindow(window);
-        GunWar.getInstance().getGuiCache().put(id, guiType);
+        map.put(id, guiType);
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
             @Override
             public void onRun(int i) {
-                GunWar.getInstance().getGuiCache().remove(id);
+                if (UI_CACHE.containsKey(player))
+                    UI_CACHE.get(player).remove(id);
             }
         }, 2400);
     }
