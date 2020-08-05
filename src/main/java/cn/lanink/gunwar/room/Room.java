@@ -126,11 +126,8 @@ public class Room extends BaseRoom {
         player.getInventory().setItem(3, Tools.getItem(11));
         player.getInventory().setItem(5, Tools.getItem(12));
         player.getInventory().setItem(8, Tools.getItem(10));
-        try {
-            Class.forName("tip.Main");
+        if (GunWar.hasTips) {
             Tips.closeTipsShow(this.level, player);
-        } catch (ClassNotFoundException ignored) {
-
         }
         player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
@@ -145,11 +142,8 @@ public class Room extends BaseRoom {
 
     @Override
     public void quitRoomOnline(Player player) {
-        try {
-            Class.forName("tip.Main");
+        if (GunWar.hasTips) {
             Tips.removeTipsConfig(this.level, player);
-        } catch (ClassNotFoundException ignored) {
-
         }
         GunWar.getInstance().getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());

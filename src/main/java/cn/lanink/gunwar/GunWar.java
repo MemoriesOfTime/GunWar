@@ -38,6 +38,7 @@ public class GunWar extends PluginBase {
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
+    public static boolean hasTips = false;
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -72,6 +73,13 @@ public class GunWar extends PluginBase {
                 getServer().getPluginManager().disablePlugin(this);
                 return;
             }
+        }
+        //检查Tips
+        try {
+            Class.forName("tip.Main");
+            hasTips = true;
+        } catch (ClassNotFoundException ignored) {
+
         }
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);

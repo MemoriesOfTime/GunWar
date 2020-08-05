@@ -170,7 +170,7 @@ public class Tools {
      * @param human 实体
      * @param skin 皮肤
      */
-    public static void setPlayerSkin(EntityHuman human, Skin skin) {
+    public static void setHumanSkin(EntityHuman human, Skin skin) {
         PlayerSkinPacket packet = new PlayerSkinPacket();
         packet.skin = skin;
         packet.newSkinName = skin.getSkinId();
@@ -195,6 +195,7 @@ public class Tools {
             player.setNameTagAlwaysVisible(false);
             player.setAllowModifyWorld(false);
         }else {
+            player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
             player.setAllowModifyWorld(true);

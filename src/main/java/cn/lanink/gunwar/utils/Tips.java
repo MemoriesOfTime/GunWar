@@ -42,4 +42,9 @@ public class Tips {
                 new BossBarMessage(level, false, 5, false, new LinkedList<>()));
     }
 
+    public static void setNameTagMessage(String level, Player player, String message) {
+        NameTagMessage nameTagMessage = new NameTagMessage(level, true, message);
+        Api.setPlayerShowMessage(player.getName(), nameTagMessage);
+    }
+
 }
