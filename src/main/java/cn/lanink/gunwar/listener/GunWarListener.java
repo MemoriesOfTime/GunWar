@@ -24,8 +24,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
-import tip.messages.NameTagMessage;
-import tip.utils.Api;
 
 import java.util.*;
 
@@ -119,16 +117,18 @@ public class GunWarListener implements Listener {
         for (Player player : redTeam) {
             room.getPlayers().put(player, 1);
             player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
-            NameTagMessage nameTagMessage =
+            player.setNameTag("§c" + player.getName());
+            /*NameTagMessage nameTagMessage =
                     new NameTagMessage(player.getLevel().getName(), true, "§c" + player.getName());
-            Api.setPlayerShowMessage(player.getName(), nameTagMessage);
+            Api.setPlayerShowMessage(player.getName(), nameTagMessage);*/
         }
         for (Player player : blueTeam) {
             room.getPlayers().put(player, 2);
             player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
-            NameTagMessage nameTagMessage =
+            player.setNameTag("§9" + player.getName());
+            /*NameTagMessage nameTagMessage =
                     new NameTagMessage(player.getLevel().getName(), true, "§9" + player.getName());
-            Api.setPlayerShowMessage(player.getName(), nameTagMessage);
+            Api.setPlayerShowMessage(player.getName(), nameTagMessage);*/
         }
     }
 

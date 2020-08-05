@@ -88,30 +88,25 @@ public class Room extends BaseRoom {
     /**
      * 结束房间
      */
-    public void endGame(boolean normal) {
+    public synchronized void endGame(boolean normal) {
         this.mode = 0;
-        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
-            @Override
-            public void onRun(int i) {
-                if (normal) {
-                    if (players.size() > 0) {
-                        Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Map.Entry<Player, Integer> entry = it.next();
-                            it.remove();
-                            quitRoomOnline(entry.getKey());
-                        }
-                    }
-                    players.clear();
-                }else {
-                    getLevel().getPlayers().values().forEach(
-                            player -> player.kick(language.roomSafeKick));
+        if (normal) {
+            if (players.size() > 0) {
+                Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<Player, Integer> entry = it.next();
+                    it.remove();
+                    quitRoomOnline(entry.getKey());
                 }
-                playerHealth.clear();
-                initTime();
-                Tools.cleanEntity(getLevel(), true);
             }
-        }, 1);
+            players.clear();
+        }else {
+            getLevel().getPlayers().values().forEach(
+                    player -> player.kick(language.roomSafeKick));
+        }
+        playerHealth.clear();
+        initTime();
+        Tools.cleanEntity(getLevel(), true);
     }
 
     /**
@@ -131,8 +126,11 @@ public class Room extends BaseRoom {
         player.getInventory().setItem(3, Tools.getItem(11));
         player.getInventory().setItem(5, Tools.getItem(12));
         player.getInventory().setItem(8, Tools.getItem(10));
-        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+        try {
+            Class.forName("tip.Main");
             Tips.closeTipsShow(this.level, player);
+        } catch (ClassNotFoundException ignored) {
+
         }
         player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
@@ -147,8 +145,11 @@ public class Room extends BaseRoom {
 
     @Override
     public void quitRoomOnline(Player player) {
-        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+        try {
+            Class.forName("tip.Main");
             Tips.removeTipsConfig(this.level, player);
+        } catch (ClassNotFoundException ignored) {
+
         }
         GunWar.getInstance().getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
