@@ -1,0 +1,137 @@
+# Translate By Lusmft
+# You can help me improve the translation through github
+# https://github.com/lt-name/GunWar_Nukkit
+useCmdInRoom: "§e >> §cВы не можете использовать комманды здесь!"
+cmdHelp: "§eДля большей информации введите: §b/%cmdName% help"
+userHelp: |-
+  §eGunWar--Помощь
+  §a/%cmdName% §eОткрыть UI игры
+  §a/%cmdName% join <roomName> §eПрисоединиться к игре
+  §a/%cmdName% quit §eВыйти из игры
+  §a/%cmdName% list §eПосмотреть список всех комнат
+  §a/%cmdName% record §eПосмотреть статистику(ranking list)
+noPermission: "§cИзвините! Но у вас нет прав!"
+joinRoom: "§aВы присоединились к комнате: %name%"
+joinRoomOnRoom: "§cВы не можете присоединиться к игре, потому что вы уже в игре!"
+joinRoomOnRiding: "§cВы не можете присоединиться к игре, потому что вы оседлали животное..."
+joinRandomRoom: "§aСлучайная комната для вас!"
+joinRoomIsPlaying: "§aЭта комната уже играет, пожалуйста подождите!"
+joinRoomIsFull: "§aЭта комната полная, пожалуйста подождите!"
+joinRoomIsNotFound: "§aНе могу найти эту комнату!"
+joinRoomNotAvailable: "§aНет свободных комнат!"
+quitRoom: "§aВы вышли из комнаты!"
+quitRoomNotInRoom: "§aВы не в комнате!"
+listRoom: "§eСписок комнат: §a %list%"
+useCmdInCon: "Пожалуйста используйте команду в игре!"
+adminHelp: |-
+  §eGunWar--Help
+  §a/%cmdName% §eОткрыть UI
+  §a/%cmdName% setwaitspawn §eПоставить текущую позицию как точку ожидания
+  §a/%cmdName% setredspawn §eПоставить текущую позицию как точку возрождения для красной команды
+  §a/%cmdName% setbluespawn §eПоставить текущую позицию как точку возрождения для синей команды
+  §a/%cmdName% setwaittime time §eПоставить время ожидания игры после набора достаточного количества игроков
+  §a/%cmdName% setgametime time §eПоставить максимальное время игры для каждого раунда
+  §a/%cmdName% setVictoryScore score §eПоставить необходимое количество очков для победы
+  §a/%cmdName% setgamemode mode §eПоставить режим игры в комнате
+  §a/%cmdName% startroom §eНачать игру в данной комнате
+  §a/%cmdName% stoproom §eПринудительно заканчивает игру в данной комнате
+  §a/%cmdName% reloadroom §eПерезагружает все комнаты
+  §a/%cmdName% unloadroom §eОтключить все комнаты и удалить конфигурацию
+adminSetWaitSpawn: "§aТочка ожидания была успешно создана!"
+adminSetRedSpawn: "§aТочка возрождения красной команды была успешно создана!"
+adminSetBlueSpawn: "§a!aТочка возрождения синей команды была успешно создана!"
+adminNotNumber: "§aВведенный параметр не является числом!"
+adminSetWaitTime: "§aВремя ожидания было поставлено: %time%"
+adminSetGameTime: "§aВремя игры было поставлено: %time%"
+adminSetGameTimeShort: "§aМинимальная длительность игры не может быть меньше чем 1 минута!"
+adminSetVictoryScore: "§aКоличество очков для победы поставлено: %score%"
+adminSetGameMode: "§aИгровой режим в комнате поставлен: %roomMode%"
+adminStartRoom: "§aИгра была принудительно начата!"
+adminStartRoomNoPlayer: "§aНедостаточно игроков для начала игры!"
+adminStartRoomIsPlaying: "§cИгра в данной комнате началась!"
+adminLevelNoRoom: "§cДанный мир не является игровой комнатой!"
+adminStopRoom: "§aКомната была принудительно остановлена!"
+adminReload: "§aПерезагрузка конфигурации завершена!"
+adminUnload: "§aВсе комнаты были отключены!"
+classic: "Классический"
+captureTheFlag: "Захват флага"
+playerTeamSelect: "Вы выбрали команду"
+roomSafeKick: "\n§cКомната была аварийно закрыта!\nДля безопасности своего инвентаря, пожалуйста перезайдите на сервер позже!"
+noTeamSelect: "Не выбрана команда"
+teamNameRed: "§cКрасная Команда"
+teamNameBlue: "§cСиняя команда"
+roundVictoryRed: "§cКрасная команда победила в раунде"
+roundVictoryBlue: "§9Синяя команда победила в раунде"
+victoryRed: "§cКрасная команда победила"
+victoryBlue: "§9Синяя команда победила"
+roundVictoryDraw: "Ничья"
+titleDeathTitle: "Смерть"
+titleDeathSubtitle: "Вы были убиты игроком %player%"
+killMessage: "§e >> §c%damagePlayer% убил %player%"
+suicideMessage: "§e >> §c%player% совершил суицид"
+tpJoinRoomLevel: "§e >> §cЧтобы войти в игровой мир сначала войдите в комнату!"
+tpQuitRoomLevel: "§e >> §cПожалуйста введите команду чтобы выйти!"
+gameArmor: "§e >> §cНевозможно снять броню во время игры!"
+playerTeamChat: "§a[Команда]§f %player% §b >>> %message%"
+scoreBoardTitle: "§eGunWar"
+waitTimeScoreBoard: |-
+  Команда: %team%
+  Игроки: §a %playerNumber%/10
+  §aОсталось: §e%time%
+waitScoreBoard: |-
+  Команда: %team%
+  Игроки: §a %playerNumber%/10
+  Минимум 2 игрока
+  Ожидание игроков...
+waitTimeBottom: "§aДо начала игры: %time% секунд!"
+waitBottom: "§cОжидание игроков для начала, на данный момент : %playerNumber% игроков"
+gameTimeScoreBoard: |-
+  §l§aКоманда: %team%
+  §l§aЗдоровье:§e %health%
+  §l§aВремя:§e %time% (сек)
+  §l§aВыживших в команде:
+  §l§cКрасная: %red%
+  §l§9Синяя: %blue%
+  §l§aКомандный счет:
+  §l§cКрасная: %redRound%
+  §l§9Синяя: %blueRound%
+gameTimeBottom: "§l§cЗдоровье: %health%"
+gameTimeRespawnBottom: "§l§cВозрождение через: %time%"
+victoryMessage: "§eПоздравляем %teamName% §e с победой!"
+userMenuButton1: "§eПрисоединиться к случайной комнате"
+userMenuButton2: "§eВыйти из комнаты"
+userMenuButton3: "§eСписок всех комнат"
+userMenuButton4: "§eПосмотреть ранговый список"
+adminMenuSetLevel: "Комната:%name%"
+adminMenuButton1: "§eПоставить точку ожидания"
+adminMenuButton2: "§eПоставить точку возрождения для красной команды"
+adminMenuButton3: "§eПоставить точку возрождения для синей команды"
+adminMenuButton4: "§eПоставить больше параметров"
+adminMenuButton5: "§eПоставить режим игры в комнате"
+adminMenuButton6: "§eПерезагрузить все комнаты"
+adminMenuButton7: "§cУдалить все комнаты"
+adminTimeMenuInputText1: "Время ожидания(с)"
+adminTimeMenuInputText2: "Время игры(с)"
+adminTimeMenuInputText3: "Очков для победы"
+joinRoomOK: "§l§aПодтвердите присоединение к комнате: %name% §l§a?"
+buttonOK: "§aПодтвердить"
+buttonReturn: "§cНазад"
+recordListButton1: "§eПосмотреть личный рекорд"
+recordListButton2: "§eПосмотреть список топ убийств"
+recordListButton3: "§eПосмотреть список топ смертей"
+recordListButton4: "§eПосмотреть список топ побед"
+recordListButton5: "§eПосмотреть список топ поражений"
+killsRanking: "Топ убийств: "
+deathsRanking: "Топ смертей: "
+victoryRanking: "Топ побед: "
+defeatRanking: "Топ поражений: "
+ranking: "Топ %ranking% Игрок: %player% Количество: %number%"
+playerGameRecord: "Убийств: %kills% \n Смертей: %deaths% \n Побед: %victory% \n Поражений: %defeat%"
+itemQuitRoom: "§cВыйти из комнаты"
+itemQuitRoomLore: "Зажмите для того, чтобы выйти из комнаты"
+itemTeamSelectRed: "§cВыбор красной команды"
+itemTeamSelectBlue: "§9Выбор синей команды"
+itemGrenade: "§aГраната"
+itemGrenadeLore: "Урон: 2-10 \n Радиус урона: 5"
+itemFlashBang: "§aОслепляющая граната"
+itemFlashBangLore: "Временно ослепляет игроков \n Радиус эффекта: 5"
