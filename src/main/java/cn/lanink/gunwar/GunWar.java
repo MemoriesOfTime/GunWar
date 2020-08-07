@@ -2,15 +2,15 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
+import cn.lanink.gunwar.lib.scoreboard.IScoreboard;
+import cn.lanink.gunwar.lib.scoreboard.ScoreboardDe;
+import cn.lanink.gunwar.lib.scoreboard.ScoreboardGt;
 import cn.lanink.gunwar.listener.*;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.ui.GuiType;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
-import cn.lanink.lib.scoreboard.IScoreboard;
-import cn.lanink.lib.scoreboard.ScoreboardDe;
-import cn.lanink.lib.scoreboard.ScoreboardGt;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;

@@ -1,5 +1,5 @@
 # using Google Translate
-# You can help me modify the translation on github
+# You can help me improve the translation through github
 # https://github.com/lt-name/GunWar_Nukkit
 useCmdInRoom: "§e >> §cYou can't use this commands here!"
 cmdHelp: "§eFor more help,please type: §b/%cmdName% help"
