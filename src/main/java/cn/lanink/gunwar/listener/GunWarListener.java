@@ -377,7 +377,7 @@ public class GunWarListener implements Listener {
         Player damagePlayer = event.getDamagePlayer();
         GameRecord.addPlayerRecord(player, RecordType.DEATHS);
         if (player != damagePlayer) {
-            GameRecord.addPlayerRecord(player, RecordType.KILLS);
+            GameRecord.addPlayerRecord(damagePlayer, RecordType.KILLS);
         }
         Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override
