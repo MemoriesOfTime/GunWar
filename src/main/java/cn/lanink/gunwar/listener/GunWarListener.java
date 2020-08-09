@@ -119,7 +119,7 @@ public class GunWarListener implements Listener {
             room.getPlayers().put(player, 1);
             player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
             player.setNameTag("§c" + player.getName());
-            if (GunWar.hasTips) {
+            if (this.gunWar.isHasTips()) {
                 Tips.setNameTagMessage(room.getLevel().getName(), player, "§c" + player.getName());
             }
         }
@@ -127,7 +127,7 @@ public class GunWarListener implements Listener {
             room.getPlayers().put(player, 2);
             player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
             player.setNameTag("§9" + player.getName());
-            if (GunWar.hasTips) {
+            if (this.gunWar.isHasTips()) {
                 Tips.setNameTagMessage(room.getLevel().getName(), player, "§9" + player.getName());
             }
         }

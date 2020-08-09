@@ -88,8 +88,8 @@ gameTimeScoreBoard: |-
   §l§a剩余时间:§e %time% 秒
   §l§a队伍存活人数:
   §l§c红: %red% 人 §9蓝: %blue% 人
-  §l§a队伍胜利：
-  §l§c红: %redRound% 回合 §9蓝: %blueRound% 回合
+  §l§a队伍得分：
+  §l§c红: %redRound% 分 §9蓝: %blueRound% 分
 gameTimeBottom: "§l§c血量： %health%"
 gameTimeRespawnBottom: "§l§c复活倒计时: %time%"
 victoryMessage: "§e恭喜 %teamName% §e获得胜利"

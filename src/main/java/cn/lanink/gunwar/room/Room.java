@@ -134,7 +134,7 @@ public class Room extends BaseRoom {
         player.getInventory().setItem(3, Tools.getItem(11));
         player.getInventory().setItem(5, Tools.getItem(12));
         player.getInventory().setItem(8, Tools.getItem(10));
-        if (GunWar.hasTips) {
+        if (GunWar.getInstance().isHasTips()) {
             Tips.closeTipsShow(this.level, player);
         }
         player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
@@ -150,7 +150,7 @@ public class Room extends BaseRoom {
 
     @Override
     public void quitRoomOnline(Player player) {
-        if (GunWar.hasTips) {
+        if (GunWar.getInstance().isHasTips()) {
             Tips.removeTipsConfig(this.level, player);
         }
         GunWar.getInstance().getScoreboard().closeScoreboard(player);

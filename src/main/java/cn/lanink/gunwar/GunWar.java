@@ -30,15 +30,15 @@ public class GunWar extends PluginBase {
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
-    private LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
-    private LinkedHashMap<String, Config> roomConfigs = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
+    private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
-    public static boolean hasTips = false;
+    private boolean hasTips = false;
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -276,6 +276,10 @@ public class GunWar extends PluginBase {
     @Override
     public Config getConfig() {
         return this.config;
+    }
+
+    public boolean isHasTips() {
+        return this.hasTips;
     }
 
     public Config getGameRecord() {
