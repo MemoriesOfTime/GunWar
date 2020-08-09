@@ -143,22 +143,17 @@ public class GunWarListener implements Listener {
         Room room = event.getRoom();
         Player player = event.getPlayer();
         if (room == null || player == null) return;
-        Server.getInstance().getScheduler().scheduleTask(this.gunWar, new Task() {
-            @Override
-            public void onRun(int i) {
-                for (Entity entity : room.getLevel().getEntities()) {
-                    if (entity instanceof EntityPlayerCorpse) {
-                        if (entity.namedTag != null &&
-                                entity.namedTag.getString("playerName").equals(player.getName())) {
-                            entity.close();
-                        }
-                    }
+        for (Entity entity : room.getLevel().getEntities()) {
+            if (entity instanceof EntityPlayerCorpse) {
+                if (entity.namedTag != null &&
+                        entity.namedTag.getString("playerName").equals(player.getName())) {
+                    entity.close();
                 }
             }
-        });
-        Tools.rePlayerState(player, true);
+        }
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+        Tools.rePlayerState(player, true);
         room.getPlayerHealth().put(player, 20F);
         switch (room.getPlayerMode(player)) {
             case 11:
@@ -177,6 +172,7 @@ public class GunWarListener implements Listener {
             @Override
             public void onRun(int i) {
                 Tools.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
+                Tools.addSound(player, Sound.RANDOM_ORB);
             }
         }, 10);
     }

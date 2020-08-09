@@ -53,14 +53,13 @@ public class TimeTask extends PluginTask<GunWar> {
                         if (entry.getValue() > 0) {
                             entry.setValue(entry.getValue() - 1);
                             if (entry.getValue() == 0) {
-                                owner.getServer().getPluginManager().callEvent(
-                                        new GunWarPlayerRespawnEvent(this.room, entry.getKey()));
-                                owner.getServer().getScheduler().scheduleDelayedTask(owner, new Task() {
+                                owner.getServer().getScheduler().scheduleTask(owner, new Task() {
                                     @Override
                                     public void onRun(int i) {
-                                        Tools.addSound(entry.getKey(), Sound.RANDOM_ORB);
+                                        owner.getServer().getPluginManager().callEvent(
+                                                new GunWarPlayerRespawnEvent(room, entry.getKey()));
                                     }
-                                }, 10, true);
+                                });
                             }else if (entry.getValue() <= 5) {
                                 Tools.addSound(entry.getKey(), Sound.RANDOM_CLICK);
                             }

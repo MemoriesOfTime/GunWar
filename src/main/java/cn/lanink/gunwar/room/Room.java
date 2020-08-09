@@ -24,7 +24,7 @@ public class Room extends BaseRoom {
     private final LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
     public int redScore, blueScore; //队伍得分
     private final GameMode gameMode;
-    public LinkedList<Player> swordAttackCD = new LinkedList<>();
+    public HashSet<Player> swordAttackCD = new HashSet<>();
     public final int victoryScore; //胜利需要分数
     //夺旗模式数据
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
@@ -99,13 +99,21 @@ public class Room extends BaseRoom {
                     quitRoomOnline(entry.getKey());
                 }
             }
-            players.clear();
+            this.players.clear();
         }else {
             getLevel().getPlayers().values().forEach(
                     player -> player.kick(language.roomSafeKick));
         }
-        playerHealth.clear();
+        this.playerHealth.clear();
+        this.playerRespawnTime.clear();
+        this.swordAttackCD.clear();
         initTime();
+        this.haveRedFlag = null;
+        this.haveBlueFlag = null;
+        this.redFlagStand = null;
+        this.blueFlagStand = null;
+        this.redFlag = null;
+        this.blueFlag = null;
         Tools.cleanEntity(getLevel(), true);
     }
 
