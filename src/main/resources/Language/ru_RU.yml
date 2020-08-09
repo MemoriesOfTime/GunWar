@@ -93,8 +93,8 @@ gameTimeScoreBoard: |-
   §l§cКрасная: %red%
   §l§9Синяя: %blue%
   §l§aКомандный счет:
-  §l§cКрасная: %redRound%
-  §l§9Синяя: %blueRound%
+  §l§cКрасная: %redRound% счет
+  §l§9Синяя: %blueRound% счет
 gameTimeBottom: "§l§cЗдоровье: %health%"
 gameTimeRespawnBottom: "§l§cВозрождение через: %time%"
 victoryMessage: "§eПоздравляем %teamName% §e с победой!"

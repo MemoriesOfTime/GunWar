@@ -77,8 +77,11 @@ public class GunWar extends PluginBase {
         //检查Tips
         try {
             Class.forName("tip.Main");
+            if (getServer().getPluginManager().getPlugin("Tips").isDisabled()) {
+                throw new Exception("Not Loaded");
+            }
             hasTips = true;
-        } catch (ClassNotFoundException ignored) {
+        } catch (Exception ignored) {
 
         }
         this.config = new Config(getDataFolder() + "/config.yml", 2);

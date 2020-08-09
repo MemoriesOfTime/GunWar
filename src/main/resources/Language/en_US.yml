@@ -93,8 +93,8 @@ gameTimeScoreBoard: |-
   §l§cRed: %red%
   §l§9Blue: %blue%
   §l§aTeam Score:
-  §l§cRed: %redRound%
-  §l§9Blue: %blueRound%
+  §l§cRed: %redRound% Score
+  §l§9Blue: %blueRound% Score
 gameTimeBottom: "§l§cHealth: %health%"
 gameTimeRespawnBottom: "§l§cResurrection countdown: %time%"
 victoryMessage: "§eCongratulations to %teamName% §e for winning"

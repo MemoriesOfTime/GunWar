@@ -5,9 +5,14 @@ api:
   - 1.0.0
 load: POSTWORLD
 author: "LT_Name"
+softdepend:
+  - "ScoreboardPlugin"
+  - "ScoreboardAPI"
+  - "Tips"
 loadbefore:
   - "ScoreboardPlugin"
   - "ScoreboardAPI"
+  - "Tips"
 
 permissions:
   GunWar.command.user:
