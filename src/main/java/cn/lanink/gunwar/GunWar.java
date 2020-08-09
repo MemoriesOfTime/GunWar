@@ -26,7 +26,7 @@ import java.util.*;
 
 public class GunWar extends PluginBase {
 
-    public static String VERSION = "?";
+    public static final String VERSION = "?";
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
