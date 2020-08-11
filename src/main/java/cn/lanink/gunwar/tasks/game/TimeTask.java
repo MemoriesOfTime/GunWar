@@ -41,7 +41,7 @@ public class TimeTask extends PluginTask<GunWar> {
         if (this.room.gameTime > 0) {
             this.room.gameTime--;
         }else {
-            Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 0));
+            this.callGunWarRoomRoundEndEvent(0);
             this.room.gameTime = this.room.getSetGameTime();
         }
         if (!use) {
@@ -109,10 +109,10 @@ public class TimeTask extends PluginTask<GunWar> {
                         }
                     }
                     if (red == 0) {
-                        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 2));
+                        this.callGunWarRoomRoundEndEvent(2);
                         this.room.gameTime = this.room.getSetGameTime();
                     } else if (blue == 0) {
-                        Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(this.room, 1));
+                        this.callGunWarRoomRoundEndEvent(1);
                         this.room.gameTime = this.room.getSetGameTime();
                     }
                     break;
@@ -120,6 +120,15 @@ public class TimeTask extends PluginTask<GunWar> {
 
             use = false;
         }
+    }
+
+    public void callGunWarRoomRoundEndEvent(int victory) {
+        Server.getInstance().getScheduler().scheduleTask(owner, new Task() {
+            @Override
+            public void onRun(int i) {
+                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, victory));
+            }
+        });
     }
 
     @Override

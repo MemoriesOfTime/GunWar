@@ -22,6 +22,7 @@ import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.level.particle.SpellParticle;
@@ -181,36 +182,39 @@ public class PlayerGameListener implements Listener {
             if (room == null || room.getMode() != 2) {
                 return;
             }
+            Player damager = (Player) entity.shootingEntity;
+            CompoundTag tag = entity.namedTag.clone();
+            Position position = entity.getPosition();
             this.gunWar.getServer().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
                 @Override
                 public void onRun() {
-                    level.addSound(entity, Sound.RANDOM_EXPLODE);
-                    switch (entity.namedTag.getInt("GunWarItemType")) {
+                    level.addSound(position, Sound.RANDOM_EXPLODE);
+                    switch (tag.getInt("GunWarItemType")) {
                         case 4:
-                            level.addParticle(new HugeExplodeSeedParticle(entity));
+                            level.addParticle(new HugeExplodeSeedParticle(position));
                             break;
                         case 5:
-                            level.addParticle(new SpellParticle(entity, 255, 255, 255));
+                            level.addParticle(new SpellParticle(position, 255, 255, 255));
                             break;
                     }
                     for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                         if (entry.getValue() != 1 && entry.getValue() != 2) {
                             continue;
                         }
-                        int x = Math.abs(entry.getKey().getFloorX() - entity.getFloorX());
-                        int y = Math.abs(entry.getKey().getFloorY() - entity.getFloorY());
-                        int z = Math.abs(entry.getKey().getFloorZ() - entity.getFloorZ());
+                        int x = Math.abs(entry.getKey().getFloorX() - position.getFloorX());
+                        int y = Math.abs(entry.getKey().getFloorY() - position.getFloorY());
+                        int z = Math.abs(entry.getKey().getFloorZ() - position.getFloorZ());
                         if (x > 5 && y > 5 && z > 5) {
                             break;
                         }
                         for (int r = 1; r <= 5; r++) {
                             if (x <= r && y <= r && z <= r) {
-                                switch (entity.namedTag.getInt("GunWarItemType")) {
+                                switch (tag.getInt("GunWarItemType")) {
                                     case 4:
                                         entry.getKey().attack(0F);
                                         float damage = 12F - (r * 2);
                                         Server.getInstance().getPluginManager().callEvent(
-                                                new GunWarPlayerDamageEvent(room, entry.getKey(), (Player) entity.shootingEntity, damage));
+                                                new GunWarPlayerDamageEvent(room, entry.getKey(), damager, damage));
                                         break;
                                     case 5:
                                         Effect effect = Effect.getEffect(15);
@@ -225,7 +229,6 @@ public class PlayerGameListener implements Listener {
                     }
                 }
             });
-
         }
     }
 
