@@ -26,7 +26,7 @@ import java.util.*;
 
 public class GunWar extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.0.4-SNAPSHOT git-35ac3cd";
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
@@ -223,6 +223,7 @@ public class GunWar extends PluginBase {
         if (skinData == null) {
             getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
         }
+        this.corpseSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
         this.corpseSkin.setTrusted(true);
         this.corpseSkin.setSkinData(skinData);
         this.corpseSkin.setSkinId("defaultSkin");
@@ -249,6 +250,7 @@ public class GunWar extends PluginBase {
             skinData = ImageIO.read(img);
             if (skinData != null) {
                 Skin skin = new Skin();
+                skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
                 skin.setTrusted(true);
                 skin.setSkinData(skinData);
                 skin.setSkinId("flag" + id);
