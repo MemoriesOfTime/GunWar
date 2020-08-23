@@ -58,7 +58,7 @@ public class GuiListener implements Listener {
                     if (simple.getResponse().getClickedButton().getText().equals(language.buttonReturn)) {
                         GuiCreate.sendUserMenu(player);
                     }else {
-                        GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText());
+                        GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText().split("\n")[0]);
                     }
                     break;
                 case RECORD_LIST:

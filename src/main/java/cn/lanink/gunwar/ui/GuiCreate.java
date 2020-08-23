@@ -97,7 +97,10 @@ public class GuiCreate {
         Language language = GunWar.getInstance().getLanguage();
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
         for (Map.Entry<String, Room> entry : GunWar.getInstance().getRooms().entrySet()) {
-            simple.addButton(new ElementButton("§e" + entry.getKey(), new ElementButtonImageData("path", "textures/ui/switch_start_button")));
+            simple.addButton(new ElementButton("§e" + entry.getKey() +
+                    "\n§r§eMode: " + entry.getValue().getGameMode().getName() +
+                            " Player: " + entry.getValue().getPlayers().size() + "/10",
+                    new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
         simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));
         showFormWindow(player, simple, GuiType.ROOM_LIST_MENU);
