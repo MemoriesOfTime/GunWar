@@ -1,9 +1,11 @@
 package cn.lanink.gunwar.item;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
+import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
@@ -29,7 +31,7 @@ public class ItemManage {
     public ItemManage(GunWar gunWar) {
         this.gunWar = gunWar;
         this.itemsFolder = this.gunWar.getDataFolder() + "/Items/";
-        this.weaponFolder = this.itemsFolder + "Weapon";
+        this.weaponFolder = this.itemsFolder + "Weapon/";
         this.meleeWeaponFolder = this.weaponFolder + "Melee";
         this.projectileWeaponFolder = this.weaponFolder + "Projectile";
         this.gunWeaponFolder = this.weaponFolder + "Gun";
@@ -44,7 +46,9 @@ public class ItemManage {
     }
 
     public void loadAllMeleeWeapon() {
-        new File(this.meleeWeaponFolder).mkdirs();
+        if (!new File(this.meleeWeaponFolder).exists()) {
+            this.gunWar.saveResource("Items/Weapon/Melee/demo.yml", false);
+        }
         File[] files = new File(this.meleeWeaponFolder).listFiles();
         if (files != null) {
             for (File file : files) {
@@ -59,6 +63,16 @@ public class ItemManage {
 
     public HashMap<String, MeleeWeapon> getMeleeWeaponMap() {
         return this.meleeWeaponMap;
+    }
+
+    public MeleeWeapon getMeleeWeapon(Item item) {
+        if (item.hasCompoundTag()) {
+            String name = item.getNamedTag().getCompound(BaseItem.GUN_WAR_ITEM_TYPE).getString(BaseItem.GUN_WAR_ITEM_NAME);
+            if (!name.isEmpty()) {
+                return this.meleeWeaponMap.get(name);
+            }
+        }
+        return null;
     }
 
 }

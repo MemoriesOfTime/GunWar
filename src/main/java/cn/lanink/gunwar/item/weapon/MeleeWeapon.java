@@ -34,6 +34,9 @@ public class MeleeWeapon extends BaseWeapon {
         return this.attackCooldown;
     }
 
+    /**
+     * @return 击退
+     */
     public float getKnockBack() {
         return this.knockBack;
     }
