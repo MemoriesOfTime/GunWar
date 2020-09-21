@@ -7,12 +7,19 @@ import cn.nukkit.utils.Config;
  */
 public class MeleeWeapon extends BaseWeapon {
 
-    private final int attackCooldown;
+    protected final int attackCooldown;
+    protected final float knockBack;
+    protected final boolean infiniteDurability;
 
     public MeleeWeapon(String name, Config config) {
         super(name, config);
         this.attackCooldown = config.getInt("attackCooldown");
-        this.getGunWarItemTag().putInt("attackCooldown", this.attackCooldown);
+        this.knockBack = (float) config.getDouble("knockBack", 0.3D);
+        this.infiniteDurability = config.getBoolean("infiniteDurability");
+        this.getGunWarItemTag()
+                .putInt("attackCooldown", this.attackCooldown)
+                .putFloat("knockBack", this.knockBack)
+                .putBoolean("infiniteDurability", this.infiniteDurability);
     }
 
     @Override
@@ -25,6 +32,10 @@ public class MeleeWeapon extends BaseWeapon {
      */
     public int getAttackCooldown() {
         return this.attackCooldown;
+    }
+
+    public float getKnockBack() {
+        return this.knockBack;
     }
 
 }

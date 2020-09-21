@@ -2,6 +2,7 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.lib.scoreboard.IScoreboard;
 import cn.lanink.gunwar.lib.scoreboard.ScoreboardDe;
 import cn.lanink.gunwar.lib.scoreboard.ScoreboardGt;
@@ -38,6 +39,7 @@ public class GunWar extends PluginBase {
     public final LinkedList<Integer> taskList = new LinkedList<>();
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
+    private ItemManage itemManage;
     private boolean hasTips = false;
 
     public static GunWar getInstance() { return gunWar; }
@@ -87,6 +89,8 @@ public class GunWar extends PluginBase {
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
         this.loadResources();
+        getLogger().info("§e开始加载物品");
+        this.itemManage = new ItemManage(this);
         getLogger().info("§e开始加载房间");
         this.loadRooms();
         this.cmdUser = this.config.getString("插件命令", "gunwar");
@@ -134,6 +138,10 @@ public class GunWar extends PluginBase {
 
     public IScoreboard getScoreboard() {
         return this.scoreboard;
+    }
+
+    public ItemManage getItemManage() {
+        return this.itemManage;
     }
 
     public LinkedHashMap<String, Room> getRooms() {

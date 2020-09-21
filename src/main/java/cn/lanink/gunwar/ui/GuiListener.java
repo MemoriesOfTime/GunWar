@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
@@ -10,6 +11,9 @@ import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
+import cn.nukkit.utils.Config;
+
+import java.io.File;
 
 public class GuiListener implements Listener {
 
@@ -120,6 +124,64 @@ public class GuiListener implements Listener {
                 case ADMIN_MODE_MENU:
                     this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgamemode " +
                         custom.getResponse().getDropdownResponse(0).getElementID());
+                    break;
+                case ADMIN_ITEM_ADD_WEAPON_MELEE:
+                    String name = custom.getResponse().getInputResponse(0);
+                    File file = new File(this.gunWar.getItemManage().getMeleeWeaponFolder() + "/" + name + ".yml");
+                    if (file.exists()) {
+                        player.sendMessage(name + " 已存在！");
+                        return;
+                    }else {
+                        Config config = new Config(Config.YAML);
+                        config.set("showName", custom.getResponse().getInputResponse(1));
+                        String stringID = custom.getResponse().getInputResponse(2);
+                        String[] split = stringID.split(":");
+                        if (split.length == 2) {
+                            try {
+                                Integer.parseInt(split[0]);
+                                Integer.parseInt(split[1]);
+                                config.set("id", stringID);
+                            } catch (NumberFormatException e) {
+                                player.sendMessage(name + " 物品ID格式错误！");
+                                return;
+                            }
+                        }else {
+                            try {
+                                Integer.parseInt(stringID);
+                                config.set("id", stringID);
+                            } catch (NumberFormatException e) {
+                                player.sendMessage(name + " 物品ID格式错误！");
+                                return;
+                            }
+                        }
+                        try {
+                            String minDamage = custom.getResponse().getInputResponse(3);
+                            String maxDamage = custom.getResponse().getInputResponse(4);
+                            Integer.parseInt(minDamage);
+                            Integer.parseInt(maxDamage);
+                            config.set("damage", minDamage + "-" + maxDamage);
+                        } catch (NumberFormatException e) {
+                            player.sendMessage(name + " 伤害只能输入数字！");
+                            return;
+                        }
+                        try {
+                            config.set("attackCooldown", Integer.parseInt(custom.getResponse().getInputResponse(5)));
+                        } catch (NumberFormatException e) {
+                            player.sendMessage(name + " 攻击冷却只能输入数字！");
+                            return;
+                        }
+                        try {
+                            config.set("knockBack", Double.parseDouble(custom.getResponse().getInputResponse(6)));
+                        } catch (NumberFormatException e) {
+                            player.sendMessage(name + " 击退只能输入数字！");
+                            return;
+                        }
+                        config.set("infiniteDurability", custom.getResponse().getToggleResponse(7));
+                        config.set("killMessage", custom.getResponse().getInputResponse(8));
+                        config.save(file, true);
+                        this.gunWar.getItemManage().getMeleeWeaponMap().put(name, new MeleeWeapon(name, config));
+                        player.sendMessage(name + " 添加成功！");
+                    }
                     break;
             }
         }else if (event.getWindow() instanceof FormWindowModal) {

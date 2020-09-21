@@ -1,4 +1,7 @@
 showName: "Sword"
-id: 279:0
+id: 272:0
 damage: "1-2"
 attackCooldown: 20 #tick
+knockBack: 0.3
+infiniteDurability: false
+killMessage: "%damager% --[+＝＝》 %player%"

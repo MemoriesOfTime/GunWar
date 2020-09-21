@@ -39,8 +39,12 @@ public class ItemManage {
 
     }
 
+    public String getMeleeWeaponFolder() {
+        return this.meleeWeaponFolder;
+    }
+
     public void loadAllMeleeWeapon() {
-        new File(this.meleeWeaponFolder).exists();
+        new File(this.meleeWeaponFolder).mkdirs();
         File[] files = new File(this.meleeWeaponFolder).listFiles();
         if (files != null) {
             for (File file : files) {
@@ -51,6 +55,10 @@ public class ItemManage {
                 }
             }
         }
+    }
+
+    public HashMap<String, MeleeWeapon> getMeleeWeaponMap() {
+        return this.meleeWeaponMap;
     }
 
 }

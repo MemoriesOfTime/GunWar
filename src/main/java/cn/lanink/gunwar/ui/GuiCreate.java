@@ -7,10 +7,7 @@ import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.form.element.ElementButton;
-import cn.nukkit.form.element.ElementButtonImageData;
-import cn.nukkit.form.element.ElementDropdown;
-import cn.nukkit.form.element.ElementInput;
+import cn.nukkit.form.element.*;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
@@ -88,6 +85,31 @@ public class GuiCreate {
         }));
         showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }
+
+    public static void sendAdminItemAddWeaponMenu(Player player) {
+        //TODO Language
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
+        simple.addButton(new ElementButton("添加近战类武器"));
+        simple.addButton(new ElementButton("添加抛掷类武器"));
+        simple.addButton(new ElementButton("添加远程类武器"));
+        showFormWindow(player, simple, GuiType.ADMIN_ITEM_ADD_WEAPON);
+    }
+
+    public static void sendAdminItemAddWeaponMeleeMenu(Player player) {
+        //TODO Language
+        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        custom.addElement(new ElementInput("物品名称", "", "Sword"));
+        custom.addElement(new ElementInput("物品显示名称", "", "a test Sword"));
+        custom.addElement(new ElementInput("物品ID", "", "272:0"));
+        custom.addElement(new ElementInput("最小伤害", "", "1"));
+        custom.addElement(new ElementInput("最大伤害", "", "2"));
+        custom.addElement(new ElementInput("攻击冷却", "", "20"));
+        custom.addElement(new ElementInput("击退", "", "0.3"));
+        custom.addElement(new ElementToggle("无限耐久"));
+        custom.addElement(new ElementInput("击杀提示", "", "%damager% --[+＝＝》 %player%"));
+        showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_MELEE);
+    }
+
 
     /**
      * 显示房间列表菜单

@@ -25,7 +25,7 @@ public class PlayerJoinAndQuit implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (player != null && GunWar.getInstance().getRooms().containsKey(player.getLevel().getName())) {
-            GunWar.getInstance().getServer().getScheduler().scheduleDelayedTask(new Task() {
+            Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
                 @Override
                 public void onRun(int i) {
                     if (player.isOnline()) {
