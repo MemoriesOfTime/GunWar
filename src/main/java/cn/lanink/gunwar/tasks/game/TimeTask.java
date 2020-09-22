@@ -24,7 +24,6 @@ public class TimeTask extends PluginTask<GunWar> {
 
     public TimeTask(GunWar owner, Room room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
     }
 
@@ -129,14 +128,6 @@ public class TimeTask extends PluginTask<GunWar> {
                 Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, victory));
             }
         });
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

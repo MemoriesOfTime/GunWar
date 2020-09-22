@@ -21,23 +21,29 @@ import java.util.LinkedHashMap;
  */
 public class PlayerJoinAndQuit implements Listener {
 
+    private final GunWar gunWar;
+
+    public PlayerJoinAndQuit(GunWar gunWar) {
+        this.gunWar = gunWar;
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player != null && GunWar.getInstance().getRooms().containsKey(player.getLevel().getName())) {
-            Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
+        if (player != null && this.gunWar.getRooms().containsKey(player.getLevel().getName())) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
                 @Override
                 public void onRun(int i) {
                     if (player.isOnline()) {
                         Tools.rePlayerState(player ,false);
-                        if (Server.getInstance().getPluginManager().getPlugin("Tips") != null) {
+                        if (gunWar.isHasTips()) {
                             Tips.removeTipsConfig(player.getLevel().getName(), player);
                         }
                         SavePlayerInventory.restore(player);
-                        player.teleport(GunWar.getInstance().getServer().getDefaultLevel().getSafeSpawn());
+                        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }
-            }, 120);
+            }, 10);
         }
     }
 
@@ -47,7 +53,7 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
-        for (Room room : GunWar.getInstance().getRooms().values()) {
+        for (Room room : this.gunWar.getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player, false);
             }
@@ -61,14 +67,14 @@ public class PlayerJoinAndQuit implements Listener {
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, Room> room =  GunWar.getInstance().getRooms();
+            LinkedHashMap<String, Room> room =  this.gunWar.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(GunWar.getInstance().getLanguage().tpQuitRoomLevel);
+                player.sendMessage(this.gunWar.getLanguage().tpQuitRoomLevel);
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(GunWar.getInstance().getLanguage().tpJoinRoomLevel);
+                player.sendMessage(this.gunWar.getLanguage().tpJoinRoomLevel);
             }
         }
     }

@@ -16,7 +16,6 @@ public class TipTask extends PluginTask<GunWar> {
 
     public TipTask(GunWar owner, Room room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
     }
@@ -56,14 +55,6 @@ public class TipTask extends PluginTask<GunWar> {
             }
         }
         return string.toString();
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

@@ -23,7 +23,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class GunWar extends PluginBase {
 
@@ -36,7 +39,6 @@ public class GunWar extends PluginBase {
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
-    public final LinkedList<Integer> taskList = new LinkedList<>();
     private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
@@ -98,7 +100,7 @@ public class GunWar extends PluginBase {
         getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
         getServer().getPluginManager().registerEvents(new GunWarListener(this), this);
@@ -125,10 +127,6 @@ public class GunWar extends PluginBase {
         }
         this.rooms.clear();
         this.roomConfigs.clear();
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
-        }
-        this.taskList.clear();
         getLogger().info("§c插件卸载完成！");
     }
 
@@ -193,10 +191,6 @@ public class GunWar extends PluginBase {
         if (this.roomConfigs.values().size() > 0) {
             this.roomConfigs.clear();
         }
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
-        }
-        this.taskList.clear();
     }
 
     /**

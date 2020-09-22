@@ -23,7 +23,6 @@ public class VictoryTask extends PluginTask<GunWar> {
 
     public VictoryTask(GunWar owner, Room room, int victory) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
         this.victoryTime = 10;
@@ -83,14 +82,6 @@ public class VictoryTask extends PluginTask<GunWar> {
                 }
             }
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

@@ -19,7 +19,6 @@ public class FlagTask extends PluginTask<GunWar> {
 
     public FlagTask(GunWar owner, Room room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
     }
 
@@ -101,14 +100,6 @@ public class FlagTask extends PluginTask<GunWar> {
             this.room.blueFlag.setPosition(new Vector3(p.getX(),
                     p.getY() + p.getEyeHeight() + 0.5, p.getZ()));
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

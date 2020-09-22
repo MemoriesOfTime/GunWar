@@ -20,7 +20,6 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
 
     public ScoreBoardTask(GunWar owner, Room room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
     }
@@ -68,14 +67,6 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             }
             use = false;
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

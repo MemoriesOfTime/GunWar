@@ -18,7 +18,6 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
 
     public FlagPickupCheckTask(GunWar owner, Room room, EntityFlag entityFlag) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.time = 10;
         this.room = room;
         this.entityFlag = entityFlag;
@@ -59,9 +58,6 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
         entityFlag.setNameTag("");
         entityFlag.setNameTagVisible(false);
         entityFlag.setNameTagAlwaysVisible(false);
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
         super.cancel();
     }
 
