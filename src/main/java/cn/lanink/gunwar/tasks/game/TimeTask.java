@@ -29,7 +29,7 @@ public class TimeTask extends PluginTask<GunWar> {
     }
 
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.room.getStatus() != 2) {
             this.cancel();
             return;
         }
@@ -66,13 +66,13 @@ public class TimeTask extends PluginTask<GunWar> {
                         }
                     }
                     if (room.redScore >= room.victoryScore) {
-                        room.setMode(3);
+                        room.setStatus(3);
                         Server.getInstance().getScheduler().scheduleRepeatingTask(
                                 owner, new VictoryTask(owner, room, 1), 20);
                         return;
                     }
                     if (room.blueScore >= room.victoryScore) {
-                        room.setMode(3);
+                        room.setStatus(3);
                         Server.getInstance().getScheduler().scheduleRepeatingTask(
                                 owner, new VictoryTask(owner, room, 2), 20);
                         return;
@@ -90,11 +90,11 @@ public class TimeTask extends PluginTask<GunWar> {
                         }
                     }
                     if (red == 0) {
-                        room.setMode(3);
+                        room.setStatus(3);
                         Server.getInstance().getScheduler().scheduleRepeatingTask(
                                 owner, new VictoryTask(owner, room, 2), 20);
                     } else if (blue == 0) {
-                        room.setMode(3);
+                        room.setStatus(3);
                         Server.getInstance().getScheduler().scheduleRepeatingTask(
                                 owner, new VictoryTask(owner, room, 1), 20);
                     }

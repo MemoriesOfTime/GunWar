@@ -63,7 +63,7 @@ public class PlayerGameListener implements Listener {
         }
         CompoundTag tag = item.getNamedTag();
         if (tag == null || !tag.getBoolean("isGunWarItem")) return;
-        if (room.getMode() == 1) {
+        if (room.getStatus() == 1) {
             switch (tag.getInt("GunWarItemType")) {
                 case 10:
                     room.quitRoom(player, true);
@@ -129,7 +129,7 @@ public class PlayerGameListener implements Listener {
         String message = event.getMessage();
         if (player == null || message == null) return;
         Room room = this.gunWar.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.isPlaying(player) || room.getMode() != 2) {
+        if (room == null || !room.isPlaying(player) || room.getStatus() != 2) {
             return;
         }
         message = this.language.playerTeamChat.replace("%player%", player.getName())
@@ -179,7 +179,7 @@ public class PlayerGameListener implements Listener {
         if (entity instanceof EntityEgg && entity.shootingEntity instanceof Player) {
             Level level = entity.getLevel();
             Room room = this.gunWar.getRooms().getOrDefault(level.getName(), null);
-            if (room == null || room.getMode() != 2) {
+            if (room == null || room.getStatus() != 2) {
                 return;
             }
             Player damager = (Player) entity.shootingEntity;

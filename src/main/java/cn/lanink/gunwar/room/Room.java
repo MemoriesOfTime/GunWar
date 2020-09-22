@@ -57,7 +57,7 @@ public class Room extends BaseRoom {
         if (this.getLevel() == null) {
             Server.getInstance().loadLevel(this.level);
         }
-        this.mode = 0;
+        this.status = 0;
     }
 
     /**
@@ -65,7 +65,7 @@ public class Room extends BaseRoom {
      */
     @Override
     protected void initTask() {
-        this.setMode(1);
+        this.setStatus(1);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20);
     }
@@ -89,9 +89,9 @@ public class Room extends BaseRoom {
      * 结束房间
      */
     public synchronized void endGame(boolean normal) {
-        this.mode = 0;
+        this.status = 0;
         if (normal) {
-            if (players.size() > 0) {
+            if (this.players.size() > 0) {
                 Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<Player, Integer> entry = it.next();
@@ -123,7 +123,7 @@ public class Room extends BaseRoom {
      */
     @Override
     public void joinRoom(Player player) {
-        if (this.mode == 0) {
+        if (this.status == 0) {
             this.initTask();
         }
         this.players.put(player, 0);

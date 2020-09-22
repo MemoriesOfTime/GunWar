@@ -137,7 +137,7 @@ public class GuiCreate {
         FormWindowModal modal;
         if (GunWar.getInstance().getRooms().containsKey(roomName.replace("§e", "").trim())) {
             Room room = GunWar.getInstance().getRooms().get(roomName.replace("§e", "").trim());
-            if (room.getMode() == 2 || room.getMode() == 3) {
+            if (room.getStatus() == 2 || room.getStatus() == 3) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, language.joinRoomIsPlaying, language.buttonReturn, language.buttonReturn);
             }else if (room.getPlayers().size() > 15){

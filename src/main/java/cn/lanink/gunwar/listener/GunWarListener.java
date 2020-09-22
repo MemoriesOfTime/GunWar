@@ -45,7 +45,7 @@ public class GunWarListener implements Listener {
     @EventHandler
     public void onRoomStart(GunWarRoomStartEvent event) {
         Room room = event.getRoom();
-        room.setMode(2);
+        room.setStatus(2);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomAssignTeamEvent(room));
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundStartEvent(room));
         Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -208,12 +208,12 @@ public class GunWarListener implements Listener {
             switch (room.getGameMode()) {
                 case CTF:
                     if ((room.redScore - room.blueScore) > 0) {
-                        room.setMode(3);
+                        room.setStatus(3);
                         Server.getInstance().getScheduler().scheduleRepeatingTask(
                                 this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
                         return;
                     }else if ((room.blueScore - room.redScore) > 0) {
-                        room.setMode(3);
+                        room.setStatus(3);
                         Server.getInstance().getScheduler().scheduleRepeatingTask(
                                 this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
                         return;
@@ -253,13 +253,13 @@ public class GunWarListener implements Listener {
         }
         //房间胜利计算
         if (room.redScore >= room.victoryScore) {
-            room.setMode(3);
+            room.setStatus(3);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, room, 1), 20);
             return;
         }
         if (room.blueScore >= room.victoryScore) {
-            room.setMode(3);
+            room.setStatus(3);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, room, 2), 20);
             return;

@@ -78,7 +78,7 @@ public class PlayerDamageListener implements Listener {
                 }
             }else if ((event.getEntity() instanceof Player)) {
                 Player player = (Player) event.getEntity();
-                if (room.getMode() == 2 && room.getPlayerMode(damagePlayer) != room.getPlayerMode(player)) {
+                if (room.getStatus() == 2 && room.getPlayerMode(damagePlayer) != room.getPlayerMode(player)) {
                     if (event instanceof EntityDamageByChildEntityEvent) {
                         int id = ((EntityDamageByChildEntityEvent) event).getChild().getNetworkId();
                         if (id == 80) {

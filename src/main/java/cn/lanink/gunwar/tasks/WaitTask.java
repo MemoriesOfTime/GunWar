@@ -27,7 +27,7 @@ public class WaitTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 1) {
+        if (this.room.getStatus() != 1) {
             this.cancel();
             return;
         }

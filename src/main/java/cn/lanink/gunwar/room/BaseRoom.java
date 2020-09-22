@@ -17,7 +17,7 @@ public abstract class BaseRoom {
 
     protected final Language language = GunWar.getInstance().getLanguage();
     public int waitTime, gameTime;
-    protected int mode; //0未初始化 1等待 2游戏 3胜利结算 4等待下一回合
+    protected int status; //0未初始化 1等待 2游戏 3胜利结算 4等待下一回合
     protected String level, waitSpawn;
     protected int setWaitTime, setGameTime;
     protected LinkedHashMap<Player, Integer> players = new LinkedHashMap<>(); //0未分配 1 11红队 2 12蓝队
@@ -35,16 +35,16 @@ public abstract class BaseRoom {
         this.gameTime = this.setGameTime;
     }
 
-    public int getMode() {
-        return this.mode;
+    public int getStatus() {
+        return this.status;
     }
 
     /**
      * 设置房间状态
-     * @param mode 状态
+     * @param status 状态
      */
-    public void setMode(int mode) {
-        this.mode = mode;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     /**
