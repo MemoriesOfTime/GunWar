@@ -314,7 +314,7 @@ public class GunWar extends PluginBase {
     }
 
     public Config getRoomConfig(Level level) {
-        return getRoomConfig(level.getName());
+        return getRoomConfig(level.getFolderName());
     }
 
     private Config getRoomConfig(String level) {

@@ -99,8 +99,8 @@ public class GuiCreate {
         //TODO Language
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput("物品名称", "", "Sword"));
-        custom.addElement(new ElementInput("物品显示名称", "", "a test Sword"));
         custom.addElement(new ElementInput("物品ID", "", "272:0"));
+        custom.addElement(new ElementInput("物品显示名称", "", "a test Sword"));
         custom.addElement(new ElementInput("最小伤害", "", "1"));
         custom.addElement(new ElementInput("最大伤害", "", "2"));
         custom.addElement(new ElementInput("攻击冷却", "", "20"));

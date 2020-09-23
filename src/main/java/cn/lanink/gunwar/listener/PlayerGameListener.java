@@ -245,16 +245,15 @@ public class PlayerGameListener implements Listener {
                     case 1:
                     case 11:
                         event.setRespawnPosition(room.getRedSpawn());
-                        break;
+                        return;
                     case 2:
                     case 12:
                         event.setRespawnPosition(room.getBlueSpawn());
-                        break;
+                        return;
                     default:
                         event.setRespawnPosition(room.getWaitSpawn());
-                        break;
+                        return;
                 }
-                break;
             }
         }
     }

@@ -50,6 +50,13 @@ public abstract class BaseItem {
     }
 
     /**
+     * @return 显示名称
+     */
+    public String getShowName() {
+        return this.item.getCustomName();
+    }
+
+    /**
      * @return 物品
      */
     public Item getItem() {

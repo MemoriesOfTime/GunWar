@@ -119,7 +119,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onEntityExplode(EntityExplodeEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -131,7 +131,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onFrameDropItem(ItemFrameDropItemEvent event) {
         Level level = event.getItemFrame() == null ? null : event.getItemFrame().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -143,7 +143,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onFoodLevelChange(PlayerFoodLevelChangeEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -155,7 +155,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onDropItem(PlayerDropItemEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -167,7 +167,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setDamage(0);
         }
     }
@@ -179,7 +179,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onPickupArrow(InventoryPickupArrowEvent event) {
         Level level = event.getArrow() == null ? null : event.getArrow().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -191,7 +191,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.getEntity().close();
         }
     }
@@ -203,7 +203,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setKeepInventory(true);
             event.setKeepExperience(true);
         }

@@ -147,9 +147,8 @@ public class GuiListener implements Listener {
                         return;
                     }
                     Config config = new Config(Config.YAML);
-                    config.set("showName", custom.getResponse().getInputResponse(1));
                     try {
-                        String stringID = custom.getResponse().getInputResponse(2);
+                        String stringID = custom.getResponse().getInputResponse(1);
                         String[] split = stringID.split(":");
                         if (split.length == 2) {
                             Integer.parseInt(split[0]);
@@ -162,6 +161,8 @@ public class GuiListener implements Listener {
                         player.sendMessage(name + " 物品ID格式错误！");
                         return;
                     }
+                    config.set("showName", custom.getResponse().getInputResponse(2));
+                    config.set("lore", "");
                     try {
                         String minDamage = custom.getResponse().getInputResponse(3);
                         String maxDamage = custom.getResponse().getInputResponse(4);
