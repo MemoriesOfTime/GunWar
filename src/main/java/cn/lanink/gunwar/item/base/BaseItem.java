@@ -16,7 +16,7 @@ public abstract class BaseItem {
     public static final String GUN_WAR_ITEM_TYPE = "GunWarItemType";
 
     private final String name;
-    protected final Item item;
+    public final Item item;
 
     public BaseItem(String name, Config config) {
         this.name = name;
@@ -28,6 +28,10 @@ public abstract class BaseItem {
             this.item = Item.get(Integer.parseInt(stringID));
         }
         this.item.setCustomName(config.getString("showName", this.item.getName()));
+        String lore = config.getString("lore");
+        if (!"".equals(lore.trim())) {
+            this.item.setLore(lore.split("\n"));
+        }
         if (!this.item.hasCompoundTag()) {
             this.item.setNamedTag(new CompoundTag());
         }
@@ -49,7 +53,7 @@ public abstract class BaseItem {
      * @return 物品
      */
     public Item getItem() {
-        return this.item;
+        return this.item.clone();
     }
 
     public CompoundTag getGunWarItemTag() {

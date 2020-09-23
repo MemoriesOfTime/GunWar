@@ -1,5 +1,8 @@
-showName: "Sword"
-id: 272:0
+id: "272:0"
+showName: "a demo sword"
+lore: |-
+  这是一个配置演示
+  this is a configuration demo
 damage: "1-2"
 attackCooldown: 20 #tick
 knockBack: 0.3

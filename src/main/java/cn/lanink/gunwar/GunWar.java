@@ -43,6 +43,7 @@ public class GunWar extends PluginBase {
     private IScoreboard scoreboard;
     private ItemManage itemManage;
     private boolean hasTips = false;
+    public static boolean debug = true;
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -66,12 +67,12 @@ public class GunWar extends PluginBase {
         }
         //加载计分板
         try {
-            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
-            this.scoreboard = new ScoreboardDe();
+            Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
+            this.scoreboard = new ScoreboardGt();
         } catch (ClassNotFoundException e) {
             try {
-                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
-                this.scoreboard = new ScoreboardGt();
+                Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
+                this.scoreboard = new ScoreboardDe();
             } catch (ClassNotFoundException ignored) {
                 getLogger().error("请安装ScoreboardAPI插件！");
                 getServer().getPluginManager().disablePlugin(this);

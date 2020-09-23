@@ -53,7 +53,7 @@ public class GunWarListener implements Listener {
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar, new ScoreBoardTask(this.gunWar, room), 18, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new TipTask(this.gunWar, room), 10);
+                this.gunWar, new TipTask(this.gunWar, room), 5, true);
         if (room.getGameMode() == GameMode.CTF) {
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
                     new FlagTask(this.gunWar, room), 5);
@@ -160,13 +160,13 @@ public class GunWarListener implements Listener {
                 room.getPlayers().put(player, 1);
             case 1:
                 player.teleport(room.getRedSpawn());
-                Tools.giveItem(player, 1);
+                Tools.giveItem(room, player, 1);
                 break;
             case 12:
                 room.getPlayers().put(player, 2);
             case 2:
                 player.teleport(room.getBlueSpawn());
-                Tools.giveItem(player, 2);
+                Tools.giveItem(room, player, 2);
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
             @Override

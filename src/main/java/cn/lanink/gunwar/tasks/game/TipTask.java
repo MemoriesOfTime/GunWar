@@ -30,7 +30,6 @@ public class TipTask extends PluginTask<GunWar> {
             switch (entry.getValue()) {
                 case 11:
                 case 12:
-                    //TODO 等待复活提示
                     if (this.room.getGameMode() == GameMode.CTF) {
                         entry.getKey().sendTip(this.language.gameTimeRespawnBottom
                                 .replace("%time%", room.getPlayerRespawnTime(entry.getKey()) + ""));

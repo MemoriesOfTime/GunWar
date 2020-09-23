@@ -3,6 +3,7 @@ package cn.lanink.gunwar.room;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tips;
@@ -21,11 +22,14 @@ import java.util.*;
 public class Room extends BaseRoom {
 
     private final String redSpawn, blueSpawn;
-    private final LinkedHashMap<Player, Float> playerHealth = new LinkedHashMap<>(); //玩家血量
+    private final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     public int redScore, blueScore; //队伍得分
     private final GameMode gameMode;
     public HashSet<Player> swordAttackCD = new HashSet<>();
     public final int victoryScore; //胜利需要分数
+
+    protected HashMap<BaseItem.ItemType, ArrayList<String>> initialItems = new HashMap<>();
+
     //夺旗模式数据
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
     public Player haveRedFlag, haveBlueFlag;
@@ -53,6 +57,9 @@ public class Room extends BaseRoom {
                 this.gameMode = GameMode.CLASSIC;
                 break;
         }
+        this.initialItems.put(BaseItem.ItemType.MELEE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
+        //TODO
+
         this.initTime();
         if (this.getLevel() == null) {
             Server.getInstance().loadLevel(this.level);
@@ -165,10 +172,17 @@ public class Room extends BaseRoom {
     }
 
     /**
+     * @return 开局给与的装备
+     */
+    public HashMap<BaseItem.ItemType, ArrayList<String>> getInitialItems() {
+        return this.initialItems;
+    }
+
+    /**
      * 获取玩家血量Map
      * @return 玩家血量Map
      */
-    public LinkedHashMap<Player, Float> getPlayerHealth() {
+    public HashMap<Player, Float> getPlayerHealth() {
         return this.playerHealth;
     }
 

@@ -16,7 +16,6 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
 
     private final Language language;
     private final Room room;
-    private boolean use = false;
 
     public ScoreBoardTask(GunWar owner, Room room) {
         super(owner);
@@ -30,42 +29,38 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             this.cancel();
             return;
         }
-        if (!use) {
-            use = true;
-            if (room.getPlayers().values().size() > 0) {
-                int red = 0, blue = 0;
-                for (int team : room.getPlayers().values()) {
-                    if (team == 1) {
-                        red++;
-                    }else if (team == 2) {
-                        blue++;
-                    }
-                }
-                for (Player player : room.getPlayers().keySet()) {
-                    LinkedList<String> ms = new LinkedList<>();
-                    String team;
-                    switch (room.getPlayerMode(player)) {
-                        case 1:
-                        case 11:
-                            team = language.teamNameRed;
-                            break;
-                        default:
-                            team = language.teamNameBlue;
-                            break;
-                    }
-                    for (String string : language.gameTimeScoreBoard.split("\n")) {
-                        ms.add(string.replace("%team%", team)
-                                .replace("%health%", room.getPlayerHealth().getOrDefault(player, 0F) + "")
-                                .replace("%time%", room.gameTime + "")
-                                .replace("%red%", red + "")
-                                .replace("%blue%", blue + "")
-                                .replace("%redRound%", room.redScore + "")
-                                .replace("%blueRound%", room.blueScore + ""));
-                    }
-                    owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+        if (room.getPlayers().size() > 0) {
+            int red = 0, blue = 0;
+            for (int team : room.getPlayers().values()) {
+                if (team == 1) {
+                    red++;
+                }else if (team == 2) {
+                    blue++;
                 }
             }
-            use = false;
+            for (Player player : room.getPlayers().keySet()) {
+                LinkedList<String> ms = new LinkedList<>();
+                String team;
+                switch (room.getPlayerMode(player)) {
+                    case 1:
+                    case 11:
+                        team = language.teamNameRed;
+                        break;
+                    default:
+                        team = language.teamNameBlue;
+                        break;
+                }
+                for (String string : language.gameTimeScoreBoard.split("\n")) {
+                    ms.add(string.replace("%team%", team)
+                            .replace("%health%", room.getPlayerHealth().getOrDefault(player, 0F) + "")
+                            .replace("%time%", room.gameTime + "")
+                            .replace("%red%", red + "")
+                            .replace("%blue%", blue + "")
+                            .replace("%redRound%", room.redScore + "")
+                            .replace("%blueRound%", room.blueScore + ""));
+                }
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+            }
         }
     }
 

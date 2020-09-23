@@ -4,6 +4,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
+import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -30,7 +31,9 @@ import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 
@@ -78,11 +81,8 @@ public class Tools {
         }
     }
 
-    /**
-     * 给装备
-     * @param player 玩家
-     * @param team 所属队伍
-     */
+
+    @Deprecated
     public static void giveItem(Player player, int team) {
         player.getInventory().setArmorContents(getArmors(team));
         player.getInventory().addItem(Item.get(272, 0, 1),
@@ -90,6 +90,38 @@ public class Tools {
                 Item.get(262, 0, 5),
                 Item.get(332, 0, 64),
                 getItem(4), getItem(5));
+    }
+
+    /**
+     * 给装备
+     * @param room 房间
+     * @param player 玩家
+     * @param team 所属队伍
+     */
+    public static void giveItem(Room room, Player player, int team) {
+        player.getInventory().setArmorContents(getArmors(team));
+        for (Map.Entry<BaseItem.ItemType, ArrayList<String>> entry : room.getInitialItems().entrySet()) {
+            for (String value : entry.getValue()) {
+                String[] strings = value.split(":");
+                Item item = null;
+                switch (entry.getKey()) {
+                    case MELEE_WEAPON:
+                        item = GunWar.getInstance().getItemManage().getMeleeWeaponMap().get(strings[0]).getItem();
+                        break;
+                    //TODO
+                    case GUN_WEAPON:
+                        break;
+                }
+                if (item != null) {
+                    item.setCount(Integer.parseInt(strings[1]));
+                    player.getInventory().addItem(item);
+                    if (GunWar.debug) {
+                        GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
+                                "物品：" + item.getCustomName() + "数量：" + strings[1]);
+                    }
+                }
+            }
+        }
     }
 
     /**
