@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.item.base;
 
+import cn.lanink.gunwar.item.ItemManage;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
@@ -37,10 +38,10 @@ public abstract class BaseItem {
         }
         this.item.getNamedTag().putCompound(GUN_WAR_ITEM_TAG, new CompoundTag()
                 .putString(GUN_WAR_ITEM_NAME, this.name)
-                .putInt(GUN_WAR_ITEM_TYPE, ItemType.NULL.getIntType()));
+                .putInt(GUN_WAR_ITEM_TYPE, this.getItemType().getIntType()));
     }
 
-    public abstract ItemType getItemType();
+    public abstract ItemManage.ItemType getItemType();
 
     /**
      * @return 名称
@@ -79,37 +80,6 @@ public abstract class BaseItem {
     @Override
     public int hashCode() {
         return Objects.hash(this.name, this.getItemType());
-    }
-
-    public static ItemType getItemType(Item item) {
-        if (item.hasCompoundTag()) {
-            CompoundTag tag = item.getNamedTag().getCompound(GUN_WAR_ITEM_TAG);
-            int intType = tag.getInt(GUN_WAR_ITEM_TYPE);
-            for (ItemType itemType : ItemType.values()) {
-                if (itemType.getIntType() == intType) {
-                    return itemType;
-                }
-            }
-        }
-        return ItemType.NULL;
-    }
-
-    public enum ItemType {
-        NULL(0),
-        MELEE_WEAPON(1),
-        PROJECTILE_WEAPON(2),
-        GUN_WEAPON(3);
-
-        private final int intType;
-
-        ItemType(int intType) {
-            this.intType = intType;
-        }
-
-        public int getIntType() {
-            return this.intType;
-        }
-
     }
 
 }

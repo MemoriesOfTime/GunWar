@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.item.weapon;
 
+import cn.lanink.gunwar.item.ItemManage;
 import cn.nukkit.utils.Config;
 
 /**
@@ -23,8 +24,8 @@ public class MeleeWeapon extends BaseWeapon {
     }
 
     @Override
-    public ItemType getItemType() {
-        return ItemType.MELEE_WEAPON;
+    public ItemManage.ItemType getItemType() {
+        return ItemManage.ItemType.MELEE_WEAPON;
     }
 
     /**

@@ -23,14 +23,12 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class GunWar extends PluginBase {
 
     public static final String VERSION = "?";
+    public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
@@ -43,7 +41,7 @@ public class GunWar extends PluginBase {
     private IScoreboard scoreboard;
     private ItemManage itemManage;
     private boolean hasTips = false;
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -90,6 +88,16 @@ public class GunWar extends PluginBase {
 
         }
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        if (config.getBoolean("debug", false)) {
+            debug = true;
+            getLogger().warning("警告：您开启了debug模式！");
+            getLogger().warning("Warning: You have turned on debug mode!");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
         this.loadResources();
         getLogger().info("§e开始加载物品");

@@ -4,7 +4,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
-import cn.lanink.gunwar.item.base.BaseItem;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -38,6 +38,10 @@ import java.util.Random;
 
 
 public class Tools {
+
+    public static double randomDouble(double min, double max) {
+        return min + ((max - min) * GunWar.RANDOM.nextDouble());
+    }
 
     /**
      * 执行命令
@@ -100,7 +104,7 @@ public class Tools {
      */
     public static void giveItem(Room room, Player player, int team) {
         player.getInventory().setArmorContents(getArmors(team));
-        for (Map.Entry<BaseItem.ItemType, ArrayList<String>> entry : room.getInitialItems().entrySet()) {
+        for (Map.Entry<ItemManage.ItemType, ArrayList<String>> entry : room.getInitialItems().entrySet()) {
             for (String value : entry.getValue()) {
                 String[] strings = value.split(":");
                 Item item = null;

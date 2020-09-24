@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.item.weapon;
 
+import cn.lanink.gunwar.item.ItemManage;
 import cn.nukkit.utils.Config;
 
 /**
@@ -12,7 +13,7 @@ public class GunWeapon extends BaseWeapon {
     }
 
     @Override
-    public ItemType getItemType() {
+    public ItemManage.ItemType getItemType() {
         return null;
     }
 

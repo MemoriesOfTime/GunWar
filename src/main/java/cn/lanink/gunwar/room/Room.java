@@ -3,7 +3,7 @@ package cn.lanink.gunwar.room;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.item.base.BaseItem;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tips;
@@ -28,7 +28,7 @@ public class Room extends BaseRoom {
     public HashSet<Player> swordAttackCD = new HashSet<>();
     public final int victoryScore; //胜利需要分数
 
-    protected HashMap<BaseItem.ItemType, ArrayList<String>> initialItems = new HashMap<>();
+    protected HashMap<ItemManage.ItemType, ArrayList<String>> initialItems = new HashMap<>();
 
     //夺旗模式数据
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
@@ -57,7 +57,7 @@ public class Room extends BaseRoom {
                 this.gameMode = GameMode.CLASSIC;
                 break;
         }
-        this.initialItems.put(BaseItem.ItemType.MELEE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
+        this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
         //TODO
 
         this.initTime();
@@ -174,7 +174,7 @@ public class Room extends BaseRoom {
     /**
      * @return 开局给与的装备
      */
-    public HashMap<BaseItem.ItemType, ArrayList<String>> getInitialItems() {
+    public HashMap<ItemManage.ItemType, ArrayList<String>> getInitialItems() {
         return this.initialItems;
     }
 

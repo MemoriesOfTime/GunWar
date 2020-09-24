@@ -5,6 +5,8 @@ import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
+import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -15,9 +17,9 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.scheduler.Task;
 
 /**
  * @author lt_name
@@ -34,7 +36,7 @@ public class PlayerDamageListener implements Listener {
      * 实体受到另一实体伤害事件
      * @param event 事件
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player) {
             Player damagePlayer = (Player) event.getDamager();
@@ -91,7 +93,27 @@ public class PlayerDamageListener implements Listener {
                             return;
                         }
                     }else {
-                        int id = damagePlayer.getInventory().getItemInHand() == null ? 0 : damagePlayer.getInventory().getItemInHand().getId();
+                        Item item = damagePlayer.getInventory().getItemInHand();
+                        switch (ItemManage.getItemType(item)) {
+                            case MELEE_WEAPON:
+                                MeleeWeapon weapon = ItemManage.getMeleeWeapon(item);
+                                if (weapon != null && ItemManage.canAttack(damagePlayer, weapon)) {
+                                    this.gunWar.getServer().getPluginManager().callEvent(
+                                            new GunWarPlayerDamageEvent(room, player, damagePlayer,
+                                                    (float) Tools.randomDouble(weapon.getMinDamage(), weapon.getMaxDamage())));
+                                    event.setAttackCooldown(weapon.getAttackCooldown());
+                                    event.setKnockBack(weapon.getKnockBack());
+                                    return;
+                                }
+                                break;
+                            //TODO
+                            case PROJECTILE_WEAPON:
+
+                                break;
+                        }
+
+
+                        /*int id = damagePlayer.getInventory().getItemInHand() == null ? 0 : damagePlayer.getInventory().getItemInHand().getId();
                         if (id == 272 && !room.swordAttackCD.contains(player)) {
                             room.swordAttackCD.add(player);
                             this.gunWar.getServer().getPluginManager().callEvent(
@@ -105,7 +127,7 @@ public class PlayerDamageListener implements Listener {
                                 }
                             }, 20);
                             return;
-                        }
+                        }*/
                     }
                 }
             }

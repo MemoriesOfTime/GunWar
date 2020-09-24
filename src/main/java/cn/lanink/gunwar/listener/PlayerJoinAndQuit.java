@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.listener;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
 import cn.lanink.gunwar.utils.Tips;
@@ -58,6 +59,7 @@ public class PlayerJoinAndQuit implements Listener {
                 room.quitRoom(player, false);
             }
         }
+        ItemManage.getPlayerAttackTime().remove(player);
     }
 
     @EventHandler
