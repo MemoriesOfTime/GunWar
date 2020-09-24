@@ -6,6 +6,7 @@ import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
@@ -42,7 +43,7 @@ public class ItemManage {
         this.gunWeaponFolder = this.weaponFolder + "Gun";
         //TODO
         this.loadAllMeleeWeapon();
-
+        this.loadAllProjectileWeapon();
 
     }
 
@@ -66,22 +67,62 @@ public class ItemManage {
         }
     }
 
+    public void loadAllProjectileWeapon() {
+        if (!new File(this.projectileWeaponFolder).exists()) {
+            this.gunWar.saveResource("Items/Weapon/Projectile/demo.yml", false);
+        }
+        File[] files = new File(this.projectileWeaponFolder).listFiles();
+        if (files != null) {
+            for (File file : files) {
+                try {
+                    String[] fileName = file.getName().split("\\.");
+                    if (fileName.length > 1 && "yml".equals(fileName[1])) {
+                        Config config = new Config(file, Config.YAML);
+                        projectileWeaponMap.put(fileName[0], new ProjectileWeapon(fileName[0], config));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     public static ConcurrentHashMap<Player, Long> getPlayerAttackTime() {
         return playerAttackTime;
     }
 
-    public HashMap<String, MeleeWeapon> getMeleeWeaponMap() {
+    public static String getName(CompoundTag compoundTag) {
+        if (compoundTag != null) {
+            String name = compoundTag.getCompound(BaseItem.GUN_WAR_ITEM_TAG).getString(BaseItem.GUN_WAR_ITEM_NAME);
+            if (!name.isEmpty()) {
+                return name;
+            }
+        }
+        return "";
+    }
+
+    public static HashMap<String, MeleeWeapon> getMeleeWeaponMap() {
         return meleeWeaponMap;
     }
 
     public static MeleeWeapon getMeleeWeapon(Item item) {
-        if (item.hasCompoundTag()) {
-            String name = item.getNamedTag().getCompound(BaseItem.GUN_WAR_ITEM_TAG).getString(BaseItem.GUN_WAR_ITEM_NAME);
-            if (!name.isEmpty()) {
-                return meleeWeaponMap.get(name);
-            }
-        }
-        return null;
+        return meleeWeaponMap.get(getName(item.getNamedTag()));
+    }
+
+    public static HashMap<String, ProjectileWeapon> getProjectileWeaponMap() {
+        return projectileWeaponMap;
+    }
+
+    public static ProjectileWeapon getProjectileWeapon(Item item) {
+        return projectileWeaponMap.get(getName(item.getNamedTag()));
+    }
+
+    public static ProjectileWeapon getProjectileWeapon(Entity entity) {
+        return projectileWeaponMap.get(getName(entity.namedTag));
+    }
+
+    public static ProjectileWeapon getProjectileWeapon(CompoundTag compoundTag) {
+        return projectileWeaponMap.get(getName(compoundTag));
     }
 
     public static boolean canAttack(Player player, MeleeWeapon weapon) {
@@ -99,8 +140,16 @@ public class ItemManage {
     }
 
     public static ItemType getItemType(Item item) {
-        if (item.hasCompoundTag()) {
-            CompoundTag tag = item.getNamedTag().getCompound(BaseItem.GUN_WAR_ITEM_TAG);
+        return getItemType(item.getNamedTag());
+    }
+
+    public static ItemType getItemType(Entity entity) {
+        return getItemType(entity.namedTag);
+    }
+
+    public static ItemType getItemType(CompoundTag compoundTag) {
+        if (compoundTag != null) {
+            CompoundTag tag = compoundTag.getCompound(BaseItem.GUN_WAR_ITEM_TAG);
             int intType = tag.getInt(BaseItem.GUN_WAR_ITEM_TYPE);
             for (ItemType itemType : ItemType.values()) {
                 if (itemType.getIntType() == intType) {

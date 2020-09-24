@@ -3,6 +3,7 @@ package cn.lanink.gunwar.room;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.SavePlayerInventory;
@@ -14,7 +15,10 @@ import cn.nukkit.level.Position;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 房间
@@ -25,7 +29,6 @@ public class Room extends BaseRoom {
     private final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     public int redScore, blueScore; //队伍得分
     private final GameMode gameMode;
-    public HashSet<Player> swordAttackCD = new HashSet<>();
     public final int victoryScore; //胜利需要分数
 
     protected HashMap<ItemManage.ItemType, ArrayList<String>> initialItems = new HashMap<>();
@@ -58,6 +61,7 @@ public class Room extends BaseRoom {
                 break;
         }
         this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
+        this.initialItems.put(ItemManage.ItemType.PROJECTILE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.projectile")));
         //TODO
 
         this.initTime();
@@ -113,7 +117,6 @@ public class Room extends BaseRoom {
         }
         this.playerHealth.clear();
         this.playerRespawnTime.clear();
-        this.swordAttackCD.clear();
         initTime();
         this.haveRedFlag = null;
         this.haveBlueFlag = null;
@@ -213,13 +216,14 @@ public class Room extends BaseRoom {
      * @param player 玩家
      * @param health 血量
      */
-    public void addHealth(Player player, float health) {
+    public synchronized float addHealth(Player player, float health) {
         float nowHealth = this.playerHealth.get(player) + health;
         if (nowHealth > 20) {
             this.playerHealth.put(player, 20F);
         }else {
             this.playerHealth.put(player, nowHealth);
         }
+        return this.playerHealth.get(player);
     }
 
     /**
@@ -227,17 +231,15 @@ public class Room extends BaseRoom {
      * @param player 玩家
      * @param health 血量
      */
-    public void lessHealth(Player player, Player damager, float health) {
+    public synchronized float lessHealth(Player player, Player damager, float health) {
         float nowHealth = this.playerHealth.get(player) - health;
-        if (nowHealth <= 0) {
-            if (damager != null) {
-                this.playerHealth.put(player, 0F);
-            }else {
-                this.playerHealth.put(player, 1F);
-            }
+        if (nowHealth < 1) {
+            this.playerHealth.put(player, 0F);
+            Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent(this, player, damager));
         }else {
             this.playerHealth.put(player, nowHealth);
         }
+        return this.playerHealth.get(player);
     }
 
     /**

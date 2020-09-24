@@ -1,10 +1,11 @@
 id: "272:0"
 showName: "a demo sword"
 lore: |-
+  damage: 1-2
   这是一个配置演示
   this is a configuration demo
 damage: "1-2"
 attackCooldown: 20 #tick
 knockBack: 0.3
-infiniteDurability: false
+infiniteDurability: true
 killMessage: "%damager% --[+＝＝》 %player%"

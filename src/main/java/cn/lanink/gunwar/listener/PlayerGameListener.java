@@ -1,12 +1,13 @@
 package cn.lanink.gunwar.listener;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
+import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.base.BaseItem;
+import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
@@ -24,11 +25,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
-import cn.nukkit.level.particle.HugeExplodeSeedParticle;
-import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.potion.Effect;
-import cn.nukkit.scheduler.AsyncTask;
 
 import java.util.Map;
 
@@ -153,17 +150,20 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         EntityProjectile entity = event.getEntity();
-        if (entity == null || !this.gunWar.getRooms().containsKey(entity.getLevel().getName())) {
+        if (entity == null || !this.gunWar.getRooms().containsKey(entity.getLevel().getFolderName())) {
             return;
         }
         if (entity.shootingEntity instanceof Player) {
             PlayerInventory playerInventory = ((Player) entity.shootingEntity).getInventory();
             if (playerInventory != null) {
                 CompoundTag tag = playerInventory.getItemInHand() != null ? playerInventory.getItemInHand().getNamedTag() : null;
-                if (tag != null && tag.getBoolean("isGunWarItem")) {
+                if (tag != null) {
+                    entity.namedTag.putCompound(BaseItem.GUN_WAR_ITEM_TAG, tag.getCompound(BaseItem.GUN_WAR_ITEM_TAG));
+                }
+                /*if (tag != null && tag.getBoolean("isGunWarItem")) {
                     entity.namedTag.putBoolean("isGunWarItem", true);
                     entity.namedTag.putInt("GunWarItemType", tag.getInt("GunWarItemType"));
-                }
+                }*/
             }
         }
     }
@@ -175,60 +175,41 @@ public class PlayerGameListener implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         EntityProjectile entity = (EntityProjectile) event.getEntity();
-        if (entity == null || entity.namedTag == null || !entity.namedTag.getBoolean("isGunWarItem")) return;
+        if (entity == null || entity.namedTag == null) return;
         if (entity instanceof EntityEgg && entity.shootingEntity instanceof Player) {
             Level level = entity.getLevel();
-            Room room = this.gunWar.getRooms().getOrDefault(level.getName(), null);
+            Room room = this.gunWar.getRooms().get(level.getFolderName());
             if (room == null || room.getStatus() != 2) {
                 return;
             }
             Player damager = (Player) entity.shootingEntity;
             CompoundTag tag = entity.namedTag.clone();
             Position position = entity.getPosition();
-            this.gunWar.getServer().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
-                @Override
-                public void onRun() {
+            if (ItemManage.getItemType(tag) == ItemManage.ItemType.PROJECTILE_WEAPON) {
+                ProjectileWeapon weapon = ItemManage.getProjectileWeapon(tag);
+                if (weapon.getRange() > 0) {
                     level.addSound(position, Sound.RANDOM_EXPLODE);
-                    switch (tag.getInt("GunWarItemType")) {
-                        case 4:
-                            level.addParticle(new HugeExplodeSeedParticle(position));
-                            break;
-                        case 5:
-                            level.addParticle(new SpellParticle(position, 255, 255, 255));
-                            break;
-                    }
+                    level.addParticle(weapon.getParticle(position));
                     for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                         if (entry.getValue() != 1 && entry.getValue() != 2) {
                             continue;
                         }
-                        int x = Math.abs(entry.getKey().getFloorX() - position.getFloorX());
-                        int y = Math.abs(entry.getKey().getFloorY() - position.getFloorY());
-                        int z = Math.abs(entry.getKey().getFloorZ() - position.getFloorZ());
-                        if (x > 5 && y > 5 && z > 5) {
-                            break;
+                        if (GunWar.debug) {
+                            gunWar.getLogger().info("[debug] distance:" + position.distance(entry.getKey()) +
+                                    " damager:" + damager.getName() + " player:" + entry.getKey().getName());
                         }
-                        for (int r = 1; r <= 5; r++) {
-                            if (x <= r && y <= r && z <= r) {
-                                switch (tag.getInt("GunWarItemType")) {
-                                    case 4:
-                                        entry.getKey().attack(0F);
-                                        float damage = 12F - (r * 2);
-                                        Server.getInstance().getPluginManager().callEvent(
-                                                new GunWarPlayerDamageEvent(room, entry.getKey(), damager, damage));
-                                        break;
-                                    case 5:
-                                        Effect effect = Effect.getEffect(15);
-                                        int tick = 90 - (r * 10);
-                                        effect.setDuration(tick);
-                                        entry.getKey().addEffect(effect);
-                                        break;
-                                }
-                                break;
+                        float damage = (float) weapon.getDamage(position.distance(entry.getKey()));
+                        if (damage > 0) {
+                            entry.getKey().attack(0F);
+                            if (room.lessHealth(entry.getKey(), damager, damage) < 1) {
+                                Tools.sendMessage(room, weapon.getKillMessage()
+                                        .replace("%damager%", damager.getName())
+                                        .replace("%player%", entry.getKey().getName()));
                             }
                         }
                     }
                 }
-            });
+            }
         }
     }
 

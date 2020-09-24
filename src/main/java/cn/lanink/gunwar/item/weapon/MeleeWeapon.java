@@ -10,14 +10,12 @@ public class MeleeWeapon extends BaseWeapon {
 
     protected final int attackCooldown;
     protected final float knockBack;
-    protected final boolean infiniteDurability;
 
     public MeleeWeapon(String name, Config config) {
         super(name, config);
         this.attackCooldown = config.getInt("attackCooldown");
-        this.knockBack = (float) config.getDouble("knockBack", 0.3D);
-        this.infiniteDurability = config.getBoolean("infiniteDurability");
-        this.getGunWarItemTag()
+        this.knockBack = Math.abs((float) config.getDouble("knockBack", 0.3D));
+        this.getCompoundTag()
                 .putInt("attackCooldown", this.attackCooldown)
                 .putFloat("knockBack", this.knockBack)
                 .putBoolean("infiniteDurability", this.infiniteDurability);

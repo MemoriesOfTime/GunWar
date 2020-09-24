@@ -7,10 +7,12 @@ import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
+import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
@@ -41,7 +43,7 @@ public class PlayerDamageListener implements Listener {
         if (event.getDamager() instanceof Player) {
             Player damagePlayer = (Player) event.getDamager();
             if (damagePlayer == null) return;
-            Room room = this.gunWar.getRooms().getOrDefault(damagePlayer.getLevel().getName(), null);
+            Room room = this.gunWar.getRooms().getOrDefault(damagePlayer.getLevel().getFolderName(), null);
             if (room == null || !room.isPlaying(damagePlayer)) return;
             if (event.getEntity() instanceof EntityFlag && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlag entityFlag = (EntityFlag) event.getEntity();
@@ -82,52 +84,49 @@ public class PlayerDamageListener implements Listener {
                 Player player = (Player) event.getEntity();
                 if (room.getStatus() == 2 && room.getPlayerMode(damagePlayer) != room.getPlayerMode(player)) {
                     if (event instanceof EntityDamageByChildEntityEvent) {
-                        int id = ((EntityDamageByChildEntityEvent) event).getChild().getNetworkId();
-                        if (id == 80) {
-                            Server.getInstance().getPluginManager().callEvent(
-                                    new GunWarPlayerDamageEvent(room, player, damagePlayer, 10F));
-                            return;
-                        } else if (id == 81) {
-                            Server.getInstance().getPluginManager().callEvent(
-                                    new GunWarPlayerDamageEvent(room, player, damagePlayer, 2F));
-                            return;
+                        Entity entity = ((EntityDamageByChildEntityEvent) event).getChild();
+                        switch (ItemManage.getItemType(entity)) {
+                            case PROJECTILE_WEAPON:
+                                ProjectileWeapon weapon = ItemManage.getProjectileWeapon(entity);
+                                if (weapon.getRange() == 0) {
+                                    GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(
+                                            room, player, damagePlayer, (float) weapon.getMaxDamage());
+                                    Server.getInstance().getPluginManager().callEvent(ev);
+                                    if (ev.isCancelled()) {
+                                        event.setCancelled(true);
+                                    }else {
+                                        if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
+                                            Tools.sendMessage(room, weapon.getKillMessage()
+                                                    .replace("%damager%", damagePlayer.getName())
+                                                    .replace("%player%", player.getName()));
+                                        }
+                                    }
+                                    return;
+                                }
+                            case GUN_WEAPON:
+                                break;
                         }
                     }else {
                         Item item = damagePlayer.getInventory().getItemInHand();
-                        switch (ItemManage.getItemType(item)) {
-                            case MELEE_WEAPON:
-                                MeleeWeapon weapon = ItemManage.getMeleeWeapon(item);
-                                if (weapon != null && ItemManage.canAttack(damagePlayer, weapon)) {
-                                    this.gunWar.getServer().getPluginManager().callEvent(
-                                            new GunWarPlayerDamageEvent(room, player, damagePlayer,
-                                                    (float) Tools.randomDouble(weapon.getMinDamage(), weapon.getMaxDamage())));
-                                    event.setAttackCooldown(weapon.getAttackCooldown());
+                        if (ItemManage.getItemType(item) == ItemManage.ItemType.MELEE_WEAPON) {
+                            MeleeWeapon weapon = ItemManage.getMeleeWeapon(item);
+                            if (weapon != null && ItemManage.canAttack(damagePlayer, weapon)) {
+                                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, player, damagePlayer,
+                                        (float) Tools.randomDouble(weapon.getMinDamage(), weapon.getMaxDamage()));
+                                Server.getInstance().getPluginManager().callEvent(ev);
+                                if (ev.isCancelled()) {
+                                    event.setCancelled(true);
+                                }else {
                                     event.setKnockBack(weapon.getKnockBack());
-                                    return;
-                                }
-                                break;
-                            //TODO
-                            case PROJECTILE_WEAPON:
-
-                                break;
-                        }
-
-
-                        /*int id = damagePlayer.getInventory().getItemInHand() == null ? 0 : damagePlayer.getInventory().getItemInHand().getId();
-                        if (id == 272 && !room.swordAttackCD.contains(player)) {
-                            room.swordAttackCD.add(player);
-                            this.gunWar.getServer().getPluginManager().callEvent(
-                                    new GunWarPlayerDamageEvent(room, player, damagePlayer, 2F));
-                            this.gunWar.getServer().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
-                                @Override
-                                public void onRun(int i) {
-                                    while (room.swordAttackCD.contains(player)) {
-                                        room.swordAttackCD.remove(player);
+                                    if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
+                                        Tools.sendMessage(room, weapon.getKillMessage()
+                                                .replace("%damager%", damagePlayer.getName())
+                                                .replace("%player%", player.getName()));
                                     }
                                 }
-                            }, 20);
-                            return;
-                        }*/
+                                return;
+                            }
+                        }
                     }
                 }
             }
@@ -143,7 +142,7 @@ public class PlayerDamageListener implements Listener {
     public void onEntityDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
-            Room room = this.gunWar.getRooms().get(player.getLevel().getName());
+            Room room = this.gunWar.getRooms().get(player.getLevel().getFolderName());
             if (room == null || !room.isPlaying(player)) return;
             if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&
                     event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {

@@ -330,7 +330,7 @@ public class GunWarListener implements Listener {
      * 玩家伤害事件
      * @param event 事件
      */
-    @EventHandler
+    @Deprecated //不再使用
     public void onPlayerDamage(GunWarPlayerDamageEvent event) {
         if (event.isCancelled()) return;
         Room room = event.getRoom();
@@ -339,7 +339,7 @@ public class GunWarListener implements Listener {
         float damage = event.getDamage();
         float health = room.getPlayerHealth().getOrDefault(player, 0F);
         float nowHealth = health - damage;
-        if (nowHealth <= 0) {
+        if (nowHealth < 1) {
             room.getPlayerHealth().put(player, 0F);
             Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent(room, player, damagePlayer));
         }else {

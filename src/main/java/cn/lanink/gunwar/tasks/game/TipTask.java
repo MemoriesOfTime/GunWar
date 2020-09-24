@@ -45,7 +45,7 @@ public class TipTask extends PluginTask<GunWar> {
     }
 
     private String getStringHealth(float health) {
-        StringBuilder string = new StringBuilder("§c" + health + "/20  ");
+        StringBuilder string = new StringBuilder("§c" + String.format("%.1f", health) + "/20  ");
         for (int j = 0; j < 20; j++) {
             if (j < health) {
                 string.append("§a▋");

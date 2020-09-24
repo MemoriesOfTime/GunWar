@@ -1,6 +1,11 @@
 package cn.lanink.gunwar.item.weapon;
 
 import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.utils.exception.item.weapon.ProjectileWeaponLoadException;
+import cn.nukkit.item.ProjectileItem;
+import cn.nukkit.level.particle.HugeExplodeSeedParticle;
+import cn.nukkit.level.particle.Particle;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 
 /**
@@ -8,11 +13,16 @@ import cn.nukkit.utils.Config;
  */
 public class ProjectileWeapon extends BaseWeapon {
 
-    protected int range;
+    protected float range;
 
-    public ProjectileWeapon(String name, Config config) {
+    public ProjectileWeapon(String name, Config config) throws ProjectileWeaponLoadException {
         super(name, config);
-        //this.range = range;
+        if (!(this.item instanceof ProjectileItem)) {
+            throw new ProjectileWeaponLoadException("name:" + this.getName() +
+                    " ID:" + this.item.getId() + ":" + this.item.getDamage() +
+                    " 不属于抛掷物");
+        }
+        this.range = Math.abs((float) config.getDouble("range"));
     }
 
     @Override
@@ -23,20 +33,29 @@ public class ProjectileWeapon extends BaseWeapon {
     /**
      * @return 有效半径
      */
-    public int getRange() {
+    public float getRange() {
         return this.range;
     }
 
-/*    public double getDamage(double distance) {
-        return getDamage(this.getDamage(), this.getRange(), distance);
+    /**
+     * 根据距离获取伤害
+     * @param distance 距离
+     * @return 伤害
+     */
+    public double getDamage(double distance) {
+        if (distance > this.getRange()) {
+            return 0;
+        }
+        double damage = Math.max((this.getRange() - distance) / this.getRange() * this.getMaxDamage() * 1.1, this.getMinDamage());
+        return Math.min(damage, this.getMaxDamage());
     }
 
-    public static double getDamage(double damage, int range, double distance) {
-        if (distance > range) {
-            return 0;
-        }else {
-            return damage - (0.1 * distance);
-        }
-    }*/
+    /**
+     * @param vector3 位置
+     * @return 粒子
+     */
+    public Particle getParticle(Vector3 vector3) {
+        return new HugeExplodeSeedParticle(vector3);
+    }
 
 }

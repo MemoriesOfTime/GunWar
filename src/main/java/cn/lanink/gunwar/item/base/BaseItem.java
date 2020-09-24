@@ -18,6 +18,7 @@ public abstract class BaseItem {
 
     private final String name;
     public final Item item;
+    protected final boolean infiniteDurability;
 
     public BaseItem(String name, Config config) {
         this.name = name;
@@ -35,6 +36,10 @@ public abstract class BaseItem {
         }
         if (!this.item.hasCompoundTag()) {
             this.item.setNamedTag(new CompoundTag());
+        }
+        this.infiniteDurability = config.getBoolean("infiniteDurability", false);
+        if (this.infiniteDurability) {
+            this.item.getNamedTag().putByte("Unbreakable", 1);
         }
         this.item.getNamedTag().putCompound(GUN_WAR_ITEM_TAG, new CompoundTag()
                 .putString(GUN_WAR_ITEM_NAME, this.name)
@@ -58,13 +63,20 @@ public abstract class BaseItem {
     }
 
     /**
+     * @return 无限耐久
+     */
+    public boolean isInfiniteDurability() {
+        return infiniteDurability;
+    }
+
+    /**
      * @return 物品
      */
     public Item getItem() {
         return this.item.clone();
     }
 
-    public CompoundTag getGunWarItemTag() {
+    public CompoundTag getCompoundTag() {
         return this.item.getNamedTag().getCompound(GUN_WAR_ITEM_TAG);
     }
 

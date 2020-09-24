@@ -39,6 +39,12 @@ import java.util.Random;
 
 public class Tools {
 
+    public static void sendMessage(Room room, String message) {
+        for (Player player : room.getPlayers().keySet()) {
+            player.sendMessage(message);
+        }
+    }
+
     public static double randomDouble(double min, double max) {
         return min + ((max - min) * GunWar.RANDOM.nextDouble());
     }
@@ -110,7 +116,10 @@ public class Tools {
                 Item item = null;
                 switch (entry.getKey()) {
                     case MELEE_WEAPON:
-                        item = GunWar.getInstance().getItemManage().getMeleeWeaponMap().get(strings[0]).getItem();
+                        item = ItemManage.getMeleeWeaponMap().get(strings[0]).getItem();
+                        break;
+                    case PROJECTILE_WEAPON:
+                        item = ItemManage.getProjectileWeaponMap().get(strings[0]).getItem();
                         break;
                     //TODO
                     case GUN_WEAPON:
