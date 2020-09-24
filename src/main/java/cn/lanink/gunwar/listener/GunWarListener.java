@@ -8,7 +8,6 @@ import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.*;
 import cn.lanink.gunwar.utils.Language;
-import cn.lanink.gunwar.utils.Tips;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
@@ -119,17 +118,11 @@ public class GunWarListener implements Listener {
             room.getPlayers().put(player, 1);
             player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
             player.setNameTag("§c" + player.getName());
-            if (this.gunWar.isHasTips()) {
-                Tips.setNameTagMessage(room.getLevel().getName(), player, "§c" + player.getName());
-            }
         }
         for (Player player : blueTeam) {
             room.getPlayers().put(player, 2);
             player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
             player.setNameTag("§9" + player.getName());
-            if (this.gunWar.isHasTips()) {
-                Tips.setNameTagMessage(room.getLevel().getName(), player, "§9" + player.getName());
-            }
         }
     }
 

@@ -1,10 +1,11 @@
 package cn.lanink.gunwar.listener;
 
+import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.room.Room;
-import cn.lanink.gunwar.utils.SavePlayerInventory;
-import cn.lanink.gunwar.utils.Tips;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -40,7 +41,7 @@ public class PlayerJoinAndQuit implements Listener {
                         if (gunWar.isHasTips()) {
                             Tips.removeTipsConfig(player.getLevel().getName(), player);
                         }
-                        SavePlayerInventory.restore(player);
+                        SavePlayerInventory.restore(gunWar, player);
                         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }
@@ -60,6 +61,9 @@ public class PlayerJoinAndQuit implements Listener {
             }
         }
         ItemManage.getPlayerAttackTime().remove(player);
+        for (GunWeapon weapon : ItemManage.getGunWeaponMap().values()) {
+            weapon.getMagazineMap().remove(player);
+        }
     }
 
     @EventHandler

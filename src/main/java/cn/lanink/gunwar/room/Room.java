@@ -1,13 +1,13 @@
 package cn.lanink.gunwar.room;
 
+import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.tasks.WaitTask;
-import cn.lanink.gunwar.utils.SavePlayerInventory;
-import cn.lanink.gunwar.utils.Tips;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -62,7 +62,7 @@ public class Room extends BaseRoom {
         }
         this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
         this.initialItems.put(ItemManage.ItemType.PROJECTILE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.projectile")));
-        //TODO
+        this.initialItems.put(ItemManage.ItemType.GUN_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.gun")));
 
         this.initTime();
         if (this.getLevel() == null) {
@@ -92,7 +92,7 @@ public class Room extends BaseRoom {
     }
 
     @Override
-    public void endGame() {
+    public void endGame(int victory) {
         this.endGame(true);
     }
 
@@ -107,7 +107,7 @@ public class Room extends BaseRoom {
                 while (it.hasNext()) {
                     Map.Entry<Player, Integer> entry = it.next();
                     it.remove();
-                    quitRoomOnline(entry.getKey());
+                    this.quitRoom(entry.getKey());
                 }
             }
             this.players.clear();
@@ -132,13 +132,13 @@ public class Room extends BaseRoom {
      * @param player 玩家
      */
     @Override
-    public void joinRoom(Player player) {
+    public void joinRoom(Player player, boolean spectator) {
         if (this.status == 0) {
             this.initTask();
         }
         this.players.put(player, 0);
         this.playerHealth.put(player, 20F);
-        SavePlayerInventory.save(player);
+        SavePlayerInventory.save(GunWar.getInstance(), player);
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
         player.getInventory().setItem(3, Tools.getItem(11));
@@ -156,18 +156,6 @@ public class Room extends BaseRoom {
                 }
             }
         }, 20);
-    }
-
-    @Override
-    public void quitRoomOnline(Player player) {
-        if (GunWar.getInstance().isHasTips()) {
-            Tips.removeTipsConfig(this.level, player);
-        }
-        GunWar.getInstance().getScoreboard().closeScoreboard(player);
-        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-        Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(player);
-        player.sendMessage(this.language.quitRoom);
     }
 
     public GameMode getGameMode() {

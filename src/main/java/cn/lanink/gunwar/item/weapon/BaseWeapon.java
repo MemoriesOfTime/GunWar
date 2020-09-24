@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.item.weapon;
 
 import cn.lanink.gunwar.item.base.BaseItem;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.utils.Config;
 
 /**
@@ -34,6 +35,10 @@ public abstract class BaseWeapon extends BaseItem {
 
     public double getMaxDamage() {
         return this.maxDamage;
+    }
+
+    public double getRandomDamage() {
+        return Tools.randomDouble(this.getMinDamage(), this.getMaxDamage());
     }
 
     public String getKillMessage() {

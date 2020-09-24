@@ -5,6 +5,7 @@ import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.room.Room;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -113,19 +114,20 @@ public class Tools {
         for (Map.Entry<ItemManage.ItemType, ArrayList<String>> entry : room.getInitialItems().entrySet()) {
             for (String value : entry.getValue()) {
                 String[] strings = value.split(":");
-                Item item = null;
+                BaseItem baseItem = null;
                 switch (entry.getKey()) {
                     case MELEE_WEAPON:
-                        item = ItemManage.getMeleeWeaponMap().get(strings[0]).getItem();
+                        baseItem = ItemManage.getMeleeWeaponMap().get(strings[0]);
                         break;
                     case PROJECTILE_WEAPON:
-                        item = ItemManage.getProjectileWeaponMap().get(strings[0]).getItem();
+                        baseItem = ItemManage.getProjectileWeaponMap().get(strings[0]);
                         break;
-                    //TODO
                     case GUN_WEAPON:
+                        baseItem = ItemManage.getGunWeaponMap().get(strings[0]);
                         break;
                 }
-                if (item != null) {
+                if (baseItem != null) {
+                    Item item = baseItem.getItem();
                     item.setCount(Integer.parseInt(strings[1]));
                     player.getInventory().addItem(item);
                     if (GunWar.debug) {

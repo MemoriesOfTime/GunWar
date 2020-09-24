@@ -1,7 +1,12 @@
 package cn.lanink.gunwar.room;
 
+import cn.lanink.gamecore.room.IRoom;
+import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.event.GunWarRoomStartEvent;
 import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
@@ -13,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基础/通用 房间类
  * @author lt_name
  */
-public abstract class BaseRoom {
+public abstract class BaseRoom implements IRoom {
 
     protected final Language language = GunWar.getInstance().getLanguage();
     public int waitTime, gameTime;
@@ -47,36 +52,51 @@ public abstract class BaseRoom {
         this.status = status;
     }
 
+    public void startGame() {
+        //TODO
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent((Room) this));
+    }
+
+    public void endGame() {
+        this.endGame(0);
+    }
+
     /**
      * 结束房间
      */
-    public abstract void endGame();
+    public abstract void endGame(int victory);
+
+    public void joinRoom(Player player) {
+        this.joinRoom(player, false);
+    }
 
     /**
      * 加入房间
      * @param player 玩家
      */
-    public abstract void joinRoom(Player player);
+    public abstract void joinRoom(Player player, boolean spectator);
+
+    public void quitRoom(Player player, boolean online) {
+        this.quitRoom(player);
+    }
 
     /**
      * 退出房间
      * @param player 玩家
-     * @param online 是否在线
      */
-    public void quitRoom(Player player, boolean online) {
+    public void quitRoom(Player player) {
         if (this.isPlaying(player)) {
             this.players.remove(player);
-        }
-        if (online) {
-            this.quitRoomOnline(player);
+            if (GunWar.getInstance().isHasTips()) {
+                Tips.removeTipsConfig(this.level, player);
+            }
+            GunWar.getInstance().getScoreboard().closeScoreboard(player);
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+            Tools.rePlayerState(player, false);
+            SavePlayerInventory.restore(GunWar.getInstance(), player);
+            player.sendMessage(this.language.quitRoom);
         }
     }
-
-    /**
-     * 退出房间(玩家在线)
-     * @param player 玩家
-     */
-    public abstract void quitRoomOnline(Player player);
 
     /**
      * 获取玩家是否在房间内
@@ -129,6 +149,10 @@ public abstract class BaseRoom {
      */
     public Level getLevel() {
         return Server.getInstance().getLevelByName(this.level);
+    }
+
+    public String getLevelName() {
+        return this.level;
     }
 
     /**

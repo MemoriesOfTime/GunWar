@@ -27,7 +27,7 @@ import java.util.*;
 
 public class GunWar extends PluginBase {
 
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.0.4-SNAPSHOT git-6c1d6f6";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
@@ -121,7 +121,7 @@ public class GunWar extends PluginBase {
     @Override
     public void onDisable() {
         this.gameRecord.save();
-        if (this.rooms.values().size() > 0) {
+        if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, Room> entry = it.next();

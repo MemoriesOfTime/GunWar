@@ -6,6 +6,7 @@ import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.Room;
@@ -92,18 +93,29 @@ public class PlayerDamageListener implements Listener {
                                     GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(
                                             room, player, damagePlayer, (float) weapon.getMaxDamage());
                                     Server.getInstance().getPluginManager().callEvent(ev);
-                                    if (ev.isCancelled()) {
-                                        event.setCancelled(true);
-                                    }else {
+                                    if (!ev.isCancelled()) {
                                         if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
                                             Tools.sendMessage(room, weapon.getKillMessage()
                                                     .replace("%damager%", damagePlayer.getName())
                                                     .replace("%player%", player.getName()));
                                         }
+                                        return;
+                                    }
+                                }
+                                break;
+                            case GUN_WEAPON:
+                                GunWeapon gunWeapon = ItemManage.getGunWeapon(entity);
+                                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(
+                                        room, player, damagePlayer, (float) gunWeapon.getRandomDamage());
+                                Server.getInstance().getPluginManager().callEvent(ev);
+                                if (!ev.isCancelled()) {
+                                    if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
+                                        Tools.sendMessage(room, gunWeapon.getKillMessage()
+                                                .replace("%damager%", damagePlayer.getName())
+                                                .replace("%player%", player.getName()));
                                     }
                                     return;
                                 }
-                            case GUN_WEAPON:
                                 break;
                         }
                     }else {
@@ -111,8 +123,8 @@ public class PlayerDamageListener implements Listener {
                         if (ItemManage.getItemType(item) == ItemManage.ItemType.MELEE_WEAPON) {
                             MeleeWeapon weapon = ItemManage.getMeleeWeapon(item);
                             if (weapon != null && ItemManage.canAttack(damagePlayer, weapon)) {
-                                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, player, damagePlayer,
-                                        (float) Tools.randomDouble(weapon.getMinDamage(), weapon.getMaxDamage()));
+                                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(
+                                        room, player, damagePlayer, (float) weapon.getRandomDamage());
                                 Server.getInstance().getPluginManager().callEvent(ev);
                                 if (ev.isCancelled()) {
                                     event.setCancelled(true);

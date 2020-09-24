@@ -1,0 +1,10 @@
+id: "290:0"
+showName: "a demo gun"
+lore: |-
+  这是一个配置演示
+  this is a configuration demo
+damage: "1-2"
+maxMagazine: 15
+reloadTime: 60 #tick
+gravity: 0.005 #子弹重力（普通雪球为0.03）
+killMessage: "%damager% ︻┳═一 %player%"

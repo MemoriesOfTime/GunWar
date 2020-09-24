@@ -1,8 +1,10 @@
 package cn.lanink.gunwar.listener;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.base.BaseItem;
+import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
@@ -50,7 +52,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null) {
             return;
         }
-        Room room = this.gunWar.getRooms().getOrDefault(player.getLevel().getName(), null);
+        Room room = this.gunWar.getRooms().get(player.getLevel().getFolderName());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -59,7 +61,7 @@ public class PlayerGameListener implements Listener {
             player.setAllowModifyWorld(false);
         }
         CompoundTag tag = item.getNamedTag();
-        if (tag == null || !tag.getBoolean("isGunWarItem")) return;
+        if (tag == null) return;
         if (room.getStatus() == 1) {
             switch (tag.getInt("GunWarItemType")) {
                 case 10:
@@ -77,6 +79,13 @@ public class PlayerGameListener implements Listener {
                     break;
             }
             event.setCancelled(true);
+        }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
+            if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR &&
+                    ItemManage.getItemType(tag) == ItemManage.ItemType.GUN_WEAPON) {
+                GunWeapon weapon = ItemManage.getGunWeapon(tag);
+                int bullets = weapon.shooting(player, player.getDirectionVector());
+                player.sendPopup("\n" + bullets + "/" + weapon.getMaxMagazine());
+            }
         }
     }
 
@@ -160,10 +169,6 @@ public class PlayerGameListener implements Listener {
                 if (tag != null) {
                     entity.namedTag.putCompound(BaseItem.GUN_WAR_ITEM_TAG, tag.getCompound(BaseItem.GUN_WAR_ITEM_TAG));
                 }
-                /*if (tag != null && tag.getBoolean("isGunWarItem")) {
-                    entity.namedTag.putBoolean("isGunWarItem", true);
-                    entity.namedTag.putInt("GunWarItemType", tag.getInt("GunWarItemType"));
-                }*/
             }
         }
     }

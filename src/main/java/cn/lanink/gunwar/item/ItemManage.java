@@ -41,17 +41,16 @@ public class ItemManage {
         this.meleeWeaponFolder = this.weaponFolder + "Melee";
         this.projectileWeaponFolder = this.weaponFolder + "Projectile";
         this.gunWeaponFolder = this.weaponFolder + "Gun";
-        //TODO
         this.loadAllMeleeWeapon();
         this.loadAllProjectileWeapon();
-
+        this.loadAllGunWeapon();
     }
 
     public String getMeleeWeaponFolder() {
         return this.meleeWeaponFolder;
     }
 
-    public void loadAllMeleeWeapon() {
+    private void loadAllMeleeWeapon() {
         if (!new File(this.meleeWeaponFolder).exists()) {
             this.gunWar.saveResource("Items/Weapon/Melee/demo.yml", false);
         }
@@ -67,7 +66,7 @@ public class ItemManage {
         }
     }
 
-    public void loadAllProjectileWeapon() {
+    private void loadAllProjectileWeapon() {
         if (!new File(this.projectileWeaponFolder).exists()) {
             this.gunWar.saveResource("Items/Weapon/Projectile/demo.yml", false);
         }
@@ -82,6 +81,22 @@ public class ItemManage {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private void loadAllGunWeapon() {
+        if (!new File(this.gunWeaponFolder).exists()) {
+            this.gunWar.saveResource("Items/Weapon/Gun/demo.yml", false);
+        }
+        File[] files = new File(this.gunWeaponFolder).listFiles();
+        if (files != null) {
+            for (File file : files) {
+                String[] fileName = file.getName().split("\\.");
+                if (fileName.length > 1 && "yml".equals(fileName[1])) {
+                    Config config = new Config(file, Config.YAML);
+                    gunWeaponMap.put(fileName[0], new GunWeapon(fileName[0], config));
                 }
             }
         }
@@ -123,6 +138,22 @@ public class ItemManage {
 
     public static ProjectileWeapon getProjectileWeapon(CompoundTag compoundTag) {
         return projectileWeaponMap.get(getName(compoundTag));
+    }
+
+    public static HashMap<String, GunWeapon> getGunWeaponMap() {
+        return gunWeaponMap;
+    }
+
+    public static GunWeapon getGunWeapon(Item item) {
+        return gunWeaponMap.get(getName(item.getNamedTag()));
+    }
+
+    public static GunWeapon getGunWeapon(Entity entity) {
+        return gunWeaponMap.get(getName(entity.namedTag));
+    }
+
+    public static GunWeapon getGunWeapon(CompoundTag compoundTag) {
+        return gunWeaponMap.get(getName(compoundTag));
     }
 
     public static boolean canAttack(Player player, MeleeWeapon weapon) {
