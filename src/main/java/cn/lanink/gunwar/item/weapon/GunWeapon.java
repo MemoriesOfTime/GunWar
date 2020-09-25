@@ -20,6 +20,7 @@ public class GunWeapon extends BaseWeapon {
 
     protected int maxMagazine;
     protected float gravity;
+    protected float motionMultiply;
     protected float reloadTime;
 
     protected ConcurrentHashMap<Player, Integer> magazineMap = new ConcurrentHashMap<>();
@@ -30,9 +31,11 @@ public class GunWeapon extends BaseWeapon {
         this.item.getNamedTag().putByte("Unbreakable", 1);
         this.maxMagazine = config.getInt("maxMagazine");
         this.gravity = (float) config.getDouble("gravity");
+        this.motionMultiply = (float) config.getDouble("motionMultiply");
         this.reloadTime = (float) config.getDouble("reloadTime");
         this.getCompoundTag().putInt("maxMagazine", this.maxMagazine)
                 .putFloat("gravity", this.gravity)
+                .putFloat("motionMultiply", this.motionMultiply)
                 .putFloat("reloadTime", this.reloadTime);
     }
 
@@ -62,6 +65,10 @@ public class GunWeapon extends BaseWeapon {
         return this.gravity;
     }
 
+    public float getMotionMultiply() {
+        return this.motionMultiply;
+    }
+
     public ConcurrentHashMap<Player, Integer> getMagazineMap() {
         return this.magazineMap;
     }
@@ -74,7 +81,7 @@ public class GunWeapon extends BaseWeapon {
         int bullets = this.magazineMap.getOrDefault(player, this.getMaxMagazine());
         if (bullets > 0) {
             this.stopReload(player);
-            BulletSnowBall.launch(player, directionVector, this.getGravity(), this.getCompoundTag());
+            BulletSnowBall.launch(player, directionVector, this.getGravity(), this.getMotionMultiply(), this.getCompoundTag());
             this.magazineMap.put(player, --bullets);
         }
         if (bullets <= 0) {

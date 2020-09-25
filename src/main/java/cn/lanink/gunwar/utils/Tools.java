@@ -113,7 +113,7 @@ public class Tools {
         player.getInventory().setArmorContents(getArmors(team));
         for (Map.Entry<ItemManage.ItemType, ArrayList<String>> entry : room.getInitialItems().entrySet()) {
             for (String value : entry.getValue()) {
-                String[] strings = value.split(":");
+                String[] strings = value.split("&");
                 BaseItem baseItem = null;
                 switch (entry.getKey()) {
                     case MELEE_WEAPON:

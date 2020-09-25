@@ -65,21 +65,27 @@ public abstract class BaseRoom implements IRoom {
                 throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
             }
         }
-        ArrayList<String> defaultItems = new ArrayList<>(Collections.singletonList("demo:1"));
+        ArrayList<String> defaultItems = new ArrayList<>(Collections.singletonList("demo&1"));
         this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON,
                 new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
         if (this.initialItems.get(ItemManage.ItemType.MELEE_WEAPON).isEmpty()) {
             config.set("initialItems.weapon.melee", new ArrayList<>(defaultItems));
+            this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON,
+                    new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
         }
         this.initialItems.put(ItemManage.ItemType.PROJECTILE_WEAPON,
                 new ArrayList<>(config.getStringList("initialItems.weapon.projectile")));
         if (this.initialItems.get(ItemManage.ItemType.PROJECTILE_WEAPON).isEmpty()) {
             config.set("initialItems.weapon.projectile", new ArrayList<>(defaultItems));
+            this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON,
+                    new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
         }
         this.initialItems.put(ItemManage.ItemType.GUN_WEAPON,
                 new ArrayList<>(config.getStringList("initialItems.weapon.gun")));
         if (this.initialItems.get(ItemManage.ItemType.GUN_WEAPON).isEmpty()) {
             config.set("initialItems.weapon.gun", new ArrayList<>(defaultItems));
+            this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON,
+                    new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
         }
         config.save();
     }

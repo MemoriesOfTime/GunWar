@@ -8,4 +8,5 @@ attackCooldown: 10 #tick
 maxMagazine: 15
 reloadTime: 100 #tick
 gravity: 0.005 #子弹重力（普通雪球为0.03）
+motionMultiply: 1.5 #移动倍速（普通雪球为1.5）
 killMessage: "%damager% ︻┳═一 %player%"

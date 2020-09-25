@@ -38,7 +38,11 @@ public class BulletSnowBall extends EntitySnowball {
         this.gravity = gravity;
     }
 
-    public static void launch(Player player, Vector3 directionVector, float gravity, CompoundTag compoundTag) {
+    public static void launch(Player player,
+                              Vector3 directionVector,
+                              float gravity,
+                              float motionMultiply,
+                              CompoundTag compoundTag) {
         CompoundTag nbt = (new CompoundTag())
                 .putList((new ListTag<>("Pos"))
                         .add(new DoubleTag("", player.x))
@@ -55,7 +59,7 @@ public class BulletSnowBall extends EntitySnowball {
         BulletSnowBall bulletSnowBall = (BulletSnowBall) Entity.createEntity("BulletSnowBall", player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
         if (bulletSnowBall != null) {
             bulletSnowBall.setGravity(gravity);
-            bulletSnowBall.setMotion(bulletSnowBall.getMotion().multiply(1.5));
+            bulletSnowBall.setMotion(bulletSnowBall.getMotion().multiply(motionMultiply));
             for (Player p : player.getLevel().getChunkPlayers(player.getFloorX() >> 4, player.getFloorZ() >> 4).values()) {
                 if (p != player) {
                     bulletSnowBall.spawnTo(p);
@@ -65,7 +69,7 @@ public class BulletSnowBall extends EntitySnowball {
                 if (!bulletSnowBall.isClosed()) {
                     bulletSnowBall.spawnTo(player);
                 }
-            }, 15);
+            }, 10);
             player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
         }
     }
@@ -78,8 +82,4 @@ public class BulletSnowBall extends EntitySnowball {
         return this.gravity;
     }
 
-    @Override
-    protected float getDrag() {
-        return 0.001F;
-    }
 }
