@@ -30,7 +30,7 @@ public class StopRoom extends BaseSubCommand {
         Player player = (Player) sender;
         Room room = this.gunWar.getRooms().get(player.getLevel().getName());
         if (room != null) {
-            room.endGame(true);
+            room.endGame();
             sender.sendMessage(this.language.adminStopRoom);
         }else {
             sender.sendMessage(this.language.adminLevelNoRoom);

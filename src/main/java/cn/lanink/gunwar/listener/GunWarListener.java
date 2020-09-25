@@ -148,7 +148,7 @@ public class GunWarListener implements Listener {
         player.getUIInventory().clearAll();
         Tools.rePlayerState(player, true);
         room.getPlayerHealth().put(player, 20F);
-        switch (room.getPlayerMode(player)) {
+        switch (room.getPlayers(player)) {
             case 11:
                 room.getPlayers().put(player, 1);
             case 1:
@@ -403,9 +403,9 @@ public class GunWarListener implements Listener {
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(3);
-        if (room.getPlayerMode(player) == 1) {
+        if (room.getPlayers(player) == 1) {
             room.getPlayers().put(player, 11);
-        }else if (room.getPlayerMode(player) == 2) {
+        }else if (room.getPlayers(player) == 2) {
             room.getPlayers().put(player, 12);
         }
         Server.getInstance().getPluginManager().callEvent(new GunWarPlayerCorpseSpawnEvent(room, player));
@@ -437,7 +437,7 @@ public class GunWarListener implements Listener {
                 .putString("ModelId", skin.getSkinId()));
         nbt.putFloat("Scale", -1.0F);
         nbt.putString("playerName", player.getName());
-        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt, room.getPlayerMode(player));
+        EntityPlayerCorpse ent = new EntityPlayerCorpse(player.getChunk(), nbt, room.getPlayers(player));
         ent.setSkin(skin);
         ent.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
         ent.setGliding(true);

@@ -56,13 +56,9 @@ public class PlayerGameListener implements Listener {
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (event.getAction() == PlayerInteractEvent.Action.LEFT_CLICK_BLOCK) {
-            event.setCancelled(true);
-            player.setAllowModifyWorld(false);
-        }
         CompoundTag tag = item.getNamedTag();
         if (tag == null) return;
-        if (room.getStatus() == 1) {
+        if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             switch (tag.getInt("GunWarItemType")) {
                 case 10:
                     room.quitRoom(player, true);
@@ -80,11 +76,21 @@ public class PlayerGameListener implements Listener {
             }
             event.setCancelled(true);
         }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
-            if (event.getAction() == PlayerInteractEvent.Action.RIGHT_CLICK_AIR &&
-                    ItemManage.getItemType(tag) == ItemManage.ItemType.GUN_WEAPON) {
+            if (ItemManage.getItemType(tag) == ItemManage.ItemType.GUN_WEAPON) {
                 GunWeapon weapon = ItemManage.getGunWeapon(tag);
-                int bullets = weapon.shooting(player, player.getDirectionVector());
-                player.sendPopup("\n" + bullets + "/" + weapon.getMaxMagazine());
+                if (weapon == null) {
+                    return;
+                }
+                switch (event.getAction()) {
+                    case RIGHT_CLICK_AIR:
+                        int bullets = weapon.shooting(player, player.getDirectionVector());
+                        player.sendPopup("\n" + bullets + "/" + weapon.getMaxMagazine());
+                        break;
+                    case LEFT_CLICK_AIR:
+                    case LEFT_CLICK_BLOCK:
+                        weapon.startReload(player);
+                        break;
+                }
             }
         }
     }
@@ -140,11 +146,11 @@ public class PlayerGameListener implements Listener {
         }
         message = this.language.playerTeamChat.replace("%player%", player.getName())
                 .replace("%message%", message);
-        int team = room.getPlayerMode(player);
+        int team = room.getPlayers(player);
         for (Player p : room.getPlayers().keySet()) {
-            if (room.getPlayerMode(p) == team ||
-                    (room.getPlayerMode(p) - 10 == team) ||
-                    (room.getPlayerMode(p) == team - 10)) {
+            if (room.getPlayers(p) == team ||
+                    (room.getPlayers(p) - 10 == team) ||
+                    (room.getPlayers(p) == team - 10)) {
                 p.sendMessage(message);
             }
         }
@@ -192,6 +198,9 @@ public class PlayerGameListener implements Listener {
             Position position = entity.getPosition();
             if (ItemManage.getItemType(tag) == ItemManage.ItemType.PROJECTILE_WEAPON) {
                 ProjectileWeapon weapon = ItemManage.getProjectileWeapon(tag);
+                if (weapon == null) {
+                    return;
+                }
                 if (weapon.getRange() > 0) {
                     level.addSound(position, Sound.RANDOM_EXPLODE);
                     level.addParticle(weapon.getParticle(position));
@@ -227,7 +236,7 @@ public class PlayerGameListener implements Listener {
         Player player = event.getPlayer();
         for (Room room : this.gunWar.getRooms().values()) {
             if (room.isPlaying(player)) {
-                switch (room.getPlayerMode(player)) {
+                switch (room.getPlayers(player)) {
                     case 1:
                     case 11:
                         event.setRespawnPosition(room.getRedSpawn());

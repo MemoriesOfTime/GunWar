@@ -1,7 +1,9 @@
 package cn.lanink.gunwar.entity;
 
+import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.base.BaseItem;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntitySnowball;
 import cn.nukkit.level.format.FullChunk;
@@ -53,7 +55,17 @@ public class BulletSnowBall extends EntitySnowball {
         if (bulletSnowBall != null) {
             bulletSnowBall.setGravity(gravity);
             bulletSnowBall.setMotion(bulletSnowBall.getMotion().multiply(1.5));
-            bulletSnowBall.spawnToAll();
+            //TODO 延迟给发射人生成
+            for (Player p : player.getLevel().getChunkPlayers(player.getFloorX() >> 4, player.getFloorZ() >> 4).values()) {
+                if (p != player) {
+                    bulletSnowBall.spawnTo(p);
+                }
+            }
+            Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
+                if (!bulletSnowBall.isClosed()) {
+                    bulletSnowBall.spawnTo(player);
+                }
+            }, 20);
             player.getLevel().addLevelSoundEvent(player, 21);
         }
     }

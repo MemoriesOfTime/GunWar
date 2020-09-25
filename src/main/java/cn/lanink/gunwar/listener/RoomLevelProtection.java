@@ -1,7 +1,6 @@
 package cn.lanink.gunwar.listener;
 
 import cn.lanink.gunwar.GunWar;
-import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.Listener;
@@ -30,7 +29,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onCraft(CraftItemEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -42,7 +41,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onStartBrew(StartBrewEvent event) {
         Level level = event.getBrewingStand() == null ? null : event.getBrewingStand().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -54,7 +53,7 @@ public class RoomLevelProtection implements Listener {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
         }
     }
@@ -65,14 +64,9 @@ public class RoomLevelProtection implements Listener {
      */
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
-        Player player = event.getPlayer();
-        if (player == null) {
-            return;
-        }
-        Level level = event.getPlayer().getLevel();
-        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getName())) {
+        Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
+        if (level != null && GunWar.getInstance().getRooms().containsKey(level.getFolderName())) {
             event.setCancelled();
-            player.setAllowModifyWorld(false);
         }
     }
 

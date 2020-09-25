@@ -126,11 +126,9 @@ public class GunWar extends PluginBase {
             while(it.hasNext()){
                 Map.Entry<String, Room> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGame(false);
-                    getLogger().info("§c房间：" + entry.getKey() + " 非正常结束！");
-                }else {
-                    getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
+                    entry.getValue().endGame();
                 }
+                getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
                 it.remove();
             }
         }

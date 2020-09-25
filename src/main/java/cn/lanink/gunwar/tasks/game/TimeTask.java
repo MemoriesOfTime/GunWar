@@ -33,7 +33,7 @@ public class TimeTask extends PluginTask<GunWar> {
             return;
         }
         if (this.room.getPlayers().size() < 1) {
-            this.room.endGame(true);
+            this.room.endGame();
             this.cancel();
             return;
         }

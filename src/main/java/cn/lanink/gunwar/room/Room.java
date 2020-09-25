@@ -5,13 +5,12 @@ import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
+import cn.lanink.gunwar.event.GunWarRoomEndEvent;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.level.Position;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
@@ -25,12 +24,9 @@ import java.util.Map;
  */
 public class Room extends BaseRoom {
 
-    private final String redSpawn, blueSpawn;
     private final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     public int redScore, blueScore; //队伍得分
     private final GameMode gameMode;
-    public final int victoryScore; //胜利需要分数
-
     protected HashMap<ItemManage.ItemType, ArrayList<String>> initialItems = new HashMap<>();
 
     //夺旗模式数据
@@ -44,13 +40,7 @@ public class Room extends BaseRoom {
      * @param config 配置文件
      */
     public Room(Config config) {
-        this.level = config.getString("World");
-        this.waitSpawn = config.getString("waitSpawn");
-        this.redSpawn = config.getString("redSpawn");
-        this.blueSpawn = config.getString("blueSpawn");
-        this.setWaitTime = config.getInt("waitTime");
-        this.setGameTime = config.getInt("gameTime");
-        this.victoryScore = config.getInt("victoryScore", 5);
+        super(config);
         switch (config.getInt("gameMode", 0)) {
             case 1:
                 this.gameMode = GameMode.CTF;
@@ -66,7 +56,7 @@ public class Room extends BaseRoom {
 
         this.initTime();
         if (this.getLevel() == null) {
-            Server.getInstance().loadLevel(this.level);
+            Server.getInstance().loadLevel(this.getLevelName());
         }
         this.status = 0;
     }
@@ -91,30 +81,22 @@ public class Room extends BaseRoom {
         this.blueScore = 0;
     }
 
-    @Override
-    public void endGame(int victory) {
-        this.endGame(true);
-    }
-
     /**
      * 结束房间
      */
-    public synchronized void endGame(boolean normal) {
+    @Override
+    public synchronized void endGame(int victory) {
         this.status = 0;
-        if (normal) {
-            if (this.players.size() > 0) {
-                Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<Player, Integer> entry = it.next();
-                    it.remove();
-                    this.quitRoom(entry.getKey());
-                }
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomEndEvent(this, victory));
+        if (this.players.size() > 0) {
+            Iterator<Map.Entry<Player, Integer>> it = players.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Player, Integer> entry = it.next();
+                it.remove();
+                this.quitRoom(entry.getKey());
             }
-            this.players.clear();
-        }else {
-            getLevel().getPlayers().values().forEach(
-                    player -> player.kick(language.roomSafeKick));
         }
+        this.players.clear();
         this.playerHealth.clear();
         this.playerRespawnTime.clear();
         initTime();
@@ -145,9 +127,9 @@ public class Room extends BaseRoom {
         player.getInventory().setItem(5, Tools.getItem(12));
         player.getInventory().setItem(8, Tools.getItem(10));
         if (GunWar.getInstance().isHasTips()) {
-            Tips.closeTipsShow(this.level, player);
+            Tips.closeTipsShow(this.getLevelName(), player);
         }
-        player.sendMessage(this.language.joinRoom.replace("%name%", this.level));
+        player.sendMessage(this.language.joinRoom.replace("%name%", this.getLevelName()));
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
             @Override
             public void onRun(int i) {
@@ -170,21 +152,6 @@ public class Room extends BaseRoom {
     }
 
     /**
-     * 获取玩家血量Map
-     * @return 玩家血量Map
-     */
-    public HashMap<Player, Float> getPlayerHealth() {
-        return this.playerHealth;
-    }
-
-    public float getPlayerHealth(Player player) {
-        if (this.playerHealth.containsKey(player)) {
-            return this.playerHealth.get(player);
-        }
-        return 0;
-    }
-
-    /**
      * 获取玩家重生时间
      * @return 玩家重生时间Map
      */
@@ -197,61 +164,6 @@ public class Room extends BaseRoom {
             return this.playerRespawnTime.get(player);
         }
         return 0;
-    }
-
-    /**
-     * 增加玩家血量
-     * @param player 玩家
-     * @param health 血量
-     */
-    public synchronized float addHealth(Player player, float health) {
-        float nowHealth = this.playerHealth.get(player) + health;
-        if (nowHealth > 20) {
-            this.playerHealth.put(player, 20F);
-        }else {
-            this.playerHealth.put(player, nowHealth);
-        }
-        return this.playerHealth.get(player);
-    }
-
-    /**
-     * 减少玩家血量
-     * @param player 玩家
-     * @param health 血量
-     */
-    public synchronized float lessHealth(Player player, Player damager, float health) {
-        float nowHealth = this.playerHealth.get(player) - health;
-        if (nowHealth < 1) {
-            this.playerHealth.put(player, 0F);
-            Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent(this, player, damager));
-        }else {
-            this.playerHealth.put(player, nowHealth);
-        }
-        return this.playerHealth.get(player);
-    }
-
-    /**
-     * 获取红队出生点
-     * @return 出生点
-     */
-    public Position getRedSpawn() {
-        String[] s = this.redSpawn.split(":");
-        return new Position(Integer.parseInt(s[0]),
-                Integer.parseInt(s[1]),
-                Integer.parseInt(s[2]),
-                this.getLevel());
-    }
-
-    /**
-     * 获取蓝队出生点
-     * @return 出生点
-     */
-    public Position getBlueSpawn() {
-        String[] s = this.blueSpawn.split(":");
-        return new Position(Integer.parseInt(s[0]),
-                Integer.parseInt(s[1]),
-                Integer.parseInt(s[2]),
-                this.getLevel());
     }
 
 }

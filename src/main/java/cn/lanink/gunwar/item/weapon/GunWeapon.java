@@ -27,6 +27,7 @@ public class GunWeapon extends BaseWeapon {
 
     public GunWeapon(String name, Config config) {
         super(name, config);
+        this.item.getNamedTag().putByte("Unbreakable", 1);
         this.maxMagazine = config.getInt("maxMagazine");
         this.gravity = (float) config.getDouble("gravity");
         this.reloadTime = (float) config.getDouble("reloadTime");
@@ -47,7 +48,7 @@ public class GunWeapon extends BaseWeapon {
     /**
      * @return 装填时间
      */
-    public float reloadTime() {
+    public float getReloadTime() {
         return this.reloadTime;
     }
 
@@ -60,6 +61,10 @@ public class GunWeapon extends BaseWeapon {
 
     public ConcurrentHashMap<Player, Integer> getMagazineMap() {
         return this.magazineMap;
+    }
+
+    public int getMagazine(Player player) {
+        return this.magazineMap.getOrDefault(player, 0);
     }
 
     public int shooting(Player player, Vector3 directionVector) {
@@ -80,11 +85,12 @@ public class GunWeapon extends BaseWeapon {
     }
 
     public void startReload(Player player) {
-        if (!this.reloadTask.containsKey(player)) {
+        if (this.getMagazine(player) < this.getMaxMagazine() &&
+                !this.reloadTask.containsKey(player)) {
             PluginTask<GunWar> task = new GunReloadTask(
                     GunWar.getInstance(), player, this,
-                    (this.maxMagazine / this.reloadTime));
-            Server.getInstance().getScheduler().scheduleRepeatingTask(task, 1);
+                    (this.getMaxMagazine() / this.getReloadTime()));
+            Server.getInstance().getScheduler().scheduleRepeatingTask(task, 1, true);
             this.reloadTask.put(player, task);
         }
     }

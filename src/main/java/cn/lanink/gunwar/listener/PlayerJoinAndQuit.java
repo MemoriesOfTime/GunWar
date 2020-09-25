@@ -32,7 +32,7 @@ public class PlayerJoinAndQuit implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player != null && this.gunWar.getRooms().containsKey(player.getLevel().getName())) {
+        if (player != null && this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
                 @Override
                 public void onRun(int i) {

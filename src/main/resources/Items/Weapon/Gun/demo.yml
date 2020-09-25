@@ -5,6 +5,6 @@ lore: |-
   this is a configuration demo
 damage: "1-2"
 maxMagazine: 15
-reloadTime: 60 #tick
+reloadTime: 100 #tick
 gravity: 0.005 #子弹重力（普通雪球为0.03）
 killMessage: "%damager% ︻┳═一 %player%"

@@ -49,15 +49,15 @@ public class PlayerDamageListener implements Listener {
             if (event.getEntity() instanceof EntityFlag && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlag entityFlag = (EntityFlag) event.getEntity();
                 int team = entityFlag.namedTag.getInt("GunWarTeam");
-                if (team == 11 && room.getPlayerMode(damagePlayer) == 2) {
+                if (team == 11 && room.getPlayers(damagePlayer) == 2) {
                     room.haveRedFlag = damagePlayer;
-                }else if (team == 12 && room.getPlayerMode(damagePlayer) == 1) {
+                }else if (team == 12 && room.getPlayers(damagePlayer) == 1) {
                     room.haveBlueFlag = damagePlayer;
                 }
             }else if (event.getEntity() instanceof EntityFlagStand && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
                 int team = entityFlagStand.namedTag.getInt("GunWarTeam");
-                if (team == room.getPlayerMode(damagePlayer)) {
+                if (team == room.getPlayers(damagePlayer)) {
                     switch (team) {
                         case 1:
                             if (room.haveBlueFlag == damagePlayer) {
@@ -83,7 +83,7 @@ public class PlayerDamageListener implements Listener {
                 }
             }else if ((event.getEntity() instanceof Player)) {
                 Player player = (Player) event.getEntity();
-                if (room.getStatus() == 2 && room.getPlayerMode(damagePlayer) != room.getPlayerMode(player)) {
+                if (room.getStatus() == 2 && room.getPlayers(damagePlayer) != room.getPlayers(player)) {
                     if (event instanceof EntityDamageByChildEntityEvent) {
                         Entity entity = ((EntityDamageByChildEntityEvent) event).getChild();
                         switch (ItemManage.getItemType(entity)) {

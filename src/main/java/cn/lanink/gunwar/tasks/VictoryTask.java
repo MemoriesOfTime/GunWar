@@ -1,7 +1,6 @@
 package cn.lanink.gunwar.tasks;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.event.GunWarRoomEndEvent;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
@@ -59,8 +58,7 @@ public class VictoryTask extends PluginTask<GunWar> {
             return;
         }
         if (this.victoryTime < 1) {
-            owner.getServer().getPluginManager().callEvent(new GunWarRoomEndEvent(this.room, this.victory));
-            this.room.endGame();
+            this.room.endGame(this.victory);
             this.cancel();
         }else {
             this.victoryTime--;

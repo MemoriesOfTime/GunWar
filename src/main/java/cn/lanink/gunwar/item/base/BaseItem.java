@@ -5,8 +5,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 
-import java.util.Objects;
-
 /**
  * @author lt_name
  */
@@ -18,7 +16,7 @@ public abstract class BaseItem {
 
     private final String name;
     public final Item item;
-    protected final boolean infiniteDurability;
+    protected boolean infiniteDurability;
 
     public BaseItem(String name, Config config) {
         this.name = name;
@@ -78,20 +76,6 @@ public abstract class BaseItem {
 
     public CompoundTag getCompoundTag() {
         return this.item.getNamedTag().getCompound(GUN_WAR_ITEM_TAG);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BaseItem)) return false;
-        BaseItem baseItem = (BaseItem) o;
-        return Objects.equals(name, baseItem.name) &&
-                Objects.equals(this.getItemType(), baseItem.getItemType());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name, this.getItemType());
     }
 
 }

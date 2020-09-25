@@ -240,12 +240,10 @@ public class Tools {
         if (joinRoom) {
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
-            player.setAllowModifyWorld(false);
         }else {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            player.setAllowModifyWorld(true);
         }
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
     }

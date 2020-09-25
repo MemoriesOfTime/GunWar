@@ -121,23 +121,34 @@ public class ItemManage {
     }
 
     public static MeleeWeapon getMeleeWeapon(Item item) {
-        return meleeWeaponMap.get(getName(item.getNamedTag()));
+        return getMeleeWeapon(item.getNamedTag());
     }
+
+    public static MeleeWeapon getMeleeWeapon(CompoundTag compoundTag) {
+        if (getItemType(compoundTag) == ItemType.MELEE_WEAPON) {
+            return meleeWeaponMap.get(getName(compoundTag));
+        }
+        return null;
+    }
+
 
     public static HashMap<String, ProjectileWeapon> getProjectileWeaponMap() {
         return projectileWeaponMap;
     }
 
     public static ProjectileWeapon getProjectileWeapon(Item item) {
-        return projectileWeaponMap.get(getName(item.getNamedTag()));
+        return getProjectileWeapon(item.getNamedTag());
     }
 
     public static ProjectileWeapon getProjectileWeapon(Entity entity) {
-        return projectileWeaponMap.get(getName(entity.namedTag));
+        return getProjectileWeapon(entity.namedTag);
     }
 
     public static ProjectileWeapon getProjectileWeapon(CompoundTag compoundTag) {
-        return projectileWeaponMap.get(getName(compoundTag));
+        if (getItemType(compoundTag) == ItemType.PROJECTILE_WEAPON) {
+            return projectileWeaponMap.get(getName(compoundTag));
+        }
+        return null;
     }
 
     public static HashMap<String, GunWeapon> getGunWeaponMap() {
@@ -145,25 +156,32 @@ public class ItemManage {
     }
 
     public static GunWeapon getGunWeapon(Item item) {
-        return gunWeaponMap.get(getName(item.getNamedTag()));
+        return getGunWeapon(item.getNamedTag());
     }
 
     public static GunWeapon getGunWeapon(Entity entity) {
-        return gunWeaponMap.get(getName(entity.namedTag));
+        return getGunWeapon(entity.namedTag);
     }
 
     public static GunWeapon getGunWeapon(CompoundTag compoundTag) {
-        return gunWeaponMap.get(getName(compoundTag));
+        if (getItemType(compoundTag) == ItemType.GUN_WEAPON) {
+            return gunWeaponMap.get(getName(compoundTag));
+        }
+        return null;
     }
 
     public static boolean canAttack(Player player, MeleeWeapon weapon) {
+        return canAttack(player, weapon.getAttackCooldown());
+    }
+
+    public static boolean canAttack(Player player, int attackCooldown) {
         long nowTime = System.currentTimeMillis();
         long lastTime = playerAttackTime.getOrDefault(player, 0L);
         if (GunWar.debug) {
             GunWar.getInstance().getLogger().info("[debug] nowTime:" + nowTime + " lastTime:" + lastTime +
-                    " differ(tick):" + (nowTime - lastTime) / 50 + " attackCooldown(tick):" + weapon.getAttackCooldown());
+                    " differ(tick):" + (nowTime - lastTime) / 50 + " attackCooldown(tick):" + attackCooldown);
         }
-        if ((nowTime - lastTime) / 50 >= weapon.getAttackCooldown()) {
+        if ((nowTime - lastTime) / 50 >= attackCooldown) {
             playerAttackTime.put(player, nowTime);
             return true;
         }
