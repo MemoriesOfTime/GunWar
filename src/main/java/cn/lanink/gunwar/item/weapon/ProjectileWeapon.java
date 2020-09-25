@@ -23,6 +23,7 @@ public class ProjectileWeapon extends BaseWeapon {
                     " 不属于抛掷物");
         }
         this.range = Math.abs((float) config.getDouble("range"));
+        this.getCompoundTag().putFloat("range", this.range);
     }
 
     @Override

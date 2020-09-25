@@ -2,6 +2,7 @@ package cn.lanink.gunwar.item;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.base.BaseItem;
+import cn.lanink.gunwar.item.weapon.BaseWeapon;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
@@ -170,7 +171,7 @@ public class ItemManage {
         return null;
     }
 
-    public static boolean canAttack(Player player, MeleeWeapon weapon) {
+    public static boolean canAttack(Player player, BaseWeapon weapon) {
         return canAttack(player, weapon.getAttackCooldown());
     }
 

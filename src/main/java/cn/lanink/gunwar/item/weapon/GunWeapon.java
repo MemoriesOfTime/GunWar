@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.item.weapon;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.BulletSnowBall;
+import cn.lanink.gunwar.entity.bullet.BulletSnowBall;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.tasks.GunReloadTask;
 import cn.nukkit.Player;
@@ -31,6 +31,9 @@ public class GunWeapon extends BaseWeapon {
         this.maxMagazine = config.getInt("maxMagazine");
         this.gravity = (float) config.getDouble("gravity");
         this.reloadTime = (float) config.getDouble("reloadTime");
+        this.getCompoundTag().putInt("maxMagazine", this.maxMagazine)
+                .putFloat("gravity", this.gravity)
+                .putFloat("reloadTime", this.reloadTime);
     }
 
     @Override

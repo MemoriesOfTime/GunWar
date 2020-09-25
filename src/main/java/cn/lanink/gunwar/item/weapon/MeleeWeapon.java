@@ -8,29 +8,17 @@ import cn.nukkit.utils.Config;
  */
 public class MeleeWeapon extends BaseWeapon {
 
-    protected final int attackCooldown;
     protected final float knockBack;
 
     public MeleeWeapon(String name, Config config) {
         super(name, config);
-        this.attackCooldown = config.getInt("attackCooldown");
         this.knockBack = Math.abs((float) config.getDouble("knockBack", 0.3D));
-        this.getCompoundTag()
-                .putInt("attackCooldown", this.attackCooldown)
-                .putFloat("knockBack", this.knockBack)
-                .putBoolean("infiniteDurability", this.infiniteDurability);
+        this.getCompoundTag().putFloat("knockBack", this.knockBack);
     }
 
     @Override
     public ItemManage.ItemType getItemType() {
         return ItemManage.ItemType.MELEE_WEAPON;
-    }
-
-    /**
-     * @return 攻击间隔
-     */
-    public int getAttackCooldown() {
-        return this.attackCooldown;
     }
 
     /**

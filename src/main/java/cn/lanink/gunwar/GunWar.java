@@ -2,6 +2,7 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.item.ItemManage;
@@ -11,7 +12,7 @@ import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.ui.GuiType;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
-import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -42,7 +43,18 @@ public class GunWar extends PluginBase {
     private boolean hasTips = false;
     public static boolean debug = false;
 
+    private String serverWorldPath;
+    private String worldBackupPath;
+    private String roomConfigPath;
+
     public static GunWar getInstance() { return gunWar; }
+
+    @Override
+    public void onLoad() {
+        this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
+        this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
+        this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+    }
 
     @Override
     public void onEnable() {
@@ -123,6 +135,18 @@ public class GunWar extends PluginBase {
         getLogger().info("§c插件卸载完成！");
     }
 
+    public String getServerWorldPath() {
+        return this.serverWorldPath;
+    }
+
+    public String getWorldBackupPath() {
+        return this.worldBackupPath;
+    }
+
+    public String getRoomConfigPath() {
+        return this.roomConfigPath;
+    }
+
     public Language getLanguage() {
         return this.language;
     }
@@ -151,16 +175,23 @@ public class GunWar extends PluginBase {
                     Config config = getRoomConfig(fileName[0]);
                     if (config.getInt("waitTime", 0) == 0 ||
                             config.getInt("gameTime", 0) == 0 ||
-                            config.getString("World", "").trim().equals("") ||
                             config.getString("waitSpawn", "").trim().equals("") ||
                             config.getString("redSpawn", "").trim().equals("") ||
                             config.getString("blueSpawn", "").trim().equals("")) {
                         getLogger().warning("§c房间：" + fileName[0] + " 配置不完整，加载失败！");
                         continue;
                     }
-                    Room room = new Room(config);
-                    this.rooms.put(fileName[0], room);
-                    getLogger().info("§a房间：" + fileName[0] + " 已加载！");
+                    if (Server.getInstance().getLevelByName(fileName[0]) == null && !Server.getInstance().loadLevel(fileName[0])) {
+                        getLogger().warning("§c房间：" + fileName[0] + " 地图加载失败！");
+                        continue;
+                    }
+                    try {
+                        Room room = new Room(Server.getInstance().getLevelByName(fileName[0]), config);
+                        this.rooms.put(fileName[0], room);
+                        getLogger().info("§a房间：" + fileName[0] + " 已加载！");
+                    } catch (RoomLoadException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -171,7 +202,7 @@ public class GunWar extends PluginBase {
      * 卸载所有房间
      */
     public void unloadRooms() {
-        if (this.rooms.values().size() > 0) {
+        if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
                 Map.Entry<String, Room> entry = it.next();
@@ -316,36 +347,6 @@ public class GunWar extends PluginBase {
         Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
         this.roomConfigs.put(level, config);
         return config;
-    }
-
-    public void roomSetWaitSpawn(Player player, Config config) {
-        String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
-        String world = player.getLevel().getName();
-        config.set("World", world);
-        config.set("waitSpawn", spawn);
-        config.save();
-    }
-
-    public void roomSetRedSpawn(Player player, Config config) {
-        String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
-        config.set("redSpawn", spawn);
-        config.save();
-    }
-
-    public void roomSetBlueSpawn(Player player, Config config) {
-        String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
-        config.set("blueSpawn", spawn);
-        config.save();
-    }
-
-    public void roomSetWaitTime(Integer waitTime, Config config) {
-        config.set("waitTime", waitTime);
-        config.save();
-    }
-
-    public void roomSetGameTime(Integer gameTime, Config config) {
-        config.set("gameTime", gameTime);
-        config.save();
     }
 
 }

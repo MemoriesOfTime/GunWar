@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.entity;
+package cn.lanink.gunwar.entity.bullet;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.base.BaseItem;
@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
  * @author lt_name
@@ -55,7 +56,6 @@ public class BulletSnowBall extends EntitySnowball {
         if (bulletSnowBall != null) {
             bulletSnowBall.setGravity(gravity);
             bulletSnowBall.setMotion(bulletSnowBall.getMotion().multiply(1.5));
-            //TODO 延迟给发射人生成
             for (Player p : player.getLevel().getChunkPlayers(player.getFloorX() >> 4, player.getFloorZ() >> 4).values()) {
                 if (p != player) {
                     bulletSnowBall.spawnTo(p);
@@ -65,8 +65,8 @@ public class BulletSnowBall extends EntitySnowball {
                 if (!bulletSnowBall.isClosed()) {
                     bulletSnowBall.spawnTo(player);
                 }
-            }, 20);
-            player.getLevel().addLevelSoundEvent(player, 21);
+            }, 15);
+            player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
         }
     }
 

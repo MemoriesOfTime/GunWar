@@ -1,8 +1,10 @@
 package cn.lanink.gunwar.room.base;
 
 import cn.lanink.gamecore.room.IRoom;
+import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
+import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
 import cn.lanink.gunwar.event.GunWarRoomStartEvent;
@@ -15,6 +17,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,10 +27,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class BaseRoom implements IRoom {
 
+    protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
     protected int setWaitTime, setGameTime;
     public int waitTime, gameTime;
     protected int status;
+    private Level level;
     private final String levelName;
     protected final String waitSpawn;
     protected final String redSpawn, blueSpawn;
@@ -36,14 +41,26 @@ public abstract class BaseRoom implements IRoom {
     public int redScore, blueScore; //队伍得分
     public final int victoryScore; //胜利需要分数
 
-    public BaseRoom(Config config) {
-        this.levelName = config.getString("World");
+    public BaseRoom(Level level, Config config) throws RoomLoadException {
+        this.level = level;
+        this.levelName = level.getFolderName();
         this.waitSpawn = config.getString("waitSpawn");
         this.redSpawn = config.getString("redSpawn");
         this.blueSpawn = config.getString("blueSpawn");
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.victoryScore = config.getInt("victoryScore", 5);
+        File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
+        if (!backup.exists()) {
+            this.gunWar.getLogger().info("§a房间：%name% 未检测到地图备份，正在备份地图中...");
+            Server.getInstance().unloadLevel(this.level);
+            if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
+                Server.getInstance().loadLevel(this.levelName);
+                this.level = Server.getInstance().getLevelByName(this.levelName);
+            }else {
+                throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
+            }
+        }
     }
 
     /**
@@ -207,7 +224,7 @@ public abstract class BaseRoom implements IRoom {
      * @return 世界
      */
     public Level getLevel() {
-        return Server.getInstance().getLevelByName(this.levelName);
+        return this.level;
     }
 
     public String getLevelName() {

@@ -2,6 +2,7 @@ package cn.lanink.gunwar.room;
 
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
+import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
@@ -12,6 +13,7 @@ import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.level.Level;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
@@ -38,8 +40,8 @@ public class Room extends BaseRoom {
      * 初始化
      * @param config 配置文件
      */
-    public Room(Config config) {
-        super(config);
+    public Room(Level level, Config config) throws RoomLoadException {
+        super(level, config);
         switch (config.getInt("gameMode", 0)) {
             case 1:
                 this.gameMode = GameMode.CTF;

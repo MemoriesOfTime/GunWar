@@ -83,8 +83,10 @@ public class PlayerGameListener implements Listener {
                 }
                 switch (event.getAction()) {
                     case RIGHT_CLICK_AIR:
-                        int bullets = weapon.shooting(player, player.getDirectionVector());
-                        player.sendPopup("\n" + bullets + "/" + weapon.getMaxMagazine());
+                        if (ItemManage.canAttack(player, weapon)) {
+                            int bullets = weapon.shooting(player, player.getDirectionVector());
+                            player.sendPopup("\n" + bullets + "/" + weapon.getMaxMagazine());
+                        }
                         break;
                     case LEFT_CLICK_AIR:
                     case LEFT_CLICK_BLOCK:
@@ -169,11 +171,17 @@ public class PlayerGameListener implements Listener {
             return;
         }
         if (entity.shootingEntity instanceof Player) {
-            PlayerInventory playerInventory = ((Player) entity.shootingEntity).getInventory();
-            if (playerInventory != null) {
-                CompoundTag tag = playerInventory.getItemInHand() != null ? playerInventory.getItemInHand().getNamedTag() : null;
-                if (tag != null) {
-                    entity.namedTag.putCompound(BaseItem.GUN_WAR_ITEM_TAG, tag.getCompound(BaseItem.GUN_WAR_ITEM_TAG));
+            Player player = (Player) entity.shootingEntity;
+            PlayerInventory playerInventory = player.getInventory();
+            CompoundTag tag = playerInventory.getItemInHand().getNamedTag();
+            if (tag != null) {
+                ProjectileWeapon weapon = ItemManage.getProjectileWeapon(tag);
+                if (weapon != null) {
+                    if (ItemManage.canAttack(player, weapon)) {
+                        entity.namedTag.putCompound(BaseItem.GUN_WAR_ITEM_TAG, tag.getCompound(BaseItem.GUN_WAR_ITEM_TAG));
+                    }else {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }

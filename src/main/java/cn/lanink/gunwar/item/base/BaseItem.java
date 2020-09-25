@@ -16,7 +16,7 @@ public abstract class BaseItem {
 
     private final String name;
     public final Item item;
-    protected boolean infiniteDurability;
+    private final boolean infiniteDurability;
 
     public BaseItem(String name, Config config) {
         this.name = name;
@@ -41,7 +41,8 @@ public abstract class BaseItem {
         }
         this.item.getNamedTag().putCompound(GUN_WAR_ITEM_TAG, new CompoundTag()
                 .putString(GUN_WAR_ITEM_NAME, this.name)
-                .putInt(GUN_WAR_ITEM_TYPE, this.getItemType().getIntType()));
+                .putInt(GUN_WAR_ITEM_TYPE, this.getItemType().getIntType()))
+                .putBoolean("infiniteDurability", this.infiniteDurability);
     }
 
     public abstract ItemManage.ItemType getItemType();

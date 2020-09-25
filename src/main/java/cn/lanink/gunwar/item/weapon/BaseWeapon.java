@@ -11,6 +11,7 @@ public abstract class BaseWeapon extends BaseItem {
 
     protected final double minDamage;
     protected final double maxDamage;
+    protected final int attackCooldown;
     protected final String killMessage;
 
     public BaseWeapon(String name, Config config) {
@@ -22,10 +23,12 @@ public abstract class BaseWeapon extends BaseItem {
         }else {
             this.maxDamage = minDamage;
         }
+        this.attackCooldown = config.getInt("attackCooldown");
         this.killMessage = config.getString("killMessage");
         this.getCompoundTag()
                 .putDouble("minDamage", this.minDamage)
                 .putDouble("maxDamage", this.maxDamage)
+                .putInt("attackCooldown", this.attackCooldown)
                 .putString("killMessage", this.killMessage);
     }
 
@@ -39,6 +42,13 @@ public abstract class BaseWeapon extends BaseItem {
 
     public double getRandomDamage() {
         return Tools.randomDouble(this.getMinDamage(), this.getMaxDamage());
+    }
+
+    /**
+     * @return 攻击间隔
+     */
+    public int getAttackCooldown() {
+        return this.attackCooldown;
     }
 
     public String getKillMessage() {

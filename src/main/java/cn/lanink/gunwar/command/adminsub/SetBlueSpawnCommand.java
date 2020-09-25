@@ -4,6 +4,7 @@ import cn.lanink.gunwar.command.base.BaseSubCommand;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.utils.Config;
 
 public class SetBlueSpawnCommand extends BaseSubCommand {
 
@@ -24,7 +25,10 @@ public class SetBlueSpawnCommand extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        this.gunWar.roomSetBlueSpawn(player,this.gunWar.getRoomConfig(player.getLevel()));
+        String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
+        Config config = this.gunWar.getRoomConfig(player.getLevel());
+        config.set("blueSpawn", spawn);
+        config.save();
         sender.sendMessage(this.language.adminSetBlueSpawn);
         return true;
     }

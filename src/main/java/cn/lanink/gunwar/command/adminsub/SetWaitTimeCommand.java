@@ -5,6 +5,7 @@ import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.utils.Config;
 
 public class SetWaitTimeCommand extends BaseSubCommand {
 
@@ -27,7 +28,9 @@ public class SetWaitTimeCommand extends BaseSubCommand {
         Player player = (Player) sender;
         if (args.length == 2) {
             if (args[1].matches("[0-9]*")) {
-                this.gunWar.roomSetWaitTime(Integer.parseInt(args[1]), this.gunWar.getRoomConfig(player.getLevel()));
+                Config config =  this.gunWar.getRoomConfig(player.getLevel());
+                config.set("waitTime", Integer.parseInt(args[1]));
+                config.save();
                 sender.sendMessage(this.language.adminSetWaitTime.replace("%time%", args[1]));
             }else {
                 sender.sendMessage(this.language.adminNotNumber);

@@ -4,5 +4,6 @@ lore: |-
   这是一个配置演示
   this is a configuration demo
 damage: "2-10" #根据距离浮动
+attackCooldown: 0 #tick
 range: 5 #如果设为0 则只有在击中时有效
 killMessage: "%damager% ☼ %player%"
