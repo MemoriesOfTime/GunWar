@@ -90,9 +90,11 @@ public class PlayerGameListener implements Listener {
                         break;
                     case LEFT_CLICK_AIR:
                     case LEFT_CLICK_BLOCK:
+                    case RIGHT_CLICK_BLOCK:
                         weapon.startReload(player);
                         break;
                 }
+                event.setCancelled(true);
             }
         }
     }
