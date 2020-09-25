@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.room;
+package cn.lanink.gunwar.room.base;
 
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
@@ -6,6 +6,7 @@ import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
 import cn.lanink.gunwar.event.GunWarRoomStartEvent;
+import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -24,12 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class BaseRoom implements IRoom {
 
     protected final Language language = GunWar.getInstance().getLanguage();
+    protected int setWaitTime, setGameTime;
     public int waitTime, gameTime;
-    protected int status; //0未初始化 1等待 2游戏 3胜利结算 4等待下一回合
+    protected int status;
     private final String levelName;
     protected final String waitSpawn;
     protected final String redSpawn, blueSpawn;
-    protected int setWaitTime, setGameTime;
     protected ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1 11红队 2 12蓝队
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     public int redScore, blueScore; //队伍得分
@@ -53,9 +54,11 @@ public abstract class BaseRoom implements IRoom {
     /**
      * 初始化倒计时时间
      */
-    protected void initTime() {
+    protected void initData() {
         this.waitTime = this.setWaitTime;
         this.gameTime = this.setGameTime;
+        this.redScore = 0;
+        this.blueScore = 0;
     }
 
     public int getStatus() {

@@ -1,11 +1,10 @@
 package cn.lanink.gunwar;
 
+import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
+import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.item.ItemManage;
-import cn.lanink.gunwar.lib.scoreboard.IScoreboard;
-import cn.lanink.gunwar.lib.scoreboard.ScoreboardDe;
-import cn.lanink.gunwar.lib.scoreboard.ScoreboardGt;
 import cn.lanink.gunwar.listener.*;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
@@ -27,7 +26,7 @@ import java.util.*;
 
 public class GunWar extends PluginBase {
 
-    public static final String VERSION = "1.0.4-SNAPSHOT git-6c1d6f6";
+    public static final String VERSION = "?";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
@@ -63,20 +62,7 @@ public class GunWar extends PluginBase {
         if (!file3.exists() && !file3.mkdirs()) {
             getLogger().warning("Language 文件夹初始化失败");
         }
-        //加载计分板
-        try {
-            Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
-            this.scoreboard = new ScoreboardGt();
-        } catch (ClassNotFoundException e) {
-            try {
-                Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
-                this.scoreboard = new ScoreboardDe();
-            } catch (ClassNotFoundException ignored) {
-                getLogger().error("请安装ScoreboardAPI插件！");
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
+        this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
             Class.forName("tip.Main");

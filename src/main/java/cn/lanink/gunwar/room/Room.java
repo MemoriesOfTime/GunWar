@@ -7,6 +7,7 @@ import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomEndEvent;
 import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -24,8 +25,6 @@ import java.util.Map;
  */
 public class Room extends BaseRoom {
 
-    private final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
-    public int redScore, blueScore; //队伍得分
     private final GameMode gameMode;
     protected HashMap<ItemManage.ItemType, ArrayList<String>> initialItems = new HashMap<>();
 
@@ -54,7 +53,7 @@ public class Room extends BaseRoom {
         this.initialItems.put(ItemManage.ItemType.PROJECTILE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.projectile")));
         this.initialItems.put(ItemManage.ItemType.GUN_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.gun")));
 
-        this.initTime();
+        this.initData();
         if (this.getLevel() == null) {
             Server.getInstance().loadLevel(this.getLevelName());
         }
@@ -75,10 +74,14 @@ public class Room extends BaseRoom {
      * 初始化部分参数
      */
     @Override
-    protected void initTime() {
-        super.initTime();
-        this.redScore = 0;
-        this.blueScore = 0;
+    protected void initData() {
+        super.initData();
+        this.haveRedFlag = null;
+        this.haveBlueFlag = null;
+        this.redFlagStand = null;
+        this.blueFlagStand = null;
+        this.redFlag = null;
+        this.blueFlag = null;
     }
 
     /**
@@ -99,13 +102,7 @@ public class Room extends BaseRoom {
         this.players.clear();
         this.playerHealth.clear();
         this.playerRespawnTime.clear();
-        initTime();
-        this.haveRedFlag = null;
-        this.haveBlueFlag = null;
-        this.redFlagStand = null;
-        this.blueFlagStand = null;
-        this.redFlag = null;
-        this.blueFlag = null;
+        initData();
         Tools.cleanEntity(getLevel(), true);
     }
 

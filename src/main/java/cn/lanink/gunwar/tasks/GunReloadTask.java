@@ -33,6 +33,8 @@ public class GunReloadTask extends PluginTask<GunWar> {
             this.gunWeapon.getMagazineMap().put(this.player, (int) this.bulletsFloat);
             if (this.gunWeapon.equals(ItemManage.getGunWeapon(this.player.getInventory().getItemInHand()))) {
                 this.player.sendPopup("\n" + (int) this.bulletsFloat + "/" + this.gunWeapon.getMaxMagazine());
+            }else {
+                this.cancel();
             }
         }
     }
