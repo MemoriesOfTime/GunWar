@@ -7,7 +7,6 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomEndEvent;
-import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.utils.Tools;
@@ -17,7 +16,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,7 +26,6 @@ import java.util.Map;
 public class Room extends BaseRoom {
 
     private final GameMode gameMode;
-    protected HashMap<ItemManage.ItemType, ArrayList<String>> initialItems = new HashMap<>();
 
     //夺旗模式数据
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
@@ -51,10 +48,6 @@ public class Room extends BaseRoom {
                 this.gameMode = GameMode.CLASSIC;
                 break;
         }
-        this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
-        this.initialItems.put(ItemManage.ItemType.PROJECTILE_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.projectile")));
-        this.initialItems.put(ItemManage.ItemType.GUN_WEAPON, new ArrayList<>(config.getStringList("initialItems.weapon.gun")));
-
         this.initData();
         if (this.getLevel() == null) {
             Server.getInstance().loadLevel(this.getLevelName());
@@ -141,13 +134,6 @@ public class Room extends BaseRoom {
 
     public GameMode getGameMode() {
         return this.gameMode;
-    }
-
-    /**
-     * @return 开局给与的装备
-     */
-    public HashMap<ItemManage.ItemType, ArrayList<String>> getInitialItems() {
-        return this.initialItems;
     }
 
     /**

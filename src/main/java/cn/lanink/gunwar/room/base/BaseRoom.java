@@ -8,6 +8,7 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
 import cn.lanink.gunwar.event.GunWarRoomStartEvent;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
@@ -18,6 +19,8 @@ import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,6 +39,7 @@ public abstract class BaseRoom implements IRoom {
     private final String levelName;
     protected final String waitSpawn;
     protected final String redSpawn, blueSpawn;
+    protected HashMap<ItemManage.ItemType, ArrayList<String>> initialItems = new HashMap<>();
     protected ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1 11红队 2 12蓝队
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     public int redScore, blueScore; //队伍得分
@@ -61,6 +65,23 @@ public abstract class BaseRoom implements IRoom {
                 throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
             }
         }
+        ArrayList<String> defaultItems = new ArrayList<>(Collections.singletonList("demo:1"));
+        this.initialItems.put(ItemManage.ItemType.MELEE_WEAPON,
+                new ArrayList<>(config.getStringList("initialItems.weapon.melee")));
+        if (this.initialItems.get(ItemManage.ItemType.MELEE_WEAPON).isEmpty()) {
+            config.set("initialItems.weapon.melee", new ArrayList<>(defaultItems));
+        }
+        this.initialItems.put(ItemManage.ItemType.PROJECTILE_WEAPON,
+                new ArrayList<>(config.getStringList("initialItems.weapon.projectile")));
+        if (this.initialItems.get(ItemManage.ItemType.PROJECTILE_WEAPON).isEmpty()) {
+            config.set("initialItems.weapon.projectile", new ArrayList<>(defaultItems));
+        }
+        this.initialItems.put(ItemManage.ItemType.GUN_WEAPON,
+                new ArrayList<>(config.getStringList("initialItems.weapon.gun")));
+        if (this.initialItems.get(ItemManage.ItemType.GUN_WEAPON).isEmpty()) {
+            config.set("initialItems.weapon.gun", new ArrayList<>(defaultItems));
+        }
+        config.save();
     }
 
     /**
@@ -201,6 +222,13 @@ public abstract class BaseRoom implements IRoom {
             this.playerHealth.put(player, nowHealth);
         }
         return this.playerHealth.get(player);
+    }
+
+    /**
+     * @return 开局给予的装备
+     */
+    public HashMap<ItemManage.ItemType, ArrayList<String>> getInitialItems() {
+        return this.initialItems;
     }
 
     /**
