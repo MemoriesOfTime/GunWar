@@ -22,6 +22,7 @@ public class GunWeapon extends BaseWeapon {
     protected float gravity;
     protected float motionMultiply;
     protected float reloadTime;
+    protected boolean reloadInterrupted;
 
     protected ConcurrentHashMap<Player, Integer> magazineMap = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Player, Task> reloadTask = new ConcurrentHashMap<>();
@@ -33,10 +34,12 @@ public class GunWeapon extends BaseWeapon {
         this.gravity = (float) config.getDouble("gravity");
         this.motionMultiply = (float) config.getDouble("motionMultiply");
         this.reloadTime = (float) config.getDouble("reloadTime");
+        this.reloadInterrupted = config.getBoolean("reloadInterrupted");
         this.getCompoundTag().putInt("maxMagazine", this.maxMagazine)
                 .putFloat("gravity", this.gravity)
                 .putFloat("motionMultiply", this.motionMultiply)
-                .putFloat("reloadTime", this.reloadTime);
+                .putFloat("reloadTime", this.reloadTime)
+                .putBoolean("reloadInterrupted", this.reloadInterrupted);
     }
 
     @Override
@@ -56,6 +59,10 @@ public class GunWeapon extends BaseWeapon {
      */
     public float getReloadTime() {
         return this.reloadTime;
+    }
+
+    public boolean isReloadInterrupted() {
+        return this.reloadInterrupted;
     }
 
     /**
@@ -80,9 +87,16 @@ public class GunWeapon extends BaseWeapon {
     public int shooting(Player player, Vector3 directionVector) {
         int bullets = this.magazineMap.getOrDefault(player, this.getMaxMagazine());
         if (bullets > 0) {
-            this.stopReload(player);
-            BulletSnowBall.launch(player, directionVector, this.getGravity(), this.getMotionMultiply(), this.getCompoundTag());
-            this.magazineMap.put(player, --bullets);
+            if (!this.isReload(player) || this.isReloadInterrupted()) {
+                this.stopReload(player);
+                BulletSnowBall.launch(
+                        player,
+                        directionVector,
+                        this.getGravity(),
+                        this.getMotionMultiply(),
+                        this.getCompoundTag());
+                this.magazineMap.put(player, --bullets);
+            }
         }
         if (bullets <= 0) {
             this.startReload(player);
@@ -92,6 +106,10 @@ public class GunWeapon extends BaseWeapon {
 
     public ConcurrentHashMap<Player, Task> getReloadTask() {
         return this.reloadTask;
+    }
+
+    public boolean isReload(Player player) {
+        return this.reloadTask.containsKey(player);
     }
 
     public void startReload(Player player) {
@@ -106,7 +124,7 @@ public class GunWeapon extends BaseWeapon {
     }
 
     public void stopReload(Player player) {
-        if (this.reloadTask.containsKey(player)) {
+        if (this.isReload(player)) {
             this.reloadTask.get(player).cancel();
             this.reloadTask.remove(player);
         }

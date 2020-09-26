@@ -23,6 +23,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.potion.Effect;
 
 /**
  * @author lt_name
@@ -94,6 +95,9 @@ public class PlayerDamageListener implements Listener {
                                             room, player, damagePlayer, (float) weapon.getMaxDamage());
                                     Server.getInstance().getPluginManager().callEvent(ev);
                                     if (!ev.isCancelled()) {
+                                        for (Effect effect : weapon.getEffects()) {
+                                            player.addEffect(effect);
+                                        }
                                         if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
                                             Tools.sendMessage(room, weapon.getKillMessage()
                                                     .replace("%damager%", damagePlayer.getName())
@@ -109,6 +113,9 @@ public class PlayerDamageListener implements Listener {
                                         room, player, damagePlayer, (float) gunWeapon.getRandomDamage());
                                 Server.getInstance().getPluginManager().callEvent(ev);
                                 if (!ev.isCancelled()) {
+                                    for (Effect effect : gunWeapon.getEffects()) {
+                                        player.addEffect(effect);
+                                    }
                                     if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
                                         Tools.sendMessage(room, gunWeapon.getKillMessage()
                                                 .replace("%damager%", damagePlayer.getName())
@@ -130,6 +137,9 @@ public class PlayerDamageListener implements Listener {
                                     event.setCancelled(true);
                                 }else {
                                     event.setKnockBack(weapon.getKnockBack());
+                                    for (Effect effect : weapon.getEffects()) {
+                                        player.addEffect(effect);
+                                    }
                                     if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
                                         Tools.sendMessage(room, weapon.getKillMessage()
                                                 .replace("%damager%", damagePlayer.getName())
@@ -160,6 +170,7 @@ public class PlayerDamageListener implements Listener {
                     event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
                 this.gunWar.getServer().getPluginManager().callEvent(
                         new GunWarPlayerDamageEvent(room, player, player, event.getDamage()));
+                room.lessHealth(player, player, event.getDamage());
             }
         }else if (event.getEntity() instanceof EntityPlayerCorpse ||
                 event.getEntity() instanceof EntityFlagStand ||

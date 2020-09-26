@@ -28,6 +28,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 
 import java.util.Map;
 
@@ -225,6 +226,9 @@ public class PlayerGameListener implements Listener {
                         float damage = (float) weapon.getDamage(position.distance(entry.getKey()));
                         if (damage > 0) {
                             entry.getKey().attack(0F);
+                            for (Effect effect : weapon.getEffects()) {
+                                entry.getKey().addEffect(effect);
+                            }
                             if (room.lessHealth(entry.getKey(), damager, damage) < 1) {
                                 Tools.sendMessage(room, weapon.getKillMessage()
                                         .replace("%damager%", damager.getName())
