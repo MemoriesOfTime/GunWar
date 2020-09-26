@@ -6,6 +6,7 @@ import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.tasks.GunReloadTask;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.Task;
@@ -23,6 +24,7 @@ public class GunWeapon extends BaseWeapon {
     protected float motionMultiply;
     protected float reloadTime;
     protected boolean reloadInterrupted;
+    protected ParticleEffect particleEffect;
 
     protected ConcurrentHashMap<Player, Integer> magazineMap = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<Player, Task> reloadTask = new ConcurrentHashMap<>();
@@ -35,6 +37,10 @@ public class GunWeapon extends BaseWeapon {
         this.motionMultiply = (float) config.getDouble("motionMultiply");
         this.reloadTime = (float) config.getDouble("reloadTime");
         this.reloadInterrupted = config.getBoolean("reloadInterrupted");
+        String stringParticleEffect = config.getString("particleEffect").trim();
+        if (!"".equals(stringParticleEffect)) {
+            this.particleEffect = ParticleEffect.valueOf(stringParticleEffect);
+        }
         this.getCompoundTag().putInt("maxMagazine", this.maxMagazine)
                 .putFloat("gravity", this.gravity)
                 .putFloat("motionMultiply", this.motionMultiply)
@@ -76,6 +82,10 @@ public class GunWeapon extends BaseWeapon {
         return this.motionMultiply;
     }
 
+    public ParticleEffect getParticleEffect() {
+        return this.particleEffect;
+    }
+
     public ConcurrentHashMap<Player, Integer> getMagazineMap() {
         return this.magazineMap;
     }
@@ -94,6 +104,7 @@ public class GunWeapon extends BaseWeapon {
                         directionVector,
                         this.getGravity(),
                         this.getMotionMultiply(),
+                        this.getParticleEffect(),
                         this.getCompoundTag());
                 this.magazineMap.put(player, --bullets);
             }

@@ -6,6 +6,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntitySnowball;
+import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -17,13 +18,14 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 /**
  * @author lt_name
  */
-public class BulletSnowBall extends EntitySnowball {
+public class BulletSnowBall extends EntitySnowball implements IBullet {
 
     static {
         Entity.registerEntity("BulletSnowBall", BulletSnowBall.class);
     }
 
     protected float gravity = 0.03F;
+    protected ParticleEffect particleEffect;
 
     public BulletSnowBall(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -42,6 +44,7 @@ public class BulletSnowBall extends EntitySnowball {
                               Vector3 directionVector,
                               float gravity,
                               float motionMultiply,
+                              ParticleEffect particleEffect,
                               CompoundTag compoundTag) {
         CompoundTag nbt = (new CompoundTag())
                 .putList((new ListTag<>("Pos"))
@@ -59,6 +62,7 @@ public class BulletSnowBall extends EntitySnowball {
         BulletSnowBall bulletSnowBall = (BulletSnowBall) Entity.createEntity("BulletSnowBall", player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
         if (bulletSnowBall != null) {
             bulletSnowBall.setGravity(gravity);
+            bulletSnowBall.setParticleEffect(particleEffect);
             bulletSnowBall.setMotion(bulletSnowBall.getMotion().multiply(motionMultiply));
             for (Player p : player.getLevel().getChunkPlayers(player.getFloorX() >> 4, player.getFloorZ() >> 4).values()) {
                 if (p != player) {
@@ -78,8 +82,22 @@ public class BulletSnowBall extends EntitySnowball {
         this.gravity = gravity;
     }
 
-    protected float getGravity() {
+    public float getGravity() {
         return this.gravity;
+    }
+
+    public void setParticleEffect(ParticleEffect particleEffect) {
+        this.particleEffect = particleEffect;
+    }
+
+    @Override
+    public boolean onUpdate(int currentTick) {
+        boolean onUpdate = super.onUpdate(currentTick);
+        if (this.particleEffect != null && !this.closed &&
+                !this.onGround && !this.hadCollision && currentTick %5 == 0) {
+            this.level.addParticleEffect(this, this.particleEffect);
+        }
+        return onUpdate;
     }
 
 }

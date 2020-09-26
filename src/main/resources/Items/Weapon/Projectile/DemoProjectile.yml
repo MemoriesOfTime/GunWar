@@ -7,12 +7,13 @@ damage: "2-10" #根据距离浮动
 effect:
   - id: 9
     amplifier: 1 #效果等级
-    duration: 20 #tick
+    duration: 40 #tick
     visible: true #可见
     color: #粒子颜色 不写即为默认颜色
       r: 84
       g: 255
       b: 159
+particle: "16" # ""
 attackCooldown: 0 #tick
 range: 5 #如果设为0 则只有在击中时有效
 enchantment:
