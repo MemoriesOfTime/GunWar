@@ -131,8 +131,7 @@
     <repositories>
         <repository>
             <id>nukkitx-repo</id>
-            <name>nukkitx-snapshot</name>
-            <url>https://repo.nukkitx.com/maven-snapshots</url>
+            <url>https://repo.nukkitx.com/</url>
         </repository>
         <repository>
             <id>repo-lanink-cn</id>
@@ -152,20 +151,6 @@
             <artifactId>MemoriesOfTime-GameCore</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.theamychan.scoreboard</groupId>
-            <artifactId>ScoreboardAPI</artifactId>
-            <version>1.3</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.3.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>gt.creeperface.nukkit.scoreboardapi</groupId>
-            <artifactId>ScoreboardAPI</artifactId>
-            <version>1.4</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/ScoreboardAPI-1.4(creeperface).jar</systemPath>
         </dependency>
         <dependency>
             <groupId>tip.Main</groupId>

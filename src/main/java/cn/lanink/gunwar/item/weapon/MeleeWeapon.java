@@ -18,7 +18,7 @@ public class MeleeWeapon extends BaseWeapon {
 
     @Override
     public ItemManage.ItemType getItemType() {
-        return ItemManage.ItemType.MELEE_WEAPON;
+        return ItemManage.ItemType.WEAPON_MELEE;
     }
 
     /**

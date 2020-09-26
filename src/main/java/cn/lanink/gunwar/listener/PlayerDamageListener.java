@@ -87,7 +87,7 @@ public class PlayerDamageListener implements Listener {
                     if (event instanceof EntityDamageByChildEntityEvent) {
                         Entity entity = ((EntityDamageByChildEntityEvent) event).getChild();
                         switch (ItemManage.getItemType(entity)) {
-                            case PROJECTILE_WEAPON:
+                            case WEAPON_PROJECTILE:
                                 ProjectileWeapon weapon = ItemManage.getProjectileWeapon(entity);
                                 if (weapon.getRange() == 0) {
                                     GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(
@@ -103,7 +103,7 @@ public class PlayerDamageListener implements Listener {
                                     }
                                 }
                                 break;
-                            case GUN_WEAPON:
+                            case WEAPON_GUN:
                                 GunWeapon gunWeapon = ItemManage.getGunWeapon(entity);
                                 GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(
                                         room, player, damagePlayer, (float) gunWeapon.getRandomDamage());
@@ -120,7 +120,7 @@ public class PlayerDamageListener implements Listener {
                         }
                     }else {
                         Item item = damagePlayer.getInventory().getItemInHand();
-                        if (ItemManage.getItemType(item) == ItemManage.ItemType.MELEE_WEAPON) {
+                        if (ItemManage.getItemType(item) == ItemManage.ItemType.WEAPON_MELEE) {
                             MeleeWeapon weapon = ItemManage.getMeleeWeapon(item);
                             if (weapon != null && ItemManage.canAttack(damagePlayer, weapon)) {
                                 GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(

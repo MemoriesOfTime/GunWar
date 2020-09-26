@@ -53,7 +53,7 @@ public class ItemManage {
 
     private void loadAllMeleeWeapon() {
         if (!new File(this.meleeWeaponFolder).exists()) {
-            this.gunWar.saveResource("Items/Weapon/Melee/demo.yml", false);
+            this.gunWar.saveResource("Items/Weapon/Melee/DemoMelee.yml", false);
         }
         File[] files = new File(this.meleeWeaponFolder).listFiles();
         if (files != null) {
@@ -69,7 +69,7 @@ public class ItemManage {
 
     private void loadAllProjectileWeapon() {
         if (!new File(this.projectileWeaponFolder).exists()) {
-            this.gunWar.saveResource("Items/Weapon/Projectile/demo.yml", false);
+            this.gunWar.saveResource("Items/Weapon/Projectile/DemoProjectile.yml", false);
         }
         File[] files = new File(this.projectileWeaponFolder).listFiles();
         if (files != null) {
@@ -89,7 +89,7 @@ public class ItemManage {
 
     private void loadAllGunWeapon() {
         if (!new File(this.gunWeaponFolder).exists()) {
-            this.gunWar.saveResource("Items/Weapon/Gun/demo.yml", false);
+            this.gunWar.saveResource("Items/Weapon/Gun/DemoGun.yml", false);
         }
         File[] files = new File(this.gunWeaponFolder).listFiles();
         if (files != null) {
@@ -126,7 +126,7 @@ public class ItemManage {
     }
 
     public static MeleeWeapon getMeleeWeapon(CompoundTag compoundTag) {
-        if (getItemType(compoundTag) == ItemType.MELEE_WEAPON) {
+        if (getItemType(compoundTag) == ItemType.WEAPON_MELEE) {
             return meleeWeaponMap.get(getName(compoundTag));
         }
         return null;
@@ -146,7 +146,7 @@ public class ItemManage {
     }
 
     public static ProjectileWeapon getProjectileWeapon(CompoundTag compoundTag) {
-        if (getItemType(compoundTag) == ItemType.PROJECTILE_WEAPON) {
+        if (getItemType(compoundTag) == ItemType.WEAPON_PROJECTILE) {
             return projectileWeaponMap.get(getName(compoundTag));
         }
         return null;
@@ -165,7 +165,7 @@ public class ItemManage {
     }
 
     public static GunWeapon getGunWeapon(CompoundTag compoundTag) {
-        if (getItemType(compoundTag) == ItemType.GUN_WEAPON) {
+        if (getItemType(compoundTag) == ItemType.WEAPON_GUN) {
             return gunWeaponMap.get(getName(compoundTag));
         }
         return null;
@@ -200,30 +200,35 @@ public class ItemManage {
     public static ItemType getItemType(CompoundTag compoundTag) {
         if (compoundTag != null) {
             CompoundTag tag = compoundTag.getCompound(BaseItem.GUN_WAR_ITEM_TAG);
-            int intType = tag.getInt(BaseItem.GUN_WAR_ITEM_TYPE);
-            for (ItemType itemType : ItemType.values()) {
-                if (itemType.getIntType() == intType) {
-                    return itemType;
-                }
+            String stringType = tag.getString(BaseItem.GUN_WAR_ITEM_TYPE);
+            return getItemType(stringType);
+        }
+        return ItemType.NULL;
+    }
+
+    public static ItemType getItemType(String stringType) {
+        for (ItemType itemType : ItemType.values()) {
+            if (itemType.getStringType().equalsIgnoreCase(stringType)) {
+                return itemType;
             }
         }
         return ItemType.NULL;
     }
 
     public enum ItemType {
-        NULL(0),
-        MELEE_WEAPON(1),
-        PROJECTILE_WEAPON(2),
-        GUN_WEAPON(3);
+        NULL(""),
+        WEAPON_MELEE("weapon_melee"),
+        WEAPON_PROJECTILE("weapon_projectile"),
+        WEAPON_GUN("weapon_gun");
 
-        private final int intType;
+        private final String stringType;
 
-        ItemType(int intType) {
-            this.intType = intType;
+        ItemType(String stringType) {
+            this.stringType = stringType;
         }
 
-        public int getIntType() {
-            return this.intType;
+        public String getStringType() {
+            return this.stringType;
         }
 
     }

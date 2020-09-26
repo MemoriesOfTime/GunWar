@@ -28,7 +28,7 @@ public class ProjectileWeapon extends BaseWeapon {
 
     @Override
     public ItemManage.ItemType getItemType() {
-        return ItemManage.ItemType.PROJECTILE_WEAPON;
+        return ItemManage.ItemType.WEAPON_PROJECTILE;
     }
 
     /**

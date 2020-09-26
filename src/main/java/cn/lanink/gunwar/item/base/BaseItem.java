@@ -20,12 +20,11 @@ public abstract class BaseItem {
 
     public BaseItem(String name, Config config) {
         this.name = name;
-        String stringID = config.getString("id");
-        String[] split = stringID.split(":");
-        if (split.length > 1) {
-            this.item = Item.get(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+        String[] stringID = config.getString("id").split(":");
+        if (stringID.length > 1) {
+            this.item = Item.get(Integer.parseInt(stringID[0]), Integer.parseInt(stringID[1]));
         }else {
-            this.item = Item.get(Integer.parseInt(stringID));
+            this.item = Item.get(Integer.parseInt(stringID[0]));
         }
         this.item.setCustomName(config.getString("showName", this.item.getName()));
         String lore = config.getString("lore");
@@ -41,7 +40,7 @@ public abstract class BaseItem {
         }
         this.item.getNamedTag().putCompound(GUN_WAR_ITEM_TAG, new CompoundTag()
                 .putString(GUN_WAR_ITEM_NAME, this.name)
-                .putInt(GUN_WAR_ITEM_TYPE, this.getItemType().getIntType()))
+                .putString(GUN_WAR_ITEM_TYPE, this.getItemType().getStringType()))
                 .putBoolean("infiniteDurability", this.infiniteDurability);
     }
 

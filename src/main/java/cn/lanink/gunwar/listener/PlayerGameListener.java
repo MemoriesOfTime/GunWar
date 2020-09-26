@@ -76,7 +76,7 @@ public class PlayerGameListener implements Listener {
             }
             event.setCancelled(true);
         }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
-            if (ItemManage.getItemType(tag) == ItemManage.ItemType.GUN_WEAPON) {
+            if (ItemManage.getItemType(tag) == ItemManage.ItemType.WEAPON_GUN) {
                 GunWeapon weapon = ItemManage.getGunWeapon(tag);
                 if (weapon == null) {
                     return;
@@ -206,7 +206,7 @@ public class PlayerGameListener implements Listener {
             Player damager = (Player) entity.shootingEntity;
             CompoundTag tag = entity.namedTag.clone();
             Position position = entity.getPosition();
-            if (ItemManage.getItemType(tag) == ItemManage.ItemType.PROJECTILE_WEAPON) {
+            if (ItemManage.getItemType(tag) == ItemManage.ItemType.WEAPON_PROJECTILE) {
                 ProjectileWeapon weapon = ItemManage.getProjectileWeapon(tag);
                 if (weapon == null) {
                     return;

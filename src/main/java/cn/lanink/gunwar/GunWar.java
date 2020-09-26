@@ -9,7 +9,6 @@ import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.*;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.ui.GuiListener;
-import cn.lanink.gunwar.ui.GuiType;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.nukkit.Server;
@@ -37,7 +36,6 @@ public class GunWar extends PluginBase {
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
-    private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
     private boolean hasTips = false;
@@ -318,10 +316,6 @@ public class GunWar extends PluginBase {
 
     public String getCmdAdmin() {
         return this.cmdAdmin;
-    }
-
-    public HashMap<Integer, GuiType> getGuiCache() {
-        return this.guiCache;
     }
 
     public Skin getCorpseSkin() {

@@ -41,7 +41,7 @@ public class GunWeapon extends BaseWeapon {
 
     @Override
     public ItemManage.ItemType getItemType() {
-        return ItemManage.ItemType.GUN_WEAPON;
+        return ItemManage.ItemType.WEAPON_GUN;
     }
 
     /**

@@ -32,9 +32,7 @@ import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 
@@ -111,30 +109,46 @@ public class Tools {
      */
     public static void giveItem(Room room, Player player, int team) {
         player.getInventory().setArmorContents(getArmors(team));
-        for (Map.Entry<ItemManage.ItemType, ArrayList<String>> entry : room.getInitialItems().entrySet()) {
-            for (String value : entry.getValue()) {
-                String[] strings = value.split("&");
-                BaseItem baseItem = null;
-                switch (entry.getKey()) {
-                    case MELEE_WEAPON:
-                        baseItem = ItemManage.getMeleeWeaponMap().get(strings[0]);
-                        break;
-                    case PROJECTILE_WEAPON:
-                        baseItem = ItemManage.getProjectileWeaponMap().get(strings[0]);
-                        break;
-                    case GUN_WEAPON:
-                        baseItem = ItemManage.getGunWeaponMap().get(strings[0]);
-                        break;
+        for (String string : room.getInitialItems()) {
+            try {
+                String[] s1 = string.split("&");
+                String[] s2 = s1[1].split("@");
+                int count = Integer.parseInt(s2[0]);
+                Item item = null;
+                if ("item".equalsIgnoreCase(s2[1])) {
+                    String[] s3 = s1[0].split(":");
+                    if (s3.length > 1) {
+                        item = Item.get(Integer.parseInt(s3[0]), Integer.parseInt(s3[1]));
+                    }else {
+                        item = Item.get(Integer.parseInt(s3[0]), 0);
+                    }
+                }else {
+                    BaseItem baseItem = null;
+                    switch (ItemManage.getItemType(s2[1])) {
+                        case WEAPON_MELEE:
+                            baseItem = ItemManage.getMeleeWeaponMap().get(s1[0]);
+                            break;
+                        case WEAPON_PROJECTILE:
+                            baseItem = ItemManage.getProjectileWeaponMap().get(s1[0]);
+                            break;
+                        case WEAPON_GUN:
+                            baseItem = ItemManage.getGunWeaponMap().get(s1[0]);
+                            break;
+                    }
+                    if (baseItem != null) {
+                        item = baseItem.getItem();
+                    }
                 }
-                if (baseItem != null) {
-                    Item item = baseItem.getItem();
-                    item.setCount(Integer.parseInt(strings[1]));
+                if (item != null) {
+                    item.setCount(count);
                     player.getInventory().addItem(item);
                     if (GunWar.debug) {
                         GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
-                                "物品：" + item.getCustomName() + "数量：" + strings[1]);
+                                "物品：" + item.getCustomName() + "数量：" + count);
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
