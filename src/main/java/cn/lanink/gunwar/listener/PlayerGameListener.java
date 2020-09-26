@@ -219,20 +219,23 @@ public class PlayerGameListener implements Listener {
                         if (entry.getValue() != 1 && entry.getValue() != 2) {
                             continue;
                         }
+                        double distance = position.distance(entry.getKey());
                         if (GunWar.debug) {
-                            gunWar.getLogger().info("[debug] distance:" + position.distance(entry.getKey()) +
+                            gunWar.getLogger().info("[debug] distance:" + distance +
                                     " damager:" + damager.getName() + " player:" + entry.getKey().getName());
                         }
-                        float damage = (float) weapon.getDamage(position.distance(entry.getKey()));
-                        if (damage > 0) {
-                            entry.getKey().attack(0F);
+                        if (distance <= weapon.getRange()) {
                             for (Effect effect : weapon.getEffects()) {
                                 entry.getKey().addEffect(effect);
                             }
-                            if (room.lessHealth(entry.getKey(), damager, damage) < 1) {
-                                Tools.sendMessage(room, weapon.getKillMessage()
-                                        .replace("%damager%", damager.getName())
-                                        .replace("%player%", entry.getKey().getName()));
+                            float damage = (float) weapon.getDamage(distance);
+                            if (damage > 0) {
+                                entry.getKey().attack(0F);
+                                if (room.lessHealth(entry.getKey(), damager, damage) < 1) {
+                                    Tools.sendMessage(room, weapon.getKillMessage()
+                                            .replace("%damager%", damager.getName())
+                                            .replace("%player%", entry.getKey().getName()));
+                                }
                             }
                         }
                     }

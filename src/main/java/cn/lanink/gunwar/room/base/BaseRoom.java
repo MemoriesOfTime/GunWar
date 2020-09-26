@@ -71,7 +71,8 @@ public abstract class BaseRoom implements IRoom {
                             "373:28&1@item",
                             "322&1@item",
                             "DemoMelee&1@weapon_melee",
-                            "DemoProjectile&1@weapon_projectile",
+                            "DemoGrenade&1@weapon_projectile",
+                            "DemoFlashbang&1@weapon_projectile",
                             "DemoGun&1@weapon_gun"));
             config.set("initialItems", defaultItems);
             config.save(true);

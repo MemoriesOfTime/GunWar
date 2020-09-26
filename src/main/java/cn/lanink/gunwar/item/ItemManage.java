@@ -69,7 +69,8 @@ public class ItemManage {
 
     private void loadAllProjectileWeapon() {
         if (!new File(this.projectileWeaponFolder).exists()) {
-            this.gunWar.saveResource("Items/Weapon/Projectile/DemoProjectile.yml", false);
+            this.gunWar.saveResource("Items/Weapon/Projectile/DemoGrenade.yml", false);
+            this.gunWar.saveResource("Items/Weapon/Projectile/DemoFlashbang.yml", false);
         }
         File[] files = new File(this.projectileWeaponFolder).listFiles();
         if (files != null) {

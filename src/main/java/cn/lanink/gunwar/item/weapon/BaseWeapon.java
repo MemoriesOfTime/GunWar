@@ -7,6 +7,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -77,8 +78,12 @@ public abstract class BaseWeapon extends BaseItem {
         return Tools.randomDouble(this.getMinDamage(), this.getMaxDamage());
     }
 
-    public ArrayList<Effect> getEffects() {
-        return new ArrayList<>(effects);
+    public LinkedList<Effect> getEffects() {
+        LinkedList<Effect> list = new LinkedList<>();
+        for (Effect effect : this.effects) {
+            list.add(effect.clone());
+        }
+        return list;
     }
 
     /**

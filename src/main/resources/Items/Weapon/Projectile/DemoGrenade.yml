@@ -13,7 +13,7 @@ effect:
       r: 84
       g: 255
       b: 159
-particle: "16" # ""
+particle: "HugeExplodeSeedParticle@Vector3:pos"
 attackCooldown: 0 #tick
 range: 5 #如果设为0 则只有在击中时有效
 enchantment:

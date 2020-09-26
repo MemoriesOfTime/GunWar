@@ -1,0 +1,16 @@
+id: "344:0"
+showName: "a demo Flashbang"
+lore: |-
+  这是一个配置演示
+  this is a configuration demo
+damage: "0" #根据距离浮动
+effect:
+  - id: 15
+    amplifier: 1 #效果等级
+    duration: 100 #tick
+    visible: true #可见
+particle: "SpellParticle@Vector3:pos&int:255&int:255&int:255"
+attackCooldown: 0 #tick
+range: 5 #如果设为0 则只有在击中时有效
+enchantment: []
+killMessage: "%damager% ☼ %player%"
