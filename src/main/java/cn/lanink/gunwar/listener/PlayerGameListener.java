@@ -86,7 +86,7 @@ public class PlayerGameListener implements Listener {
                     case RIGHT_CLICK_AIR:
                         if (ItemManage.canAttack(player, weapon)) {
                             int bullets = weapon.shooting(player, player.getDirectionVector());
-                            player.sendPopup("\n" + bullets + "/" + weapon.getMaxMagazine());
+                            player.sendTip(Tools.getShowStringMagazine(bullets, weapon.getMaxMagazine()));
                         }
                         break;
                     case LEFT_CLICK_AIR:

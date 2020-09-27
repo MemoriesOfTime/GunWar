@@ -3,6 +3,7 @@ package cn.lanink.gunwar.tasks;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -34,7 +35,7 @@ public class GunReloadTask extends PluginTask<GunWar> {
             this.bulletsFloat += this.base;
             this.gunWeapon.getMagazineMap().put(this.player, (int) this.bulletsFloat);
             if (this.gunWeapon.equals(ItemManage.getGunWeapon(this.player.getInventory().getItemInHand()))) {
-                this.player.sendPopup("\n" + (int) this.bulletsFloat + "/" + this.gunWeapon.getMaxMagazine());
+                this.player.sendTip(Tools.getShowStringMagazine((int) this.bulletsFloat, this.gunWeapon.getMaxMagazine()));
             }else {
                 this.cancel();
             }
@@ -44,12 +45,12 @@ public class GunReloadTask extends PluginTask<GunWar> {
     @Override
     public void cancel() {
         super.cancel();
-        this.gunWeapon.getReloadTask().remove(player);
         //换弹中被打断
         if (!this.gunWeapon.isReloadInterrupted() && this.bulletsFloat < this.gunWeapon.getMaxMagazine()) {
             this.gunWeapon.getMagazineMap().put(this.player, this.initialQuantity);
-            this.player.sendPopup("\n" + this.initialQuantity + "/" + this.gunWeapon.getMaxMagazine());
+            this.player.sendTip(Tools.getShowStringMagazine(this.initialQuantity, this.gunWeapon.getMaxMagazine()));
         }
+        this.gunWeapon.getReloadTask().remove(player);
     }
 
 }

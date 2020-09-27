@@ -3,6 +3,8 @@ package cn.lanink.gunwar.listener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
+import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.room.GameMode;
 import cn.lanink.gunwar.room.Room;
 import cn.lanink.gunwar.tasks.VictoryTask;
@@ -18,7 +20,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -52,7 +53,7 @@ public class GunWarListener implements Listener {
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar, new ScoreBoardTask(this.gunWar, room), 18, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new TipTask(this.gunWar, room), 5, true);
+                this.gunWar, new ShowHealthTask(this.gunWar, room), 5, true);
         if (room.getGameMode() == GameMode.CTF) {
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
                     new FlagTask(this.gunWar, room), 5);
@@ -196,6 +197,11 @@ public class GunWarListener implements Listener {
         Room room = event.getRoom();
         int v = event.getVictory();
         Tools.cleanEntity(room.getLevel(), true);
+        for (Player player : room.getPlayers().keySet()) {
+            for (GunWeapon weapon : ItemManage.getGunWeaponMap().values()) {
+                weapon.getMagazineMap().remove(player);
+            }
+        }
         //本回合胜利计算
         if (v == 0) {
             switch (room.getGameMode()) {
@@ -382,7 +388,7 @@ public class GunWarListener implements Listener {
                             .replace("%damagePlayer%", damagePlayer.getName())
                             .replace("%player%", player.getName())));
                 }
-                int arrow = 0;
+                /*int arrow = 0;
                 int snowball = 0;
                 for (Item item : player.getInventory().getContents().values()) {
                     if (item.getId() == 262) {
@@ -396,7 +402,7 @@ public class GunWarListener implements Listener {
                 }
                 if (snowball > 0) {
                     player.getLevel().dropItem(player, Item.get(332, 0, snowball/2));
-                }
+                }*/
                 player.getInventory().clearAll();
             }
         });

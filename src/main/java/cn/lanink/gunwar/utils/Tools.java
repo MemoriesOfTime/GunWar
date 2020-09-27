@@ -38,6 +38,18 @@ import java.util.Random;
 
 public class Tools {
 
+    public static String getShowStringMagazine(int now, int max) {
+        StringBuilder string = new StringBuilder("§e" + now + "/" + max + "  ");
+        for (int j = 0; j < max; j++) {
+            if (j < now) {
+                string.append("§a▍");
+            }else {
+                string.append("§c▍");
+            }
+        }
+        return string.toString();
+    }
+
     public static void sendMessage(Room room, String message) {
         for (Player player : room.getPlayers().keySet()) {
             player.sendMessage(message);
