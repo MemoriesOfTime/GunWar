@@ -14,6 +14,7 @@ public class GunReloadTask extends PluginTask<GunWar> {
     private final Player player;
     private final GunWeapon gunWeapon;
     private final float base;
+    private int initialQuantity;
     private float bulletsFloat;
 
     public GunReloadTask(GunWar owner, Player player, GunWeapon gunWeapon, float base) {
@@ -21,7 +22,8 @@ public class GunReloadTask extends PluginTask<GunWar> {
         this.player = player;
         this.gunWeapon = gunWeapon;
         this.base = base;
-        this.bulletsFloat = gunWeapon.getMagazine(player);
+        this.initialQuantity = gunWeapon.getMagazine(player);
+        this.bulletsFloat = this.initialQuantity;
     }
 
     @Override
@@ -43,6 +45,11 @@ public class GunReloadTask extends PluginTask<GunWar> {
     public void cancel() {
         super.cancel();
         this.gunWeapon.getReloadTask().remove(player);
+        //换弹中被打断
+        if (!this.gunWeapon.isReloadInterrupted() && this.bulletsFloat < this.gunWeapon.getMaxMagazine()) {
+            this.gunWeapon.getMagazineMap().put(this.player, this.initialQuantity);
+            this.player.sendPopup("\n" + this.initialQuantity + "/" + this.gunWeapon.getMaxMagazine());
+        }
     }
 
 }
