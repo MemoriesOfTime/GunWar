@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
@@ -137,7 +138,7 @@ public class GuiListener implements Listener {
                     break;
                 case ADMIN_MODE_MENU:
                     this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgamemode " +
-                        custom.getResponse().getDropdownResponse(0).getElementID());
+                        custom.getResponse().getDropdownResponse(0).getElementContent());
                     break;
                 case ADMIN_ITEM_ADD_WEAPON_MELEE:
                     String name = custom.getResponse().getInputResponse(0);
@@ -188,7 +189,7 @@ public class GuiListener implements Listener {
                     config.set("infiniteDurability", custom.getResponse().getToggleResponse(7));
                     config.set("killMessage", custom.getResponse().getInputResponse(8));
                     config.save(file, true);
-                    this.gunWar.getItemManage().getMeleeWeaponMap().put(name, new MeleeWeapon(name, config));
+                    ItemManage.getMeleeWeaponMap().put(name, new MeleeWeapon(name, config));
                     player.sendMessage(name + " 添加成功！");
                     break;
             }

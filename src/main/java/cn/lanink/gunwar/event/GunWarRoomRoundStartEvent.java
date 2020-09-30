@@ -1,6 +1,6 @@
 package cn.lanink.gunwar.event;
 
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -12,7 +12,7 @@ public class GunWarRoomRoundStartEvent extends GunWarRoomEvent implements Cancel
         return handlers;
     }
 
-    public GunWarRoomRoundStartEvent(Room room) {
+    public GunWarRoomRoundStartEvent(BaseRoom room) {
         this.room = room;
     }
 

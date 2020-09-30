@@ -1,25 +1,29 @@
-package cn.lanink.gunwar.listener;
+package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.entity.EntityPlayerCorpse;
+import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.listener.base.BaseGameListener;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
-import cn.nukkit.event.Listener;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
-import cn.nukkit.event.player.PlayerChatEvent;
-import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.inventory.PlayerInventory;
@@ -32,14 +36,34 @@ import cn.nukkit.potion.Effect;
 
 import java.util.Map;
 
-public class PlayerGameListener implements Listener {
+public class DefaultGameListener extends BaseGameListener {
 
-    private final GunWar gunWar;
-    private final Language language;
+    private final GunWar gunWar = GunWar.getInstance();
+    private final Language language = GunWar.getInstance().getLanguage();
 
-    public PlayerGameListener(GunWar gunWar) {
-        this.gunWar = gunWar;
-        this.language = gunWar.getLanguage();
+    /**
+     * 伤害事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.LOW)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            BaseRoom room = this.getListenerRoom(player.getLevel());
+            if (room == null || !room.isPlaying(player)) return;
+            if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&
+                    event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
+                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, player, player, event.getDamage());
+                Server.getInstance().getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    room.lessHealth(player, ev.getDamagePlayer(), ev.getDamage());
+                }
+            }
+        }else if (event.getEntity() instanceof EntityPlayerCorpse ||
+                event.getEntity() instanceof EntityFlagStand ||
+                event.getEntity() instanceof EntityFlag) {
+            event.setCancelled(true);
+        }
     }
 
     /**
@@ -53,7 +77,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || item == null) {
             return;
         }
-        Room room = this.gunWar.getRooms().get(player.getLevel().getFolderName());
+        BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -62,7 +86,7 @@ public class PlayerGameListener implements Listener {
         if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             switch (tag.getInt("GunWarItemType")) {
                 case 10:
-                    room.quitRoom(player, true);
+                    room.quitRoom(player);
                     break;
                 case 11:
                     room.getPlayers().put(player, 1);
@@ -110,7 +134,7 @@ public class PlayerGameListener implements Listener {
         if (player == null || event.getInventory() == null) {
             return;
         }
-        Room room = this.gunWar.getRooms().getOrDefault(player.getLevel().getName(), null);
+        BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
@@ -121,56 +145,13 @@ public class PlayerGameListener implements Listener {
     }
 
     /**
-     * 玩家执行命令事件
-     * @param event 事件
-     */
-    @EventHandler
-    public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
-        Player player = event.getPlayer();
-        if (player == null || event.getMessage() == null) return;
-        Room room = this.gunWar.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.isPlaying(player)) {
-            return;
-        }
-        if (event.getMessage().startsWith(this.gunWar.getCmdUser(), 1) ||
-                event.getMessage().startsWith(this.gunWar.getCmdAdmin(), 1)) {
-            return;
-        }
-        event.setCancelled(true);
-        player.sendMessage(this.language.useCmdInRoom);
-    }
-
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onChat(PlayerChatEvent event) {
-        Player player = event.getPlayer();
-        String message = event.getMessage();
-        if (player == null || message == null) return;
-        Room room = this.gunWar.getRooms().get(player.getLevel().getName());
-        if (room == null || !room.isPlaying(player) || room.getStatus() != 2) {
-            return;
-        }
-        message = this.language.playerTeamChat.replace("%player%", player.getName())
-                .replace("%message%", message);
-        int team = room.getPlayers(player);
-        for (Player p : room.getPlayers().keySet()) {
-            if (room.getPlayers(p) == team ||
-                    (room.getPlayers(p) - 10 == team) ||
-                    (room.getPlayers(p) == team - 10)) {
-                p.sendMessage(message);
-            }
-        }
-        event.setMessage("");
-        event.setCancelled(true);
-    }
-
-    /**
      * 抛射物被发射事件
      * @param event 事件
      */
     @EventHandler
     public void onProjectileLaunch(ProjectileLaunchEvent event) {
         EntityProjectile entity = event.getEntity();
-        if (entity == null || !this.gunWar.getRooms().containsKey(entity.getLevel().getFolderName())) {
+        if (entity == null || !this.getListenerRooms().containsKey(entity.getLevel().getFolderName())) {
             return;
         }
         if (entity.shootingEntity instanceof Player) {
@@ -200,8 +181,8 @@ public class PlayerGameListener implements Listener {
         if (entity == null || entity.namedTag == null) return;
         if (entity instanceof EntityEgg && entity.shootingEntity instanceof Player) {
             Level level = entity.getLevel();
-            Room room = this.gunWar.getRooms().get(level.getFolderName());
-            if (room == null || room.getStatus() != 2) {
+            BaseRoom room = this.getListenerRoom(level);
+            if (room == null || room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
                 return;
             }
             Player damager = (Player) entity.shootingEntity;
@@ -251,7 +232,7 @@ public class PlayerGameListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        for (Room room : this.gunWar.getRooms().values()) {
+        for (BaseRoom room : this.getListenerRooms().values()) {
             if (room.isPlaying(player)) {
                 switch (room.getPlayers(player)) {
                     case 1:

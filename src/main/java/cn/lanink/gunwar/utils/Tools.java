@@ -6,7 +6,7 @@ import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.base.BaseItem;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -50,9 +50,27 @@ public class Tools {
         return string.toString();
     }
 
-    public static void sendMessage(Room room, String message) {
+    public static void sendMessage(BaseRoom room, String message) {
         for (Player player : room.getPlayers().keySet()) {
             player.sendMessage(message);
+        }
+    }
+
+    public static void sendRoundVictoryTitle(BaseRoom room, int v) {
+        for (Player player : room.getPlayers().keySet()) {
+            String title;
+            switch (v) {
+                case 1:
+                    title = GunWar.getInstance().getLanguage().roundVictoryRed;
+                    break;
+                case 2:
+                    title = GunWar.getInstance().getLanguage().roundVictoryBlue;
+                    break;
+                default:
+                    title = GunWar.getInstance().getLanguage().roundVictoryDraw;
+                    break;
+            }
+            player.sendTitle(title, "", 10, 20, 10);
         }
     }
 
@@ -119,7 +137,7 @@ public class Tools {
      * @param player 玩家
      * @param team 所属队伍
      */
-    public static void giveItem(Room room, Player player, int team) {
+    public static void giveItem(BaseRoom room, Player player, int team) {
         player.getInventory().setArmorContents(getArmors(team));
         for (String string : room.getInitialItems()) {
             try {
@@ -279,7 +297,7 @@ public class Tools {
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(Room room, Sound sound) {
+    public static void addSound(BaseRoom room, Sound sound) {
         room.getPlayers().keySet().forEach(player -> addSound(player, sound));
     }
 

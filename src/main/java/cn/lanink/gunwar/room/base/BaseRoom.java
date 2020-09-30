@@ -6,21 +6,35 @@ import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.event.GunWarPlayerDeathEvent;
-import cn.lanink.gunwar.event.GunWarRoomStartEvent;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.entity.EntityPlayerCorpse;
+import cn.lanink.gunwar.event.*;
+import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.weapon.GunWeapon;
+import cn.lanink.gunwar.tasks.VictoryTask;
+import cn.lanink.gunwar.tasks.WaitTask;
+import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
+import cn.lanink.gunwar.tasks.game.ShowHealthTask;
+import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
+import cn.lanink.gunwar.utils.gamerecord.GameRecord;
+import cn.lanink.gunwar.utils.gamerecord.RecordType;
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -31,6 +45,7 @@ public abstract class BaseRoom implements IRoom {
 
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
+    private String gameMode = null;
     protected int setWaitTime, setGameTime;
     public int waitTime, gameTime;
     protected int status;
@@ -44,6 +59,11 @@ public abstract class BaseRoom implements IRoom {
     public int redScore, blueScore; //队伍得分
     public final int victoryScore; //胜利需要分数
 
+    /**
+     * 初始化
+     * @param level 游戏世界
+     * @param config 配置文件
+     */
     public BaseRoom(Level level, Config config) throws RoomLoadException {
         this.level = level;
         this.levelName = level.getFolderName();
@@ -78,12 +98,47 @@ public abstract class BaseRoom implements IRoom {
             config.save(true);
             this.initialItems.addAll(defaultItems);
         }
+        this.initData();
+        for (String name : this.getListeners()) {
+            this.gunWar.getGameListeners().get(name).addListenerRoom(this);
+        }
+        this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
+    }
+
+    public final void setGameMode(String gameMode) {
+        if (this.gameMode == null) {
+            this.gameMode = gameMode;
+        }
+    }
+
+    public final String getGameMode() {
+        return gameMode;
     }
 
     /**
-     * 初始化task
+     * 设置房间状态
+     * @param status 状态
      */
-    protected abstract void initTask();
+    public final void setStatus(int status) {
+        this.status = status;
+    }
+
+    public final int getStatus() {
+        return this.status;
+    }
+
+    public abstract List<String> getListeners();
+
+    public abstract ITimeTask getTimeTask();
+
+    /**
+     * 初始化Task
+     */
+    protected void initTask() {
+        this.setStatus(1);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20);
+    }
 
     /**
      * 初始化倒计时时间
@@ -93,23 +148,85 @@ public abstract class BaseRoom implements IRoom {
         this.gameTime = this.setGameTime;
         this.redScore = 0;
         this.blueScore = 0;
+        this.players.clear();
+        this.playerHealth.clear();
     }
 
-    public int getStatus() {
-        return this.status;
-    }
-
-    /**
-     * 设置房间状态
-     * @param status 状态
-     */
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
+    @Override
     public void startGame() {
-        //TODO
-        Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent((Room) this));
+        this.setStatus(ROOM_STATUS_GAME);
+        this.assignTeam();
+        this.roundStart();
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                this.gunWar, new TimeTask(this.gunWar, this.getTimeTask()), 20, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                this.gunWar, new ScoreBoardTask(this.gunWar, this), 18, true);
+        Server.getInstance().getScheduler().scheduleRepeatingTask(
+                this.gunWar, new ShowHealthTask(this.gunWar, this), 5, true);
+    }
+
+    public void assignTeam() {
+        GunWarRoomAssignTeamEvent ev = new GunWarRoomAssignTeamEvent(this);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+        LinkedList<Player> redTeam = new LinkedList<>();
+        LinkedList<Player> blueTeam = new LinkedList<>();
+        LinkedList<Player> noTeam = new LinkedList<>();
+        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            switch (entry.getValue()) {
+                case 1:
+                    redTeam.add(entry.getKey());
+                    break;
+                case 2:
+                    blueTeam.add(entry.getKey());
+                    break;
+                default:
+                    noTeam.add(entry.getKey());
+                    break;
+            }
+        }
+        //队伍平衡
+        Player cache;
+        while (true) {
+            if (noTeam.size() > 0) {
+                for (Player player : noTeam) {
+                    if (redTeam.size() > blueTeam.size()) {
+                        blueTeam.add(player);
+                    }else {
+                        redTeam.add(player);
+                    }
+                }
+                noTeam.clear();
+            }
+            if (redTeam.size() != blueTeam.size()) {
+                if (Math.abs(redTeam.size() - blueTeam.size()) == 1) {
+                    break;
+                }
+                if (redTeam.size() > blueTeam.size()) {
+                    cache = redTeam.get(GunWar.RANDOM.nextInt(redTeam.size()));
+                    redTeam.remove(cache);
+                    blueTeam.add(cache);
+                }else {
+                    cache = blueTeam.get(GunWar.RANDOM.nextInt(blueTeam.size()));
+                    blueTeam.remove(cache);
+                    redTeam.add(cache);
+                }
+            }else {
+                break;
+            }
+        }
+        for (Player player : redTeam) {
+            this.getPlayers().put(player, 1);
+            player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
+            player.setNameTag("§c" + player.getName());
+        }
+        for (Player player : blueTeam) {
+            this.getPlayers().put(player, 2);
+            player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
+            player.setNameTag("§9" + player.getName());
+        }
     }
 
     public void endGame() {
@@ -119,7 +236,120 @@ public abstract class BaseRoom implements IRoom {
     /**
      * 结束房间
      */
-    public abstract void endGame(int victory);
+    @Override
+    public void endGame(int victory) {
+        this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomEndEvent(this, victory));
+        LinkedList<Player> victoryPlayers = new LinkedList<>();
+        LinkedList<Player> defeatPlayers = new LinkedList<>();
+        if (this.getPlayers().size() > 0) {
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                if (victory == 1) {
+                    if (entry.getValue() == 1 || entry.getValue() == 11) {
+                        victoryPlayers.add(entry.getKey());
+                    }else {
+                        defeatPlayers.add(entry.getKey());
+                    }
+                }else if (victory == 2) {
+                    if (entry.getValue() == 2 || entry.getValue() == 12) {
+                        victoryPlayers.add(entry.getKey());
+                    }else {
+                        defeatPlayers.add(entry.getKey());
+                    }
+                }
+            }
+            Iterator<Map.Entry<Player, Integer>> it = this.getPlayers().entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<Player, Integer> entry = it.next();
+                it.remove();
+                this.quitRoom(entry.getKey());
+            }
+        }
+        initData();
+        Tools.cleanEntity(getLevel(), true);
+        List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
+        List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
+        if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
+            for (Player player : victoryPlayers) {
+                Tools.cmd(player, vCmds);
+            }
+        }
+        if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
+            for (Player player : defeatPlayers) {
+                Tools.cmd(player, dCmds);
+            }
+        }
+        this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+    }
+
+    public void roundStart() {
+        GunWarRoomRoundStartEvent ev = new GunWarRoomRoundStartEvent(this);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+        this.gameTime = this.getSetGameTime();
+        for (Player player : this.getPlayers().keySet()) {
+            this.playerRespawn(player);
+        }
+    }
+
+    public void roundEnd(int victory) {
+        GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+        int v = ev.getVictory();
+        Tools.cleanEntity(this.getLevel(), true);
+        for (Player player : this.getPlayers().keySet()) {
+            for (GunWeapon weapon : ItemManage.getGunWeaponMap().values()) {
+                weapon.getMagazineMap().remove(player);
+            }
+        }
+        //本回合胜利计算
+        if (v == 0) {
+            int red = 0, blue = 0;
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == 1) {
+                    red++;
+                }else if (entry.getValue() == 2) {
+                    blue++;
+                }
+            }
+            if (red == blue) {
+                this.redScore++;
+                this.blueScore++;
+                Tools.sendRoundVictoryTitle(this, 0);
+            }else if (red > blue) {
+                this.redScore++;
+                Tools.sendRoundVictoryTitle(this, 1);
+            }else {
+                this.blueScore++;
+                Tools.sendRoundVictoryTitle(this, 2);
+            }
+        }else if (v == 1) {
+            this.redScore++;
+            Tools.sendRoundVictoryTitle(this, 1);
+        }else {
+            this.blueScore++;
+            Tools.sendRoundVictoryTitle(this, 2);
+        }
+        //房间胜利计算
+        if (this.redScore >= this.victoryScore) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
+            return;
+        }
+        if (this.blueScore >= this.victoryScore) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
+            return;
+        }
+        this.roundStart();
+    }
 
     public void joinRoom(Player player) {
         this.joinRoom(player, false);
@@ -129,16 +359,38 @@ public abstract class BaseRoom implements IRoom {
      * 加入房间
      * @param player 玩家
      */
-    public abstract void joinRoom(Player player, boolean spectator);
-
-    public void quitRoom(Player player, boolean online) {
-        this.quitRoom(player);
+    @Override
+    public void joinRoom(Player player, boolean spectator) {
+        if (this.status == 0) {
+            this.initTask();
+        }
+        this.players.put(player, 0);
+        this.playerHealth.put(player, 20F);
+        SavePlayerInventory.save(GunWar.getInstance(), player);
+        Tools.rePlayerState(player, true);
+        player.teleport(this.getWaitSpawn());
+        player.getInventory().setItem(3, Tools.getItem(11));
+        player.getInventory().setItem(5, Tools.getItem(12));
+        player.getInventory().setItem(8, Tools.getItem(10));
+        if (GunWar.getInstance().isHasTips()) {
+            Tips.closeTipsShow(this.getLevelName(), player);
+        }
+        player.sendMessage(this.language.joinRoom.replace("%name%", this.getLevelName()));
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
+            @Override
+            public void onRun(int i) {
+                if (player.getLevel() != getLevel()) {
+                    quitRoom(player);
+                }
+            }
+        }, 20);
     }
 
     /**
      * 退出房间
      * @param player 玩家
      */
+    @Override
     public void quitRoom(Player player) {
         this.players.remove(player);
         if (GunWar.getInstance().isHasTips()) {
@@ -213,7 +465,7 @@ public abstract class BaseRoom implements IRoom {
         float nowHealth = this.playerHealth.get(player) - health;
         if (nowHealth < 1) {
             this.playerHealth.put(player, 0F);
-            Server.getInstance().getPluginManager().callEvent(new GunWarPlayerDeathEvent((Room) this, player, damager));
+            this.playerDeath(player, damager);
         }else {
             this.playerHealth.put(player, nowHealth);
         }
@@ -247,10 +499,12 @@ public abstract class BaseRoom implements IRoom {
      * 获取世界
      * @return 世界
      */
+    @Override
     public Level getLevel() {
         return this.level;
     }
 
+    @Override
     public String getLevelName() {
         return this.levelName;
     }
@@ -289,6 +543,117 @@ public abstract class BaseRoom implements IRoom {
                 Integer.parseInt(s[1]),
                 Integer.parseInt(s[2]),
                 this.getLevel());
+    }
+
+    public void playerRespawn(Player player) {
+        GunWarPlayerRespawnEvent ev = new GunWarPlayerRespawnEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+        for (Entity entity : this.getLevel().getEntities()) {
+            if (entity instanceof EntityPlayerCorpse) {
+                if (entity.namedTag != null &&
+                        entity.namedTag.getString("playerName").equals(player.getName())) {
+                    entity.close();
+                }
+            }
+        }
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
+        Tools.rePlayerState(player, true);
+        this.getPlayerHealth().put(player, 20F);
+        switch (this.getPlayers(player)) {
+            case 11:
+                this.getPlayers().put(player, 1);
+            case 1:
+                player.teleport(this.getRedSpawn());
+                Tools.giveItem(this, player, 1);
+                break;
+            case 12:
+                this.getPlayers().put(player, 2);
+            case 2:
+                player.teleport(this.getBlueSpawn());
+                Tools.giveItem(this, player, 2);
+        }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
+            @Override
+            public void onRun(int i) {
+                Tools.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
+                Tools.addSound(player, Sound.RANDOM_ORB);
+            }
+        }, 10);
+    }
+
+    public void playerDeath(Player player, Player damager) {
+        GunWarPlayerDeathEvent ev = new GunWarPlayerDeathEvent(this, player, damager);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+        GameRecord.addPlayerRecord(player, RecordType.DEATHS);
+        if (player != damager) {
+            GameRecord.addPlayerRecord(damager, RecordType.KILLS);
+        }
+        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
+            @Override
+            public void onRun() {
+                player.sendTitle(language.titleDeathTitle,
+                        language.titleDeathSubtitle.replace("%player%", damager.getName()),
+                        10, 30, 10);
+                if (player == damager) {
+                    getPlayers().keySet().forEach(p -> p.sendMessage(language.suicideMessage
+                            .replace("%player%", player.getName())));
+                }else {
+                    getPlayers().keySet().forEach(p -> p.sendMessage(language.killMessage
+                            .replace("%damagePlayer%", damager.getName())
+                            .replace("%player%", player.getName())));
+                }
+            }
+        });
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
+        player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
+        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
+        player.setGamemode(3);
+        if (this.getPlayers(player) == 1) {
+            this.getPlayers().put(player, 11);
+        }else if (this.getPlayers(player) == 2) {
+            this.getPlayers().put(player, 12);
+        }
+        this.corpseSpawn(player);
+    }
+
+    public void corpseSpawn(Player player) {
+        GunWarPlayerCorpseSpawnEvent ev = new GunWarPlayerCorpseSpawnEvent(this, player);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+        CompoundTag nbt = EntityPlayerCorpse.getDefaultNBT(player);
+        Skin skin = player.getSkin();
+        switch(skin.getSkinData().data.length) {
+            case 8192:
+            case 16384:
+            case 32768:
+            case 65536:
+                break;
+            default:
+                skin = GunWar.getInstance().getCorpseSkin();
+        }
+        skin.setTrusted(true);
+        nbt.putCompound("Skin", new CompoundTag()
+                .putByteArray("Data", skin.getSkinData().data)
+                .putString("ModelId", skin.getSkinId()));
+        nbt.putFloat("Scale", -1.0F);
+        nbt.putString("playerName", player.getName());
+        EntityPlayerCorpse entity = new EntityPlayerCorpse(player.getChunk(), nbt, this.getPlayers(player));
+        entity.setSkin(skin);
+        entity.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
+        entity.setGliding(true);
+        entity.setRotation(player.getYaw(), 0);
+        entity.spawnToAll();
+        entity.updateMovement();
     }
 
 }

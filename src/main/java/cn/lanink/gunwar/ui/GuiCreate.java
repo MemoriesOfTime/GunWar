@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.ui;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
@@ -14,10 +14,7 @@ import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.scheduler.Task;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 
 public class GuiCreate {
@@ -77,12 +74,8 @@ public class GuiCreate {
         Language language = GunWar.getInstance().getLanguage();
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementDropdown("\n\n\n" +
-                language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()), new LinkedList<String>() {
-            {
-                add(language.classic);
-                add(language.captureTheFlag);
-            }
-        }));
+                language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()),
+                new LinkedList<>(Arrays.asList(GunWar.getRoomClass().keySet().toArray(new String[]{})))));
         showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
     }
 
@@ -118,9 +111,9 @@ public class GuiCreate {
     public static void sendRoomListMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        for (Map.Entry<String, Room> entry : GunWar.getInstance().getRooms().entrySet()) {
+        for (Map.Entry<String, BaseRoom> entry : GunWar.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e" + entry.getKey() +
-                    "\n§r§eMode: " + entry.getValue().getGameMode().getName() +
+                    "\n§r§eMode: " + entry.getValue().getGameMode() +
                             " Player: " + entry.getValue().getPlayers().size() + "/10",
                     new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
@@ -136,7 +129,7 @@ public class GuiCreate {
         Language language = GunWar.getInstance().getLanguage();
         FormWindowModal modal;
         if (GunWar.getInstance().getRooms().containsKey(roomName.replace("§e", "").trim())) {
-            Room room = GunWar.getInstance().getRooms().get(roomName.replace("§e", "").trim());
+            BaseRoom room = GunWar.getInstance().getRooms().get(roomName.replace("§e", "").trim());
             if (room.getStatus() == 2 || room.getStatus() == 3) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, language.joinRoomIsPlaying, language.buttonReturn, language.buttonReturn);

@@ -2,12 +2,15 @@ package cn.lanink.gunwar;
 
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
-import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.item.ItemManage;
-import cn.lanink.gunwar.listener.*;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.listener.base.BaseGameListener;
+import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
+import cn.lanink.gunwar.listener.defaults.*;
+import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
+import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
@@ -22,16 +25,22 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class GunWar extends PluginBase {
 
-    public static final String VERSION = "1.0.5-SNAPSHOT git-82771f0";
+    public static final String VERSION = "?";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
-    private final LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
+
+    private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
+    private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
+
+    private final HashMap<String, BaseGameListener> gameListeners = new HashMap<>();
+    private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
@@ -52,6 +61,14 @@ public class GunWar extends PluginBase {
         this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
         this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
         this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+        registerListener("RoomLevelProtection", RoomLevelProtection.class);
+        registerListener("DefaultChatListener", DefaultChatListener.class);
+        registerListener("DefaultGameListener", DefaultGameListener.class);
+        registerListener("DefaultDamageListener", DefaultDamageListener.class);
+        registerListener("CTFDamageListener", CTFDamageListener.class);
+
+        registerRoom("classic", ClassicModeRoom.class);
+        registerRoom("ctf", CTFModeRoom.class);
     }
 
     @Override
@@ -98,18 +115,14 @@ public class GunWar extends PluginBase {
         this.loadResources();
         getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
-        getLogger().info("§e开始加载房间");
-        this.loadRooms();
         this.cmdUser = this.config.getString("插件命令", "gunwar");
         this.cmdAdmin = this.config.getString("管理命令", "gunwaradmin");
         getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
-        getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
-        getServer().getPluginManager().registerEvents(new GunWarListener(this), this);
         getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.loadAllListener();
+        this.loadAllRoom();
         new MetricsLite(this, 7448);
         getLogger().info("§e插件加载完成！欢迎使用！");
     }
@@ -118,9 +131,9 @@ public class GunWar extends PluginBase {
     public void onDisable() {
         this.gameRecord.save();
         if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
+                Map.Entry<String, BaseRoom> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
                     entry.getValue().endGame();
                 }
@@ -131,6 +144,22 @@ public class GunWar extends PluginBase {
         this.rooms.clear();
         this.roomConfigs.clear();
         getLogger().info("§c插件卸载完成！");
+    }
+
+    public static void registerListener(String name, Class<? extends BaseGameListener> listenerClass) {
+        LISTENER_CLASS.put(name, listenerClass);
+    }
+
+    public static HashMap<String, Class<? extends BaseGameListener>> getListenerClass() {
+        return LISTENER_CLASS;
+    }
+
+    public static void registerRoom(String name, Class<? extends BaseRoom> roomClass) {
+        ROOM_CLASS.put(name, roomClass);
+    }
+
+    public static LinkedHashMap<String, Class<? extends BaseRoom>> getRoomClass() {
+        return ROOM_CLASS;
     }
 
     public String getServerWorldPath() {
@@ -157,43 +186,81 @@ public class GunWar extends PluginBase {
         return this.itemManage;
     }
 
-    public LinkedHashMap<String, Room> getRooms() {
+    public HashMap<String, BaseGameListener> getGameListeners() {
+        return this.gameListeners;
+    }
+
+    public LinkedHashMap<String, BaseRoom> getRooms() {
         return this.rooms;
+    }
+
+    public void loadAllListener() {
+        for (Map.Entry<String, Class<? extends BaseGameListener>> entry : LISTENER_CLASS.entrySet()) {
+            try {
+                Constructor<? extends BaseGameListener> constructor = entry.getValue().getConstructor();
+                BaseGameListener gameListener = constructor.newInstance();
+                gameListener.init(entry.getKey());
+                this.loadListener(gameListener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadListener(BaseGameListener gameListener) {
+        this.gameListeners.put(gameListener.getListenerName(), gameListener);
+        this.getServer().getPluginManager().registerEvents(gameListener, this);
+        if (GunWar.debug) {
+            this.getLogger().info("[debug] registerListener: " + gameListener.getListenerName());
+        }
     }
 
     /**
      * 加载所有房间
      */
-    private void loadRooms() {
+    private void loadAllRoom() {
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null) {
             for (File file1 : s) {
                 String[] fileName = file1.getName().split("\\.");
                 if (fileName.length > 0) {
-                    Config config = getRoomConfig(fileName[0]);
-                    if (config.getInt("waitTime", 0) == 0 ||
-                            config.getInt("gameTime", 0) == 0 ||
-                            config.getString("waitSpawn", "").trim().equals("") ||
-                            config.getString("redSpawn", "").trim().equals("") ||
-                            config.getString("blueSpawn", "").trim().equals("")) {
-                        getLogger().warning("§c房间：" + fileName[0] + " 配置不完整，加载失败！");
-                        continue;
-                    }
-                    if (Server.getInstance().getLevelByName(fileName[0]) == null && !Server.getInstance().loadLevel(fileName[0])) {
-                        getLogger().warning("§c房间：" + fileName[0] + " 地图加载失败！");
-                        continue;
-                    }
-                    try {
-                        Room room = new Room(Server.getInstance().getLevelByName(fileName[0]), config);
-                        this.rooms.put(fileName[0], room);
-                        getLogger().info("§a房间：" + fileName[0] + " 已加载！");
-                    } catch (RoomLoadException e) {
-                        e.printStackTrace();
-                    }
+                    this.loadRoom(fileName[0]);
                 }
             }
         }
         getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
+    }
+
+    private void loadRoom(String world) {
+        Config config = this.getRoomConfig(world);
+        if (config.getInt("waitTime", 0) == 0 ||
+                config.getInt("gameTime", 0) == 0 ||
+                "".equals(config.getString("waitSpawn", "").trim()) ||
+                "".equals(config.getString("redSpawn", "").trim()) ||
+                "".equals(config.getString("blueSpawn", "").trim()) ||
+                "".equals(config.getString("gameMode", "").trim())) {
+            getLogger().warning("§c房间：" + world + " 配置不完整，加载失败！");
+            return;
+        }
+        if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
+            getLogger().warning("§c房间：" + world + " 地图加载失败！");
+            return;
+        }
+
+        String gameMode = config.getString("gameMode", "classic");
+        if (!ROOM_CLASS.containsKey(gameMode)) {
+            getLogger().warning("§c房间：" + world + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
+            return;
+        }
+        try {
+            Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
+            BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
+            baseRoom.setGameMode(gameMode);
+            this.rooms.put(world, baseRoom);
+            getLogger().info("§a房间：" + world + " 已加载！");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -201,9 +268,9 @@ public class GunWar extends PluginBase {
      */
     public void unloadRooms() {
         if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
+                Map.Entry<String, BaseRoom> entry = it.next();
                 entry.getValue().endGame();
                 getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
                 it.remove();
@@ -220,7 +287,7 @@ public class GunWar extends PluginBase {
      */
     public void reLoadRooms() {
         this.unloadRooms();
-        this.loadRooms();
+        this.loadAllRoom();
     }
 
     private void loadResources() {

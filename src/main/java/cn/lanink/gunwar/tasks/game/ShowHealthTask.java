@@ -1,8 +1,8 @@
 package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.room.GameMode;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -14,10 +14,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ShowHealthTask extends PluginTask<GunWar> {
 
     private final Language language;
-    private final Room room;
+    private final BaseRoom room;
     private final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
 
-    public ShowHealthTask(GunWar owner, Room room) {
+    public ShowHealthTask(GunWar owner, BaseRoom room) {
         super(owner);
         this.language = owner.getLanguage();
         this.room = room;
@@ -41,9 +41,9 @@ public class ShowHealthTask extends PluginTask<GunWar> {
             switch (entry.getValue()) {
                 case 11:
                 case 12:
-                    if (this.room.getGameMode() == GameMode.CTF) {
+                    if ("ctf".equals(this.room.getGameMode())) {
                         bossBar.setText(this.language.gameTimeRespawnBottom
-                                .replace("%time%", room.getPlayerRespawnTime(entry.getKey()) + ""));
+                                .replace("%time%", ((CTFModeRoom) room).getPlayerRespawnTime(entry.getKey()) + ""));
                         bossBar.setLength(0);
                     }
                     break;

@@ -1,8 +1,7 @@
 package cn.lanink.gunwar.tasks;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.event.GunWarRoomStartEvent;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -16,9 +15,9 @@ import java.util.Map;
 public class WaitTask extends PluginTask<GunWar> {
 
     private final Language language;
-    private final Room room;
+    private final BaseRoom room;
 
-    public WaitTask(GunWar owner, Room room) {
+    public WaitTask(GunWar owner, BaseRoom room) {
         super(owner);
         this.language = owner.getLanguage();
         this.room = room;
@@ -66,7 +65,7 @@ public class WaitTask extends PluginTask<GunWar> {
                     owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
                 }
             }else {
-                owner.getServer().getPluginManager().callEvent(new GunWarRoomStartEvent(this.room));
+                this.room.startGame();
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {

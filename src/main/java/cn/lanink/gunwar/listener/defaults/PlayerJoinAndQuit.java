@@ -1,11 +1,11 @@
-package cn.lanink.gunwar.listener;
+package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -55,9 +55,9 @@ public class PlayerJoinAndQuit implements Listener {
         if (player == null) {
             return;
         }
-        for (Room room : this.gunWar.getRooms().values()) {
+        for (BaseRoom room : this.gunWar.getRooms().values()) {
             if (room.isPlaying(player)) {
-                room.quitRoom(player, false);
+                room.quitRoom(player);
             }
         }
         ItemManage.getPlayerAttackTime().remove(player);
@@ -73,7 +73,7 @@ public class PlayerJoinAndQuit implements Listener {
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
         if (player == null || fromLevel == null || toLevel == null) return;
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, Room> room =  this.gunWar.getRooms();
+            LinkedHashMap<String, BaseRoom> room =  this.gunWar.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
                 player.sendMessage(this.gunWar.getLanguage().tpQuitRoomLevel);

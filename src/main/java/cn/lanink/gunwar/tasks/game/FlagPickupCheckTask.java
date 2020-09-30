@@ -2,7 +2,7 @@ package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -12,11 +12,11 @@ import cn.nukkit.scheduler.PluginTask;
 public class FlagPickupCheckTask extends PluginTask<GunWar> {
 
     private int time;
-    private final Room room;
+    private final CTFModeRoom room;
     private final EntityFlag entityFlag;
     private final int team;
 
-    public FlagPickupCheckTask(GunWar owner, Room room, EntityFlag entityFlag) {
+    public FlagPickupCheckTask(GunWar owner, CTFModeRoom room, EntityFlag entityFlag) {
         super(owner);
         this.time = 10;
         this.room = room;

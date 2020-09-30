@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.tasks;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
@@ -16,11 +16,11 @@ import java.util.Map;
 public class VictoryTask extends PluginTask<GunWar> {
 
     private final Language language;
-    private final Room room;
+    private final BaseRoom room;
     private final int victory;
     private int victoryTime;
 
-    public VictoryTask(GunWar owner, Room room, int victory) {
+    public VictoryTask(GunWar owner, BaseRoom room, int victory) {
         super(owner);
         this.language = owner.getLanguage();
         this.room = room;

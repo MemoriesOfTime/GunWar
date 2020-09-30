@@ -3,7 +3,7 @@ package cn.lanink.gunwar.tasks.game;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.math.Vector3;
@@ -15,9 +15,9 @@ import cn.nukkit.scheduler.PluginTask;
  */
 public class FlagTask extends PluginTask<GunWar> {
 
-    private final Room room;
+    private final CTFModeRoom room;
 
-    public FlagTask(GunWar owner, Room room) {
+    public FlagTask(GunWar owner, CTFModeRoom room) {
         super(owner);
         this.room = room;
     }

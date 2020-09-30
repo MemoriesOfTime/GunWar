@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -15,9 +15,9 @@ import java.util.LinkedList;
 public class ScoreBoardTask extends PluginTask<GunWar> {
 
     private final Language language;
-    private final Room room;
+    private final BaseRoom room;
 
-    public ScoreBoardTask(GunWar owner, Room room) {
+    public ScoreBoardTask(GunWar owner, BaseRoom room) {
         super(owner);
         this.language = owner.getLanguage();
         this.room = room;
