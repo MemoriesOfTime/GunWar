@@ -302,11 +302,6 @@ public abstract class BaseRoom implements IRoom {
         }
         int v = ev.getVictory();
         Tools.cleanEntity(this.getLevel(), true);
-        for (Player player : this.getPlayers().keySet()) {
-            for (GunWeapon weapon : ItemManage.getGunWeaponMap().values()) {
-                weapon.getMagazineMap().remove(player);
-            }
-        }
         //本回合胜利计算
         if (v == 0) {
             int red = 0, blue = 0;
@@ -550,6 +545,10 @@ public abstract class BaseRoom implements IRoom {
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
+        }
+        for (GunWeapon gunWeapon : ItemManage.getGunWeaponMap().values()) {
+            gunWeapon.stopReload(player);
+            gunWeapon.getMagazineMap().remove(player);
         }
         for (Entity entity : this.getLevel().getEntities()) {
             if (entity instanceof EntityPlayerCorpse) {

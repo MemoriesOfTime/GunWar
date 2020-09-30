@@ -4,8 +4,6 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
-import cn.lanink.gunwar.item.ItemManage;
-import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.FlagPickupCheckTask;
@@ -118,7 +116,9 @@ public class CTFModeRoom extends ClassicModeRoom {
         this.blueFlagStand = null;
         this.redFlag = null;
         this.blueFlag = null;
-        this.playerRespawnTime.clear();
+        if (this.playerRespawnTime != null) {
+            this.playerRespawnTime.clear();
+        }
     }
 
     @Override
@@ -136,11 +136,6 @@ public class CTFModeRoom extends ClassicModeRoom {
         }
         int v = ev.getVictory();
         Tools.cleanEntity(this.getLevel(), true);
-        for (Player player : this.getPlayers().keySet()) {
-            for (GunWeapon weapon : ItemManage.getGunWeaponMap().values()) {
-                weapon.getMagazineMap().remove(player);
-            }
-        }
         //本回合胜利计算
         if (v == 0) {
             if ((this.redScore - this.blueScore) > 0) {
