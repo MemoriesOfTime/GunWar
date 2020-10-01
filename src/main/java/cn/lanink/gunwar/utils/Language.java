@@ -4,6 +4,10 @@ import cn.nukkit.utils.Config;
 
 public class Language {
 
+    //TODO
+    public String roomLevelBackupExist = "§a房间：%name% 检测到地图备份！";
+    public String roomLevelBackupNotExist = "§a房间：%name% 地图备份不存在！无法还原地图！";
+    public String roomLevelRestoreLevelFailure = "§c房间：%name% 地图还原失败！";
     //命令
     public String useCmdInRoom = "§e >> §c游戏中无法使用其他命令";
     public String cmdHelp = "§a查看帮助：/%cmdName% help";

@@ -54,6 +54,8 @@ public class GunWar extends PluginBase {
     private String worldBackupPath;
     private String roomConfigPath;
 
+    private boolean restoreWorld = false;
+
     public static GunWar getInstance() { return gunWar; }
 
     @Override
@@ -101,7 +103,7 @@ public class GunWar extends PluginBase {
 
         }
         this.config = new Config(getDataFolder() + "/config.yml", 2);
-        if (config.getBoolean("debug", false)) {
+        if (this.config.getBoolean("debug", false)) {
             debug = true;
             getLogger().warning("警告：您开启了debug模式！");
             getLogger().warning("Warning: You have turned on debug mode!");
@@ -111,6 +113,7 @@ public class GunWar extends PluginBase {
 
             }
         }
+        this.restoreWorld = this.config.getBoolean("restoreWorld");
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
         this.loadResources();
         getLogger().info("§e开始加载物品");
@@ -172,6 +175,10 @@ public class GunWar extends PluginBase {
 
     public String getRoomConfigPath() {
         return this.roomConfigPath;
+    }
+
+    public boolean isRestoreWorld() {
+        return this.restoreWorld;
     }
 
     public Language getLanguage() {
@@ -269,17 +276,23 @@ public class GunWar extends PluginBase {
     public void unloadRooms() {
         if (this.rooms.size() > 0) {
             Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
-            while(it.hasNext()){
+            while (it.hasNext()) {
                 Map.Entry<String, BaseRoom> entry = it.next();
-                entry.getValue().endGame();
-                getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
                 it.remove();
+                this.unloadRoom(entry.getKey());
             }
             this.rooms.clear();
         }
-        if (this.roomConfigs.values().size() > 0) {
-            this.roomConfigs.clear();
+        this.roomConfigs.clear();
+    }
+
+    public void unloadRoom(String world) {
+        if (this.rooms.containsKey(world)) {
+            this.rooms.get(world).endGame();
+            this.rooms.remove(world);
+            getLogger().info("§c房间：" + world + " 已卸载！");
         }
+        this.roomConfigs.remove(world);
     }
 
     /**

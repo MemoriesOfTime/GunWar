@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.tasks.game;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
@@ -25,32 +26,32 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != 2) {
+        if (this.room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
             this.cancel();
             return;
         }
-        if (room.getPlayers().size() > 0) {
+        if (this.room.getPlayers().size() > 0) {
             int red = 0, blue = 0;
-            for (int team : room.getPlayers().values()) {
+            for (int team : this.room.getPlayers().values()) {
                 if (team == 1) {
                     red++;
                 }else if (team == 2) {
                     blue++;
                 }
             }
-            for (Player player : room.getPlayers().keySet()) {
+            for (Player player : this.room.getPlayers().keySet()) {
                 LinkedList<String> ms = new LinkedList<>();
                 String team;
-                switch (room.getPlayers(player)) {
+                switch (this.room.getPlayers(player)) {
                     case 1:
                     case 11:
-                        team = language.teamNameRed;
+                        team = this.language.teamNameRed;
                         break;
                     default:
-                        team = language.teamNameBlue;
+                        team = this.language.teamNameBlue;
                         break;
                 }
-                for (String string : language.gameTimeScoreBoard.split("\n")) {
+                for (String string : this.language.gameTimeScoreBoard.split("\n")) {
                     ms.add(string.replace("%team%", team)
                             .replace("%health%", String.format("%.1f", room.getPlayerHealth().getOrDefault(player, 0F)))
                             .replace("%time%", room.gameTime + "")

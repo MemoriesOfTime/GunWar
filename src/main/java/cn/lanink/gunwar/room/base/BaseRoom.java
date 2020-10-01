@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.room.base;
 
 import cn.lanink.gamecore.room.IRoom;
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
@@ -35,6 +36,7 @@ import cn.nukkit.utils.Config;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -238,6 +240,7 @@ public abstract class BaseRoom implements IRoom {
      */
     @Override
     public void endGame(int victory) {
+        int oldStatus = this.getStatus();
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomEndEvent(this, victory));
         LinkedList<Player> victoryPlayers = new LinkedList<>();
@@ -280,6 +283,12 @@ public abstract class BaseRoom implements IRoom {
             }
         }
         this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+        switch (oldStatus) {
+            case IRoomStatus.ROOM_STATUS_GAME:
+            case IRoomStatus.ROOM_STATUS_VICTORY:
+                this.restoreWorld();
+                break;
+        }
     }
 
     public void roundStart() {
@@ -344,6 +353,11 @@ public abstract class BaseRoom implements IRoom {
             return;
         }
         this.roundStart();
+    }
+
+    public boolean canJoin() {
+        return (this.getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED || this.getStatus() == ROOM_STATUS_WAIT) &&
+                this.getPlayers().size() < 10;
     }
 
     public void joinRoom(Player player) {
@@ -653,6 +667,41 @@ public abstract class BaseRoom implements IRoom {
         entity.setRotation(player.getYaw(), 0);
         entity.spawnToAll();
         entity.updateMovement();
+    }
+
+    /**
+     * 还原房间地图
+     */
+    protected void restoreWorld() {
+        if (!this.gunWar.isRestoreWorld()) {
+            return;
+        }
+        this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
+        if (GunWar.debug) {
+            this.gunWar.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
+        }
+        Server.getInstance().unloadLevel(this.level);
+        File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
+        File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
+        if (!backup.exists()) {
+            this.gunWar.getLogger().error(this.gunWar.getLanguage()
+                    .roomLevelBackupNotExist.replace("%name%", this.levelName));
+            this.gunWar.unloadRoom(this.levelName);
+        }
+        CompletableFuture.runAsync(() -> {
+            if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+                Server.getInstance().loadLevel(this.levelName);
+                this.level = Server.getInstance().getLevelByName(this.levelName);
+                this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+                if (GunWar.debug) {
+                    this.gunWar.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
+                }
+            }else {
+                this.gunWar.getLogger().error(this.gunWar.getLanguage()
+                        .roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
+                this.gunWar.unloadRoom(this.levelName);
+            }
+        });
     }
 
 }
