@@ -4,6 +4,7 @@ public enum GuiType {
     USER_MENU,
     ADMIN_MENU,
     ADMIN_TIME_MENU,
+    ADMIN_PLAYERS_MENU,
     ADMIN_MODE_MENU,
 
     ADMIN_ITEM_ADD_WEAPON,

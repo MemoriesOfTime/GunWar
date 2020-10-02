@@ -64,7 +64,7 @@ public class JoinCommand extends BaseSubCommand {
                     BaseRoom room = this.gunWar.getRooms().get(args[1]);
                     if (room.getStatus() != 0 && room.getStatus() != 1) {
                         sender.sendMessage(this.language.joinRoomIsPlaying);
-                    } else if (room.getPlayers().size() >= 10) {
+                    } else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                         sender.sendMessage(this.language.joinRoomIsFull);
                     } else {
                         room.joinRoom(player);

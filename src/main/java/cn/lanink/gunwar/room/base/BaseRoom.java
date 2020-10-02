@@ -48,13 +48,14 @@ public abstract class BaseRoom implements IRoom {
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
     private String gameMode = null;
-    protected int setWaitTime, setGameTime;
-    public int waitTime, gameTime;
     protected int status;
     private Level level;
     private final String levelName;
+    protected int minPlayers, maxPlayers;
     protected final String waitSpawn;
     protected final String redSpawn, blueSpawn;
+    protected int setWaitTime, setGameTime;
+    public int waitTime, gameTime;
     protected ArrayList<String> initialItems = new ArrayList<>();
     protected ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1 11红队 2 12蓝队
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
@@ -69,6 +70,14 @@ public abstract class BaseRoom implements IRoom {
     public BaseRoom(Level level, Config config) throws RoomLoadException {
         this.level = level;
         this.levelName = level.getFolderName();
+        this.minPlayers = config.getInt("minPlayers", 2);
+        if (this.minPlayers < 2) {
+            this.minPlayers = 2;
+        }
+        this.maxPlayers = config.getInt("maxPlayers", 10);
+        if (this.maxPlayers < this.minPlayers) {
+            this.maxPlayers = this.minPlayers;
+        }
         this.waitSpawn = config.getString("waitSpawn");
         this.redSpawn = config.getString("redSpawn");
         this.blueSpawn = config.getString("blueSpawn");
@@ -129,12 +138,29 @@ public abstract class BaseRoom implements IRoom {
         return this.status;
     }
 
+    /**
+     * @return 房间最少人数
+     */
+    public int getMinPlayers() {
+        return this.minPlayers;
+    }
+
+    /**
+     * @return 房间最多人数
+     */
+    public int getMaxPlayers() {
+        return this.maxPlayers;
+    }
+
+    /**
+     * @return 使用的监听器
+     */
     public abstract List<String> getListeners();
 
     public abstract ITimeTask getTimeTask();
 
     /**
-     * 初始化Task
+     * 初始化Task （等待状态）
      */
     protected void initTask() {
         this.setStatus(1);
@@ -143,7 +169,7 @@ public abstract class BaseRoom implements IRoom {
     }
 
     /**
-     * 初始化倒计时时间
+     * 初始化房间数据
      */
     protected void initData() {
         this.waitTime = this.setWaitTime;
@@ -357,7 +383,7 @@ public abstract class BaseRoom implements IRoom {
 
     public boolean canJoin() {
         return (this.getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED || this.getStatus() == ROOM_STATUS_WAIT) &&
-                this.getPlayers().size() < 10;
+                this.getPlayers().size() < this.getMaxPlayers();
     }
 
     public void joinRoom(Player player) {

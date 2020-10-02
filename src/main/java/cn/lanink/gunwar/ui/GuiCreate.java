@@ -47,6 +47,7 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(language.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(language.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
+        simple.addButton(new ElementButton("设置游戏人数", new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
         simple.addButton(new ElementButton(language.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
         simple.addButton(new ElementButton(language.adminMenuButton6,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
         simple.addButton(new ElementButton(language.adminMenuButton7, new ElementButtonImageData("path", "textures/ui/redX1")));
@@ -64,6 +65,18 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.adminTimeMenuInputText2, "", "300"));
         custom.addElement(new ElementInput(language.adminTimeMenuInputText3, "", "5"));
         showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
+    }
+
+    /**
+     * 设置房间游戏人数菜单
+     * @param player 玩家
+     */
+    public static void sendAdminPlayersMenu(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
+        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        custom.addElement(new ElementInput(language.adminPlayersMenuInputText1, "", "2"));
+        custom.addElement(new ElementInput(language.adminPlayersMenuInputText2, "", "10"));
+        showFormWindow(player, custom, GuiType.ADMIN_PLAYERS_MENU);
     }
 
     /**
@@ -114,7 +127,7 @@ public class GuiCreate {
         for (Map.Entry<String, BaseRoom> entry : GunWar.getInstance().getRooms().entrySet()) {
             simple.addButton(new ElementButton("§e" + entry.getKey() +
                     "\n§r§eMode: " + entry.getValue().getGameMode() +
-                            " Player: " + entry.getValue().getPlayers().size() + "/10",
+                            " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button")));
         }
         simple.addButton(new ElementButton(language.buttonReturn, new ElementButtonImageData("path", "textures/ui/cancel")));

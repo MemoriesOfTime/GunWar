@@ -52,6 +52,8 @@ public class Language {
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
     public String adminSetVictoryScore = "§a胜利分数已设置为: %score%";
     public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
+    public String adminSetMinPlayers = "§a房间最少人数已设置为: %minPlayers%";
+    public String adminSetMaxPlayers = "§a房间最多人数已设置为: %maxPlayers%";
     public String adminStartRoom = "§a已强制开启游戏！";
     public String adminStartRoomNoPlayer = "§a房间人数不足两人,无法开始游戏！";
     public String adminStartRoomIsPlaying = "§c房间已经开始了！";
@@ -113,6 +115,8 @@ public class Language {
     public String adminTimeMenuInputText1 = "等待时间（秒）";
     public String adminTimeMenuInputText2 = "游戏时间（秒）";
     public String adminTimeMenuInputText3 = "胜利所需分数";
+    public String adminPlayersMenuInputText1 = "房间最少游戏人数";
+    public String adminPlayersMenuInputText2 = "房间最多游戏人数";
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
@@ -164,6 +168,8 @@ public class Language {
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminSetVictoryScore = config.getString("adminSetVictoryScore", this.adminSetVictoryScore);
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
+        this.adminSetMinPlayers = config.getString("adminSetMinPlayers", this.adminSetMinPlayers);
+        this.adminSetMaxPlayers = config.getString("adminSetMaxPlayers", this.adminSetMaxPlayers);
         this.adminStartRoom = config.getString("adminStartRoom", this.adminStartRoom);
         this.adminStartRoomNoPlayer = config.getString("adminStartRoomNoPlayer", this.adminStartRoomNoPlayer);
         this.adminStartRoomIsPlaying = config.getString("adminStartRoomIsPlaying", this.adminStartRoomIsPlaying);
@@ -218,6 +224,8 @@ public class Language {
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
+        this.adminPlayersMenuInputText1 = config.getString("adminPlayersMenuInputText1", this.adminPlayersMenuInputText1);
+        this.adminPlayersMenuInputText2 = config.getString("adminPlayersMenuInputText2", this.adminPlayersMenuInputText2);
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
