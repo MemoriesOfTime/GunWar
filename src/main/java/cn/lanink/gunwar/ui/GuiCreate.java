@@ -47,10 +47,10 @@ public class GuiCreate {
         simple.addButton(new ElementButton(language.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(language.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
         simple.addButton(new ElementButton(language.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton("设置游戏人数", new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
-        simple.addButton(new ElementButton(language.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
-        simple.addButton(new ElementButton(language.adminMenuButton6,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(language.adminMenuButton7, new ElementButtonImageData("path", "textures/ui/redX1")));
+        simple.addButton(new ElementButton(language.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
+        simple.addButton(new ElementButton(language.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
+        simple.addButton(new ElementButton(language.adminMenuButton7,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(language.adminMenuButton8, new ElementButtonImageData("path", "textures/ui/redX1")));
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
     }
 
@@ -105,15 +105,51 @@ public class GuiCreate {
         //TODO Language
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput("物品名称", "", "Sword"));
+        custom.addElement(new ElementInput("物品显示名称", "", "a demo Sword"));
         custom.addElement(new ElementInput("物品ID", "", "272:0"));
-        custom.addElement(new ElementInput("物品显示名称", "", "a test Sword"));
+        custom.addElement(new ElementInput("lore", "", "剑\n这是一个配置演示"));
         custom.addElement(new ElementInput("最小伤害", "", "1"));
         custom.addElement(new ElementInput("最大伤害", "", "2"));
-        custom.addElement(new ElementInput("攻击冷却", "", "20"));
+        custom.addElement(new ElementInput("攻击冷却(tick)", "", "20"));
         custom.addElement(new ElementInput("击退", "", "0.3"));
         custom.addElement(new ElementToggle("无限耐久"));
         custom.addElement(new ElementInput("击杀提示", "", "%damager% --[+＝＝》 %player%"));
         showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_MELEE);
+    }
+
+    public static void sendAdminItemAddWeaponProjectileMenu(Player player) {
+        //TODO Language
+        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        custom.addElement(new ElementInput("物品名称", "", "Grenade"));
+        custom.addElement(new ElementInput("物品显示名称", "", "a demo Grenade"));
+        custom.addElement(new ElementInput("物品ID", "", "344:0"));
+        custom.addElement(new ElementInput("lore", "", "手榴弹\n这是一个配置演示"));
+        custom.addElement(new ElementInput("最小伤害", "", "1"));
+        custom.addElement(new ElementInput("最大伤害", "", "2"));
+        custom.addElement(new ElementInput("粒子", "", "HugeExplodeSeedParticle@Vector3:pos"));
+        custom.addElement(new ElementInput("攻击冷却(tick)", "", "20"));
+        custom.addElement(new ElementInput("伤害范围", "", "5"));
+        custom.addElement(new ElementInput("击杀提示", "", "%damager% ☼ %player%"));
+        showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_PROJECTILE);
+    }
+
+    public static void sendAdminItemAddWeaponGunMenu(Player player) {
+        //TODO Language
+        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        custom.addElement(new ElementInput("物品名称", "", "Gun"));
+        custom.addElement(new ElementInput("物品显示名称", "", "a demo gun"));
+        custom.addElement(new ElementInput("物品ID", "", "290:0"));
+        custom.addElement(new ElementInput("lore", "", "枪\n这是一个配置演示"));
+        custom.addElement(new ElementInput("最小伤害", "", "1"));
+        custom.addElement(new ElementInput("最大伤害", "", "2"));
+        custom.addElement(new ElementInput("攻击冷却(tick)", "", "10"));
+        custom.addElement(new ElementInput("弹夹容量", "", "30"));
+        custom.addElement(new ElementInput("换弹时间", "", "5"));
+        custom.addElement(new ElementToggle("换弹允许中断"));
+        custom.addElement(new ElementInput("子弹重力", "", "0.03"));
+        custom.addElement(new ElementInput("子弹移动倍速", "", "1.5"));
+        custom.addElement(new ElementInput("击杀提示", "", "%damager% ︻┳═一 %player%"));
+        showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_GUN);
     }
 
 

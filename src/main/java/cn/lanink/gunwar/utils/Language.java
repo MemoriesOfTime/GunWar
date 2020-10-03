@@ -109,9 +109,10 @@ public class Language {
     public String adminMenuButton2 = "§e设置红队出生点";
     public String adminMenuButton3 = "§e设置蓝队出生点";
     public String adminMenuButton4 = "§e设置更多参数";
-    public String adminMenuButton5 = "§e设置房间模式";
-    public String adminMenuButton6 = "§e重载所有房间";
-    public String adminMenuButton7 = "§c卸载所有房间";
+    public String adminMenuButton5 = "§e设置游戏人数";
+    public String adminMenuButton6 = "§e设置房间模式";
+    public String adminMenuButton7 = "§e重载所有房间";
+    public String adminMenuButton8 = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "等待时间（秒）";
     public String adminTimeMenuInputText2 = "游戏时间（秒）";
     public String adminTimeMenuInputText3 = "胜利所需分数";
@@ -221,6 +222,8 @@ public class Language {
         this.adminMenuButton4 = config.getString("adminMenuButton4", this.adminMenuButton4);
         this.adminMenuButton5 = config.getString("adminMenuButton5", this.adminMenuButton5);
         this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
+        this.adminMenuButton7 = config.getString("adminMenuButton7", this.adminMenuButton7);
+        this.adminMenuButton8 = config.getString("adminMenuButton8", this.adminMenuButton8);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);

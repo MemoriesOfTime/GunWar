@@ -51,6 +51,14 @@ public class ItemManage {
         return this.meleeWeaponFolder;
     }
 
+    public String getProjectileWeaponFolder() {
+        return this.projectileWeaponFolder;
+    }
+
+    public String getGunWeaponFolder() {
+        return this.gunWeaponFolder;
+    }
+
     private void loadAllMeleeWeapon() {
         if (!new File(this.meleeWeaponFolder).exists()) {
             this.gunWar.saveResource("Items/Weapon/Melee/DemoMelee.yml", false);
