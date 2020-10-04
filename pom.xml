@@ -152,13 +152,6 @@
             <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>tip.Main</groupId>
-            <artifactId>Tips</artifactId>
-            <version>1.7.8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Tips_v1.7.8.jar</systemPath>
-        </dependency>
     </dependencies>
 
 </project>
