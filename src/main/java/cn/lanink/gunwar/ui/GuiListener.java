@@ -297,7 +297,7 @@ public class GuiListener implements Listener {
         player.sendMessage(name + " 创建成功！");
     }
 
-    public void adminItemAddWeaponGun(Player player, FormWindowCustom custom) {
+    private void adminItemAddWeaponGun(Player player, FormWindowCustom custom) {
         String name = custom.getResponse().getInputResponse(0);
         File file = new File(this.gunWar.getItemManage().getGunWeaponFolder() + "/" + name + ".yml");
         if (file.exists()) {

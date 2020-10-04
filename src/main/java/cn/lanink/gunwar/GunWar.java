@@ -1,5 +1,6 @@
 package cn.lanink.gunwar;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gunwar.command.AdminCommand;
@@ -238,7 +239,7 @@ public class GunWar extends PluginBase {
         getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
     }
 
-    private void loadRoom(String world) {
+    public void loadRoom(String world) {
         Config config = this.getRoomConfig(world);
         if (config.getInt("waitTime", 0) == 0 ||
                 config.getInt("gameTime", 0) == 0 ||
@@ -273,22 +274,19 @@ public class GunWar extends PluginBase {
     /**
      * 卸载所有房间
      */
-    public void unloadRooms() {
-        if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, BaseRoom> entry = it.next();
-                it.remove();
-                this.unloadRoom(entry.getKey());
-            }
-            this.rooms.clear();
+    public void unloadAllRoom() {
+        for (String world : new HashSet<>(this.rooms.keySet())) {
+            this.unloadRoom(world);
         }
+        this.rooms.clear();
         this.roomConfigs.clear();
     }
 
     public void unloadRoom(String world) {
         if (this.rooms.containsKey(world)) {
-            this.rooms.get(world).endGame();
+            BaseRoom room = this.rooms.get(world);
+            room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
+            room.endGame();
             this.rooms.remove(world);
             getLogger().info("§c房间：" + world + " 已卸载！");
         }
@@ -299,7 +297,7 @@ public class GunWar extends PluginBase {
      * 重载所有房间
      */
     public void reLoadRooms() {
-        this.unloadRooms();
+        this.unloadAllRoom();
         this.loadAllRoom();
     }
 
@@ -414,7 +412,7 @@ public class GunWar extends PluginBase {
         return getRoomConfig(level.getFolderName());
     }
 
-    private Config getRoomConfig(String level) {
+    public Config getRoomConfig(String level) {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }

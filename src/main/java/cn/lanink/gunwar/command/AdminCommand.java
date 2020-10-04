@@ -11,6 +11,7 @@ public class AdminCommand extends BaseCommand {
     public AdminCommand(String name) {
         super(name, "GunWar 管理命令");
         this.setPermission("GunWar.command.admin");
+        //游戏内使用命令不区分大小写！
         this.addSubCommand(new SetWaitSpawnCommand("setwaitspawn"));
         this.addSubCommand(new SetRedSpawnCommand("setredspawn"));
         this.addSubCommand(new SetBlueSpawnCommand("setbluespawn"));
