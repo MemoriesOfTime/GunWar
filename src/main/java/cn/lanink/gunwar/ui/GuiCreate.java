@@ -14,13 +14,19 @@ import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.scheduler.Task;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-
+/**
+ * @author lt_name
+ */
 public class GuiCreate {
 
     public static final String PLUGIN_NAME = "§l§7[§1G§2u§3n§4W§5a§6r§7]";
-    public static final HashMap<Player, HashMap<Integer, GuiType>> UI_CACHE = new HashMap<>();
+    public static final ConcurrentHashMap<Player, ConcurrentHashMap<Integer, GuiType>> UI_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 显示用户菜单
@@ -93,62 +99,62 @@ public class GuiCreate {
     }
 
     public static void sendAdminItemAddWeaponMenu(Player player) {
-        //TODO Language
+        Language language = GunWar.getInstance().getLanguage();
         FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton("添加近战类武器"));
-        simple.addButton(new ElementButton("添加抛掷类武器"));
-        simple.addButton(new ElementButton("添加远程类武器"));
+        simple.addButton(new ElementButton(language.gui_admin_item_add_weapon_melee));
+        simple.addButton(new ElementButton(language.gui_admin_item_add_weapon_projectile));
+        simple.addButton(new ElementButton(language.gui_admin_item_add_weapon_gun));
         showFormWindow(player, simple, GuiType.ADMIN_ITEM_ADD_WEAPON);
     }
 
     public static void sendAdminItemAddWeaponMeleeMenu(Player player) {
-        //TODO Language
+        Language language = GunWar.getInstance().getLanguage();
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput("物品名称", "", "Sword"));
-        custom.addElement(new ElementInput("物品显示名称", "", "a demo Sword"));
-        custom.addElement(new ElementInput("物品ID", "", "272:0"));
-        custom.addElement(new ElementInput("lore", "", "剑\n这是一个配置演示"));
-        custom.addElement(new ElementInput("最小伤害", "", "1"));
-        custom.addElement(new ElementInput("最大伤害", "", "2"));
-        custom.addElement(new ElementInput("攻击冷却(tick)", "", "20"));
-        custom.addElement(new ElementInput("击退", "", "0.3"));
-        custom.addElement(new ElementToggle("无限耐久"));
-        custom.addElement(new ElementInput("击杀提示", "", "%damager% --[+＝＝》 %player%"));
+        custom.addElement(new ElementInput(language.gui_admin_item_name, "", "Sword"));
+        custom.addElement(new ElementInput(language.gui_admin_item_showName, "", "a demo Sword"));
+        custom.addElement(new ElementInput(language.gui_admin_item_id, "", "272:0"));
+        custom.addElement(new ElementInput(language.gui_admin_item_lore, "", "剑\n这是一个配置演示"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_minDamage, "", "1"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_maxDamage, "", "2"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_attackCooldown, "", "20"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_knockBack, "", "0.3"));
+        custom.addElement(new ElementToggle(language.gui_admin_item_weapon_infiniteDurability));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_killMessage, "", "%damager% --[+＝＝》 %player%"));
         showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_MELEE);
     }
 
     public static void sendAdminItemAddWeaponProjectileMenu(Player player) {
-        //TODO Language
+        Language language = GunWar.getInstance().getLanguage();
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput("物品名称", "", "Grenade"));
-        custom.addElement(new ElementInput("物品显示名称", "", "a demo Grenade"));
-        custom.addElement(new ElementInput("物品ID", "", "344:0"));
-        custom.addElement(new ElementInput("lore", "", "手榴弹\n这是一个配置演示"));
-        custom.addElement(new ElementInput("最小伤害", "", "1"));
-        custom.addElement(new ElementInput("最大伤害", "", "2"));
-        custom.addElement(new ElementInput("粒子", "", "HugeExplodeSeedParticle@Vector3:pos"));
-        custom.addElement(new ElementInput("攻击冷却(tick)", "", "20"));
-        custom.addElement(new ElementInput("伤害范围", "", "5"));
-        custom.addElement(new ElementInput("击杀提示", "", "%damager% ☼ %player%"));
+        custom.addElement(new ElementInput(language.gui_admin_item_name, "", "Grenade"));
+        custom.addElement(new ElementInput(language.gui_admin_item_showName, "", "a demo Grenade"));
+        custom.addElement(new ElementInput(language.gui_admin_item_id, "", "344:0"));
+        custom.addElement(new ElementInput(language.gui_admin_item_lore, "", "手榴弹\n这是一个配置演示"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_minDamage, "", "1"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_maxDamage, "", "2"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_particle, "", "HugeExplodeSeedParticle@Vector3:pos"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_attackCooldown, "", "20"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_range, "", "5"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_killMessage, "", "%damager% ☼ %player%"));
         showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_PROJECTILE);
     }
 
     public static void sendAdminItemAddWeaponGunMenu(Player player) {
-        //TODO Language
+        Language language = GunWar.getInstance().getLanguage();
         FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput("物品名称", "", "Gun"));
-        custom.addElement(new ElementInput("物品显示名称", "", "a demo gun"));
-        custom.addElement(new ElementInput("物品ID", "", "290:0"));
-        custom.addElement(new ElementInput("lore", "", "枪\n这是一个配置演示"));
-        custom.addElement(new ElementInput("最小伤害", "", "1"));
-        custom.addElement(new ElementInput("最大伤害", "", "2"));
-        custom.addElement(new ElementInput("攻击冷却(tick)", "", "10"));
-        custom.addElement(new ElementInput("弹夹容量", "", "30"));
-        custom.addElement(new ElementInput("换弹时间", "", "5"));
-        custom.addElement(new ElementToggle("换弹允许中断"));
-        custom.addElement(new ElementInput("子弹重力", "", "0.03"));
-        custom.addElement(new ElementInput("子弹移动倍速", "", "1.5"));
-        custom.addElement(new ElementInput("击杀提示", "", "%damager% ︻┳═一 %player%"));
+        custom.addElement(new ElementInput(language.gui_admin_item_name, "", "Gun"));
+        custom.addElement(new ElementInput(language.gui_admin_item_showName, "", "a demo gun"));
+        custom.addElement(new ElementInput(language.gui_admin_item_id, "", "290:0"));
+        custom.addElement(new ElementInput(language.gui_admin_item_lore, "", "枪\n这是一个配置演示"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_minDamage, "", "1"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_maxDamage, "", "2"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_attackCooldown, "", "10"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_maxMagazine, "", "30"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_reloadTime, "", "5"));
+        custom.addElement(new ElementToggle(language.gui_admin_item_weapon_reloadInterrupted));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_bulletGravity, "", "0.03"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_bulletMotionMultiply, "", "1.5"));
+        custom.addElement(new ElementInput(language.gui_admin_item_weapon_killMessage, "", "%damager% ︻┳═一 %player%"));
         showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_GUN);
     }
 
@@ -265,9 +271,9 @@ public class GuiCreate {
     }
 
     public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
-        HashMap<Integer, GuiType> map;
+        ConcurrentHashMap<Integer, GuiType> map;
         if (!UI_CACHE.containsKey(player)) {
-            map = new HashMap<>();
+            map = new ConcurrentHashMap<>();
             UI_CACHE.put(player, map);
         }else {
             map = UI_CACHE.get(player);

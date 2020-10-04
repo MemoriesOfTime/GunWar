@@ -2,8 +2,14 @@ package cn.lanink.gunwar.utils;
 
 import cn.nukkit.utils.Config;
 
+/**
+ * @author lt_name
+ */
 public class Language {
 
+    /**
+     * 将配置读取成变量，防止使用时错误调用
+     */
     //TODO
     public String roomLevelBackupExist = "§a房间：%name% 检测到地图备份！";
     public String roomLevelBackupNotExist = "§a房间：%name% 地图备份不存在！无法还原地图！";
@@ -121,6 +127,31 @@ public class Language {
     public String joinRoomOK = "§l§a确认要加入房间: %name% §l§a？";
     public String buttonOK = "§a确定";
     public String buttonReturn = "§c返回";
+    //GUI 添加武器
+    public String gui_admin_item_add_weapon_melee = "添加近战类武器";
+    public String gui_admin_item_add_weapon_projectile = "添加抛掷类武器";
+    public String gui_admin_item_add_weapon_gun = "添加远程类武器";
+    public String gui_admin_item_name = "物品名称";
+    public String gui_admin_item_showName = "物品显示名称";
+    public String gui_admin_item_id = "物品ID";
+    public String gui_admin_item_lore = "物品lore";
+    public String gui_admin_item_weapon_minDamage = "最小伤害";
+    public String gui_admin_item_weapon_maxDamage = "最大伤害";
+    public String gui_admin_item_weapon_attackCooldown= "攻击冷却(tick)";
+    public String gui_admin_item_weapon_knockBack = "击退";
+    public String gui_admin_item_weapon_infiniteDurability = "无限耐久";
+    public String gui_admin_item_weapon_killMessage = "击杀提示";
+    public String gui_admin_item_weapon_particle = "粒子";
+    public String gui_admin_item_weapon_range = "伤害范围";
+    public String gui_admin_item_weapon_maxMagazine = "弹夹容量";
+    public String gui_admin_item_weapon_reloadTime = "换弹时间";
+    public String gui_admin_item_weapon_reloadInterrupted = "换弹允许中断";
+    public String gui_admin_item_weapon_bulletGravity = "子弹重力";
+    public String gui_admin_item_weapon_bulletMotionMultiply = "子弹移动倍速";
+    public String gui_admin_item_add_error_exist = "§c物品：%name% 已存在！";
+    public String gui_admin_item_add_error_var = "§c物品：%name% 参数：%var% 输入错误！";
+    public String gui_admin_item_add_success = "§a物品：%name% 添加成功！您可以通过配置文件修改更多内容！";
+    //GUI-排行榜
     public String recordListButton1 = "§e查看个人战绩";
     public String recordListButton2 = "§e查看击杀排行榜";
     public String recordListButton3 = "§e查看死亡排行榜";
@@ -232,6 +263,32 @@ public class Language {
         this.joinRoomOK = config.getString("joinRoomOK", this.joinRoomOK);
         this.buttonOK = config.getString("buttonOK", this.buttonOK);
         this.buttonReturn = config.getString("buttonReturn", this.buttonReturn);
+        //GUI 添加武器
+
+        this.gui_admin_item_add_weapon_melee = config.getString("gui_admin_item_add_weapon_melee", this.gui_admin_item_add_weapon_melee);
+        this.gui_admin_item_add_weapon_projectile = config.getString("gui_admin_item_add_weapon_projectile", this.gui_admin_item_add_weapon_projectile);
+        this.gui_admin_item_add_weapon_gun = config.getString("gui_admin_item_add_weapon_gun", this.gui_admin_item_add_weapon_gun);
+        this.gui_admin_item_name = config.getString("gui_admin_item_name", this.gui_admin_item_name);
+        this.gui_admin_item_showName = config.getString("gui_admin_item_showName", this.gui_admin_item_showName);
+        this.gui_admin_item_id = config.getString("gui_admin_item_id", this.gui_admin_item_id);
+        this.gui_admin_item_lore = config.getString("gui_admin_item_lore", this.gui_admin_item_lore);
+        this.gui_admin_item_weapon_minDamage = config.getString("gui_admin_item_weapon_minDamage", this.gui_admin_item_weapon_minDamage);
+        this.gui_admin_item_weapon_maxDamage = config.getString("gui_admin_item_weapon_maxDamage", this.gui_admin_item_weapon_maxDamage);
+        this.gui_admin_item_weapon_attackCooldown = config.getString("gui_admin_item_weapon_attackCooldown", this.gui_admin_item_weapon_attackCooldown);
+        this.gui_admin_item_weapon_knockBack = config.getString("gui_admin_item_weapon_knockBack", this.gui_admin_item_weapon_knockBack);
+        this.gui_admin_item_weapon_infiniteDurability = config.getString("gui_admin_item_weapon_infiniteDurability", this.gui_admin_item_weapon_infiniteDurability);
+        this.gui_admin_item_weapon_killMessage = config.getString("gui_admin_item_weapon_killMessage", this.gui_admin_item_weapon_killMessage);
+        this.gui_admin_item_weapon_particle = config.getString("gui_admin_item_weapon_particle", this.gui_admin_item_weapon_particle);
+        this.gui_admin_item_weapon_range = config.getString("gui_admin_item_weapon_range", this.gui_admin_item_weapon_range);
+        this.gui_admin_item_weapon_maxMagazine = config.getString("gui_admin_item_weapon_maxMagazine", this.gui_admin_item_weapon_maxMagazine);
+        this.gui_admin_item_weapon_reloadTime = config.getString("gui_admin_item_weapon_reloadTime", this.gui_admin_item_weapon_reloadTime);
+        this.gui_admin_item_weapon_reloadInterrupted = config.getString("gui_admin_item_weapon_reloadInterrupted", this.gui_admin_item_weapon_reloadInterrupted);
+        this.gui_admin_item_weapon_bulletGravity = config.getString("gui_admin_item_weapon_bulletGravity", this.gui_admin_item_weapon_bulletGravity);
+        this.gui_admin_item_weapon_bulletMotionMultiply = config.getString("gui_admin_item_weapon_bulletMotionMultiply", this.gui_admin_item_weapon_bulletMotionMultiply);
+        this.gui_admin_item_add_error_exist = config.getString("gui_admin_item_add_error_exist", this.gui_admin_item_add_error_exist);
+        this.gui_admin_item_add_error_var = config.getString("gui_admin_item_add_error_var", this.gui_admin_item_add_error_var);
+        this.gui_admin_item_add_success = config.getString("gui_admin_item_add_success", this.gui_admin_item_add_success);
+        //GUI 排行榜
         this.recordListButton1 = config.getString("recordListButton1", this.recordListButton1);
         this.recordListButton2 = config.getString("recordListButton2", this.recordListButton2);
         this.recordListButton3 = config.getString("recordListButton3", this.recordListButton3);
