@@ -1,7 +1,8 @@
 package cn.lanink.gunwar.tasks.game;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -15,67 +16,53 @@ import java.util.LinkedList;
 public class ScoreBoardTask extends PluginTask<GunWar> {
 
     private final Language language;
-    private final Room room;
-    private boolean use = false;
+    private final BaseRoom room;
 
-    public ScoreBoardTask(GunWar owner, Room room) {
+    public ScoreBoardTask(GunWar owner, BaseRoom room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
     }
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
             this.cancel();
             return;
         }
-        if (!use) {
-            use = true;
-            if (room.getPlayers().values().size() > 0) {
-                int red = 0, blue = 0;
-                for (int team : room.getPlayers().values()) {
-                    if (team == 1) {
-                        red++;
-                    }else if (team == 2) {
-                        blue++;
-                    }
-                }
-                for (Player player : room.getPlayers().keySet()) {
-                    LinkedList<String> ms = new LinkedList<>();
-                    String team;
-                    switch (room.getPlayerMode(player)) {
-                        case 1:
-                        case 11:
-                            team = language.teamNameRed;
-                            break;
-                        default:
-                            team = language.teamNameBlue;
-                            break;
-                    }
-                    for (String string : language.gameTimeScoreBoard.split("\n")) {
-                        ms.add(string.replace("%team%", team)
-                                .replace("%health%", room.getPlayerHealth().getOrDefault(player, 0F) + "")
-                                .replace("%time%", room.gameTime + "")
-                                .replace("%red%", red + "")
-                                .replace("%blue%", blue + "")
-                                .replace("%redRound%", room.redScore + "")
-                                .replace("%blueRound%", room.blueScore + ""));
-                    }
-                    owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+        if (this.room.getPlayers().size() > 0) {
+            int red = 0, blue = 0;
+            for (int team : this.room.getPlayers().values()) {
+                if (team == 1) {
+                    red++;
+                }else if (team == 2) {
+                    blue++;
                 }
             }
-            use = false;
+            for (Player player : this.room.getPlayers().keySet()) {
+                LinkedList<String> ms = new LinkedList<>();
+                String team;
+                switch (this.room.getPlayers(player)) {
+                    case 1:
+                    case 11:
+                        team = this.language.teamNameRed;
+                        break;
+                    default:
+                        team = this.language.teamNameBlue;
+                        break;
+                }
+                for (String string : this.language.gameTimeScoreBoard.split("\n")) {
+                    ms.add(string.replace("%team%", team)
+                            .replace("%health%", String.format("%.1f", room.getPlayerHealth().getOrDefault(player, 0F)))
+                            .replace("%time%", room.gameTime + "")
+                            .replace("%red%", red + "")
+                            .replace("%blue%", blue + "")
+                            .replace("%redRound%", room.redScore + "")
+                            .replace("%blueRound%", room.blueScore + ""));
+                }
+                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+            }
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

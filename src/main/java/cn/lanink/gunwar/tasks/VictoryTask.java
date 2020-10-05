@@ -1,8 +1,7 @@
 package cn.lanink.gunwar.tasks;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.event.GunWarRoomEndEvent;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
@@ -17,13 +16,12 @@ import java.util.Map;
 public class VictoryTask extends PluginTask<GunWar> {
 
     private final Language language;
-    private final Room room;
+    private final BaseRoom room;
     private final int victory;
     private int victoryTime;
 
-    public VictoryTask(GunWar owner, Room room, int victory) {
+    public VictoryTask(GunWar owner, BaseRoom room, int victory) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.language = owner.getLanguage();
         this.room = room;
         this.victoryTime = 10;
@@ -55,13 +53,12 @@ public class VictoryTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 3) {
+        if (this.room.getStatus() != 3) {
             this.cancel();
             return;
         }
         if (this.victoryTime < 1) {
-            owner.getServer().getPluginManager().callEvent(new GunWarRoomEndEvent(this.room, this.victory));
-            this.room.endGame();
+            this.room.endGame(this.victory);
             this.cancel();
         }else {
             this.victoryTime--;
@@ -83,14 +80,6 @@ public class VictoryTask extends PluginTask<GunWar> {
                 }
             }
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

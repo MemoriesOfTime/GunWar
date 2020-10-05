@@ -5,6 +5,7 @@ import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.utils.Config;
 
 public class SetGameTimeCommand extends BaseSubCommand {
 
@@ -28,7 +29,9 @@ public class SetGameTimeCommand extends BaseSubCommand {
             if (args[1].matches("[0-9]*")) {
                 if (Integer.parseInt(args[1]) > 60) {
                     Player player = (Player) sender;
-                    this.gunWar.roomSetGameTime(Integer.parseInt(args[1]), this.gunWar.getRoomConfig(player.getLevel()));
+                    Config config = this.gunWar.getRoomConfig(player.getLevel());
+                    config.set("gameTime", Integer.parseInt(args[1]));
+                    config.save();
                     sender.sendMessage(this.language.adminSetGameTime.replace("%time%", args[1]));
                 } else {
                     sender.sendMessage(this.language.adminSetGameTimeShort);

@@ -1,6 +1,6 @@
 package cn.lanink.gunwar.event;
 
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -15,7 +15,7 @@ public class GunWarPlayerDamageEvent extends GunWarRoomPlayerEvent  implements C
         return handlers;
     }
 
-    public GunWarPlayerDamageEvent(Room room, Player player, Player damagePlayer, float damage) {
+    public GunWarPlayerDamageEvent(BaseRoom room, Player player, Player damagePlayer, float damage) {
         this.room = room;
         this.player = player;
         this.damagePlayer = damagePlayer;

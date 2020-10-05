@@ -1,142 +1,28 @@
 package cn.lanink.gunwar.tasks.game;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.event.GunWarPlayerRespawnEvent;
-import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
-import cn.lanink.gunwar.room.Room;
-import cn.lanink.gunwar.tasks.VictoryTask;
-import cn.lanink.gunwar.utils.Tools;
-import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.level.Sound;
+import cn.lanink.gunwar.room.base.ITimeTask;
 import cn.nukkit.scheduler.PluginTask;
-import cn.nukkit.scheduler.Task;
-
-import java.util.Map;
 
 /**
  * 游戏时间计算
  */
 public class TimeTask extends PluginTask<GunWar> {
 
-    private final Room room;
-    private boolean use = false;
+    private final ITimeTask task;
 
-    public TimeTask(GunWar owner, Room room) {
+    public TimeTask(GunWar owner, ITimeTask task) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
-        this.room = room;
+        this.task = task;
     }
 
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.task.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
             this.cancel();
             return;
         }
-        if (this.room.getPlayers().size() < 1) {
-            this.room.endGame(true);
-            this.cancel();
-            return;
-        }
-        if (this.room.gameTime > 0) {
-            this.room.gameTime--;
-        }else {
-            this.callGunWarRoomRoundEndEvent(0);
-            this.room.gameTime = this.room.getSetGameTime();
-        }
-        if (!use) {
-            use = true;
-            int red = 0, blue = 0;
-            switch (this.room.getGameMode()) {
-                case CTF:
-                    for (Map.Entry<Player, Integer> entry : this.room.getPlayerRespawnTime().entrySet()) {
-                        if (entry.getValue() > 0) {
-                            entry.setValue(entry.getValue() - 1);
-                            if (entry.getValue() == 0) {
-                                owner.getServer().getScheduler().scheduleTask(owner, new Task() {
-                                    @Override
-                                    public void onRun(int i) {
-                                        owner.getServer().getPluginManager().callEvent(
-                                                new GunWarPlayerRespawnEvent(room, entry.getKey()));
-                                    }
-                                });
-                            }else if (entry.getValue() <= 5) {
-                                Tools.addSound(entry.getKey(), Sound.RANDOM_CLICK);
-                            }
-                        }
-                    }
-                    if (room.redScore >= room.victoryScore) {
-                        room.setMode(3);
-                        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                                owner, new VictoryTask(owner, room, 1), 20);
-                        return;
-                    }
-                    if (room.blueScore >= room.victoryScore) {
-                        room.setMode(3);
-                        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                                owner, new VictoryTask(owner, room, 2), 20);
-                        return;
-                    }
-                    for (int team : this.room.getPlayers().values()) {
-                        switch (team) {
-                            case 1:
-                            case 11:
-                                red++;
-                                break;
-                            case 2:
-                            case 12:
-                                blue++;
-                                break;
-                        }
-                    }
-                    if (red == 0) {
-                        room.setMode(3);
-                        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                                owner, new VictoryTask(owner, room, 2), 20);
-                    } else if (blue == 0) {
-                        room.setMode(3);
-                        Server.getInstance().getScheduler().scheduleRepeatingTask(
-                                owner, new VictoryTask(owner, room, 1), 20);
-                    }
-                    break;
-                case CLASSIC:
-                default:
-                    for (int team : this.room.getPlayers().values()) {
-                        if (team == 1) {
-                            red++;
-                        } else if (team == 2) {
-                            blue++;
-                        }
-                    }
-                    if (red == 0) {
-                        this.callGunWarRoomRoundEndEvent(2);
-                        this.room.gameTime = this.room.getSetGameTime();
-                    } else if (blue == 0) {
-                        this.callGunWarRoomRoundEndEvent(1);
-                        this.room.gameTime = this.room.getSetGameTime();
-                    }
-                    break;
-            }
-
-            use = false;
-        }
-    }
-
-    public void callGunWarRoomRoundEndEvent(int victory) {
-        Server.getInstance().getScheduler().scheduleTask(owner, new Task() {
-            @Override
-            public void onRun(int i) {
-                Server.getInstance().getPluginManager().callEvent(new GunWarRoomRoundEndEvent(room, victory));
-            }
-        });
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
+        this.task.timeTask();
     }
 
 }
