@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.command.adminsub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -28,9 +28,9 @@ public class StopRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        Room room = this.gunWar.getRooms().get(player.getLevel().getName());
+        BaseRoom room = this.gunWar.getRooms().get(player.getLevel().getFolderName());
         if (room != null) {
-            room.endGame(true);
+            room.endGame();
             sender.sendMessage(this.language.adminStopRoom);
         }else {
             sender.sendMessage(this.language.adminLevelNoRoom);

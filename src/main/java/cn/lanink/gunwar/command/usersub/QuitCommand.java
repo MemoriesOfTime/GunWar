@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.command.usersub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -25,9 +25,9 @@ public class QuitCommand extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        for (Room room : this.gunWar.getRooms().values()) {
+        for (BaseRoom room : this.gunWar.getRooms().values()) {
             if (room.isPlaying(player)) {
-                room.quitRoom(player, true);
+                room.quitRoom(player);
                 return true;
             }
         }

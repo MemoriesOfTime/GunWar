@@ -3,7 +3,7 @@ package cn.lanink.gunwar.tasks.game;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.math.Vector3;
@@ -15,17 +15,16 @@ import cn.nukkit.scheduler.PluginTask;
  */
 public class FlagTask extends PluginTask<GunWar> {
 
-    private final Room room;
+    private final CTFModeRoom room;
 
-    public FlagTask(GunWar owner, Room room) {
+    public FlagTask(GunWar owner, CTFModeRoom room) {
         super(owner);
-        owner.taskList.add(this.getTaskId());
         this.room = room;
     }
 
     @Override
     public void onRun(int i) {
-        if (this.room.getMode() != 2) {
+        if (this.room.getStatus() != 2) {
             this.cancel();
             return;
         }
@@ -101,14 +100,6 @@ public class FlagTask extends PluginTask<GunWar> {
             this.room.blueFlag.setPosition(new Vector3(p.getX(),
                     p.getY() + p.getEyeHeight() + 0.5, p.getZ()));
         }
-    }
-
-    @Override
-    public void cancel() {
-        while (owner.taskList.contains(this.getTaskId())) {
-            owner.taskList.remove(this.getTaskId());
-        }
-        super.cancel();
     }
 
 }

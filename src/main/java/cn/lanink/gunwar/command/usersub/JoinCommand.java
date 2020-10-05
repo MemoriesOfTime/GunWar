@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.command.usersub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -31,15 +31,15 @@ public class JoinCommand extends BaseSubCommand {
                 sender.sendMessage(this.language.joinRoomIsRiding);
                 return true;
             }
-            for (Room room : this.gunWar.getRooms().values()) {
+            for (BaseRoom room : this.gunWar.getRooms().values()) {
                 if (room.isPlaying(player)) {
                     sender.sendMessage(this.language.joinRoomIsInRoom);
                     return true;
                 }
             }
             if (args.length < 2) {
-                for (Room room : this.gunWar.getRooms().values()) {
-                    if ((room.getMode() == 0 || room.getMode() == 1) && room.getPlayers().size() < 10) {
+                for (BaseRoom room : this.gunWar.getRooms().values()) {
+                    if (room.canJoin()) {
                         room.joinRoom(player);
                         sender.sendMessage(this.language.joinRandomRoom);
                         return true;
@@ -49,9 +49,9 @@ public class JoinCommand extends BaseSubCommand {
                 String[] s = args[1].split(":");
                 if (s.length == 2 && s[0].toLowerCase().trim().equals("mode")) {
                     String modeName = s[1].toLowerCase().trim();
-                    for (Room room : this.gunWar.getRooms().values()) {
-                        if ((room.getMode() == 0 || room.getMode() == 1) && room.getPlayers().size() < 10) {
-                            if (room.getGameMode().getName().equals(modeName)) {
+                    for (BaseRoom room : this.gunWar.getRooms().values()) {
+                        if (room.canJoin()) {
+                            if (room.getGameMode().equals(modeName)) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.language.joinRandomRoom);
                                 return true;
@@ -61,10 +61,10 @@ public class JoinCommand extends BaseSubCommand {
                     sender.sendMessage(this.language.joinRoomIsNotFound);
                     return true;
                 }else if (this.gunWar.getRooms().containsKey(args[1])) {
-                    Room room = this.gunWar.getRooms().get(args[1]);
-                    if (room.getMode() == 2 || room.getMode() == 3) {
+                    BaseRoom room = this.gunWar.getRooms().get(args[1]);
+                    if (room.getStatus() != 0 && room.getStatus() != 1) {
                         sender.sendMessage(this.language.joinRoomIsPlaying);
-                    } else if (room.getPlayers().size() >= 10) {
+                    } else if (room.getPlayers().size() >= room.getMaxPlayers()) {
                         sender.sendMessage(this.language.joinRoomIsFull);
                     } else {
                         room.joinRoom(player);

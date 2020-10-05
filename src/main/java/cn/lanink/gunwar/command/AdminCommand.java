@@ -11,6 +11,7 @@ public class AdminCommand extends BaseCommand {
     public AdminCommand(String name) {
         super(name, "GunWar 管理命令");
         this.setPermission("GunWar.command.admin");
+        //游戏内使用命令不区分大小写！
         this.addSubCommand(new SetWaitSpawnCommand("setwaitspawn"));
         this.addSubCommand(new SetRedSpawnCommand("setredspawn"));
         this.addSubCommand(new SetBlueSpawnCommand("setbluespawn"));
@@ -18,10 +19,13 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new SetGameTimeCommand("setgametime"));
         this.addSubCommand(new SetVictoryScore("setvictoryscore"));
         this.addSubCommand(new SetGameMode("setgamemode"));
+        this.addSubCommand(new SetMinPlayers("setminplayers"));
+        this.addSubCommand(new SetMaxPlayers("setmaxplayers"));
         this.addSubCommand(new StartRoom("startroom"));
         this.addSubCommand(new StopRoom("stoproom"));
         this.addSubCommand(new ReloadCommand("reloadroom"));
         this.addSubCommand(new UnloadCommand("unloadroom"));
+        this.addSubCommand(new AddWeapon("AddWeapon"));
         this.loadCommandBase();
     }
 

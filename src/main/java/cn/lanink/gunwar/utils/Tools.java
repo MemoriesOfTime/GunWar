@@ -4,7 +4,9 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.item.base.BaseItem;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -35,6 +37,46 @@ import java.util.Random;
 
 
 public class Tools {
+
+    public static String getShowStringMagazine(int now, int max) {
+        StringBuilder string = new StringBuilder("§e" + now + "/" + max + "  ");
+        for (int j = 0; j < max; j++) {
+            if (j < now) {
+                string.append("§a▍");
+            }else {
+                string.append("§c▍");
+            }
+        }
+        return string.toString();
+    }
+
+    public static void sendMessage(BaseRoom room, String message) {
+        for (Player player : room.getPlayers().keySet()) {
+            player.sendMessage(message);
+        }
+    }
+
+    public static void sendRoundVictoryTitle(BaseRoom room, int v) {
+        for (Player player : room.getPlayers().keySet()) {
+            String title;
+            switch (v) {
+                case 1:
+                    title = GunWar.getInstance().getLanguage().roundVictoryRed;
+                    break;
+                case 2:
+                    title = GunWar.getInstance().getLanguage().roundVictoryBlue;
+                    break;
+                default:
+                    title = GunWar.getInstance().getLanguage().roundVictoryDraw;
+                    break;
+            }
+            player.sendTitle(title, "", 10, 20, 10);
+        }
+    }
+
+    public static double randomDouble(double min, double max) {
+        return min + ((max - min) * GunWar.RANDOM.nextDouble());
+    }
 
     /**
      * 执行命令
@@ -80,16 +122,54 @@ public class Tools {
 
     /**
      * 给装备
+     * @param room 房间
      * @param player 玩家
      * @param team 所属队伍
      */
-    public static void giveItem(Player player, int team) {
+    public static void giveItem(BaseRoom room, Player player, int team) {
         player.getInventory().setArmorContents(getArmors(team));
-        player.getInventory().addItem(Item.get(272, 0, 1),
-                Item.get(261, 0, 1),
-                Item.get(262, 0, 5),
-                Item.get(332, 0, 64),
-                getItem(4), getItem(5));
+        for (String string : room.getInitialItems()) {
+            try {
+                String[] s1 = string.split("&");
+                String[] s2 = s1[1].split("@");
+                int count = Integer.parseInt(s2[0]);
+                Item item = null;
+                if ("item".equalsIgnoreCase(s2[1])) {
+                    String[] s3 = s1[0].split(":");
+                    if (s3.length > 1) {
+                        item = Item.get(Integer.parseInt(s3[0]), Integer.parseInt(s3[1]));
+                    }else {
+                        item = Item.get(Integer.parseInt(s3[0]), 0);
+                    }
+                }else {
+                    BaseItem baseItem = null;
+                    switch (ItemManage.getItemType(s2[1])) {
+                        case WEAPON_MELEE:
+                            baseItem = ItemManage.getMeleeWeaponMap().get(s1[0]);
+                            break;
+                        case WEAPON_PROJECTILE:
+                            baseItem = ItemManage.getProjectileWeaponMap().get(s1[0]);
+                            break;
+                        case WEAPON_GUN:
+                            baseItem = ItemManage.getGunWeaponMap().get(s1[0]);
+                            break;
+                    }
+                    if (baseItem != null) {
+                        item = baseItem.getItem();
+                    }
+                }
+                if (item != null) {
+                    item.setCount(count);
+                    player.getInventory().addItem(item);
+                    if (GunWar.debug) {
+                        GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
+                                "物品：" + item.getCustomName() + "数量：" + count);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -124,20 +204,6 @@ public class Tools {
         Language language = GunWar.getInstance().getLanguage();
         Item item = Item.get(0);
         switch (type) {
-            case 4:
-                item = Item.get(344, 0, 1);
-                item.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 4));
-                item.setCustomName(language.itemGrenade);
-                item.setLore(language.itemGrenadeLore.split("\n"));
-                return item;
-            case 5:
-                item = Item.get(344, 0, 1);
-                item.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 5));
-                item.setCustomName(language.itemFlashBang);
-                item.setLore(language.itemFlashBangLore.split("\n"));
-                return item;
             case 10:
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
@@ -193,12 +259,10 @@ public class Tools {
         if (joinRoom) {
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
-            player.setAllowModifyWorld(false);
         }else {
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
-            player.setAllowModifyWorld(true);
         }
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
     }
@@ -208,7 +272,7 @@ public class Tools {
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(Room room, Sound sound) {
+    public static void addSound(BaseRoom room, Sound sound) {
         room.getPlayers().keySet().forEach(player -> addSound(player, sound));
     }
 

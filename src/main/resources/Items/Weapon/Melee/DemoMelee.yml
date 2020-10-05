@@ -1,0 +1,15 @@
+showName: "a demo sword"
+id: "272:0"
+lore: |-
+  damage: 1-2
+  这是一个配置演示
+  this is a configuration demo
+damage: "1-2"
+effect: []
+attackCooldown: 20 #tick
+knockBack: 0.3
+infiniteDurability: true
+enchantment:
+  - id: 17
+    level: 1
+killMessage: "%damager% --[+＝＝》 %player%"

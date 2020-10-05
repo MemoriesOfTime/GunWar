@@ -1,19 +1,18 @@
 package cn.lanink.gunwar.event;
 
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
-import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 import java.util.LinkedList;
 import java.util.Map;
 
-public class GunWarRoomEndEvent extends GunWarRoomEvent implements Cancellable {
+public class GunWarRoomEndEvent extends GunWarRoomEvent {
 
     private static final HandlerList handlers = new HandlerList();
     private int victory;
 
-    public GunWarRoomEndEvent(Room room, int victory) {
+    public GunWarRoomEndEvent(BaseRoom room, int victory) {
         this.room = room;
         this.victory = victory;
     }

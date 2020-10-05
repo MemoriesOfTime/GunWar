@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.command.adminsub;
 
+import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.command.base.BaseSubCommand;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
@@ -29,21 +30,14 @@ public class SetGameMode extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         if (args.length == 2) {
-            if (args[1].matches("[0-9]*")) {
+            if (GunWar.getRoomClass().containsKey(args[1])) {
                 Player player = (Player) sender;
-                int mode = Integer.parseInt(args[1]);
                 Config config = this.gunWar.getRoomConfig(player.getLevel());
-                config.set("gameMode", mode);
+                config.set("gameMode", args[1]);
                 config.save();
-                if (mode == 1) {
-                    sender.sendMessage(this.language.adminSetGameMode
-                            .replace("%roomMode%", this.language.captureTheFlag));
-                }else {
-                    sender.sendMessage(this.language.adminSetGameMode
-                            .replace("%roomMode%", this.language.classic));
-                }
+                sender.sendMessage(this.language.adminSetGameMode.replace("%roomMode%", args[1]));
             }else {
-                sender.sendMessage(this.language.adminNotNumber);
+                //TODO
             }
         }else {
             sender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.getName()));

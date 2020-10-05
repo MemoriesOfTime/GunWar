@@ -1,17 +1,21 @@
 package cn.lanink.gunwar;
 
+import cn.lanink.gamecore.room.IRoomStatus;
+import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
+import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
-import cn.lanink.gunwar.lib.scoreboard.IScoreboard;
-import cn.lanink.gunwar.lib.scoreboard.ScoreboardDe;
-import cn.lanink.gunwar.lib.scoreboard.ScoreboardGt;
-import cn.lanink.gunwar.listener.*;
-import cn.lanink.gunwar.room.Room;
+import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.listener.base.BaseGameListener;
+import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
+import cn.lanink.gunwar.listener.defaults.*;
+import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
+import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.ui.GuiListener;
-import cn.lanink.gunwar.ui.GuiType;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
-import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -22,58 +26,75 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class GunWar extends PluginBase {
 
-    public static final String VERSION = "1.0.4-SNAPSHOT git-35ac3cd";
+    public static final String VERSION = "?";
+    public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
-    private final LinkedHashMap<String, Room> rooms = new LinkedHashMap<>();
+
+    private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
+    private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
+
+    private final HashMap<String, BaseGameListener> gameListeners = new HashMap<>();
+    private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private String cmdUser, cmdAdmin;
     private final Skin corpseSkin = new Skin();
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
-    public final LinkedList<Integer> taskList = new LinkedList<>();
-    private final HashMap<Integer, GuiType> guiCache = new HashMap<>();
     private IScoreboard scoreboard;
+    private ItemManage itemManage;
     private boolean hasTips = false;
+    public static boolean debug = false;
+
+    private String serverWorldPath;
+    private String worldBackupPath;
+    private String roomConfigPath;
+
+    private boolean restoreWorld = false;
 
     public static GunWar getInstance() { return gunWar; }
 
     @Override
-    public void onEnable() {
-        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        if (gunWar == null) gunWar = this;
-        getLogger().info("§l§e版本: " + VERSION);
-        saveDefaultConfig();
+    public void onLoad() {
+        gunWar = this;
+
+        this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
+        this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
+        this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+        this.saveDefaultConfig();
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         File file3 = new File(this.getDataFolder() + "/Language");
         if (!file1.exists() && !file1.mkdirs()) {
-            getLogger().error("Rooms 文件夹初始化失败");
+            this.getLogger().error("Rooms 文件夹初始化失败");
         }
         if (!file2.exists() && !file2.mkdirs()) {
-            getLogger().error("PlayerInventory 文件夹初始化失败");
+            this.getLogger().error("PlayerInventory 文件夹初始化失败");
         }
         if (!file3.exists() && !file3.mkdirs()) {
-            getLogger().warning("Language 文件夹初始化失败");
+            this.getLogger().warning("Language 文件夹初始化失败");
         }
-        //加载计分板
-        try {
-            Class.forName("de.theamychan.scoreboard.ScoreboardPlugin");
-            this.scoreboard = new ScoreboardDe();
-        } catch (ClassNotFoundException e) {
-            try {
-                Class.forName("gt.creeperface.nukkit.scoreboardapi.ScoreboardAPI");
-                this.scoreboard = new ScoreboardGt();
-            } catch (ClassNotFoundException ignored) {
-                getLogger().error("请安装ScoreboardAPI插件！");
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
-        }
+
+        registerListener("RoomLevelProtection", RoomLevelProtection.class);
+        registerListener("DefaultChatListener", DefaultChatListener.class);
+        registerListener("DefaultGameListener", DefaultGameListener.class);
+        registerListener("DefaultDamageListener", DefaultDamageListener.class);
+        registerListener("CTFDamageListener", CTFDamageListener.class);
+
+        registerRoom("classic", ClassicModeRoom.class);
+        registerRoom("ctf", CTFModeRoom.class);
+    }
+
+    @Override
+    public void onEnable() {
+        this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        this.getLogger().info("§l§e版本: " + VERSION);
+        this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
             Class.forName("tip.Main");
@@ -85,47 +106,86 @@ public class GunWar extends PluginBase {
 
         }
         this.config = new Config(getDataFolder() + "/config.yml", 2);
+        if (this.config.getBoolean("debug", false)) {
+            debug = true;
+            this.getLogger().warning("警告：您开启了debug模式！");
+            this.getLogger().warning("Warning: You have turned on debug mode!");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+        this.restoreWorld = this.config.getBoolean("restoreWorld");
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
         this.loadResources();
-        getLogger().info("§e开始加载房间");
-        this.loadRooms();
-        this.cmdUser = this.config.getString("插件命令", "gunwar");
-        this.cmdAdmin = this.config.getString("管理命令", "gunwaradmin");
-        getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
-        getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
-        getServer().getPluginManager().registerEvents(new RoomLevelProtection(), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(), this);
-        getServer().getPluginManager().registerEvents(new PlayerGameListener(this), this);
-        getServer().getPluginManager().registerEvents(new PlayerDamageListener(this), this);
-        getServer().getPluginManager().registerEvents(new GunWarListener(this), this);
-        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
-        new MetricsLite(this, 7448);
-        getLogger().info("§e插件加载完成！欢迎使用！");
+        this.getLogger().info("§e开始加载物品");
+        this.itemManage = new ItemManage(this);
+        this.cmdUser = this.config.getString("cmdUser", "gunwar");
+        this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");
+        this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
+        this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
+        this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.loadAllListener();
+        this.loadAllRoom();
+        try {
+            new MetricsLite(this, 7448);
+        } catch (Exception ignored) {
+
+        }
+        this.getLogger().info("§e插件加载完成！欢迎使用！");
     }
 
     @Override
     public void onDisable() {
         this.gameRecord.save();
-        if (this.rooms.values().size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
+        if (this.rooms.size() > 0) {
+            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
             while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
+                Map.Entry<String, BaseRoom> entry = it.next();
                 if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGame(false);
-                    getLogger().info("§c房间：" + entry.getKey() + " 非正常结束！");
-                }else {
-                    getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
+                    entry.getValue().endGame();
                 }
+                getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
                 it.remove();
             }
         }
         this.rooms.clear();
         this.roomConfigs.clear();
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
-        }
-        this.taskList.clear();
         getLogger().info("§c插件卸载完成！");
+    }
+
+    public static void registerListener(String name, Class<? extends BaseGameListener> listenerClass) {
+        LISTENER_CLASS.put(name, listenerClass);
+    }
+
+    public static HashMap<String, Class<? extends BaseGameListener>> getListenerClass() {
+        return LISTENER_CLASS;
+    }
+
+    public static void registerRoom(String name, Class<? extends BaseRoom> roomClass) {
+        ROOM_CLASS.put(name, roomClass);
+    }
+
+    public static LinkedHashMap<String, Class<? extends BaseRoom>> getRoomClass() {
+        return ROOM_CLASS;
+    }
+
+    public String getServerWorldPath() {
+        return this.serverWorldPath;
+    }
+
+    public String getWorldBackupPath() {
+        return this.worldBackupPath;
+    }
+
+    public String getRoomConfigPath() {
+        return this.roomConfigPath;
+    }
+
+    public boolean isRestoreWorld() {
+        return this.restoreWorld;
     }
 
     public Language getLanguage() {
@@ -136,67 +196,115 @@ public class GunWar extends PluginBase {
         return this.scoreboard;
     }
 
-    public LinkedHashMap<String, Room> getRooms() {
+    public ItemManage getItemManage() {
+        return this.itemManage;
+    }
+
+    public HashMap<String, BaseGameListener> getGameListeners() {
+        return this.gameListeners;
+    }
+
+    public LinkedHashMap<String, BaseRoom> getRooms() {
         return this.rooms;
+    }
+
+    public void loadAllListener() {
+        for (Map.Entry<String, Class<? extends BaseGameListener>> entry : LISTENER_CLASS.entrySet()) {
+            try {
+                Constructor<? extends BaseGameListener> constructor = entry.getValue().getConstructor();
+                BaseGameListener gameListener = constructor.newInstance();
+                gameListener.init(entry.getKey());
+                this.loadListener(gameListener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void loadListener(BaseGameListener gameListener) {
+        this.gameListeners.put(gameListener.getListenerName(), gameListener);
+        this.getServer().getPluginManager().registerEvents(gameListener, this);
+        if (GunWar.debug) {
+            this.getLogger().info("[debug] registerListener: " + gameListener.getListenerName());
+        }
     }
 
     /**
      * 加载所有房间
      */
-    private void loadRooms() {
+    private void loadAllRoom() {
         File[] s = new File(getDataFolder() + "/Rooms").listFiles();
         if (s != null) {
             for (File file1 : s) {
                 String[] fileName = file1.getName().split("\\.");
                 if (fileName.length > 0) {
-                    Config config = getRoomConfig(fileName[0]);
-                    if (config.getInt("waitTime", 0) == 0 ||
-                            config.getInt("gameTime", 0) == 0 ||
-                            config.getString("World", "").trim().equals("") ||
-                            config.getString("waitSpawn", "").trim().equals("") ||
-                            config.getString("redSpawn", "").trim().equals("") ||
-                            config.getString("blueSpawn", "").trim().equals("")) {
-                        getLogger().warning("§c房间：" + fileName[0] + " 配置不完整，加载失败！");
-                        continue;
-                    }
-                    Room room = new Room(config);
-                    this.rooms.put(fileName[0], room);
-                    getLogger().info("§a房间：" + fileName[0] + " 已加载！");
+                    this.loadRoom(fileName[0]);
                 }
             }
         }
         getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
     }
 
+    public void loadRoom(String world) {
+        Config config = this.getRoomConfig(world);
+        if (config.getInt("waitTime", 0) == 0 ||
+                config.getInt("gameTime", 0) == 0 ||
+                "".equals(config.getString("waitSpawn", "").trim()) ||
+                "".equals(config.getString("redSpawn", "").trim()) ||
+                "".equals(config.getString("blueSpawn", "").trim()) ||
+                "".equals(config.getString("gameMode", "").trim())) {
+            getLogger().warning("§c房间：" + world + " 配置不完整，加载失败！");
+            return;
+        }
+        if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
+            getLogger().warning("§c房间：" + world + " 地图加载失败！");
+            return;
+        }
+
+        String gameMode = config.getString("gameMode", "classic");
+        if (!ROOM_CLASS.containsKey(gameMode)) {
+            getLogger().warning("§c房间：" + world + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
+            return;
+        }
+        try {
+            Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
+            BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
+            baseRoom.setGameMode(gameMode);
+            this.rooms.put(world, baseRoom);
+            getLogger().info("§a房间：" + world + " 已加载！");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 卸载所有房间
      */
-    public void unloadRooms() {
-        if (this.rooms.values().size() > 0) {
-            Iterator<Map.Entry<String, Room>> it = this.rooms.entrySet().iterator();
-            while(it.hasNext()){
-                Map.Entry<String, Room> entry = it.next();
-                entry.getValue().endGame();
-                getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
-                it.remove();
-            }
-            this.rooms.clear();
+    public void unloadAllRoom() {
+        for (String world : new HashSet<>(this.rooms.keySet())) {
+            this.unloadRoom(world);
         }
-        if (this.roomConfigs.values().size() > 0) {
-            this.roomConfigs.clear();
+        this.rooms.clear();
+        this.roomConfigs.clear();
+    }
+
+    public void unloadRoom(String world) {
+        if (this.rooms.containsKey(world)) {
+            BaseRoom room = this.rooms.get(world);
+            room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
+            room.endGame();
+            this.rooms.remove(world);
+            getLogger().info("§c房间：" + world + " 已卸载！");
         }
-        for (int id : this.taskList) {
-            getServer().getScheduler().cancelTask(id);
-        }
-        this.taskList.clear();
+        this.roomConfigs.remove(world);
     }
 
     /**
      * 重载所有房间
      */
     public void reLoadRooms() {
-        this.unloadRooms();
-        this.loadRooms();
+        this.unloadAllRoom();
+        this.loadAllRoom();
     }
 
     private void loadResources() {
@@ -296,10 +404,6 @@ public class GunWar extends PluginBase {
         return this.cmdAdmin;
     }
 
-    public HashMap<Integer, GuiType> getGuiCache() {
-        return this.guiCache;
-    }
-
     public Skin getCorpseSkin() {
         return this.corpseSkin;
     }
@@ -313,46 +417,16 @@ public class GunWar extends PluginBase {
     }
 
     public Config getRoomConfig(Level level) {
-        return getRoomConfig(level.getName());
+        return getRoomConfig(level.getFolderName());
     }
 
-    private Config getRoomConfig(String level) {
+    public Config getRoomConfig(String level) {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
         Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
         this.roomConfigs.put(level, config);
         return config;
-    }
-
-    public void roomSetWaitSpawn(Player player, Config config) {
-        String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
-        String world = player.getLevel().getName();
-        config.set("World", world);
-        config.set("waitSpawn", spawn);
-        config.save();
-    }
-
-    public void roomSetRedSpawn(Player player, Config config) {
-        String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
-        config.set("redSpawn", spawn);
-        config.save();
-    }
-
-    public void roomSetBlueSpawn(Player player, Config config) {
-        String spawn = player.getFloorX() + ":" + player.getFloorY() + ":" + player.getFloorZ();
-        config.set("blueSpawn", spawn);
-        config.save();
-    }
-
-    public void roomSetWaitTime(Integer waitTime, Config config) {
-        config.set("waitTime", waitTime);
-        config.save();
-    }
-
-    public void roomSetGameTime(Integer gameTime, Config config) {
-        config.set("gameTime", gameTime);
-        config.save();
     }
 
 }
