@@ -11,6 +11,7 @@ public class Language {
      * 将配置读取成变量，防止使用时错误调用
      */
     //TODO
+    public String roomLevelBackup = "§a房间：%name% 未检测到地图备份，正在备份地图中...";
     public String roomLevelBackupExist = "§a房间：%name% 检测到地图备份！";
     public String roomLevelBackupNotExist = "§a房间：%name% 地图备份不存在！无法还原地图！";
     public String roomLevelRestoreLevelFailure = "§c房间：%name% 地图还原失败！";
@@ -48,7 +49,8 @@ public class Language {
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
             "§a/%cmdName% stoproom §e强制关闭所在地图的房间 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n" +
-            "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置";
+            "§a/%cmdName% unloadroom §e关闭所有房间,并卸载配置 \n" +
+            "§a/%cmdName% AddWeapon §e打开添加武器界面 ";
     public String adminSetWaitSpawn = "§a等待出生点设置成功！";
     public String adminSetRedSpawn = "§a红队出生点设置成功！";
     public String adminSetBlueSpawn = "§a蓝队出生点设置成功！";

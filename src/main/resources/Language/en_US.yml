@@ -37,6 +37,7 @@ adminHelp: |-
   §a/%cmdName% stoproom §eForcibly close the room in the location map
   §a/%cmdName% reloadroom §eReload all the rooms
   §a/%cmdName% unloadroom §eClose all rooms and uninstall config
+  §a/%cmdName% AddWeapon §eOpen the add weapon gui
 adminSetWaitSpawn: "§aWait for the spawn point to be set successfully!"
 adminSetRedSpawn: "§aThe red team spawn point is set successfully!"
 adminSetBlueSpawn: "§aThe blue team's spawn point is set successfully!"

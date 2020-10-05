@@ -9,7 +9,6 @@ import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
@@ -56,11 +55,9 @@ public class DefaultDamageListener extends BaseGameListener {
                                     for (Effect effect : weapon.getEffects()) {
                                         player.addEffect(effect);
                                     }
-                                    if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
-                                        Tools.sendMessage(room, weapon.getKillMessage()
-                                                .replace("%damager%", damagePlayer.getName())
-                                                .replace("%player%", player.getName()));
-                                    }
+                                    room.lessHealth(player, damagePlayer, ev.getDamage(), weapon.getKillMessage()
+                                            .replace("%damager%", damagePlayer.getName())
+                                            .replace("%player%", player.getName()));
                                     return;
                                 }
                             }
@@ -74,11 +71,9 @@ public class DefaultDamageListener extends BaseGameListener {
                                 for (Effect effect : gunWeapon.getEffects()) {
                                     player.addEffect(effect);
                                 }
-                                if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
-                                    Tools.sendMessage(room, gunWeapon.getKillMessage()
-                                            .replace("%damager%", damagePlayer.getName())
-                                            .replace("%player%", player.getName()));
-                                }
+                                room.lessHealth(player, damagePlayer, ev.getDamage(), gunWeapon.getKillMessage()
+                                        .replace("%damager%", damagePlayer.getName())
+                                        .replace("%player%", player.getName()));
                                 return;
                             }
                             break;
@@ -98,11 +93,9 @@ public class DefaultDamageListener extends BaseGameListener {
                                 for (Effect effect : weapon.getEffects()) {
                                     player.addEffect(effect);
                                 }
-                                if (room.lessHealth(player, damagePlayer, ev.getDamage()) < 1) {
-                                    Tools.sendMessage(room, weapon.getKillMessage()
-                                            .replace("%damager%", damagePlayer.getName())
-                                            .replace("%player%", player.getName()));
-                                }
+                                room.lessHealth(player, damagePlayer, ev.getDamage(), weapon.getKillMessage()
+                                        .replace("%damager%", damagePlayer.getName())
+                                        .replace("%player%", player.getName()));
                             }
                             return;
                         }

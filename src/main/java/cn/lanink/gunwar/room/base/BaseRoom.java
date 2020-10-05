@@ -30,7 +30,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
@@ -86,7 +85,7 @@ public abstract class BaseRoom implements IRoom {
         this.victoryScore = config.getInt("victoryScore", 5);
         File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
-            this.gunWar.getLogger().info("§a房间：%name% 未检测到地图备份，正在备份地图中...");
+            this.gunWar.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
             Server.getInstance().unloadLevel(this.level);
             if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                 Server.getInstance().loadLevel(this.levelName);
@@ -491,16 +490,20 @@ public abstract class BaseRoom implements IRoom {
         return this.playerHealth.get(player);
     }
 
+    public synchronized float lessHealth(Player player, Player damager, float health) {
+        return this.lessHealth(player, damager, health, "");
+    }
+
     /**
      * 减少玩家血量
      * @param player 玩家
      * @param health 血量
      */
-    public synchronized float lessHealth(Player player, Player damager, float health) {
+    public synchronized float lessHealth(Player player, Player damager, float health, String killMessage) {
         float nowHealth = this.playerHealth.get(player) - health;
         if (nowHealth < 1) {
             this.playerHealth.put(player, 0F);
-            this.playerDeath(player, damager);
+            this.playerDeath(player, damager, killMessage);
         }else {
             this.playerHealth.put(player, nowHealth);
         }
@@ -625,31 +628,32 @@ public abstract class BaseRoom implements IRoom {
     }
 
     public void playerDeath(Player player, Player damager) {
+        this.playerDeath(player, damager, "");
+    }
+
+    public void playerDeath(Player player, Player damager, String killMessage) {
         GunWarPlayerDeathEvent ev = new GunWarPlayerDeathEvent(this, player, damager);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
         }
         GameRecord.addPlayerRecord(player, RecordType.DEATHS);
-        if (player != damager) {
+        if (player == damager) {
+            this.getPlayers().keySet().forEach(p -> p.sendMessage(language.suicideMessage
+                    .replace("%player%", player.getName())));
+        }else {
             GameRecord.addPlayerRecord(damager, RecordType.KILLS);
-        }
-        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
-            @Override
-            public void onRun() {
-                player.sendTitle(language.titleDeathTitle,
-                        language.titleDeathSubtitle.replace("%player%", damager.getName()),
-                        10, 30, 10);
-                if (player == damager) {
-                    getPlayers().keySet().forEach(p -> p.sendMessage(language.suicideMessage
-                            .replace("%player%", player.getName())));
-                }else {
-                    getPlayers().keySet().forEach(p -> p.sendMessage(language.killMessage
-                            .replace("%damagePlayer%", damager.getName())
-                            .replace("%player%", player.getName())));
-                }
+            player.sendTitle(language.titleDeathTitle,
+                    language.titleDeathSubtitle.replace("%player%", damager.getName()),
+                    10, 30, 10);
+            if (killMessage == null || "".equals(killMessage.trim())) {
+                this.getPlayers().keySet().forEach(p -> p.sendMessage(language.killMessage
+                        .replace("%damagePlayer%", damager.getName())
+                        .replace("%player%", player.getName())));
+            }else {
+                this.getPlayers().keySet().forEach(p -> p.sendMessage(killMessage));
             }
-        });
+        }
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);

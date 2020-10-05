@@ -34,6 +34,7 @@ adminHelp: |-
   §a/%cmdName% stoproom §e强制关闭所在地图的房间
   §a/%cmdName% reloadroom §e重载所有房间
   §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
+  §a/%cmdName% AddWeapon §e打开添加武器界面
 adminSetWaitSpawn: "§a等待出生点设置成功！"
 adminSetRedSpawn: "§a红队出生点设置成功！"
 adminSetBlueSpawn: "§a蓝队出生点设置成功！"

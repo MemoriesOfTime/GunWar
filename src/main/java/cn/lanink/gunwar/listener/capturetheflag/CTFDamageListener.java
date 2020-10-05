@@ -8,7 +8,6 @@ import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
-import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Sound;
@@ -23,7 +22,7 @@ public class CTFDamageListener extends BaseGameListener {
      * 实体受到另一实体伤害事件
      * @param event 事件
      */
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player)) {
             Player damagePlayer = (Player) event.getDamager();

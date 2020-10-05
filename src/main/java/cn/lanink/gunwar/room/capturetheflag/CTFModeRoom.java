@@ -192,8 +192,8 @@ public class CTFModeRoom extends ClassicModeRoom {
     }
 
     @Override
-    public void playerDeath(Player player, Player damager) {
-        super.playerDeath(player, damager);
+    public void playerDeath(Player player, Player damager, String killMessage) {
+        super.playerDeath(player, damager, killMessage);
         this.getPlayerRespawnTime().put(player, 20);
         if (this.haveRedFlag == player) {
             this.haveRedFlag = null;
