@@ -61,9 +61,25 @@ public class GunWar extends PluginBase {
 
     @Override
     public void onLoad() {
+        gunWar = this;
+
         this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
         this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
         this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+        this.saveDefaultConfig();
+        File file1 = new File(this.getDataFolder() + "/Rooms");
+        File file2 = new File(this.getDataFolder() + "/PlayerInventory");
+        File file3 = new File(this.getDataFolder() + "/Language");
+        if (!file1.exists() && !file1.mkdirs()) {
+            this.getLogger().error("Rooms 文件夹初始化失败");
+        }
+        if (!file2.exists() && !file2.mkdirs()) {
+            this.getLogger().error("PlayerInventory 文件夹初始化失败");
+        }
+        if (!file3.exists() && !file3.mkdirs()) {
+            this.getLogger().warning("Language 文件夹初始化失败");
+        }
+
         registerListener("RoomLevelProtection", RoomLevelProtection.class);
         registerListener("DefaultChatListener", DefaultChatListener.class);
         registerListener("DefaultGameListener", DefaultGameListener.class);
@@ -76,22 +92,8 @@ public class GunWar extends PluginBase {
 
     @Override
     public void onEnable() {
-        getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        if (gunWar == null) gunWar = this;
-        getLogger().info("§l§e版本: " + VERSION);
-        saveDefaultConfig();
-        File file1 = new File(this.getDataFolder() + "/Rooms");
-        File file2 = new File(this.getDataFolder() + "/PlayerInventory");
-        File file3 = new File(this.getDataFolder() + "/Language");
-        if (!file1.exists() && !file1.mkdirs()) {
-            getLogger().error("Rooms 文件夹初始化失败");
-        }
-        if (!file2.exists() && !file2.mkdirs()) {
-            getLogger().error("PlayerInventory 文件夹初始化失败");
-        }
-        if (!file3.exists() && !file3.mkdirs()) {
-            getLogger().warning("Language 文件夹初始化失败");
-        }
+        this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        this.getLogger().info("§l§e版本: " + VERSION);
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
@@ -106,8 +108,8 @@ public class GunWar extends PluginBase {
         this.config = new Config(getDataFolder() + "/config.yml", 2);
         if (this.config.getBoolean("debug", false)) {
             debug = true;
-            getLogger().warning("警告：您开启了debug模式！");
-            getLogger().warning("Warning: You have turned on debug mode!");
+            this.getLogger().warning("警告：您开启了debug模式！");
+            this.getLogger().warning("Warning: You have turned on debug mode!");
             try {
                 Thread.sleep(5000);
             } catch (InterruptedException ignored) {
@@ -117,18 +119,22 @@ public class GunWar extends PluginBase {
         this.restoreWorld = this.config.getBoolean("restoreWorld");
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
         this.loadResources();
-        getLogger().info("§e开始加载物品");
+        this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
-        this.cmdUser = this.config.getString("插件命令", "gunwar");
-        this.cmdAdmin = this.config.getString("管理命令", "gunwaradmin");
-        getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
-        getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
-        getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
-        getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.cmdUser = this.config.getString("cmdUser", "gunwar");
+        this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");
+        this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
+        this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
+        this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.loadAllListener();
         this.loadAllRoom();
-        new MetricsLite(this, 7448);
-        getLogger().info("§e插件加载完成！欢迎使用！");
+        try {
+            new MetricsLite(this, 7448);
+        } catch (Exception ignored) {
+
+        }
+        this.getLogger().info("§e插件加载完成！欢迎使用！");
     }
 
     @Override

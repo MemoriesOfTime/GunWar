@@ -1,7 +1,8 @@
 # zh_CN | ko_KR | en_US | ru_RU
 language: zh_CN
-插件命令: gunwar
-管理命令: gunwaradmin
+restoreWorld: true
+cmdUser: gunwar
+cmdAdmin: gunwaradmin
 胜利执行命令:
   - me 我胜利了
   - tell "@p" 恭喜获得胜利！&con
