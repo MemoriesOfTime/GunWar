@@ -120,17 +120,6 @@ public class Tools {
         }
     }
 
-
-    @Deprecated
-    public static void giveItem(Player player, int team) {
-        player.getInventory().setArmorContents(getArmors(team));
-        player.getInventory().addItem(Item.get(272, 0, 1),
-                Item.get(261, 0, 1),
-                Item.get(262, 0, 5),
-                Item.get(332, 0, 64),
-                getItem(4), getItem(5));
-    }
-
     /**
      * 给装备
      * @param room 房间
@@ -215,20 +204,6 @@ public class Tools {
         Language language = GunWar.getInstance().getLanguage();
         Item item = Item.get(0);
         switch (type) {
-            case 4:
-                item = Item.get(344, 0, 1);
-                item.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 4));
-                item.setCustomName(language.itemGrenade);
-                item.setLore(language.itemGrenadeLore.split("\n"));
-                return item;
-            case 5:
-                item = Item.get(344, 0, 1);
-                item.setNamedTag(new CompoundTag().putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 5));
-                item.setCustomName(language.itemFlashBang);
-                item.setLore(language.itemFlashBangLore.split("\n"));
-                return item;
             case 10:
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
