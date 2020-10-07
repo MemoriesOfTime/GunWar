@@ -86,7 +86,7 @@ public abstract class BaseRoom implements IRoom {
         File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
             this.gunWar.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
-            Server.getInstance().unloadLevel(this.level);
+            Server.getInstance().unloadLevel(this.level, true);
             if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                 Server.getInstance().loadLevel(this.levelName);
                 this.level = Server.getInstance().getLevelByName(this.levelName);
@@ -271,6 +271,12 @@ public abstract class BaseRoom implements IRoom {
         LinkedList<Player> victoryPlayers = new LinkedList<>();
         LinkedList<Player> defeatPlayers = new LinkedList<>();
         if (this.getPlayers().size() > 0) {
+            for (Player p1 : this.players.keySet()) {
+                for (Player p2 : this.players.keySet()) {
+                    p1.showPlayer(p2);
+                    p2.showPlayer(p1);
+                }
+            }
             for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
                 if (victory == 1) {
                     if (entry.getValue() == 1 || entry.getValue() == 11) {
@@ -434,6 +440,10 @@ public abstract class BaseRoom implements IRoom {
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
         SavePlayerInventory.restore(GunWar.getInstance(), player);
+        for (Player p : this.players.keySet()) {
+            p.showPlayer(player);
+            player.showPlayer(p);
+        }
         player.sendMessage(this.language.quitRoom);
     }
 
@@ -604,6 +614,7 @@ public abstract class BaseRoom implements IRoom {
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         Tools.rePlayerState(player, true);
+        Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
         switch (this.getPlayers(player)) {
             case 11:
@@ -659,6 +670,7 @@ public abstract class BaseRoom implements IRoom {
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
         player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, true));
         player.setGamemode(3);
+        Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 1) {
             this.getPlayers().put(player, 11);
         }else if (this.getPlayers(player) == 2) {
@@ -710,7 +722,7 @@ public abstract class BaseRoom implements IRoom {
         if (GunWar.debug) {
             this.gunWar.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
         }
-        Server.getInstance().unloadLevel(this.level);
+        Server.getInstance().unloadLevel(this.level, true);
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
         File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {

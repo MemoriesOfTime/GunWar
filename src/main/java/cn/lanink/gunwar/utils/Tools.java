@@ -38,6 +38,30 @@ import java.util.Random;
 
 public class Tools {
 
+    /**
+     * 显示玩家
+     *
+     * @param room 房间
+     * @param player 玩家
+     */
+    public static void showPlayer(BaseRoom room, Player player) {
+        for (Player p : room.getPlayers().keySet()) {
+            p.showPlayer(player);
+        }
+    }
+
+    /**
+     * 隐藏玩家
+     *
+     * @param room 房间
+     * @param player 玩家
+     */
+    public static void hidePlayer(BaseRoom room, Player player) {
+        for (Player p : room.getPlayers().keySet()) {
+            p.hidePlayer(player);
+        }
+    }
+
     public static String getShowStringMagazine(int now, int max) {
         StringBuilder string = new StringBuilder("§e" + now + "/" + max + "  ");
         for (int j = 0; j < max; j++) {
