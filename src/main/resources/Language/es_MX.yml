@@ -26,6 +26,7 @@ useCmdInCon: "Utiliza el comando de juego!"
 adminHelp: |-
   §eGunWar--Ayuda
   §a/%cmdName% §eAbrir UI
+  §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
   §a/%cmdName% setwaitspawn §eEstablecer la posición actual como punto de espera
   §a/%cmdName% setredspawn §eEstablecer la ubicación actual como el punto de generación del equipo rojo
   §a/%cmdName% setbluespawn §eEstablecer la ubicación actual como el punto de generación del equipo azul

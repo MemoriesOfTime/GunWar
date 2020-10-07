@@ -26,6 +26,7 @@ useCmdInCon: "Пожалуйста используйте команду в иг
 adminHelp: |-
   §eGunWar--Help
   §a/%cmdName% §eОткрыть UI
+  §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
   §a/%cmdName% setwaitspawn §eПоставить текущую позицию как точку ожидания
   §a/%cmdName% setredspawn §eПоставить текущую позицию как точку возрождения для красной команды
   §a/%cmdName% setbluespawn §eПоставить текущую позицию как точку возрождения для синей команды

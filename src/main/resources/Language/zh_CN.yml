@@ -23,6 +23,7 @@ useCmdInCon: "请不要在控制台执行此指令!"
 adminHelp: |-
   §eGunWar--命令帮助
   §a/%cmdName% §e打开ui(仅游戏内可用)
+  §a/%cmdName% CreateRoom §e快速创建房间（在当前地图）
   §a/%cmdName% setwaitspawn §e设置当前位置为等待点
   §a/%cmdName% setredspawn §e将当前位置设置为红队出生点
   §a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点

@@ -25,6 +25,7 @@ useCmdInCon: "플레이어만 사용 가능한 명령어입니다!"
 adminHelp: |-
   §eGunWar--도움말 목록
   §a/%cmdName% §eUI를 엽니다
+  §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
   §a/%cmdName% setwaitspawn §e대기 지점을 설정합니다
   §a/%cmdName% setredspawn §e빨간 팀 생성 지점을 설정합니다
   §a/%cmdName% setbluespawn §e파랑 팀 생성 지점을 설정헙니다
