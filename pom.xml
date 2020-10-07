@@ -131,7 +131,7 @@
     <repositories>
         <repository>
             <id>nukkitx-repo</id>
-            <url>https://repo.nukkitx.com/</url>
+            <url>https://repo.nukkitx.com/main/</url>
         </repository>
         <repository>
             <id>repo-lanink-cn</id>
