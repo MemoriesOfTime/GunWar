@@ -29,14 +29,17 @@ public class CreateRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        if (this.gunWar.createRoomSchedule.containsKey(player)) {
-            this.gunWar.createRoomSchedule.remove(player);
-            //TODO Language
-            sender.sendMessage("§c已取消创建房间！");
+        if (!this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
+            if (this.gunWar.createRoomSchedule.containsKey(player)) {
+                this.gunWar.createRoomSchedule.remove(player);
+                sender.sendMessage(this.language.admin_createRoom_cancel);
+            }else {
+                this.gunWar.createRoomSchedule.put(player, 10);
+                Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
+                        new CreateRoomTask(this.gunWar, player), 10);
+            }
         }else {
-            this.gunWar.createRoomSchedule.put(player, 10);
-            Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
-                    new CreateRoomTask(this.gunWar, player), 10);
+            sender.sendMessage(this.language.admin_createRoom_exist);
         }
         return true;
     }

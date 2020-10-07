@@ -37,7 +37,31 @@ public class CreateRoomListener implements Listener {
             Config config = this.gunWar.getRoomConfig(player.getLevel());
             switch (item.getNamedTag().getInt("GunWarItemType")) {
                 case 110:
-                    this.gunWar.createRoomSchedule.put(player, this.gunWar.createRoomSchedule.get(player) - 10);
+                    switch (this.gunWar.createRoomSchedule.get(player)) {
+                        case 20:
+                            config.remove("waitSpawn");
+                            this.gunWar.createRoomSchedule.put(player, 10);
+                            break;
+                        case 30:
+                            config.remove("redSpawn");
+                            this.gunWar.createRoomSchedule.put(player, 20);
+                            break;
+                        case 40:
+                            config.remove("blueSpawn");
+                            this.gunWar.createRoomSchedule.put(player, 30);
+                            break;
+                        case 50:
+                            config.remove("waitTime");
+                            config.remove("gameTime");
+                            config.remove("victoryScore");
+                            this.gunWar.createRoomSchedule.put(player, 40);
+                            break;
+                        case 60:
+                            config.remove("minPlayers");
+                            config.remove("maxPlayers");
+                            this.gunWar.createRoomSchedule.put(player, 50);
+                            break;
+                    }
                     break;
                 case 111:
                     this.gunWar.createRoomSchedule.put(player, this.gunWar.createRoomSchedule.get(player) + 10);
