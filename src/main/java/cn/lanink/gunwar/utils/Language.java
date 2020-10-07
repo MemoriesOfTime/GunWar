@@ -69,6 +69,16 @@ public class Language {
     public String adminStopRoom = "§a已强制结束房间！";
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
+    //创建房间
+    public String admin_createRoom_exist = "§c这个地图已经存在游戏房间了！";
+    public String admin_createRoom_cancel = "§c已取消创建房间！";
+    public String admin_createRoom_back  = "§e上一步";
+    public String admin_createRoom_setWaitSpawn = "§a设置等待出生点";
+    public String admin_createRoom_setTeamSpawn = "§a设置 %team% §r§a出生点";
+    public String admin_createRoom_setMoreParameters = "§a设置更多参数";
+    public String admin_createRoom_setRoomPlayers = "§a设置房间人数";
+    public String admin_createRoom_setGameMode = "§a设置游戏模式";
+    public String admin_createRoom_setSuccessful = "§a房间设置完成，正在加载...";
     //房间模式
     public String classic = "经典";
     public String captureTheFlag = "夺旗";
@@ -207,6 +217,16 @@ public class Language {
         this.adminStopRoom = config.getString("adminStopRoom", this.adminStopRoom);
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
+        //创建房间
+        this.admin_createRoom_exist = config.getString("admin_createRoom_exist", this.admin_createRoom_exist);
+        this.admin_createRoom_cancel = config.getString("admin_createRoom_cancel", this.admin_createRoom_cancel);
+        this.admin_createRoom_back = config.getString("admin_createRoom_back", this.admin_createRoom_back);
+        this.admin_createRoom_setWaitSpawn = config.getString("admin_createRoom_setWaitSpawn", this.admin_createRoom_setWaitSpawn);
+        this.admin_createRoom_setTeamSpawn = config.getString("admin_createRoom_setTeamSpawn", this.admin_createRoom_setTeamSpawn);
+        this.admin_createRoom_setMoreParameters = config.getString("admin_createRoom_setMoreParameters", this.admin_createRoom_setMoreParameters);
+        this.admin_createRoom_setRoomPlayers = config.getString("admin_createRoom_setRoomPlayers", this.admin_createRoom_setRoomPlayers);
+        this.admin_createRoom_setGameMode = config.getString("admin_createRoom_setGameMode", this.admin_createRoom_setGameMode);
+        this.admin_createRoom_setSuccessful = config.getString("admin_createRoom_setSuccessful", this.admin_createRoom_setSuccessful);
         //房间模式
         this.classic = config.getString("classic", this.classic);
         this.captureTheFlag = config.getString("captureTheFlag", this.captureTheFlag);

@@ -15,6 +15,7 @@ import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -50,12 +51,13 @@ public class GunWar extends PluginBase {
     private ItemManage itemManage;
     private boolean hasTips = false;
     public static boolean debug = false;
+    private boolean restoreWorld = false;
 
     private String serverWorldPath;
     private String worldBackupPath;
     private String roomConfigPath;
 
-    private boolean restoreWorld = false;
+    public final HashMap<Player, Integer> createRoomSchedule = new HashMap<>();
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -127,6 +129,7 @@ public class GunWar extends PluginBase {
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new CreateRoomListener(this), this);
         this.loadAllListener();
         this.loadAllRoom();
         try {
@@ -206,6 +209,10 @@ public class GunWar extends PluginBase {
 
     public LinkedHashMap<String, BaseRoom> getRooms() {
         return this.rooms;
+    }
+
+    public HashMap<String, Config> getRoomConfigs() {
+        return this.roomConfigs;
     }
 
     public void loadAllListener() {
