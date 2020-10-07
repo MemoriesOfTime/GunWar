@@ -409,21 +409,15 @@ public abstract class BaseRoom implements IRoom {
         SavePlayerInventory.save(GunWar.getInstance(), player);
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
-        player.getInventory().setItem(3, Tools.getItem(11));
-        player.getInventory().setItem(5, Tools.getItem(12));
-        player.getInventory().setItem(8, Tools.getItem(10));
         if (GunWar.getInstance().isHasTips()) {
             Tips.closeTipsShow(this.getLevelName(), player);
         }
         player.sendMessage(this.language.joinRoom.replace("%name%", this.getLevelName()));
-        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
-            @Override
-            public void onRun(int i) {
-                if (player.getLevel() != getLevel()) {
-                    quitRoom(player);
-                }
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
+            if (player.getLevel() != getLevel()) {
+                quitRoom(player);
             }
-        }, 20);
+        }, 10);
     }
 
     /**

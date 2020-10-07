@@ -142,6 +142,8 @@ public class DefaultGameListener extends BaseGameListener {
         if (event.getSlot() >= event.getInventory().getSize()) {
             event.setCancelled(true);
             player.sendMessage(this.language.gameArmor);
+        }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
+            event.setCancelled(true);
         }
     }
 
