@@ -30,7 +30,9 @@ public class CreateRoom extends BaseSubCommand {
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
         if (this.gunWar.createRoomSchedule.containsKey(player)) {
-            sender.sendMessage("你已经进入创建房间状态了");
+            this.gunWar.createRoomSchedule.remove(player);
+            //TODO Language
+            sender.sendMessage("§c已取消创建房间！");
         }else {
             this.gunWar.createRoomSchedule.put(player, 10);
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,

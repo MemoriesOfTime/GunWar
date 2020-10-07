@@ -10,6 +10,7 @@ import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * @author lt_name
@@ -18,16 +19,24 @@ public class CreateRoomTask extends PluginTask<GunWar> {
 
     private final Player player;
     private final Level level;
+    private final Map<Integer, Item> playerInventory;
+    private final Item offHandItem;
 
     public CreateRoomTask(GunWar owner, Player player) {
         super(owner);
         this.player = player;
         this.level = player.getLevel();
+        this.playerInventory = player.getInventory().getContents();
+        this.offHandItem = player.getOffhandInventory().getItem(0);
+        player.getInventory().clearAll();
     }
 
     @Override
     public void onRun(int i) {
-        if (!this.player.isOnline() && this.player.getLevel() != this.level) {
+        //TODO Language
+        if (!this.player.isOnline() ||
+                this.player.getLevel() != this.level ||
+                !this.owner.createRoomSchedule.containsKey(this.player)) {
             this.cancel();
             return;
         }
@@ -131,6 +140,9 @@ public class CreateRoomTask extends PluginTask<GunWar> {
             file.delete();
             this.player.sendMessage("§c已取消创建房间！");
         }
+        this.player.getInventory().clearAll();
+        this.player.getInventory().setContents(this.playerInventory);
+        this.player.getOffhandInventory().setItem(0, this.offHandItem);
         this.owner.createRoomSchedule.remove(this.player);
         super.cancel();
     }
