@@ -314,6 +314,7 @@ public class GunWar extends PluginBase {
         saveResource("Language/ko_KR.yml", false);
         saveResource("Language/en_US.yml", false);
         saveResource("Language/ru_RU.yml", false);
+        saveResource("Language/es_MX.yml", false);
         String s = this.config.getString("language", "zh_CN");
         File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
