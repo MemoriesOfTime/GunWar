@@ -35,7 +35,7 @@ public class WaitTask extends PluginTask<GunWar> {
             player.getInventory().setItem(5, Tools.getItem(12));
             player.getInventory().setItem(8, Tools.getItem(10));
         }
-        if (this.room.getPlayers().size() > this.room.getMinPlayers()) {
+        if (this.room.getPlayers().size() >= this.room.getMinPlayers()) {
             if (this.room.getPlayers().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }

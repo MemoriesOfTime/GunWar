@@ -1,8 +1,9 @@
-package cn.lanink.gunwar.tasks.game;
+package cn.lanink.gunwar.tasks.game.ctf;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -58,6 +59,7 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
         entityFlag.setNameTag("");
         entityFlag.setNameTagVisible(false);
         entityFlag.setNameTagAlwaysVisible(false);
+        entityFlag.getLevel().addSound(entityFlag, Sound.MOB_ENDERMEN_PORTAL);
         super.cancel();
     }
 
