@@ -1,6 +1,10 @@
 # Translated by Jassyel
 # You can help me improve the translation through github
 # https://github.com/lt-name/GunWar_Nukkit
+roomLevelBackup: "§aRoom: %name% did not detect the map backup, the map is being backed up..."
+roomLevelBackupExist: "§aRoom: %name% detected map backup!"
+roomLevelBackupNotExist: "§aRoom: %name% map backup does not exist! Unable to restore the map!"
+roomLevelRestoreLevelFailure: "§cRoom: %name% map restoration failed!"
 useCmdInRoom: "§e >> §cNo puedes usar este comando aquí!"
 cmdHelp: "§ePara mas ayuda, por favor usa: §b/%cmdName% help"
 userHelp: |-

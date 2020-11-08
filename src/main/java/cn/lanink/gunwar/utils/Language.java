@@ -10,7 +10,6 @@ public class Language {
     /**
      * 将配置读取成变量，防止使用时错误调用
      */
-    //TODO
     public String roomLevelBackup = "§a房间：%name% 未检测到地图备份，正在备份地图中...";
     public String roomLevelBackupExist = "§a房间：%name% 检测到地图备份！";
     public String roomLevelBackupNotExist = "§a房间：%name% 地图备份不存在！无法还原地图！";
@@ -183,6 +182,11 @@ public class Language {
     public String itemTeamSelectBlue = "§9选择蓝队";
 
     public Language(Config config) {
+        this.roomLevelBackup = config.get("roomLevelBackup", this.roomLevelBackup);
+        this.roomLevelBackupExist = config.getString("roomLevelBackupExist", this.roomLevelBackupExist);
+        this.roomLevelBackupNotExist = config.getString("roomLevelBackupNotExist", this.roomLevelBackupNotExist);
+        this.roomLevelRestoreLevelFailure = config.getString("roomLevelRestoreLevelFailure", this.roomLevelRestoreLevelFailure);
+        //命令
         this.useCmdInRoom = config.getString("useCmdInRoom", this.useCmdInRoom);
         this.cmdHelp = config.getString("cmdHelp", this.cmdHelp);
         this.userHelp = config.getString("userHelp", this.userHelp);
