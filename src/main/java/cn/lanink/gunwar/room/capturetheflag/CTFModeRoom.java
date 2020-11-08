@@ -13,6 +13,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
@@ -47,11 +48,17 @@ public class CTFModeRoom extends ClassicModeRoom {
             this.endGame();
             return;
         }
-        if (this.gameTime > 0) {
-            this.gameTime--;
-        }else {
+        if (this.gameTime <= 0) {
             Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
             this.gameTime = this.getSetGameTime();
+            return;
+        }
+        this.gameTime--;
+        if (this.haveRedFlag != null) {
+            this.haveRedFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
+        }
+        if (this.haveBlueFlag != null) {
+            this.haveBlueFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
         }
         int red = 0, blue = 0;
         for (Map.Entry<Player, Integer> entry : this.getPlayerRespawnTime().entrySet()) {
