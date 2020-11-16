@@ -107,7 +107,7 @@ public class GunWar extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.config = new Config(getDataFolder() + "/config.yml", Config.YAML);
         if (this.config.getBoolean("debug", false)) {
             debug = true;
             this.getLogger().warning("警告：您开启了debug模式！");
@@ -119,7 +119,7 @@ public class GunWar extends PluginBase {
             }
         }
         this.restoreWorld = this.config.getBoolean("restoreWorld");
-        this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
+        this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", Config.YAML);
         this.loadResources();
         this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
