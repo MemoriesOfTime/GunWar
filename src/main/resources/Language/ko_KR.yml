@@ -30,13 +30,6 @@ adminHelp: |-
   §eGunWar--도움말 목록
   §a/%cmdName% §eUI를 엽니다
   §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
-  §a/%cmdName% setwaitspawn §e대기 지점을 설정합니다
-  §a/%cmdName% setredspawn §e빨간 팀 생성 지점을 설정합니다
-  §a/%cmdName% setbluespawn §e파랑 팀 생성 지점을 설정헙니다
-  §a/%cmdName% setwaittime <시간(초)> §e no translation
-  §a/%cmdName% setgametime <시간(초)> §e한 라운드당 최대 진행 시간을 설정합니다
-  §a/%cmdName% setVictoryScore <점수> §e승리에 필요한 점수를 설정합니다
-  §a/%cmdName% setgamemode <게임 모드> §e현재 있는 방의 게임 모드를 설정합니다
   §a/%cmdName% startroom §e현재 있는 방을 시작합니다
   §a/%cmdName% stoproom §e현재 있는 방을 강제로 종료합니다
   §a/%cmdName% reloadroom §e모든 방을 다시 불러옵니다

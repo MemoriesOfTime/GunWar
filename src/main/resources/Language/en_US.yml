@@ -31,13 +31,6 @@ adminHelp: |-
   §eGunWar--Help
   §a/%cmdName% §eOpen UI
   §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
-  §a/%cmdName% setwaitspawn §eSet the current position as the waiting point
-  §a/%cmdName% setredspawn §eSet the current location as the spawn point of the red team
-  §a/%cmdName% setbluespawn §eSet the current location as the spawn point of the blue team
-  §a/%cmdName% setwaittime time §eSet the waiting time after enough players
-  §a/%cmdName% setgametime time §eSet the maximum time for each round
-  §a/%cmdName% setVictoryScore score §eSet the required points for victory
-  §a/%cmdName% setgamemode mode §eSet room game mode
   §a/%cmdName% startroom §eStart the room game of the location map
   §a/%cmdName% stoproom §eForcibly close the room in the location map
   §a/%cmdName% reloadroom §eReload all the rooms

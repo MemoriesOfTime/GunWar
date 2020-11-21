@@ -1,15 +1,18 @@
 package cn.lanink.gunwar.tasks;
 
+import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.entity.EntityText;
 import cn.lanink.gunwar.ui.GuiCreate;
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 
-import java.io.File;
 import java.util.Map;
 
 /**
@@ -21,6 +24,10 @@ public class CreateRoomTask extends PluginTask<GunWar> {
     private final Level level;
     private final Map<Integer, Item> playerInventory;
     private final Item offHandItem;
+
+    private Entity waitSpawnText;
+    private Entity redSpawnText;
+    private Entity blueSpawnText;
 
     public CreateRoomTask(GunWar owner, Player player) {
         super(owner);
@@ -123,18 +130,62 @@ public class CreateRoomTask extends PluginTask<GunWar> {
             case 70: //完成设置
                 player.sendMessage(this.owner.getLanguage().admin_createRoom_setSuccessful);
                 config.save(true);
+                this.closeEntity();
                 this.owner.loadRoom(this.level.getFolderName());
                 this.cancel();
-                break;
+                return;
+        }
+        //显示已设置的点
+        try{
+            String[] s = config.getString("waitSpawn").split(":");
+            Position pos = new Position(
+                    Integer.parseInt(s[0]) + 0.5,
+                    Integer.parseInt(s[1]),
+                    Integer.parseInt(s[2]) + 0.5,
+                    this.level);
+            if (this.waitSpawnText == null || this.waitSpawnText.isClosed()) {
+                this.waitSpawnText = new EntityText(pos, "§aWait §eSpawn");
+                this.waitSpawnText.spawnToAll();
+            }
+            this.waitSpawnText.setPosition(pos);
+        } catch (Exception ignored) {
+        }
+        try{
+            String[] s = config.getString("redSpawn").split(":");
+            Position pos = new Position(
+                    Integer.parseInt(s[0]) + 0.5,
+                    Integer.parseInt(s[1]),
+                    Integer.parseInt(s[2]) + 0.5,
+                    this.level);
+            if (this.redSpawnText == null || this.redSpawnText.isClosed()) {
+                this.redSpawnText = new EntityText(pos, "§cRed §eSpawn");
+                this.redSpawnText.spawnToAll();
+            }
+            this.redSpawnText.setPosition(pos);
+        } catch (Exception ignored) {
+        }
+        try{
+            String[] s = config.getString("blueSpawn").split(":");
+            Position pos = new Position(
+                    Integer.parseInt(s[0]) + 0.5,
+                    Integer.parseInt(s[1]),
+                    Integer.parseInt(s[2]) + 0.5,
+                    this.level);
+            if (this.blueSpawnText == null || this.blueSpawnText.isClosed()) {
+                this.blueSpawnText = new EntityText(pos, "§9Blue §eSpawn");
+                this.blueSpawnText.spawnToAll();
+            }
+            this.blueSpawnText.setPosition(pos);
+        } catch (Exception ignored) {
         }
     }
 
     @Override
     public void cancel() {
+        this.closeEntity();
         if (this.owner.createRoomSchedule.getOrDefault(player, 0) != 70) {
             this.owner.getRoomConfigs().remove(this.level.getFolderName());
-            File file = new File(this.owner.getDataFolder() + "/Rooms/" + level + ".yml");
-            file.delete();
+            FileUtil.deleteFile(this.owner.getDataFolder() + "/Rooms/" + level + ".yml");
             this.player.sendMessage(this.owner.getLanguage().admin_createRoom_cancel);
         }
         this.player.getInventory().clearAll();
@@ -143,6 +194,18 @@ public class CreateRoomTask extends PluginTask<GunWar> {
         this.player.getOffhandInventory().setItem(0, this.offHandItem);
         this.owner.createRoomSchedule.remove(this.player);
         super.cancel();
+    }
+
+    private void closeEntity() {
+        if (this.waitSpawnText != null) {
+            this.waitSpawnText.close();
+        }
+        if (this.redSpawnText != null) {
+            this.redSpawnText.close();
+        }
+        if (this.blueSpawnText != null) {
+            this.blueSpawnText.close();
+        }
     }
 
 }

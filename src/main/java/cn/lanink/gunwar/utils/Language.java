@@ -38,14 +38,7 @@ public class Language {
     public String useCmdInCon = "请不要在控制台执行此指令!";
     public String adminHelp = "§eGunWar--命令帮助 \n" +
             "§a/%cmdName% §e打开ui(仅游戏内可用) \n" +
-            "§a/%cmdName% CreateRoom §e快速创建房间（在当前地图） \n" +
-            "§a/%cmdName% setwaitspawn §e设置当前位置为等待点 \n" +
-            "§a/%cmdName% setredspawn §e将当前位置设置为红队出生点 \n" +
-            "§a/%cmdName% setbluespawn §e将当前位置设置为蓝队出生点 \n" +
-            "§a/%cmdName% setwaittime 数字 §e设置游戏人数足够后的等待时间 \n" +
-            "§a/%cmdName% setgametime 数字 §e设置每回合游戏最长时间 \n" +
-            "§a/%cmdName% setVictoryScore 数字 §e设置胜利所需分数 \n" +
-            "§a/%cmdName% setgamemode 数字 §e设置房间模式 \n" +
+            "§a/%cmdName% CreateRoom §e创建房间（在当前地图） \n" +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
             "§a/%cmdName% stoproom §e强制关闭所在地图的房间 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n" +

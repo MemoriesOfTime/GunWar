@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.command.adminsub;
 
+import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gunwar.command.base.BaseSubCommand;
 import cn.lanink.gunwar.tasks.CreateRoomTask;
 import cn.nukkit.Player;
@@ -34,6 +35,8 @@ public class CreateRoom extends BaseSubCommand {
                 this.gunWar.createRoomSchedule.remove(player);
                 sender.sendMessage(this.language.admin_createRoom_cancel);
             }else {
+                this.gunWar.getRoomConfigs().remove(player.getLevel().getFolderName());
+                FileUtil.deleteFile(this.gunWar.getDataFolder() + "/Rooms/" + player.getLevel().getFolderName() + ".yml");
                 this.gunWar.createRoomSchedule.put(player, 10);
                 Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
                         new CreateRoomTask(this.gunWar, player), 10);

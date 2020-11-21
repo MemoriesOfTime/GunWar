@@ -6,6 +6,7 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
+import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
@@ -22,18 +23,25 @@ public class CreateRoomListener implements Listener {
     }
 
     @EventHandler
+    public void onInventoryClick(InventoryClickEvent event) {
+        Player player = event.getPlayer();
+        if (player != null && this.gunWar.createRoomSchedule.containsKey(player)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Item item = event.getItem();
         if (player == null || item == null) {
             return;
         }
-        Block block = event.getBlock();
-        if (block.getFloorX() == 0 && block.getFloorY() == 0 && block.getFloorZ() == 0) {
-            return;
-        }
-        String pos = block.getFloorX() + ":" + (block.getFloorY() + 1) + ":" + block.getFloorZ();
         if (this.gunWar.createRoomSchedule.containsKey(player) && item.hasCompoundTag()) {
+            Block block = event.getBlock();
+            if (block.getFloorX() == 0 && block.getFloorY() == 0 && block.getFloorZ() == 0) {
+                return;
+            }
             Config config = this.gunWar.getRoomConfig(player.getLevel());
             switch (item.getNamedTag().getInt("GunWarItemType")) {
                 case 110: //上一步
@@ -60,6 +68,7 @@ public class CreateRoomListener implements Listener {
                     this.gunWar.createRoomSchedule.put(player, this.gunWar.createRoomSchedule.get(player) + 10);
                     break;
                 case 113: //设置
+                    String pos = block.getFloorX() + ":" + (block.getFloorY() + 1) + ":" + block.getFloorZ();
                     switch (this.gunWar.createRoomSchedule.get(player)) {
                         case 10:
                             config.set("waitSpawn", pos);
