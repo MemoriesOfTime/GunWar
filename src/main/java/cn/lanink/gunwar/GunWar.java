@@ -430,7 +430,7 @@ public class GunWar extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
-        Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
+        Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", Config.YAML);
         this.roomConfigs.put(level, config);
         return config;
     }

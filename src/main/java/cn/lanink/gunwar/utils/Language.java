@@ -59,7 +59,8 @@ public class Language {
     public String adminSetGameTime = "§a游戏时间已设置为：%time%";
     public String adminSetGameTimeShort = "§a游戏时间最小不能低于1分钟！";
     public String adminSetVictoryScore = "§a胜利分数已设置为: %score%";
-    public String adminSetGameMode = "§a房间模式已设置为: %roomMode%";
+    public String adminSetGameMode = "§a房间模式已设置为: %gameMode%";
+    public String gameMode_NotFound = "§c游戏模式: %gameMode% 不存在！";
     public String adminSetMinPlayers = "§a房间最少人数已设置为: %minPlayers%";
     public String adminSetMaxPlayers = "§a房间最多人数已设置为: %maxPlayers%";
     public String adminStartRoom = "§a已强制开启游戏！";
@@ -213,6 +214,7 @@ public class Language {
         this.adminSetGameTimeShort = config.getString("adminSetGameTimeShort", this.adminSetGameTimeShort);
         this.adminSetVictoryScore = config.getString("adminSetVictoryScore", this.adminSetVictoryScore);
         this.adminSetGameMode = config.getString("adminSetGameMode", this.adminSetGameMode);
+        this.gameMode_NotFound = config.getString("gameMode_NotFound", this.gameMode_NotFound);
         this.adminSetMinPlayers = config.getString("adminSetMinPlayers", this.adminSetMinPlayers);
         this.adminSetMaxPlayers = config.getString("adminSetMaxPlayers", this.adminSetMaxPlayers);
         this.adminStartRoom = config.getString("adminStartRoom", this.adminStartRoom);

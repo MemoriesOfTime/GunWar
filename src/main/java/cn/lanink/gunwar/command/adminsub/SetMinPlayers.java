@@ -10,6 +10,7 @@ import cn.nukkit.utils.Config;
 /**
  * @author lt_name
  */
+@Deprecated
 public class SetMinPlayers extends BaseSubCommand {
 
     public SetMinPlayers(String name) {

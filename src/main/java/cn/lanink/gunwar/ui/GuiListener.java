@@ -151,17 +151,52 @@ public class GuiListener implements Listener {
     private void onClick(Player player, FormWindowCustom custom, GuiType guiType) {
         switch (guiType) {
             case ADMIN_TIME_MENU:
-                this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaittime " + custom.getResponse().getInputResponse(0));
-                this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgametime " + custom.getResponse().getInputResponse(1));
-                this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setvictoryscore " + custom.getResponse().getInputResponse(2));
+                try {
+                    int waitTime = Integer.parseInt(custom.getResponse().getInputResponse(0));
+                    int gameTime = Integer.parseInt(custom.getResponse().getInputResponse(1));
+                    int victoryScore = Integer.parseInt(custom.getResponse().getInputResponse(2));
+                    if (waitTime < 1 || gameTime < 1 || victoryScore < 1) {
+                        throw new Exception("");
+                    }
+                    Config config = this.gunWar.getRoomConfig(player.getLevel());
+                    config.set("waitTime", waitTime);
+                    config.set("gameTime", gameTime);
+                    config.set("victoryScore", victoryScore);
+                    config.save();
+                    player.sendMessage(this.language.adminSetWaitTime.replace("%time%", waitTime + ""));
+                    player.sendMessage(this.language.adminSetGameTime.replace("%time%", gameTime + ""));
+                    player.sendMessage(this.language.adminSetVictoryScore.replace("%score%", victoryScore + ""));
+                } catch (Exception e) {
+                    player.sendMessage(this.language.adminNotNumber);
+                }
                 break;
             case ADMIN_PLAYERS_MENU:
-                Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setminplayers " + custom.getResponse().getInputResponse(0));
-                Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setmaxplayers " + custom.getResponse().getInputResponse(1));
+                try {
+                    int minPlayers = Integer.parseInt(custom.getResponse().getInputResponse(0));
+                    int maxPlayers = Integer.parseInt(custom.getResponse().getInputResponse(1));
+                    if (minPlayers < 1 || maxPlayers < 2) {
+                        throw new Exception("");
+                    }
+                    Config config = this.gunWar.getRoomConfig(player.getLevel());
+                    config.set("minPlayers", minPlayers);
+                    config.set("maxPlayers", maxPlayers);
+                    config.save();
+                    player.sendMessage(this.language.adminSetMinPlayers.replace("%minPlayers%", minPlayers + ""));
+                    player.sendMessage(this.language.adminSetMaxPlayers.replace("%maxPlayers%", maxPlayers + ""));
+                } catch (Exception e) {
+                    player.sendMessage(this.language.adminNotNumber);
+                }
                 break;
             case ADMIN_MODE_MENU:
-                this.gunWar.getServer().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setgamemode " +
-                        custom.getResponse().getDropdownResponse(0).getElementContent());
+                String gameMode = custom.getResponse().getDropdownResponse(0).getElementContent();
+                if (GunWar.getRoomClass().containsKey(gameMode)) {
+                    Config config = this.gunWar.getRoomConfig(player.getLevel());
+                    config.set("gameMode", gameMode);
+                    config.save();
+                    player.sendMessage(this.language.adminSetGameMode.replace("%gameMode%", gameMode));
+                }else {
+                    player.sendMessage(this.language.gameMode_NotFound.replace("%gameMode%", gameMode));
+                }
                 break;
             case ADMIN_ITEM_ADD_WEAPON_MELEE:
                 this.adminItemAddWeaponMelee(player, custom);

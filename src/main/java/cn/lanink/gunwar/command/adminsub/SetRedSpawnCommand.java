@@ -6,6 +6,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.utils.Config;
 
+@Deprecated
 public class SetRedSpawnCommand extends BaseSubCommand {
 
     public SetRedSpawnCommand(String name) {

@@ -29,6 +29,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
         this.playerInventory = player.getInventory().getContents();
         this.offHandItem = player.getOffhandInventory().getItem(0);
         player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
         }
         Config config = this.owner.getRoomConfig(player.getLevel());
         switch (createRoomSchedule) {
-            case 10:
+            case 10: //设置等待出生点
                 player.sendTip(this.owner.getLanguage().admin_createRoom_setWaitSpawn);
 
                 item = Item.get(138);
@@ -61,7 +62,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 item.setCustomName(this.owner.getLanguage().admin_createRoom_setWaitSpawn);
                 player.getInventory().setItem(4, item);
                 break;
-            case 20:
+            case 20: //设置红队出生点
                 player.sendTip(this.owner.getLanguage().admin_createRoom_setTeamSpawn
                         .replace("%team%", this.owner.getLanguage().teamNameRed));
                 item = Item.get(241, 14);
@@ -71,7 +72,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                         .replace("%team%", this.owner.getLanguage().teamNameRed));
                 player.getInventory().setItem(4, item);
                 break;
-            case 30:
+            case 30: //设置蓝队出生点
                 player.sendTip(this.owner.getLanguage().admin_createRoom_setTeamSpawn
                         .replace("%team%", this.owner.getLanguage().teamNameBlue));
                 item = Item.get(241, 11);
@@ -81,7 +82,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                         .replace("%team%", this.owner.getLanguage().teamNameBlue));
                 player.getInventory().setItem(4, item);
                 break;
-            case 40:
+            case 40: //设置更多参数
                 player.sendTip(this.owner.getLanguage().admin_createRoom_setMoreParameters);
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
@@ -95,7 +96,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                     GuiCreate.sendAdminPlayersMenu(player);
                 }
                 break;
-            case 50:
+            case 50: //设置房间人数
                 player.sendTip(this.owner.getLanguage().admin_createRoom_setRoomPlayers);
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
@@ -108,7 +109,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                     GuiCreate.sendAdminModeMenu(player);
                 }
                 break;
-            case 60:
+            case 60: //设置游戏模式
                 player.sendTip(this.owner.getLanguage().admin_createRoom_setGameMode);
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
@@ -119,7 +120,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                     this.owner.createRoomSchedule.put(player, 70);
                 }
                 break;
-            case 70:
+            case 70: //完成设置
                 player.sendMessage(this.owner.getLanguage().admin_createRoom_setSuccessful);
                 config.save(true);
                 this.owner.loadRoom(this.level.getFolderName());
@@ -137,6 +138,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
             this.player.sendMessage(this.owner.getLanguage().admin_createRoom_cancel);
         }
         this.player.getInventory().clearAll();
+        this.player.getUIInventory().clearAll();
         this.player.getInventory().setContents(this.playerInventory);
         this.player.getOffhandInventory().setItem(0, this.offHandItem);
         this.owner.createRoomSchedule.remove(this.player);

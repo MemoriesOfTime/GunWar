@@ -11,6 +11,7 @@ import cn.nukkit.utils.Config;
 /**
  * @author lt_name
  */
+@Deprecated
 public class SetGameMode extends BaseSubCommand {
 
     public SetGameMode(String name) {
@@ -36,8 +37,6 @@ public class SetGameMode extends BaseSubCommand {
                 config.set("gameMode", args[1]);
                 config.save();
                 sender.sendMessage(this.language.adminSetGameMode.replace("%roomMode%", args[1]));
-            }else {
-                //TODO
             }
         }else {
             sender.sendMessage(this.language.cmdHelp.replace("%cmdName%", this.getName()));
