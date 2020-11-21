@@ -56,6 +56,10 @@ public class PlayerJoinAndQuit implements Listener {
             return;
         }
         this.gunWar.createRoomSchedule.remove(player);
+        if (this.gunWar.createRoomTask.containsKey(player)) {
+            this.gunWar.createRoomTask.get(player).cancel();
+            this.gunWar.createRoomTask.remove(player);
+        }
         for (BaseRoom room : this.gunWar.getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);

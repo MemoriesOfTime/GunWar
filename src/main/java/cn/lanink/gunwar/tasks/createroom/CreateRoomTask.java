@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.tasks;
+package cn.lanink.gunwar.tasks.createroom;
 
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gunwar.GunWar;
@@ -8,12 +8,15 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lt_name
@@ -28,6 +31,8 @@ public class CreateRoomTask extends PluginTask<GunWar> {
     private Entity waitSpawnText;
     private Entity redSpawnText;
     private Entity blueSpawnText;
+
+    private int particleEffectTick = 0;
 
     public CreateRoomTask(GunWar owner, Player player) {
         super(owner);
@@ -62,7 +67,6 @@ public class CreateRoomTask extends PluginTask<GunWar> {
         switch (createRoomSchedule) {
             case 10: //设置等待出生点
                 player.sendTip(this.owner.getLanguage().admin_createRoom_setWaitSpawn);
-
                 item = Item.get(138);
                 item.setNamedTag(new CompoundTag()
                         .putInt("GunWarItemType", 113));
@@ -136,6 +140,10 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 return;
         }
         //显示已设置的点
+        this.particleEffectTick++;
+        if (this.particleEffectTick >= 2) {
+            this.particleEffectTick = 0;
+        }
         try{
             String[] s = config.getString("waitSpawn").split(":");
             Position pos = new Position(
@@ -148,6 +156,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 this.waitSpawnText.spawnToAll();
             }
             this.waitSpawnText.setPosition(pos);
+            this.particleEffect(pos);
         } catch (Exception ignored) {
         }
         try{
@@ -162,6 +171,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 this.redSpawnText.spawnToAll();
             }
             this.redSpawnText.setPosition(pos);
+            this.particleEffect(pos);
         } catch (Exception ignored) {
         }
         try{
@@ -176,6 +186,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 this.blueSpawnText.spawnToAll();
             }
             this.blueSpawnText.setPosition(pos);
+            this.particleEffect(pos);
         } catch (Exception ignored) {
         }
     }
@@ -188,11 +199,14 @@ public class CreateRoomTask extends PluginTask<GunWar> {
             FileUtil.deleteFile(this.owner.getDataFolder() + "/Rooms/" + level + ".yml");
             this.player.sendMessage(this.owner.getLanguage().admin_createRoom_cancel);
         }
-        this.player.getInventory().clearAll();
-        this.player.getUIInventory().clearAll();
-        this.player.getInventory().setContents(this.playerInventory);
-        this.player.getOffhandInventory().setItem(0, this.offHandItem);
+        if (this.player != null && this.player.getInventory() != null) {
+            this.player.getInventory().clearAll();
+            this.player.getUIInventory().clearAll();
+            this.player.getInventory().setContents(this.playerInventory);
+            this.player.getOffhandInventory().setItem(0, this.offHandItem);
+        }
         this.owner.createRoomSchedule.remove(this.player);
+        this.owner.createRoomTask.remove(this.player);
         super.cancel();
     }
 
@@ -206,6 +220,33 @@ public class CreateRoomTask extends PluginTask<GunWar> {
         if (this.blueSpawnText != null) {
             this.blueSpawnText.close();
         }
+    }
+
+    private void particleEffect(Vector3 center) {
+        if (this.particleEffectTick != 0) {
+            return;
+        }
+        CompletableFuture.runAsync(() -> {
+            try {
+                center.y += 0.2;
+                Vector3 v = center.clone();
+                v.x += 0.8;
+                double x = v.x - center.x;
+                double z = v.z - center.z;
+                for (int i = 0; i < 360; i += 10) {
+                    this.level.addParticleEffect(
+                            new Vector3(
+                                    x * Math.cos(i) - z * Math.sin(i) + center.x,
+                                    center.y + (i * 0.0055),
+                                    x * Math.sin(i) + z * Math.cos(i) + center.z),
+                            ParticleEffect.REDSTONE_TORCH_DUST);
+                    Thread.sleep(15);
+                }
+            } catch (Exception ignored) {
+
+            }
+        });
+
     }
 
 }

@@ -22,6 +22,7 @@ import cn.nukkit.item.ItemFirework;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -32,11 +33,27 @@ import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 
 public class Tools {
+
+    public static List<Vector3> getRoundEdgePoint(Vector3 center, double diameter) {
+        List<Vector3> list = new LinkedList<>();
+        Vector3 point = center.clone();
+        point.x += diameter;
+        double xDistance = point.x - center.x;
+        double zDistance = point.z - center.z;
+        for (int i = 0; i < 360; i += 10) {
+            list.add(new Vector3(
+                    xDistance * Math.cos(i) - zDistance * Math.sin(i) + center.x,
+                    center.y,
+                    xDistance * Math.sin(i) + zDistance * Math.cos(i) + center.z));
+        }
+        return list;
+    }
 
     /**
      * 显示玩家

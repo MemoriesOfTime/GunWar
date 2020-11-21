@@ -20,6 +20,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
+import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 
@@ -58,6 +59,7 @@ public class GunWar extends PluginBase {
     private String roomConfigPath;
 
     public final HashMap<Player, Integer> createRoomSchedule = new HashMap<>();
+    public final HashMap<Player, Task> createRoomTask = new HashMap<>();
 
     public static GunWar getInstance() { return gunWar; }
 
