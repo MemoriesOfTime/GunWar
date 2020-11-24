@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.tasks.createroom;
+package cn.lanink.gunwar.tasks.adminroom;
 
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gunwar.GunWar;
@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author lt_name
  */
-public class CreateRoomTask extends PluginTask<GunWar> {
+public class SetRoomTask extends PluginTask<GunWar> {
 
     private final Player player;
     private final Level level;
@@ -34,10 +34,10 @@ public class CreateRoomTask extends PluginTask<GunWar> {
 
     private int particleEffectTick = 0;
 
-    public CreateRoomTask(GunWar owner, Player player) {
+    public SetRoomTask(GunWar owner, Player player, Level level) {
         super(owner);
         this.player = player;
-        this.level = player.getLevel();
+        this.level = level;
         this.playerInventory = player.getInventory().getContents();
         this.offHandItem = player.getOffhandInventory().getItem(0);
         player.getInventory().clearAll();
@@ -48,11 +48,11 @@ public class CreateRoomTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (!this.player.isOnline() ||
                 this.player.getLevel() != this.level ||
-                !this.owner.createRoomSchedule.containsKey(this.player)) {
+                !this.owner.setRoomSchedule.containsKey(this.player)) {
             this.cancel();
             return;
         }
-        int createRoomSchedule = this.owner.createRoomSchedule.getOrDefault(player, 0);
+        int createRoomSchedule = this.owner.setRoomSchedule.getOrDefault(player, 0);
         Item item;
         if (createRoomSchedule > 10) {
             item = Item.get(340);
@@ -103,7 +103,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 if (config.getInt("waitTime") > 0 &&
                         config.getInt("gameTime") > 0 &&
                         config.getInt("victoryScore") > 0) {
-                    this.owner.createRoomSchedule.put(player, 50);
+                    this.owner.setRoomSchedule.put(player, 50);
                     GuiCreate.sendAdminPlayersMenu(player);
                 }
                 break;
@@ -116,7 +116,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 player.getInventory().setItem(4, item);
                 if (config.getInt("minPlayers") > 0 &&
                         config.getInt("maxPlayers") > 0) {
-                    this.owner.createRoomSchedule.put(player, 60);
+                    this.owner.setRoomSchedule.put(player, 60);
                     GuiCreate.sendAdminModeMenu(player);
                 }
                 break;
@@ -128,7 +128,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 item.setCustomName(this.owner.getLanguage().admin_createRoom_setGameMode);
                 player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("gameMode", "").trim())) {
-                    this.owner.createRoomSchedule.put(player, 70);
+                    this.owner.setRoomSchedule.put(player, 70);
                 }
                 break;
             case 70: //完成设置
@@ -155,7 +155,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 this.waitSpawnText = new EntityText(pos, "§aWait §eSpawn");
                 this.waitSpawnText.spawnToAll();
             }
-            this.waitSpawnText.setPosition(pos);
+            this.waitSpawnText.teleport(pos);
             this.particleEffect(pos);
         } catch (Exception ignored) {
         }
@@ -170,7 +170,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 this.redSpawnText = new EntityText(pos, "§cRed §eSpawn");
                 this.redSpawnText.spawnToAll();
             }
-            this.redSpawnText.setPosition(pos);
+            this.redSpawnText.teleport(pos);
             this.particleEffect(pos);
         } catch (Exception ignored) {
         }
@@ -185,7 +185,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
                 this.blueSpawnText = new EntityText(pos, "§9Blue §eSpawn");
                 this.blueSpawnText.spawnToAll();
             }
-            this.blueSpawnText.setPosition(pos);
+            this.blueSpawnText.teleport(pos);
             this.particleEffect(pos);
         } catch (Exception ignored) {
         }
@@ -194,7 +194,7 @@ public class CreateRoomTask extends PluginTask<GunWar> {
     @Override
     public void cancel() {
         this.closeEntity();
-        if (this.owner.createRoomSchedule.getOrDefault(player, 0) != 70) {
+        if (this.owner.setRoomSchedule.getOrDefault(player, 0) != 70) {
             this.owner.getRoomConfigs().remove(this.level.getFolderName());
             FileUtil.deleteFile(this.owner.getDataFolder() + "/Rooms/" + level + ".yml");
             this.player.sendMessage(this.owner.getLanguage().admin_createRoom_cancel);
@@ -205,8 +205,8 @@ public class CreateRoomTask extends PluginTask<GunWar> {
             this.player.getInventory().setContents(this.playerInventory);
             this.player.getOffhandInventory().setItem(0, this.offHandItem);
         }
-        this.owner.createRoomSchedule.remove(this.player);
-        this.owner.createRoomTask.remove(this.player);
+        this.owner.setRoomSchedule.remove(this.player);
+        this.owner.setRoomTask.remove(this.player);
         super.cancel();
     }
 
@@ -246,7 +246,6 @@ public class CreateRoomTask extends PluginTask<GunWar> {
 
             }
         });
-
     }
 
 }

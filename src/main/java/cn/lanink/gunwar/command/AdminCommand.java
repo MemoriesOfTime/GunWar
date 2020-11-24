@@ -13,6 +13,7 @@ public class AdminCommand extends BaseCommand {
         this.setPermission("GunWar.command.admin");
         //游戏内使用命令不区分大小写！
         this.addSubCommand(new CreateRoom("CreateRoom"));
+        this.addSubCommand(new SetRoom("SetRoom"));
         this.addSubCommand(new StartRoom("StartRoom"));
         this.addSubCommand(new StopRoom("StopRoom"));
         this.addSubCommand(new ReloadCommand("ReloadRoom"));

@@ -25,7 +25,7 @@ public class CreateRoomListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = event.getPlayer();
-        if (player != null && this.gunWar.createRoomSchedule.containsKey(player)) {
+        if (player != null && this.gunWar.setRoomSchedule.containsKey(player)) {
             event.setCancelled(true);
         }
     }
@@ -37,7 +37,7 @@ public class CreateRoomListener implements Listener {
         if (player == null || item == null) {
             return;
         }
-        if (this.gunWar.createRoomSchedule.containsKey(player) && item.hasCompoundTag()) {
+        if (this.gunWar.setRoomSchedule.containsKey(player) && item.hasCompoundTag()) {
             Block block = event.getBlock();
             if (block.getFloorX() == 0 && block.getFloorY() == 0 && block.getFloorZ() == 0) {
                 return;
@@ -45,44 +45,44 @@ public class CreateRoomListener implements Listener {
             Config config = this.gunWar.getRoomConfig(player.getLevel());
             switch (item.getNamedTag().getInt("GunWarItemType")) {
                 case 110: //上一步
-                    switch (this.gunWar.createRoomSchedule.get(player)) {
+                    switch (this.gunWar.setRoomSchedule.get(player)) {
                         case 10:
                             break;
                         case 50:
                             config.remove("waitTime");
                             config.remove("gameTime");
                             config.remove("victoryScore");
-                            this.gunWar.createRoomSchedule.put(player, 40);
+                            this.gunWar.setRoomSchedule.put(player, 40);
                             break;
                         case 60:
                             config.remove("minPlayers");
                             config.remove("maxPlayers");
-                            this.gunWar.createRoomSchedule.put(player, 50);
+                            this.gunWar.setRoomSchedule.put(player, 50);
                             break;
                         default:
-                            this.gunWar.createRoomSchedule.put(player, this.gunWar.createRoomSchedule.get(player) - 10);
+                            this.gunWar.setRoomSchedule.put(player, this.gunWar.setRoomSchedule.get(player) - 10);
                             break;
                     }
                     break;
                 case 111: //下一步
-                    this.gunWar.createRoomSchedule.put(player, this.gunWar.createRoomSchedule.get(player) + 10);
+                    this.gunWar.setRoomSchedule.put(player, this.gunWar.setRoomSchedule.get(player) + 10);
                     break;
                 case 113: //设置
                     String pos = block.getFloorX() + ":" + (block.getFloorY() + 1) + ":" + block.getFloorZ();
-                    switch (this.gunWar.createRoomSchedule.get(player)) {
+                    switch (this.gunWar.setRoomSchedule.get(player)) {
                         case 10:
                             config.set("waitSpawn", pos);
-                            this.gunWar.createRoomSchedule.put(player, 20);
+                            this.gunWar.setRoomSchedule.put(player, 20);
                             break;
                         case 20:
                             config.set("redSpawn", pos);
                             player.sendMessage(this.gunWar.getLanguage().adminSetRedSpawn);
-                            this.gunWar.createRoomSchedule.put(player, 30);
+                            this.gunWar.setRoomSchedule.put(player, 30);
                             break;
                         case 30:
                             config.set("blueSpawn", pos);
                             player.sendMessage(this.gunWar.getLanguage().adminSetBlueSpawn);
-                            this.gunWar.createRoomSchedule.put(player, 40);
+                            this.gunWar.setRoomSchedule.put(player, 40);
                             GuiCreate.sendAdminTimeMenu(player);
                             break;
                         case 40:

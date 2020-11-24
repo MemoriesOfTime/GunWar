@@ -107,27 +107,15 @@ public class GuiListener implements Listener {
             case ADMIN_MENU:
                 switch (simple.getResponse().getClickedButtonId()) {
                     case 0:
-                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setwaitspawn");
+                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " CreateRoom");
                         break;
                     case 1:
-                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setredspawn");
+                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " SetRoom");
                         break;
                     case 2:
-                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " setbluespawn");
-                        break;
-                    case 3:
-                        GuiCreate.sendAdminTimeMenu(player);
-                        break;
-                    case 4:
-                        GuiCreate.sendAdminPlayersMenu(player);
-                        break;
-                    case 5:
-                        GuiCreate.sendAdminModeMenu(player);
-                        break;
-                    case 6:
                         Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " reloadroom");
                         break;
-                    case 7:
+                    case 3:
                         Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " unloadroom");
                         break;
                 }

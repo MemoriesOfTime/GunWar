@@ -58,8 +58,8 @@ public class GunWar extends PluginBase {
     private String worldBackupPath;
     private String roomConfigPath;
 
-    public final HashMap<Player, Integer> createRoomSchedule = new HashMap<>();
-    public final HashMap<Player, Task> createRoomTask = new HashMap<>();
+    public final HashMap<Player, Integer> setRoomSchedule = new HashMap<>();
+    public final HashMap<Player, Task> setRoomTask = new HashMap<>();
 
     public static GunWar getInstance() { return gunWar; }
 

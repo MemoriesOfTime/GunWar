@@ -1,12 +1,12 @@
 package cn.lanink.gunwar.command.adminsub;
 
-import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gunwar.command.base.BaseSubCommand;
-import cn.lanink.gunwar.tasks.createroom.CreateRoomTask;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.level.Level;
 
 /**
  * @author lt_name
@@ -30,17 +30,13 @@ public class CreateRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        if (!this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
-            if (this.gunWar.createRoomSchedule.containsKey(player)) {
-                this.gunWar.createRoomSchedule.remove(player);
-                sender.sendMessage(this.language.admin_createRoom_cancel);
-            }else {
-                this.gunWar.getRoomConfigs().remove(player.getLevel().getFolderName());
-                FileUtil.deleteFile(this.gunWar.getDataFolder() + "/Rooms/" + player.getLevel().getFolderName() + ".yml");
-                this.gunWar.createRoomSchedule.put(player, 10);
-                CreateRoomTask task = new CreateRoomTask(this.gunWar, player);
-                this.gunWar.createRoomTask.put(player, task);
-                Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar, task, 10);
+        if (!this.gunWar.getRooms().containsKey(args[1])) {
+            Level level = Server.getInstance().getLevelByName(args[1]);
+            if (level != null) {
+                this.gunWar.getRoomConfig(args[1]);
+                player.teleport(level.getSafeSpawn());
+                Server.getInstance().dispatchCommand(player,
+                        this.gunWar.getCmdAdmin() + " SetRoom " + args[1]);
             }
         }else {
             sender.sendMessage(this.language.admin_createRoom_exist);
@@ -50,7 +46,7 @@ public class CreateRoom extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[0];
+        return new CommandParameter[]{ CommandParameter.newType("roomName", CommandParamType.TEXT) };
     }
 
 }

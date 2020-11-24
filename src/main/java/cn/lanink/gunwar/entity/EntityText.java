@@ -18,6 +18,7 @@ public class EntityText extends Entity {
         this.setNameTagVisible(true);
         this.setNameTagAlwaysVisible(true);
         this.setNameTag(nameTag);
+        this.setImmobile(true);
     }
 
 }

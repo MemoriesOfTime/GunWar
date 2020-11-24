@@ -66,6 +66,9 @@ public class Language {
     //创建房间
     public String admin_createRoom_exist = "§c这个地图已经存在游戏房间了！";
     public String admin_createRoom_cancel = "§c已取消创建房间！";
+    //TODO
+    public String admin_setRoom_noExist = "§c房间不存在，请先创建房间！";
+    public String admin_setRoom_cancel = "§c已取消创建房间！";
     public String admin_createRoom_back  = "§e上一步";
     public String admin_createRoom_setWaitSpawn = "§a设置等待出生点";
     public String admin_createRoom_setTeamSpawn = "§a设置 %team% §r§a出生点";
@@ -117,14 +120,11 @@ public class Language {
     public String userMenuButton3 = "§e查看房间列表";
     public String userMenuButton4 = "§e查看战绩排行榜";
     public String adminMenuSetLevel = "当前设置地图：%name%";
-    public String adminMenuButton1 = "§e设置等待出生点";
-    public String adminMenuButton2 = "§e设置红队出生点";
-    public String adminMenuButton3 = "§e设置蓝队出生点";
-    public String adminMenuButton4 = "§e设置更多参数";
-    public String adminMenuButton5 = "§e设置游戏人数";
-    public String adminMenuButton6 = "§e设置房间模式";
-    public String adminMenuButton7 = "§e重载所有房间";
-    public String adminMenuButton8 = "§c卸载所有房间";
+    //TODO
+    public String gui_admin_main_createRoom = "§e创建新房间";
+    public String gui_admin_main_setRoom = "§e设置房间";
+    public String gui_admin_main_reloadAllRoom = "§e重载所有房间";
+    public String gui_admin_main_unloadAllRoom = "§c卸载所有房间";
     public String adminTimeMenuInputText1 = "等待时间（秒）";
     public String adminTimeMenuInputText2 = "游戏时间（秒）";
     public String adminTimeMenuInputText3 = "胜利所需分数";
@@ -265,14 +265,8 @@ public class Language {
         this.userMenuButton3 = config.getString("userMenuButton3", this.userMenuButton3);
         this.userMenuButton4 = config.getString("userMenuButton4", this.userMenuButton4);
         this.adminMenuSetLevel = config.getString("adminMenuSetLevel", this.adminMenuSetLevel);
-        this.adminMenuButton1 = config.getString("adminMenuButton1", this.adminMenuButton1);
-        this.adminMenuButton2 = config.getString("adminMenuButton2", this.adminMenuButton2);
-        this.adminMenuButton3 = config.getString("adminMenuButton3", this.adminMenuButton3);
-        this.adminMenuButton4 = config.getString("adminMenuButton4", this.adminMenuButton4);
-        this.adminMenuButton5 = config.getString("adminMenuButton5", this.adminMenuButton5);
-        this.adminMenuButton6 = config.getString("adminMenuButton6", this.adminMenuButton6);
-        this.adminMenuButton7 = config.getString("adminMenuButton7", this.adminMenuButton7);
-        this.adminMenuButton8 = config.getString("adminMenuButton8", this.adminMenuButton8);
+        this.gui_admin_main_reloadAllRoom = config.getString("adminMenuButton7", this.gui_admin_main_reloadAllRoom);
+        this.gui_admin_main_unloadAllRoom = config.getString("adminMenuButton8", this.gui_admin_main_unloadAllRoom);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);
         this.adminTimeMenuInputText2 = config.getString("adminTimeMenuInputText2", this.adminTimeMenuInputText2);
         this.adminTimeMenuInputText3 = config.getString("adminTimeMenuInputText3", this.adminTimeMenuInputText3);
