@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.ui.GuiCreate;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
@@ -14,11 +14,11 @@ import cn.nukkit.utils.Config;
 /**
  * @author lt_name
  */
-public class CreateRoomListener implements Listener {
+public class SetRoomListener implements Listener {
 
     private final GunWar gunWar;
 
-    public CreateRoomListener(GunWar gunWar) {
+    public SetRoomListener(GunWar gunWar) {
         this.gunWar = gunWar;
     }
 

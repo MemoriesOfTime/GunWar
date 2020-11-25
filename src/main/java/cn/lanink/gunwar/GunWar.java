@@ -5,6 +5,7 @@ import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
+import cn.lanink.gunwar.gui.GuiListener;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
@@ -12,7 +13,6 @@ import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
-import cn.lanink.gunwar.ui.GuiListener;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.nukkit.Player;
@@ -131,7 +131,7 @@ public class GunWar extends PluginBase {
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
-        this.getServer().getPluginManager().registerEvents(new CreateRoomListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
         this.loadAllListener();
         this.loadAllRoom();
         try {

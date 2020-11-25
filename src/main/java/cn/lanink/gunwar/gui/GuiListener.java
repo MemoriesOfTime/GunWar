@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.ui;
+package cn.lanink.gunwar.gui;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
@@ -119,6 +119,16 @@ public class GuiListener implements Listener {
                         Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " unloadroom");
                         break;
                 }
+                break;
+            case ADMIN_CREATE_ROOM_MENU:
+                Server.getInstance().dispatchCommand(player,
+                        this.gunWar.getCmdAdmin() + " CreateRoom " +
+                                simple.getResponse().getClickedButton().getText());
+                break;
+            case ADMIN_SET_ROOM_MENU:
+                Server.getInstance().dispatchCommand(player,
+                        this.gunWar.getCmdAdmin() + " SetRoom " +
+                                simple.getResponse().getClickedButton().getText());
                 break;
             case  ADMIN_ITEM_ADD_WEAPON:
                 switch (simple.getResponse().getClickedButtonId()) {

@@ -65,8 +65,11 @@ public class Language {
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
     //创建房间
     public String admin_createRoom_exist = "§c这个地图已经存在游戏房间了！";
+    //TODO
+    public String admin_createRoom_success = "§a房间：%name% 创建成功！";
     public String admin_createRoom_cancel = "§c已取消创建房间！";
     //TODO
+    public String admin_setRoom_start = "§a正在设置房间：%name%！";
     public String admin_setRoom_noExist = "§c房间不存在，请先创建房间！";
     public String admin_setRoom_cancel = "§c已取消创建房间！";
     public String admin_createRoom_back  = "§e上一步";
@@ -121,6 +124,8 @@ public class Language {
     public String userMenuButton4 = "§e查看战绩排行榜";
     public String adminMenuSetLevel = "当前设置地图：%name%";
     //TODO
+    public String gui_admin_room_selectWorld = "§a选择地图";
+    public String gui_admin_room_selectRoom = "§a选择房间";
     public String gui_admin_main_createRoom = "§e创建新房间";
     public String gui_admin_main_setRoom = "§e设置房间";
     public String gui_admin_main_reloadAllRoom = "§e重载所有房间";

@@ -1,8 +1,10 @@
-package cn.lanink.gunwar.ui;
+package cn.lanink.gunwar.gui;
 
 public enum GuiType {
     USER_MENU,
     ADMIN_MENU,
+    ADMIN_CREATE_ROOM_MENU,
+    ADMIN_SET_ROOM_MENU,
     ADMIN_TIME_MENU,
     ADMIN_PLAYERS_MENU,
     ADMIN_MODE_MENU,

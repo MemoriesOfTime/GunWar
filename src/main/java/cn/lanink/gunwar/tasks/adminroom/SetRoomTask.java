@@ -3,7 +3,7 @@ package cn.lanink.gunwar.tasks.adminroom;
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityText;
-import cn.lanink.gunwar.ui.GuiCreate;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;

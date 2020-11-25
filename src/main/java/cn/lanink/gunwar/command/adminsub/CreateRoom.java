@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.command.adminsub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
@@ -30,23 +31,30 @@ public class CreateRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        if (!this.gunWar.getRooms().containsKey(args[1])) {
-            Level level = Server.getInstance().getLevelByName(args[1]);
-            if (level != null) {
-                this.gunWar.getRoomConfig(args[1]);
-                player.teleport(level.getSafeSpawn());
-                Server.getInstance().dispatchCommand(player,
-                        this.gunWar.getCmdAdmin() + " SetRoom " + args[1]);
-            }
+        if (args.length < 2) {
+            GuiCreate.sendCreateRoomMenu(player);
         }else {
-            sender.sendMessage(this.language.admin_createRoom_exist);
+            if (!this.gunWar.getRooms().containsKey(args[1])) {
+                Level level = Server.getInstance().getLevelByName(args[1]);
+                if (level != null) {
+                    this.gunWar.getRoomConfig(args[1]);
+                    sender.sendMessage(this.language.admin_createRoom_success.replace("%name%", args[1]));
+                    if (player.getLevel() != level) {
+                        player.teleport(level.getSafeSpawn());
+                    }
+                    Server.getInstance().dispatchCommand(player,
+                            this.gunWar.getCmdAdmin() + " SetRoom " + args[1]);
+                }
+            }else {
+                sender.sendMessage(this.language.admin_createRoom_exist);
+            }
         }
         return true;
     }
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[]{ CommandParameter.newType("roomName", CommandParamType.TEXT) };
+        return new CommandParameter[]{ CommandParameter.newType("worldName", CommandParamType.TEXT) };
     }
 
 }
