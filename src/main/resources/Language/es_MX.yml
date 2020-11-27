@@ -91,6 +91,7 @@ tpJoinRoomLevel: "§e >> §cPara entrar al juego, por favor selecciona una parti
 tpQuitRoomLevel: "§e >> §cUsa el comando para salir de la partida!"
 gameArmor: "§e >> §cLa armadura no se puede quitar en el juego.!"
 playerTeamChat: "§a[Equipo]§f %player% §b >>> %message%"
+game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
 scoreBoardTitle: "§eGuerra de armas"
 waitTimeScoreBoard: |-
   Equipo: %team%

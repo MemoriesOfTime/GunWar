@@ -97,6 +97,12 @@ public class Tools {
         }
     }
 
+    public static void sendTitle(BaseRoom room, String title, String subtitle) {
+        for (Player player : room.getPlayers().keySet()) {
+            player.sendTitle(title, subtitle);
+        }
+    }
+
     public static void sendRoundVictoryTitle(BaseRoom room, int v) {
         for (Player player : room.getPlayers().keySet()) {
             String title;

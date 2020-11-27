@@ -88,6 +88,7 @@ tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 gameArmor: "§e >> §c游戏中无法脱下护甲！"
 playerTeamChat: "§a[队伍]§f %player% §b >>> %message%"
+game_ctf_playerPickUpTheFlag: "§e%player% §a拿到了 %team% §a的旗帜"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   所属队伍: %team%

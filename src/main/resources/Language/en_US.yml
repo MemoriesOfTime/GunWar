@@ -91,6 +91,7 @@ tpJoinRoomLevel: "§e >> §cTo enter the game map, please join the game first!"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room!"
 gameArmor: "§e >> §cThe armor cannot be taken off in the game!"
 playerTeamChat: "§a[Team]§f %player% §b >>> %message%"
+game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   Team: %team%

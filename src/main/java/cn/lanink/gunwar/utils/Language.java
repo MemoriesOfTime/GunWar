@@ -102,6 +102,7 @@ public class Language {
     public String tpQuitRoomLevel = "§e >> §c退出房间请使用命令！";
     public String gameArmor = "§e >> §c游戏中无法脱下护甲！";
     public String playerTeamChat = "§a[队伍]§f %player% §b >>> %message%";
+    public String game_ctf_playerPickUpTheFlag = "§e%player% §a拿到了 %team% §a的旗帜";
     //ScoreBoardTask
     public String scoreBoardTitle = "§eGunWar";
     public String waitTimeScoreBoard = " 所属队伍: %team% \n 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";
@@ -260,6 +261,7 @@ public class Language {
         this.tpQuitRoomLevel = config.getString("tpQuitRoomLevel", this.tpQuitRoomLevel);
         this.gameArmor = config.getString("gameArmor", this.gameArmor);
         this.playerTeamChat = config.getString("playerTeamChat", this.playerTeamChat);
+        this.game_ctf_playerPickUpTheFlag = config.getString("game_ctf_playerPickUpTheFlag", this.game_ctf_playerPickUpTheFlag);
         //tips
         this.scoreBoardTitle = config.getString("scoreBoardTitle", this.scoreBoardTitle);
         this.waitTimeScoreBoard = config.getString("waitTimeScoreBoard", this.waitTimeScoreBoard);
