@@ -65,20 +65,19 @@ public class Language {
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
     //创建房间
     public String admin_createRoom_exist = "§c这个地图已经存在游戏房间了！";
-    //TODO
     public String admin_createRoom_success = "§a房间：%name% 创建成功！";
-    public String admin_createRoom_cancel = "§c已取消创建房间！";
-    //TODO
     public String admin_setRoom_start = "§a正在设置房间：%name%！";
     public String admin_setRoom_noExist = "§c房间不存在，请先创建房间！";
-    public String admin_setRoom_cancel = "§c已取消创建房间！";
-    public String admin_createRoom_back  = "§e上一步";
-    public String admin_createRoom_setWaitSpawn = "§a设置等待出生点";
-    public String admin_createRoom_setTeamSpawn = "§a设置 %team% §r§a出生点";
-    public String admin_createRoom_setMoreParameters = "§a设置更多参数";
-    public String admin_createRoom_setRoomPlayers = "§a设置房间人数";
-    public String admin_createRoom_setGameMode = "§a设置游戏模式";
-    public String admin_createRoom_setSuccessful = "§a房间设置完成，正在加载...";
+    public String admin_setRoom_cancel = "§c已取消设置房间！";
+    public String admin_setRoom_back = "§e上一步";
+    public String admin_setRoom_next = "§e下一步";
+    public String admin_setRoom_save = "§e保存设置";
+    public String admin_setRoom_setWaitSpawn = "§a设置等待出生点";
+    public String admin_setRoom_setTeamSpawn = "§a设置 %team% §r§a出生点";
+    public String admin_setRoom_setMoreParameters = "§a设置更多参数";
+    public String admin_setRoom_setRoomPlayers = "§a设置房间人数";
+    public String admin_setRoom_setGameMode = "§a设置游戏模式";
+    public String admin_setRoom_setSuccessful = "§a房间设置完成，正在加载...";
     //房间模式
     public String classic = "经典";
     public String captureTheFlag = "夺旗";
@@ -123,7 +122,6 @@ public class Language {
     public String userMenuButton3 = "§e查看房间列表";
     public String userMenuButton4 = "§e查看战绩排行榜";
     public String adminMenuSetLevel = "当前设置地图：%name%";
-    //TODO
     public String gui_admin_room_selectWorld = "§a选择地图";
     public String gui_admin_room_selectRoom = "§a选择房间";
     public String gui_admin_main_createRoom = "§e创建新房间";
@@ -224,14 +222,19 @@ public class Language {
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         //创建房间
         this.admin_createRoom_exist = config.getString("admin_createRoom_exist", this.admin_createRoom_exist);
-        this.admin_createRoom_cancel = config.getString("admin_createRoom_cancel", this.admin_createRoom_cancel);
-        this.admin_createRoom_back = config.getString("admin_createRoom_back", this.admin_createRoom_back);
-        this.admin_createRoom_setWaitSpawn = config.getString("admin_createRoom_setWaitSpawn", this.admin_createRoom_setWaitSpawn);
-        this.admin_createRoom_setTeamSpawn = config.getString("admin_createRoom_setTeamSpawn", this.admin_createRoom_setTeamSpawn);
-        this.admin_createRoom_setMoreParameters = config.getString("admin_createRoom_setMoreParameters", this.admin_createRoom_setMoreParameters);
-        this.admin_createRoom_setRoomPlayers = config.getString("admin_createRoom_setRoomPlayers", this.admin_createRoom_setRoomPlayers);
-        this.admin_createRoom_setGameMode = config.getString("admin_createRoom_setGameMode", this.admin_createRoom_setGameMode);
-        this.admin_createRoom_setSuccessful = config.getString("admin_createRoom_setSuccessful", this.admin_createRoom_setSuccessful);
+        this.admin_createRoom_success = config.getString("admin_createRoom_success", this.admin_createRoom_success);
+        this.admin_setRoom_start = config.getString("admin_setRoom_start", this.admin_setRoom_start);
+        this.admin_setRoom_noExist = config.getString("admin_setRoom_noExist", this.admin_setRoom_noExist);
+        this.admin_setRoom_cancel = config.getString("admin_setRoom_cancel", this.admin_setRoom_cancel);
+        this.admin_setRoom_back = config.getString("admin_setRoom_back", this.admin_setRoom_back);
+        this.admin_setRoom_next = config.getString("admin_setRoom_next", this.admin_setRoom_next);
+        this.admin_setRoom_save = config.getString("admin_setRoom_save", this.admin_setRoom_save);
+        this.admin_setRoom_setWaitSpawn = config.getString("admin_setRoom_setWaitSpawn", this.admin_setRoom_setWaitSpawn);
+        this.admin_setRoom_setTeamSpawn = config.getString("admin_setRoom_setTeamSpawn", this.admin_setRoom_setTeamSpawn);
+        this.admin_setRoom_setMoreParameters = config.getString("admin_setRoom_setMoreParameters", this.admin_setRoom_setMoreParameters);
+        this.admin_setRoom_setRoomPlayers = config.getString("admin_setRoom_setRoomPlayers", this.admin_setRoom_setRoomPlayers);
+        this.admin_setRoom_setGameMode = config.getString("admin_setRoom_setGameMode", this.admin_setRoom_setGameMode);
+        this.admin_setRoom_setSuccessful = config.getString("admin_setRoom_setSuccessful", this.admin_setRoom_setSuccessful);
         //房间模式
         this.classic = config.getString("classic", this.classic);
         this.captureTheFlag = config.getString("captureTheFlag", this.captureTheFlag);
@@ -270,6 +273,10 @@ public class Language {
         this.userMenuButton3 = config.getString("userMenuButton3", this.userMenuButton3);
         this.userMenuButton4 = config.getString("userMenuButton4", this.userMenuButton4);
         this.adminMenuSetLevel = config.getString("adminMenuSetLevel", this.adminMenuSetLevel);
+        this.gui_admin_room_selectWorld = config.getString("gui_admin_room_selectWorld", this.gui_admin_room_selectWorld);
+        this.gui_admin_room_selectRoom = config.getString("gui_admin_room_selectRoom", this.gui_admin_room_selectRoom);
+        this.gui_admin_main_createRoom = config.getString("gui_admin_main_createRoom", this.gui_admin_main_createRoom);
+        this.gui_admin_main_setRoom = config.getString("gui_admin_main_setRoom", this.gui_admin_main_setRoom);
         this.gui_admin_main_reloadAllRoom = config.getString("adminMenuButton7", this.gui_admin_main_reloadAllRoom);
         this.gui_admin_main_unloadAllRoom = config.getString("adminMenuButton8", this.gui_admin_main_unloadAllRoom);
         this.adminTimeMenuInputText1 = config.getString("adminTimeMenuInputText1", this.adminTimeMenuInputText1);

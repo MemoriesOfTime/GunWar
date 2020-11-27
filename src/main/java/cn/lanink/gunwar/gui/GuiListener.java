@@ -36,7 +36,6 @@ public class GuiListener implements Listener {
 
     /**
      * 玩家操作ui事件
-     * 直接执行现有命令，减小代码重复量，也便于维护
      * @param event 事件
      */
     @EventHandler

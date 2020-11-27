@@ -34,7 +34,7 @@ public class CreateRoom extends BaseSubCommand {
         if (args.length < 2) {
             GuiCreate.sendCreateRoomMenu(player);
         }else {
-            if (!this.gunWar.getRooms().containsKey(args[1])) {
+            if (!this.gunWar.getRoomConfigs().containsKey(args[1])) {
                 Level level = Server.getInstance().getLevelByName(args[1]);
                 if (level != null) {
                     this.gunWar.getRoomConfig(args[1]);

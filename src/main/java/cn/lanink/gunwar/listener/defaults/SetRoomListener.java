@@ -48,7 +48,7 @@ public class SetRoomListener implements Listener {
                     switch (this.gunWar.setRoomSchedule.get(player)) {
                         case 10:
                             break;
-                        case 50:
+                        /*case 50:
                             config.remove("waitTime");
                             config.remove("gameTime");
                             config.remove("victoryScore");
@@ -58,7 +58,7 @@ public class SetRoomListener implements Listener {
                             config.remove("minPlayers");
                             config.remove("maxPlayers");
                             this.gunWar.setRoomSchedule.put(player, 50);
-                            break;
+                            break;*/
                         default:
                             this.gunWar.setRoomSchedule.put(player, this.gunWar.setRoomSchedule.get(player) - 10);
                             break;
@@ -66,6 +66,9 @@ public class SetRoomListener implements Listener {
                     break;
                 case 111: //下一步
                     this.gunWar.setRoomSchedule.put(player, this.gunWar.setRoomSchedule.get(player) + 10);
+                    break;
+                case 112: //保存设置
+                    this.gunWar.setRoomSchedule.put(player, 70);
                     break;
                 case 113: //设置
                     String pos = block.getFloorX() + ":" + (block.getFloorY() + 1) + ":" + block.getFloorZ();
