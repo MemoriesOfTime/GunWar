@@ -44,6 +44,8 @@ public class CreateRoom extends BaseSubCommand {
                     }
                     Server.getInstance().dispatchCommand(player,
                             this.gunWar.getCmdAdmin() + " SetRoom " + args[1]);
+                }else {
+                    sender.sendMessage(this.language.world_doesNotExist.replace("%name%", args[1]));
                 }
             }else {
                 sender.sendMessage(this.language.admin_createRoom_exist);

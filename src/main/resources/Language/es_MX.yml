@@ -30,7 +30,8 @@ useCmdInCon: "Utiliza el comando de juego!"
 adminHelp: |-
   §eGunWar--Ayuda
   §a/%cmdName% §eAbrir UI
-  §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
+  §a/%cmdName% CreateRoom §eCreate room
+  §a/%cmdName% SetRoom §eSet up the room
   §a/%cmdName% startroom §eInicie el juego de sala del mapa de ubicación
   §a/%cmdName% stoproom §eCerrar a la fuerza la habitación en el mapa de ubicación
   §a/%cmdName% reloadroom §eRecargar todas las habitaciones
@@ -55,6 +56,7 @@ adminLevelNoRoom: "§cEl mapa actual no es una sala de juegos!"
 adminStopRoom: "§aLa habitación ha sido terminada a la fuerza!"
 adminReload: "§aLa recarga de la configuración está completa! ¡Compruebe la información en segundo plano"
 adminUnload: "§aTodas las habitaciones han sido descargadas! Verifique la información en segundo plano!"
+world_doesNotExist: "§cWorld: %name% does not exist"
 admin_createRoom_exist: "§cThis map already exists in the game room!"
 admin_createRoom_success: "§aRoom: %name% created successfully!"
 admin_setRoom_start: "§aSetting up room: %name%!"

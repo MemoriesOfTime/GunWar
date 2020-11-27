@@ -29,7 +29,8 @@ useCmdInCon: "플레이어만 사용 가능한 명령어입니다!"
 adminHelp: |-
   §eGunWar--도움말 목록
   §a/%cmdName% §eUI를 엽니다
-  §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
+  §a/%cmdName% CreateRoom §eCreate room
+  §a/%cmdName% SetRoom §eSet up the room
   §a/%cmdName% startroom §e현재 있는 방을 시작합니다
   §a/%cmdName% stoproom §e현재 있는 방을 강제로 종료합니다
   §a/%cmdName% reloadroom §e모든 방을 다시 불러옵니다
@@ -54,6 +55,7 @@ adminLevelNoRoom: "§a이 월드는 게임 방이 아닙니다"
 adminStopRoom: "§a게임이 강제로 종료되었습니다"
 adminReload: "§a모든 방 다시 불러오기 성공, 콘솔을 참조하십시오."
 adminUnload: "§a모든 방 비활성화 성공, 콘솔을 참조하십시오."
+world_doesNotExist: "§cWorld: %name% does not exist"
 admin_createRoom_exist: "§cThis map already exists in the game room!"
 admin_createRoom_success: "§aRoom: %name% created successfully!"
 admin_setRoom_start: "§aSetting up room: %name%!"

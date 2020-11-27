@@ -30,7 +30,8 @@ useCmdInCon: "Пожалуйста используйте команду в иг
 adminHelp: |-
   §eGunWar--Help
   §a/%cmdName% §eОткрыть UI
-  §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
+  §a/%cmdName% CreateRoom §eCreate room
+  §a/%cmdName% SetRoom §eSet up the room
   §a/%cmdName% startroom §eНачать игру в данной комнате
   §a/%cmdName% stoproom §eПринудительно заканчивает игру в данной комнате
   §a/%cmdName% reloadroom §eПерезагружает все комнаты
@@ -55,6 +56,7 @@ adminLevelNoRoom: "§cДанный мир не является игровой �
 adminStopRoom: "§aКомната была принудительно остановлена!"
 adminReload: "§aПерезагрузка конфигурации завершена!"
 adminUnload: "§aВсе комнаты были отключены!"
+world_doesNotExist: "§cWorld: %name% does not exist"
 admin_createRoom_exist: "§cThis map already exists in the game room!"
 admin_createRoom_success: "§aRoom: %name% created successfully!"
 admin_setRoom_start: "§aSetting up room: %name%!"

@@ -38,7 +38,8 @@ public class Language {
     public String useCmdInCon = "请不要在控制台执行此指令!";
     public String adminHelp = "§eGunWar--命令帮助 \n" +
             "§a/%cmdName% §e打开ui(仅游戏内可用) \n" +
-            "§a/%cmdName% CreateRoom §e创建房间（在当前地图） \n" +
+            "§a/%cmdName% CreateRoom §e创建房间 \n" +
+            "§a/%cmdName% SetRoom §e设置房间 \n" +
             "§a/%cmdName% startroom §e开始所在地图的房间游戏 \n" +
             "§a/%cmdName% stoproom §e强制关闭所在地图的房间 \n" +
             "§a/%cmdName% reloadroom §e重载所有房间 \n" +
@@ -64,6 +65,7 @@ public class Language {
     public String adminReload = "§a配置重载完成！请在后台查看信息！";
     public String adminUnload = "§a已卸载所有房间！请在后台查看信息！";
     //创建房间
+    public String world_doesNotExist = "§c世界：%name% 不存在";
     public String admin_createRoom_exist = "§c这个地图已经存在游戏房间了！";
     public String admin_createRoom_success = "§a房间：%name% 创建成功！";
     public String admin_setRoom_start = "§a正在设置房间：%name%！";
@@ -221,6 +223,7 @@ public class Language {
         this.adminReload = config.getString("adminReload", this.adminReload);
         this.adminUnload = config.getString("adminUnload", this.adminUnload);
         //创建房间
+        this.world_doesNotExist = config.getString("world_doesNotExist", this.world_doesNotExist);
         this.admin_createRoom_exist = config.getString("admin_createRoom_exist", this.admin_createRoom_exist);
         this.admin_createRoom_success = config.getString("admin_createRoom_success", this.admin_createRoom_success);
         this.admin_setRoom_start = config.getString("admin_setRoom_start", this.admin_setRoom_start);
