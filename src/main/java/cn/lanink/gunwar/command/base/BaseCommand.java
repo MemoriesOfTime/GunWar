@@ -2,7 +2,6 @@ package cn.lanink.gunwar.command.base;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.utils.Language;
-import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -92,7 +91,7 @@ abstract public class BaseCommand extends Command {
         this.commandParameters.clear();
         for(BaseSubCommand subCommand : this.subCommand){
             LinkedList<CommandParameter> parameters = new LinkedList<>();
-            parameters.add(new CommandParameter(subCommand.getName(), new String[]{subCommand.getName()}));
+            parameters.add(CommandParameter.newEnum(subCommand.getName(), new String[]{subCommand.getName()}));
             parameters.addAll(Arrays.asList(subCommand.getParameters()));
             this.commandParameters.put(subCommand.getName(),parameters.toArray(new CommandParameter[0]));
         }

@@ -13,6 +13,7 @@ import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
+import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.nukkit.Player;
@@ -20,7 +21,6 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 
@@ -58,8 +58,7 @@ public class GunWar extends PluginBase {
     private String worldBackupPath;
     private String roomConfigPath;
 
-    public final HashMap<Player, Integer> setRoomSchedule = new HashMap<>();
-    public final HashMap<Player, Task> setRoomTask = new HashMap<>();
+    public final HashMap<Player, SetRoomTask> setRoomTask = new HashMap<>();
 
     public static GunWar getInstance() { return gunWar; }
 

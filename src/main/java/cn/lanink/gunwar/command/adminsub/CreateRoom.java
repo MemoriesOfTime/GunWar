@@ -37,6 +37,9 @@ public class CreateRoom extends BaseSubCommand {
             if (!this.gunWar.getRoomConfigs().containsKey(args[1])) {
                 Level level = Server.getInstance().getLevelByName(args[1]);
                 if (level != null) {
+                    if (this.gunWar.setRoomTask.containsKey(player)) {
+                        this.gunWar.setRoomTask.get(player).cancel();
+                    }
                     this.gunWar.getRoomConfig(args[1]);
                     sender.sendMessage(this.language.admin_createRoom_success.replace("%name%", args[1]));
                     if (player.getLevel() != level) {
@@ -44,6 +47,9 @@ public class CreateRoom extends BaseSubCommand {
                     }
                     Server.getInstance().dispatchCommand(player,
                             this.gunWar.getCmdAdmin() + " SetRoom " + args[1]);
+                    if (this.gunWar.setRoomTask.containsKey(player)) {
+                        this.gunWar.setRoomTask.get(player).setAutoNext(true);
+                    }
                 }else {
                     sender.sendMessage(this.language.world_doesNotExist.replace("%name%", args[1]));
                 }

@@ -1,8 +1,8 @@
 package cn.lanink.gunwar.tasks.adminroom;
 
-import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityText;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
@@ -22,9 +22,11 @@ import java.util.concurrent.CompletableFuture;
  */
 public class SetRoomTask extends PluginTask<GunWar> {
 
+    private int setRoomSchedule = 10;
+    private boolean autoNext = false;
+
     private final Player player;
     private final Level level;
-    private boolean autoNext = true;
     private final Map<Integer, Item> playerInventory;
     private final Item offHandItem;
 
@@ -48,13 +50,12 @@ public class SetRoomTask extends PluginTask<GunWar> {
     public void onRun(int i) {
         if (!this.player.isOnline() ||
                 this.player.getLevel() != this.level ||
-                !this.owner.setRoomSchedule.containsKey(this.player)) {
+                !this.owner.setRoomTask.containsKey(this.player)) {
             this.cancel();
             return;
         }
-        int createRoomSchedule = this.owner.setRoomSchedule.getOrDefault(player, 10);
         Item item;
-        if (createRoomSchedule > 10) {
+        if (this.setRoomSchedule > 10) {
             item = Item.get(340);
             item.setNamedTag(new CompoundTag()
                     .putInt("GunWarItemType", 110));
@@ -65,7 +66,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
         }
         boolean canNext = false;
         Config config = this.owner.getRoomConfig(player.getLevel());
-        switch (createRoomSchedule) {
+        switch (this.setRoomSchedule) {
             case 10: //设置等待出生点
                 this.player.sendTip(this.owner.getLanguage().admin_setRoom_setWaitSpawn);
                 item = Item.get(138);
@@ -113,9 +114,12 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 if (config.getInt("waitTime") > 0 &&
                         config.getInt("gameTime") > 0 &&
                         config.getInt("victoryScore") > 0) {
-                    /*this.owner.setRoomSchedule.put(player, 50);
-                    GuiCreate.sendAdminPlayersMenu(player);*/
-                    canNext = true;
+                    if (autoNext) {
+                        this.setRoomSchedule(50);
+                        GuiCreate.sendAdminPlayersMenu(player);
+                    }else {
+                        canNext = true;
+                    }
                 }
                 break;
             case 50: //设置房间人数
@@ -127,9 +131,12 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.getInventory().setItem(4, item);
                 if (config.getInt("minPlayers") > 0 &&
                         config.getInt("maxPlayers") > 0) {
-                    /*this.owner.setRoomSchedule.put(player, 60);
-                    GuiCreate.sendAdminModeMenu(player);*/
-                    canNext = true;
+                    if (autoNext) {
+                        this.setRoomSchedule(60);
+                        GuiCreate.sendAdminModeMenu(player);
+                    }else {
+                        canNext = true;
+                    }
                 }
                 break;
             case 60: //设置游戏模式
@@ -140,8 +147,11 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 item.setCustomName(this.owner.getLanguage().admin_setRoom_setGameMode);
                 this.player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("gameMode", "").trim())) {
-                    //this.owner.setRoomSchedule.put(player, 70);
-                    canNext = true;
+                    if (autoNext) {
+                        this.setRoomSchedule(70);
+                    }else {
+                        canNext = true;
+                    }
                 }
                 break;
             case 70: //保存设置
@@ -155,7 +165,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
         //下一步
         if (canNext) {
             item = Item.get(340);
-            if (createRoomSchedule >= 60) {
+            if (this.setRoomSchedule >= 60) {
                 item.setNamedTag(new CompoundTag()
                         .putInt("GunWarItemType", 112));
                 item.setCustomName(this.owner.getLanguage().admin_setRoom_save);
@@ -220,23 +230,20 @@ public class SetRoomTask extends PluginTask<GunWar> {
         }
     }
 
-    @Override
-    public void cancel() {
-        this.closeEntity();
-        if (this.owner.setRoomSchedule.getOrDefault(player, 0) != 70) {
-            this.owner.getRoomConfigs().remove(this.level.getFolderName());
-            FileUtil.deleteFile(this.owner.getDataFolder() + "/Rooms/" + level + ".yml");
-            this.player.sendMessage(this.owner.getLanguage().admin_setRoom_cancel);
-        }
-        if (this.player != null && this.player.getInventory() != null) {
-            this.player.getInventory().clearAll();
-            this.player.getUIInventory().clearAll();
-            this.player.getInventory().setContents(this.playerInventory);
-            this.player.getOffhandInventory().setItem(0, this.offHandItem);
-        }
-        this.owner.setRoomSchedule.remove(this.player);
-        this.owner.setRoomTask.remove(this.player);
-        super.cancel();
+    public int getSetRoomSchedule() {
+        return this.setRoomSchedule;
+    }
+
+    public void setRoomSchedule(int setRoomSchedule) {
+        this.setRoomSchedule = setRoomSchedule;
+    }
+
+    public boolean isAutoNext() {
+        return this.autoNext;
+    }
+
+    public void setAutoNext(boolean autoNext) {
+        this.autoNext = autoNext;
     }
 
     private void closeEntity() {
@@ -275,6 +282,22 @@ public class SetRoomTask extends PluginTask<GunWar> {
 
             }
         });
+    }
+
+    @Override
+    public void cancel() {
+        this.closeEntity();
+        if (this.setRoomSchedule != 70) {
+            this.player.sendMessage(this.owner.getLanguage().admin_setRoom_cancel);
+        }
+        if (this.player != null && this.player.getInventory() != null) {
+            this.player.getInventory().clearAll();
+            this.player.getUIInventory().clearAll();
+            this.player.getInventory().setContents(this.playerInventory);
+            this.player.getOffhandInventory().setItem(0, this.offHandItem);
+        }
+        this.owner.setRoomTask.remove(this.player);
+        super.cancel();
     }
 
 }

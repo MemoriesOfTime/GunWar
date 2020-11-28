@@ -32,8 +32,8 @@ public class SetRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        if (this.gunWar.setRoomSchedule.containsKey(player)) {
-            this.gunWar.setRoomSchedule.remove(player);
+        if (this.gunWar.setRoomTask.containsKey(player)) {
+            this.gunWar.setRoomTask.get(player).cancel();
         }else {
             if (args.length < 2) {
                 GuiCreate.sendSetRoomMenu(player);
@@ -43,7 +43,7 @@ public class SetRoom extends BaseSubCommand {
                     if (player.getLevel() != level) {
                         player.teleport(level.getSafeSpawn());
                     }
-                    this.gunWar.setRoomSchedule.put(player, 10);
+                    //this.gunWar.setRoomSchedule.put(player, 10);
                     SetRoomTask task = new SetRoomTask(this.gunWar, player, level);
                     this.gunWar.setRoomTask.put(player, task);
                     Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar, task, 10);
