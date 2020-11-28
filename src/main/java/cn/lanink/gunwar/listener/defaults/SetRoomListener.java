@@ -92,7 +92,9 @@ public class SetRoomListener implements Listener {
                             config.set("blueSpawn", pos);
                             player.sendMessage(this.gunWar.getLanguage().adminSetBlueSpawn);
                             task.setRoomSchedule(40);
-                            //GuiCreate.sendAdminTimeMenu(player);
+                            if (task.isAutoNext()) {
+                                GuiCreate.sendAdminTimeMenu(player);
+                            }
                             break;
                         case 40:
                             GuiCreate.sendAdminTimeMenu(player);

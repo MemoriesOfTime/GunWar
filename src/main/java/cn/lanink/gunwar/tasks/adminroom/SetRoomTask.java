@@ -162,7 +162,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.cancel();
                 return;
         }
-        //下一步
+        //判断给 下一步/保存 物品
         if (canNext) {
             item = Item.get(340);
             if (this.setRoomSchedule >= 60) {

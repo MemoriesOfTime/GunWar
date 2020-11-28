@@ -43,7 +43,6 @@ public class SetRoom extends BaseSubCommand {
                     if (player.getLevel() != level) {
                         player.teleport(level.getSafeSpawn());
                     }
-                    //this.gunWar.setRoomSchedule.put(player, 10);
                     SetRoomTask task = new SetRoomTask(this.gunWar, player, level);
                     this.gunWar.setRoomTask.put(player, task);
                     Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar, task, 10);
