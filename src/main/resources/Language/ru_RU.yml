@@ -30,14 +30,8 @@ useCmdInCon: "Пожалуйста используйте команду в иг
 adminHelp: |-
   §eGunWar--Help
   §a/%cmdName% §eОткрыть UI
-  §a/%cmdName% CreateRoom §eQuickly create a room (on the current map)
-  §a/%cmdName% setwaitspawn §eПоставить текущую позицию как точку ожидания
-  §a/%cmdName% setredspawn §eПоставить текущую позицию как точку возрождения для красной команды
-  §a/%cmdName% setbluespawn §eПоставить текущую позицию как точку возрождения для синей команды
-  §a/%cmdName% setwaittime time §eПоставить время ожидания игры после набора достаточного количества игроков
-  §a/%cmdName% setgametime time §eПоставить максимальное время игры для каждого раунда
-  §a/%cmdName% setVictoryScore score §eПоставить необходимое количество очков для победы
-  §a/%cmdName% setgamemode mode §eПоставить режим игры в комнате
+  §a/%cmdName% CreateRoom §eCreate room
+  §a/%cmdName% SetRoom §eSet up the room
   §a/%cmdName% startroom §eНачать игру в данной комнате
   §a/%cmdName% stoproom §eПринудительно заканчивает игру в данной комнате
   §a/%cmdName% reloadroom §eПерезагружает все комнаты
@@ -51,7 +45,8 @@ adminSetWaitTime: "§aВремя ожидания было поставлено:
 adminSetGameTime: "§aВремя игры было поставлено: %time%"
 adminSetGameTimeShort: "§aМинимальная длительность игры не может быть меньше чем 1 минута!"
 adminSetVictoryScore: "§aКоличество очков для победы поставлено: %score%"
-adminSetGameMode: "§aИгровой режим в комнате поставлен: %roomMode%"
+adminSetGameMode: "§aИгровой режим в комнате поставлен: %gameMode%"
+gameMode_NotFound: "§cGame Mode: %gameMode% does not exist!"
 adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
 adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
 adminStartRoom: "§aИгра была принудительно начата!"
@@ -61,15 +56,21 @@ adminLevelNoRoom: "§cДанный мир не является игровой �
 adminStopRoom: "§aКомната была принудительно остановлена!"
 adminReload: "§aПерезагрузка конфигурации завершена!"
 adminUnload: "§aВсе комнаты были отключены!"
+world_doesNotExist: "§cWorld: %name% does not exist"
 admin_createRoom_exist: "§cThis map already exists in the game room!"
-admin_createRoom_cancel: "§cThe room creation has been cancelled!"
-admin_createRoom_back: "§eBack"
-admin_createRoom_setWaitSpawn: "§aSet waiting spawn point"
-admin_createRoom_setTeamSpawn: "§aSet %team% §r§a spawn point"
-admin_createRoom_setMoreParameters: "§aSet more parameters"
-admin_createRoom_setRoomPlayers: "§aSet the number of people in the room"
-admin_createRoom_setGameMode: "§aSet game mode"
-admin_createRoom_setSuccessful: "§aThe room is set up, loading..."
+admin_createRoom_success: "§aRoom: %name% created successfully!"
+admin_setRoom_start: "§aSetting up room: %name%!"
+admin_setRoom_noExist: "§cThe room does not exist, please create a room first!"
+admin_setRoom_cancel: "§cThe room has been cancelled!"
+admin_setRoom_back: "§eback"
+admin_setRoom_next: "§eNext"
+admin_setRoom_save: "§eSave"
+admin_setRoom_setWaitSpawn: "§aSet waiting point"
+admin_setRoom_setTeamSpawn: "§aSet %team% §r§a spawn point"
+admin_setRoom_setMoreParameters: "§aSet more parameters"
+admin_setRoom_setRoomPlayers: "§aSet the number of people in the room"
+admin_setRoom_setGameMode: "§aSet game mode"
+admin_setRoom_setSuccessful: "§aThe room is set up, loading..."
 classic: "Классический"
 captureTheFlag: "Захват флага"
 playerTeamSelect: "Вы выбрали команду"
@@ -90,6 +91,9 @@ tpJoinRoomLevel: "§e >> §cЧтобы войти в игровой мир сн�
 tpQuitRoomLevel: "§e >> §cПожалуйста введите команду чтобы выйти!"
 gameArmor: "§e >> §cНевозможно снять броню во время игры!"
 playerTeamChat: "§a[Команда]§f %player% §b >>> %message%"
+game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
+game_ctf_overtime: "§eOvertime!"
+game_ctf_draw: "draw"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   Команда: %team%
@@ -120,14 +124,12 @@ userMenuButton2: "§eВыйти из комнаты"
 userMenuButton3: "§eСписок всех комнат"
 userMenuButton4: "§eПосмотреть ранговый список"
 adminMenuSetLevel: "Комната:%name%"
-adminMenuButton1: "§eПоставить точку ожидания"
-adminMenuButton2: "§eПоставить точку возрождения для красной команды"
-adminMenuButton3: "§eПоставить точку возрождения для синей команды"
-adminMenuButton4: "§eПоставить больше параметров"
-adminMenuButton5: "§eSet the number of players"
-adminMenuButton6: "§eПоставить режим игры в комнате"
-adminMenuButton7: "§eПерезагрузить все комнаты"
-adminMenuButton8: "§cУдалить все комнаты"
+gui_admin_room_selectWorld: "§aSelect map"
+gui_admin_room_selectRoom: "§aChoose a room"
+gui_admin_main_createRoom: "§eCreate new room"
+gui_admin_main_setRoom: "§eSet up the room"
+gui_admin_main_reloadAllRoom: "§eOverload all rooms"
+gui_admin_main_unloadAllRoom: "§cUnload all rooms"
 adminTimeMenuInputText1: "Время ожидания(с)"
 adminTimeMenuInputText2: "Время игры(с)"
 adminTimeMenuInputText3: "Очков для победы"

@@ -1,11 +1,13 @@
 package cn.lanink.gunwar.command.adminsub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
-import cn.lanink.gunwar.tasks.CreateRoomTask;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.level.Level;
 
 /**
  * @author lt_name
@@ -29,24 +31,38 @@ public class CreateRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        if (!this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
-            if (this.gunWar.createRoomSchedule.containsKey(player)) {
-                this.gunWar.createRoomSchedule.remove(player);
-                sender.sendMessage(this.language.admin_createRoom_cancel);
-            }else {
-                this.gunWar.createRoomSchedule.put(player, 10);
-                Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
-                        new CreateRoomTask(this.gunWar, player), 10);
-            }
+        if (args.length < 2) {
+            GuiCreate.sendCreateRoomMenu(player);
         }else {
-            sender.sendMessage(this.language.admin_createRoom_exist);
+            if (!this.gunWar.getRoomConfigs().containsKey(args[1])) {
+                Level level = Server.getInstance().getLevelByName(args[1]);
+                if (level != null) {
+                    if (this.gunWar.setRoomTask.containsKey(player)) {
+                        this.gunWar.setRoomTask.get(player).cancel();
+                    }
+                    this.gunWar.getRoomConfig(args[1]);
+                    sender.sendMessage(this.language.admin_createRoom_success.replace("%name%", args[1]));
+                    if (player.getLevel() != level) {
+                        player.teleport(level.getSafeSpawn());
+                    }
+                    Server.getInstance().dispatchCommand(player,
+                            this.gunWar.getCmdAdmin() + " SetRoom " + args[1]);
+                    if (this.gunWar.setRoomTask.containsKey(player)) {
+                        this.gunWar.setRoomTask.get(player).setAutoNext(true);
+                    }
+                }else {
+                    sender.sendMessage(this.language.world_doesNotExist.replace("%name%", args[1]));
+                }
+            }else {
+                sender.sendMessage(this.language.admin_createRoom_exist);
+            }
         }
         return true;
     }
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[0];
+        return new CommandParameter[]{ CommandParameter.newType("worldName", CommandParamType.TEXT) };
     }
 
 }

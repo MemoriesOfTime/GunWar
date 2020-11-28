@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.command.usersub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
-import cn.lanink.gunwar.ui.GuiCreate;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;

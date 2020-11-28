@@ -30,6 +30,7 @@ public class CTFModeRoom extends ClassicModeRoom {
     public Player haveRedFlag, haveBlueFlag;
     public EntityFlagStand redFlagStand, blueFlagStand;
     public EntityFlag redFlag, blueFlag;
+    private boolean overtime = false;
 
     public CTFModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
@@ -126,6 +127,7 @@ public class CTFModeRoom extends ClassicModeRoom {
         if (this.playerRespawnTime != null) {
             this.playerRespawnTime.clear();
         }
+        this.overtime = false;
     }
 
     @Override
@@ -155,9 +157,15 @@ public class CTFModeRoom extends ClassicModeRoom {
                 Server.getInstance().getScheduler().scheduleRepeatingTask(
                         this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
                 return;
-            } else {
+            }else if (!this.overtime) {
+                this.overtime = true;
                 this.gameTime = this.getSetGameTime() / 5;
-                //TODO 添加加时赛提示
+                Tools.sendTitle(this, this.language.game_ctf_overtime, "");
+                return;
+            }else {
+                this.setStatus(3);
+                Server.getInstance().getScheduler().scheduleRepeatingTask(
+                        this.gunWar, new VictoryTask(this.gunWar, this, 0), 20);
                 return;
             }
         }else if (v == 1) {

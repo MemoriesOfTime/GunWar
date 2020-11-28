@@ -1,10 +1,12 @@
 package cn.lanink.gunwar.listener.capturetheflag;
 
+import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
+import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -27,7 +29,6 @@ public class CTFDamageListener extends BaseGameListener {
         if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player)) {
             Player damagePlayer = (Player) event.getDamager();
             if (damagePlayer == null) return;
-
             BaseRoom baseRoom = this.getListenerRoom(damagePlayer.getLevel());
             CTFModeRoom room = null;
             if (baseRoom instanceof CTFModeRoom) {
@@ -39,10 +40,17 @@ public class CTFDamageListener extends BaseGameListener {
             if (event.getEntity() instanceof EntityFlag && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlag entityFlag = (EntityFlag) event.getEntity();
                 int team = entityFlag.namedTag.getInt("GunWarTeam");
+                Language language = GunWar.getInstance().getLanguage();
                 if (team == 11 && room.getPlayers(damagePlayer) == 2) {
                     room.haveRedFlag = damagePlayer;
+                    Tools.sendTitle(room, "", language.game_ctf_playerPickUpTheFlag
+                            .replace("%player%", damagePlayer.getName())
+                            .replace("%team%", language.teamNameRed));
                 }else if (team == 12 && room.getPlayers(damagePlayer) == 1) {
                     room.haveBlueFlag = damagePlayer;
+                    Tools.sendTitle(room, "", language.game_ctf_playerPickUpTheFlag
+                            .replace("%player%", damagePlayer.getName())
+                            .replace("%team%", language.teamNameBlue));
                 }
             }else if (event.getEntity() instanceof EntityFlagStand && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
