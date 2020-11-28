@@ -89,6 +89,8 @@ tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 gameArmor: "§e >> §c游戏中无法脱下护甲！"
 playerTeamChat: "§a[队伍]§f %player% §b >>> %message%"
 game_ctf_playerPickUpTheFlag: "§e%player% §a拿到了 %team% §a的旗帜"
+game_ctf_overtime: "§e加时!"
+game_ctf_draw: "平局"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   所属队伍: %team%

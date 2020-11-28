@@ -27,26 +27,32 @@ public class VictoryTask extends PluginTask<GunWar> {
         this.victoryTime = 10;
         this.victory = victory;
         for (Map.Entry<Player, Integer> entry: room.getPlayers().entrySet()) {
-            if (this.victory == 1) {
-                if (entry.getValue() == 1) {
-                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
-                }else {
-                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
-                }
-                LinkedList<String> ms = new LinkedList<>();
-                ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameRed));
-                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
-                entry.getKey().sendTitle(this.language.victoryRed, "", 10, 40, 20);
-            }else if (this.victory == 2) {
-                if (entry.getValue() == 2) {
-                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
-                }else {
-                    GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
-                }
-                LinkedList<String> ms = new LinkedList<>();
-                ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameBlue));
-                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
-                entry.getKey().sendTitle(this.language.victoryBlue, "", 10, 40, 20);
+            LinkedList<String> ms = new LinkedList<>();
+            switch (this.victory) {
+                case 1:
+                    if (entry.getValue() == 1) {
+                        GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
+                    }else {
+                        GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
+                    }
+                    ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameRed));
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+                    entry.getKey().sendTitle(this.language.victoryRed, "", 10, 40, 20);
+                    break;
+                case 2:
+                    if (entry.getValue() == 2) {
+                        GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
+                    }else {
+                        GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
+                    }
+                    ms.add(this.language.game_ctf_draw);
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+                    entry.getKey().sendTitle(this.language.game_ctf_draw, "", 10, 40, 20);
+                    break;
+                default:
+                    ms.add(this.language.game_ctf_draw);
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+                    entry.getKey().sendTitle(this.language.game_ctf_draw, "", 10, 40, 20);
             }
         }
     }
@@ -75,6 +81,8 @@ public class VictoryTask extends PluginTask<GunWar> {
                             if (entry.getValue() == 2) {
                                 Tools.spawnFirework(entry.getKey());
                             }
+                        }else {
+                            entry.getKey().sendTip(this.language.game_ctf_draw);
                         }
                     }
                 }

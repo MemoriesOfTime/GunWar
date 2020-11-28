@@ -92,6 +92,8 @@ tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room!"
 gameArmor: "§e >> §cThe armor cannot be taken off in the game!"
 playerTeamChat: "§a[Team]§f %player% §b >>> %message%"
 game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
+game_ctf_overtime: "§eOvertime!"
+game_ctf_draw: "draw"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   Team: %team%

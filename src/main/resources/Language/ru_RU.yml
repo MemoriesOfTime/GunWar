@@ -92,6 +92,8 @@ tpQuitRoomLevel: "§e >> §cПожалуйста введите команду �
 gameArmor: "§e >> §cНевозможно снять броню во время игры!"
 playerTeamChat: "§a[Команда]§f %player% §b >>> %message%"
 game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
+game_ctf_overtime: "§eOvertime!"
+game_ctf_draw: "draw"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   Команда: %team%

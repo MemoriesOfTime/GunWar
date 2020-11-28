@@ -91,6 +91,8 @@ tpQuitRoomLevel: "§e >> 게임에서 나가시려면 명령을 사용해 주세
 gameArmor: "§e >> §c게임 중에는 갑옷을 벗을 수 없습니다!"
 playerTeamChat: "§c[팀] %player% + §b >> %message%"
 game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
+game_ctf_overtime: "§eOvertime!"
+game_ctf_draw: "draw"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   소속 팀: %team%
