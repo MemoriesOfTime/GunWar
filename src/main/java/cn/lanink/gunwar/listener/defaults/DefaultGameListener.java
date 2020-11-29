@@ -24,6 +24,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.player.PlayerGameModeChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
 import cn.nukkit.inventory.PlayerInventory;
@@ -141,6 +142,8 @@ public class DefaultGameListener extends BaseGameListener {
         if (event.getSlot() >= event.getInventory().getSize()) {
             event.setCancelled(true);
             player.sendMessage(this.language.gameArmor);
+        }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
+            event.setCancelled(true);
         }
     }
 
@@ -248,6 +251,18 @@ public class DefaultGameListener extends BaseGameListener {
                         return;
                 }
             }
+        }
+    }
+
+    /**
+     * 玩家游戏模式改变事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameModeChange(PlayerGameModeChangeEvent event) {
+        Level level = event.getPlayer() == null ? null : event.getPlayer().getLevel();
+        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
+            event.setCancelled(false);
         }
     }
 

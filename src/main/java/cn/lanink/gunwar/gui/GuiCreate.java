@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.ui;
+package cn.lanink.gunwar.gui;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
@@ -12,6 +12,7 @@ import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
+import cn.nukkit.level.Level;
 import cn.nukkit.scheduler.Task;
 
 import java.util.Arrays;
@@ -48,16 +49,42 @@ public class GuiCreate {
      */
     public static void sendAdminMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, language.adminMenuSetLevel.replace("%name%", player.getLevel().getName()));
-        simple.addButton(new ElementButton(language.adminMenuButton1, new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.adminMenuButton2, new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.adminMenuButton3, new ElementButtonImageData("path", "textures/ui/World")));
-        simple.addButton(new ElementButton(language.adminMenuButton4, new ElementButtonImageData("path", "textures/ui/timer")));
-        simple.addButton(new ElementButton(language.adminMenuButton5, new ElementButtonImageData("path", "textures/ui/FriendsDiversity")));
-        simple.addButton(new ElementButton(language.adminMenuButton6, new ElementButtonImageData("path", "textures/ui/dev_glyph_color")));
-        simple.addButton(new ElementButton(language.adminMenuButton7,  new ElementButtonImageData("path", "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(language.adminMenuButton8, new ElementButtonImageData("path", "textures/ui/redX1")));
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
+        simple.addButton(new ElementButton(language.gui_admin_main_createRoom,
+                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/World")));
+        simple.addButton(new ElementButton(language.gui_admin_main_setRoom,
+                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/dev_glyph_color")));
+        simple.addButton(new ElementButton(language.gui_admin_main_reloadAllRoom,
+                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/refresh_light")));
+        simple.addButton(new ElementButton(language.gui_admin_main_unloadAllRoom,
+                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/redX1")));
         showFormWindow(player, simple, GuiType.ADMIN_MENU);
+    }
+
+    /**
+     * 显示创建房间菜单（选择地图）
+     * @param player 玩家
+     */
+    public static void sendCreateRoomMenu(Player player) {
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
+                GunWar.getInstance().getLanguage().gui_admin_room_selectWorld);
+        for (Level level : Server.getInstance().getLevels().values()) {
+            simple.addButton(new ElementButton(level.getFolderName()));
+        }
+        showFormWindow(player, simple, GuiType.ADMIN_CREATE_ROOM_MENU);
+    }
+
+    /**
+     * 显示设置房间菜单（选择房间）
+     * @param player 玩家
+     */
+    public static void sendSetRoomMenu(Player player) {
+        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
+                GunWar.getInstance().getLanguage().gui_admin_room_selectRoom);
+        for (String roomName : GunWar.getInstance().getRoomConfigs().keySet()) {
+            simple.addButton(new ElementButton(roomName));
+        }
+        showFormWindow(player, simple, GuiType.ADMIN_SET_ROOM_MENU);
     }
 
     /**

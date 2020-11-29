@@ -1,0 +1,179 @@
+# Translated by Jassyel
+# You can help me improve the translation through github
+# https://github.com/lt-name/GunWar_Nukkit
+roomLevelBackup: "§aRoom: %name% did not detect the map backup, the map is being backed up..."
+roomLevelBackupExist: "§aRoom: %name% detected map backup!"
+roomLevelBackupNotExist: "§aRoom: %name% map backup does not exist! Unable to restore the map!"
+roomLevelRestoreLevelFailure: "§cRoom: %name% map restoration failed!"
+useCmdInRoom: "§e >> §cNo puedes usar este comando aquí!"
+cmdHelp: "§ePara mas ayuda, por favor usa: §b/%cmdName% help"
+userHelp: |-
+  §eGunWar--Ayuda
+  §a/%cmdName% §eAbrir UI
+  §a/%cmdName% join <roomName> §eEntrar a una partida
+  §a/%cmdName% quit §eSalir de una partida
+  §a/%cmdName% list §eVer la lista de todas las partidas
+  §a/%cmdName% record §eMira los records(lista de records)
+noPermission: "§cLo siento, no tienes suficientes permisos para esto!"
+joinRoom: "§aHas entrado a la partida: §2%name%"
+joinRoomOnRoom: "§c No puedes entrar porqué tu ya estas en una partida ahora mismo"
+joinRoomOnRiding: "§c No puedes unirte a un juego porque estás montando algo..."
+joinRandomRoom: "§a Has sido asignado a una partida aleatoria!"
+joinRoomIsPlaying: "§aEsta partida ya comenzó, por favor espera!"
+joinRoomIsFull: "§aLa partida está llena, por favor espera!"
+joinRoomIsNotFound: "§aLa partida no existe!"
+joinRoomNotAvailable: "§aEsta partida no está disponible!"
+quitRoom: "§aHas salido de la partida!"
+quitRoomNotInRoom: "§aNo estas en ninguna partida!"
+listRoom: "§eLista de arenas: §a %list%"
+useCmdInCon: "Utiliza el comando de juego!"
+adminHelp: |-
+  §eGunWar--Ayuda
+  §a/%cmdName% §eAbrir UI
+  §a/%cmdName% CreateRoom §eCreate room
+  §a/%cmdName% SetRoom §eSet up the room
+  §a/%cmdName% startroom §eInicie el juego de sala del mapa de ubicación
+  §a/%cmdName% stoproom §eCerrar a la fuerza la habitación en el mapa de ubicación
+  §a/%cmdName% reloadroom §eRecargar todas las habitaciones
+  §a/%cmdName% unloadroom §eCierre todas las habitaciones y desinstale la configuración
+  §a/%cmdName% AddWeapon §eOpen the add weapon gui
+adminSetWaitSpawn: "§aEspere a que el punto de generación se establezca correctamente!"
+adminSetRedSpawn: "§aEl punto de aparición del equipo rojo se estableció correctamente!"
+adminSetBlueSpawn: "§aEl punto de aparición del equipo azul se estableció correctamente!"
+adminNotNumber: "§a¡El parámetro introducido no es un número!"
+adminSetWaitTime: "§aEl tiempo de espera se ha establecido en: %time%"
+adminSetGameTime: "§aEl tiempo de juego se ha establecido en: %time%"
+adminSetGameTimeShort: "§aEl tiempo mínimo de juego no puede ser inferior a 1 minuto!"
+adminSetVictoryScore: "§aLa puntuación de la victoria se ha establecido en: %score%"
+adminSetGameMode: "§aEl modo de juego de sala se ha configurado en: %gameMode%"
+gameMode_NotFound: "§cGame Mode: %gameMode% does not exist!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
+adminStartRoom: "§aEl juego se ha iniciado a la fuerza.!"
+adminStartRoomNoPlayer: "§aNo hay suficientes personas en la sala para comenzar el juego!"
+adminStartRoomIsPlaying: "§cLa habitación ha comenzado!"
+adminLevelNoRoom: "§cEl mapa actual no es una sala de juegos!"
+adminStopRoom: "§aLa habitación ha sido terminada a la fuerza!"
+adminReload: "§aLa recarga de la configuración está completa! ¡Compruebe la información en segundo plano"
+adminUnload: "§aTodas las habitaciones han sido descargadas! Verifique la información en segundo plano!"
+world_doesNotExist: "§cWorld: %name% does not exist"
+admin_createRoom_exist: "§cThis map already exists in the game room!"
+admin_createRoom_success: "§aRoom: %name% created successfully!"
+admin_setRoom_start: "§aSetting up room: %name%!"
+admin_setRoom_noExist: "§cThe room does not exist, please create a room first!"
+admin_setRoom_cancel: "§cThe room has been cancelled!"
+admin_setRoom_back: "§eback"
+admin_setRoom_next: "§eNext"
+admin_setRoom_save: "§eSave"
+admin_setRoom_setWaitSpawn: "§aSet waiting point"
+admin_setRoom_setTeamSpawn: "§aSet %team% §r§a spawn point"
+admin_setRoom_setMoreParameters: "§aSet more parameters"
+admin_setRoom_setRoomPlayers: "§aSet the number of people in the room"
+admin_setRoom_setGameMode: "§aSet game mode"
+admin_setRoom_setSuccessful: "§aThe room is set up, loading..."
+classic: "Clasico"
+captureTheFlag: "Captura la bandera"
+playerTeamSelect: "Has seleccionado un equipo"
+roomSafeKick: "\n§cThe room is closed abnormally!\nFor the safety of your backpack, please re-enter the server later!"
+noTeamSelect: "Ningún equipo seleccionado"
+teamNameRed: "§cEquipo Rojo"
+teamNameBlue: "§9Equipo Azúl"
+roundVictoryRed: "§cEl equipo rojo ganó la partida"
+roundVictoryBlue: "§9El equipo azúl ganó la partida"
+victoryRed: "§cVictorias del equipo rojo"
+victoryBlue: "§9Victorias del equipo azúl"
+roundVictoryDraw: "Dram"
+titleDeathTitle: "Muertes"
+titleDeathSubtitle: "Fuiste asesinado por %player%"
+killMessage: "§e >> §c%damagePlayer% eliminó a %player%"
+suicideMessage: "§e >> §c%player% se suicidó"
+tpJoinRoomLevel: "§e >> §cPara entrar al juego, por favor selecciona una partida primero!"
+tpQuitRoomLevel: "§e >> §cUsa el comando para salir de la partida!"
+gameArmor: "§e >> §cLa armadura no se puede quitar en el juego.!"
+playerTeamChat: "§a[Equipo]§f %player% §b >>> %message%"
+game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
+game_ctf_overtime: "§eOvertime!"
+game_ctf_draw: "draw"
+scoreBoardTitle: "§eGuerra de armas"
+waitTimeScoreBoard: |-
+  Equipo: %team%
+  Jugadores: §a %playerNumber%/10
+  §aTiempo: §e%time%
+waitScoreBoard: |-
+  Equipo: %team%
+  Jugadores: §a %playerNumber%/10
+  2 jugadores requeridos
+  Esperando jugadores
+waitTimeBottom: "§aAún quedan: %time% segundos!"
+waitBottom: "§cEsperando jugadores para iniciar, actualmente hay: %playerNumber% jugadores"
+gameTimeScoreBoard: |-
+  §l§aEquipo: %team%
+  §l§aSalud:§e %health%
+  §l§aTiempo:§e %time% (s)
+  §l§aEquipo Survival:
+  §l§cRojo: %red%
+  §l§9Azúl: %blue%
+  §l§aRecords:
+  §l§cRojo: %redRound% Puntos
+  §l§9Azúl: %blueRound% Puntos
+gameTimeBottom: "§l§cSalud: %health%"
+gameTimeRespawnBottom: "§l§cCuenta regresiva de resurrección: %time%"
+victoryMessage: "§eFelicidades a %teamName% §e por ganar, GG"
+userMenuButton1: "§eEntrar a una partida aleatoria"
+userMenuButton2: "§eSalir de esta partida"
+userMenuButton3: "§eLista de partidas"
+userMenuButton4: "§eVer la lista de rangos"
+adminMenuSetLevel: "Mapa:%name%"
+gui_admin_room_selectWorld: "§aSelect map"
+gui_admin_room_selectRoom: "§aChoose a room"
+gui_admin_main_createRoom: "§eCreate new room"
+gui_admin_main_setRoom: "§eSet up the room"
+gui_admin_main_reloadAllRoom: "§eOverload all rooms"
+gui_admin_main_unloadAllRoom: "§cUnload all rooms"
+adminTimeMenuInputText1: "Tiempo de espera(s)"
+adminTimeMenuInputText2: "Tiempo para jugar(s)"
+adminTimeMenuInputText3: "Puntos necesarios para ganar"
+adminPlayersMenuInputText1: "Minimum number of players in the room"
+adminPlayersMenuInputText2: "Maximum number of players in the room"
+joinRoomOK: "§l§aConfirmar para entrar a: %name% §l§a?"
+buttonOK: "§aConfirmar"
+buttonReturn: "§cAtrás"
+#TODO translate
+gui_admin_item_add_weapon_melee: "添加近战类武器"
+gui_admin_item_add_weapon_projectile: "添加抛掷类武器"
+gui_admin_item_add_weapon_gun: "添加远程类武器"
+gui_admin_item_name: "物品名称"
+gui_admin_item_showName: "物品显示名称"
+gui_admin_item_id: "物品ID"
+gui_admin_item_lore: "物品lore"
+gui_admin_item_weapon_minDamage: "最小伤害"
+gui_admin_item_weapon_maxDamage: "最大伤害"
+gui_admin_item_weapon_attackCooldown: "攻击冷却(tick)"
+gui_admin_item_weapon_knockBack: "击退"
+gui_admin_item_weapon_infiniteDurability: "无限耐久"
+gui_admin_item_weapon_killMessage: "击杀提示"
+gui_admin_item_weapon_particle: "粒子"
+gui_admin_item_weapon_range: "伤害范围"
+gui_admin_item_weapon_maxMagazine: "弹夹容量"
+gui_admin_item_weapon_reloadTime: "换弹时间"
+gui_admin_item_weapon_reloadInterrupted: "换弹允许中断"
+gui_admin_item_weapon_bulletGravity: "子弹重力"
+gui_admin_item_weapon_bulletMotionMultiply: "子弹移动倍速"
+gui_admin_item_add_error_exist: "§c物品：%name% 已存在！"
+gui_admin_item_add_error_var: "§c物品：%name% 参数：%var% 输入错误！"
+gui_admin_item_add_success: "§a物品：%name% 添加成功！您可以通过配置文件修改更多内容！"
+recordListButton1: "§eVer records personales"
+recordListButton2: "§eVer la tabla de clasificación de asesinatos"
+recordListButton3: "§eVer tabla de clasificación de muertes"
+recordListButton4: "§eVer la tabla de clasificación de victorias"
+recordListButton5: "§eVer la tabla de clasificación de derrotas"
+killsRanking: "Tabla de clasificación de asesinatos: "
+deathsRanking: "Tabla de clasificación de muertes: "
+victoryRanking: "Rango de victorias: "
+defeatRanking: "Rango de derrotas: "
+ranking: "Top%ranking% Jugador: %player% Frecuencia: %number%"
+playerGameRecord: "Asesinatos: %kills% \n Muertes: %deaths% \n Victorias: %victory% \n Derrotas: %defeat%"
+itemQuitRoom: "§cSalir de la partida"
+itemQuitRoomLore: "Mantenga presionado y haga clic para salir de la habitación"
+itemTeamSelectRed: "§cEscoger Equipo Rojo"
+itemTeamSelectBlue: "§9Escoger Equipo Azúl"

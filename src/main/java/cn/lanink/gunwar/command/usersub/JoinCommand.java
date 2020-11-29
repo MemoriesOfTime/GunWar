@@ -82,7 +82,7 @@ public class JoinCommand extends BaseSubCommand {
 
     @Override
     public CommandParameter[] getParameters() {
-        return new CommandParameter[] { new CommandParameter("roomName", CommandParamType.TEXT, false) };
+        return new CommandParameter[] { CommandParameter.newType("roomName", CommandParamType.TEXT) };
     }
 
 

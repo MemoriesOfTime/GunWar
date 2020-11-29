@@ -40,12 +40,12 @@ public class ClassicModeRoom extends BaseRoom implements ITimeTask {
             this.endGame();
             return;
         }
-        if (this.gameTime > 0) {
-            this.gameTime--;
-        }else {
+        if (this.gameTime <= 0) {
             Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
             this.gameTime = this.getSetGameTime();
+            return;
         }
+        this.gameTime--;
         int red = 0, blue = 0;
         for (int team : this.getPlayers().values()) {
             if (team == 1) {

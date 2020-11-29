@@ -5,6 +5,7 @@ import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
+import cn.lanink.gunwar.gui.GuiListener;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
@@ -12,9 +13,10 @@ import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
-import cn.lanink.gunwar.ui.GuiListener;
+import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
@@ -50,12 +52,13 @@ public class GunWar extends PluginBase {
     private ItemManage itemManage;
     private boolean hasTips = false;
     public static boolean debug = false;
+    private boolean restoreWorld = false;
 
     private String serverWorldPath;
     private String worldBackupPath;
     private String roomConfigPath;
 
-    private boolean restoreWorld = false;
+    public final HashMap<Player, SetRoomTask> setRoomTask = new HashMap<>();
 
     public static GunWar getInstance() { return gunWar; }
 
@@ -92,8 +95,9 @@ public class GunWar extends PluginBase {
 
     @Override
     public void onEnable() {
-        this.getLogger().info("§e插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        this.getLogger().info("§l§e版本: " + VERSION);
+        this.getLogger().info("§l§e 插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
+        this.getLogger().info("§l§e https://github.com/lt-name/GunWar_Nukkit");
+        this.getLogger().info("§l§e Version: " + VERSION);
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
@@ -105,7 +109,7 @@ public class GunWar extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        this.config = new Config(getDataFolder() + "/config.yml", 2);
+        this.config = new Config(getDataFolder() + "/config.yml", Config.YAML);
         if (this.config.getBoolean("debug", false)) {
             debug = true;
             this.getLogger().warning("警告：您开启了debug模式！");
@@ -117,7 +121,7 @@ public class GunWar extends PluginBase {
             }
         }
         this.restoreWorld = this.config.getBoolean("restoreWorld");
-        this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", 2);
+        this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", Config.YAML);
         this.loadResources();
         this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
@@ -127,6 +131,7 @@ public class GunWar extends PluginBase {
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
         this.loadAllListener();
         this.loadAllRoom();
         try {
@@ -206,6 +211,10 @@ public class GunWar extends PluginBase {
 
     public LinkedHashMap<String, BaseRoom> getRooms() {
         return this.rooms;
+    }
+
+    public HashMap<String, Config> getRoomConfigs() {
+        return this.roomConfigs;
     }
 
     public void loadAllListener() {
@@ -314,6 +323,7 @@ public class GunWar extends PluginBase {
         saveResource("Language/ko_KR.yml", false);
         saveResource("Language/en_US.yml", false);
         saveResource("Language/ru_RU.yml", false);
+        saveResource("Language/es_MX.yml", false);
         String s = this.config.getString("language", "zh_CN");
         File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
@@ -424,7 +434,7 @@ public class GunWar extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
-        Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", 2);
+        Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", Config.YAML);
         this.roomConfigs.put(level, config);
         return config;
     }

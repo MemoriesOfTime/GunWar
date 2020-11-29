@@ -1,6 +1,10 @@
 # using Google Translate
 # You can help me improve the translation through github
 # https://github.com/lt-name/GunWar_Nukkit
+roomLevelBackup: "§aRoom: %name% did not detect the map backup, the map is being backed up..."
+roomLevelBackupExist: "§aRoom: %name% detected map backup!"
+roomLevelBackupNotExist: "§aRoom: %name% map backup does not exist! Unable to restore the map!"
+roomLevelRestoreLevelFailure: "§cRoom: %name% map restoration failed!"
 useCmdInRoom: "§e >> §cYou can't use this commands here!"
 cmdHelp: "§eFor more help,please type: §b/%cmdName% help"
 userHelp: |-
@@ -26,13 +30,8 @@ useCmdInCon: "Please use command in the game!"
 adminHelp: |-
   §eGunWar--Help
   §a/%cmdName% §eOpen UI
-  §a/%cmdName% setwaitspawn §eSet the current position as the waiting point
-  §a/%cmdName% setredspawn §eSet the current location as the spawn point of the red team
-  §a/%cmdName% setbluespawn §eSet the current location as the spawn point of the blue team
-  §a/%cmdName% setwaittime time §eSet the waiting time after enough players
-  §a/%cmdName% setgametime time §eSet the maximum time for each round
-  §a/%cmdName% setVictoryScore score §eSet the required points for victory
-  §a/%cmdName% setgamemode mode §eSet room game mode
+  §a/%cmdName% CreateRoom §eCreate room
+  §a/%cmdName% SetRoom §eSet up the room
   §a/%cmdName% startroom §eStart the room game of the location map
   §a/%cmdName% stoproom §eForcibly close the room in the location map
   §a/%cmdName% reloadroom §eReload all the rooms
@@ -46,7 +45,8 @@ adminSetWaitTime: "§aThe waiting time has been set to: %time%"
 adminSetGameTime: "§aThe game time has been set to: %time%"
 adminSetGameTimeShort: "§aThe minimum game time cannot be less than 1 minute!"
 adminSetVictoryScore: "§aThe victory score has been set to: %score%"
-adminSetGameMode: "§aThe room game mode has been set to: %roomMode%"
+adminSetGameMode: "§aThe room game mode has been set to: %gameMode%"
+gameMode_NotFound: "§cGame Mode: %gameMode% does not exist!"
 adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
 adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
 adminStartRoom: "§aThe game has been forcibly started!"
@@ -56,6 +56,21 @@ adminLevelNoRoom: "§cThe current map is not a game room!"
 adminStopRoom: "§aThe room has been forcibly ended!"
 adminReload: "§aConfiguration reload is complete! Please check the information in the background!"
 adminUnload: "§aAll rooms have been unloaded! Please check the information in the background!"
+world_doesNotExist: "§cWorld: %name% does not exist"
+admin_createRoom_exist: "§cThis map already exists in the game room!"
+admin_createRoom_success: "§aRoom: %name% created successfully!"
+admin_setRoom_start: "§aSetting up room: %name%!"
+admin_setRoom_noExist: "§cThe room does not exist, please create a room first!"
+admin_setRoom_cancel: "§cThe room has been cancelled!"
+admin_setRoom_back: "§eback"
+admin_setRoom_next: "§eNext"
+admin_setRoom_save: "§eSave"
+admin_setRoom_setWaitSpawn: "§aSet waiting point"
+admin_setRoom_setTeamSpawn: "§aSet %team% §r§a spawn point"
+admin_setRoom_setMoreParameters: "§aSet more parameters"
+admin_setRoom_setRoomPlayers: "§aSet the number of people in the room"
+admin_setRoom_setGameMode: "§aSet game mode"
+admin_setRoom_setSuccessful: "§aThe room is set up, loading..."
 classic: "Classic"
 captureTheFlag: "CaptureTheFlag"
 playerTeamSelect: "You have selected a team"
@@ -76,6 +91,9 @@ tpJoinRoomLevel: "§e >> §cTo enter the game map, please join the game first!"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room!"
 gameArmor: "§e >> §cThe armor cannot be taken off in the game!"
 playerTeamChat: "§a[Team]§f %player% §b >>> %message%"
+game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
+game_ctf_overtime: "§eOvertime!"
+game_ctf_draw: "draw"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   Team: %team%
@@ -106,14 +124,12 @@ userMenuButton2: "§eQuit this room"
 userMenuButton3: "§eList all the rooms"
 userMenuButton4: "§eView the ranking list"
 adminMenuSetLevel: "Map:%name%"
-adminMenuButton1: "§eSet waiting point"
-adminMenuButton2: "§eSet the red team spawn point"
-adminMenuButton3: "§eSet the blue team spawn point"
-adminMenuButton4: "§eSet more parameters"
-adminMenuButton5: "§eSet the number of players"
-adminMenuButton6: "§eSet room game mode"
-adminMenuButton7: "§eReload all the rooms"
-adminMenuButton8: "§cUninstall all the rooms"
+gui_admin_room_selectWorld: "§aSelect map"
+gui_admin_room_selectRoom: "§aChoose a room"
+gui_admin_main_createRoom: "§eCreate new room"
+gui_admin_main_setRoom: "§eSet up the room"
+gui_admin_main_reloadAllRoom: "§eOverload all rooms"
+gui_admin_main_unloadAllRoom: "§cUnload all rooms"
 adminTimeMenuInputText1: "Waiting Time(s)"
 adminTimeMenuInputText2: "Playing Time(s)"
 adminTimeMenuInputText3: "Points required to win"
@@ -161,7 +177,3 @@ itemQuitRoom: "§cExit the room"
 itemQuitRoomLore: "Hold and click to exit the room"
 itemTeamSelectRed: "§cChoose the red team"
 itemTeamSelectBlue: "§9Choose Blue Team"
-itemGrenade: "§aGrenade"
-itemGrenadeLore: "Damage: 2-10 \n Damage radius: 5"
-itemFlashBang: "§aFlashBang"
-itemFlashBangLore: "Causes temporary blindness effect \n Effective radius: 5"

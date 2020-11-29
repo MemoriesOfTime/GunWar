@@ -6,13 +6,14 @@ import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.VictoryTask;
-import cn.lanink.gunwar.tasks.game.FlagPickupCheckTask;
-import cn.lanink.gunwar.tasks.game.FlagTask;
+import cn.lanink.gunwar.tasks.game.ctf.FlagPickupCheckTask;
+import cn.lanink.gunwar.tasks.game.ctf.FlagTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
@@ -29,6 +30,7 @@ public class CTFModeRoom extends ClassicModeRoom {
     public Player haveRedFlag, haveBlueFlag;
     public EntityFlagStand redFlagStand, blueFlagStand;
     public EntityFlag redFlag, blueFlag;
+    private boolean overtime = false;
 
     public CTFModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
@@ -47,11 +49,17 @@ public class CTFModeRoom extends ClassicModeRoom {
             this.endGame();
             return;
         }
-        if (this.gameTime > 0) {
-            this.gameTime--;
-        }else {
+        if (this.gameTime <= 0) {
             Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
             this.gameTime = this.getSetGameTime();
+            return;
+        }
+        this.gameTime--;
+        if (this.haveRedFlag != null) {
+            this.haveRedFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
+        }
+        if (this.haveBlueFlag != null) {
+            this.haveBlueFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
         }
         int red = 0, blue = 0;
         for (Map.Entry<Player, Integer> entry : this.getPlayerRespawnTime().entrySet()) {
@@ -119,6 +127,7 @@ public class CTFModeRoom extends ClassicModeRoom {
         if (this.playerRespawnTime != null) {
             this.playerRespawnTime.clear();
         }
+        this.overtime = false;
     }
 
     @Override
@@ -148,9 +157,15 @@ public class CTFModeRoom extends ClassicModeRoom {
                 Server.getInstance().getScheduler().scheduleRepeatingTask(
                         this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
                 return;
-            } else {
+            }else if (!this.overtime) {
+                this.overtime = true;
                 this.gameTime = this.getSetGameTime() / 5;
-                //TODO 添加加时赛提示
+                Tools.sendTitle(this, this.language.game_ctf_overtime, "");
+                return;
+            }else {
+                this.setStatus(3);
+                Server.getInstance().getScheduler().scheduleRepeatingTask(
+                        this.gunWar, new VictoryTask(this.gunWar, this, 0), 20);
                 return;
             }
         }else if (v == 1) {

@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.tasks.game;
+package cn.lanink.gunwar.tasks.game.ctf;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;

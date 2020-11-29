@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.tasks;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Language;
@@ -25,12 +26,17 @@ public class WaitTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != 1) {
+        if (this.room.getStatus() != IRoomStatus.ROOM_STATUS_WAIT) {
             this.cancel();
             return;
         }
-        if (this.room.getPlayers().size() > 1) {
-            if (this.room.getPlayers().size() == 10 && this.room.waitTime > 10) {
+        for (Player player : this.room.getPlayers().keySet()) {
+            player.getInventory().setItem(3, Tools.getItem(11));
+            player.getInventory().setItem(5, Tools.getItem(12));
+            player.getInventory().setItem(8, Tools.getItem(10));
+        }
+        if (this.room.getPlayers().size() >= this.room.getMinPlayers()) {
+            if (this.room.getPlayers().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }
             if (this.room.waitTime > 0) {

@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>GunWar</artifactId>
-    <version>1.0.5-SNAPSHOT</version>
+    <version>1.0.6-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -133,7 +133,7 @@
     <repositories>
         <repository>
             <id>nukkitx-repo</id>
-            <url>https://repo.nukkitx.com/</url>
+            <url>https://repo.nukkitx.com/main/</url>
         </repository>
         <repository>
             <id>repo-lanink-cn</id>
