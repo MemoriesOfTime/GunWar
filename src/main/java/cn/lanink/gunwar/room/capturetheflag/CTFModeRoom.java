@@ -4,7 +4,7 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
-import cn.lanink.gunwar.room.classic.ClassicModeRoom;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagPickupCheckTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagTask;
@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  * @author lt_name
  */
-public class CTFModeRoom extends ClassicModeRoom {
+public class CTFModeRoom extends BaseRoom {
 
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
     public Player haveRedFlag, haveBlueFlag;
@@ -45,16 +45,7 @@ public class CTFModeRoom extends ClassicModeRoom {
 
     @Override
     public void timeTask() {
-        if (this.getPlayers().size() < 1) {
-            this.endGame();
-            return;
-        }
-        if (this.gameTime <= 0) {
-            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
-            this.gameTime = this.getSetGameTime();
-            return;
-        }
-        this.gameTime--;
+        super.timeTask();
         if (this.haveRedFlag != null) {
             this.haveRedFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
         }
@@ -77,18 +68,7 @@ public class CTFModeRoom extends ClassicModeRoom {
                 }
             }
         }
-        if (this.redScore >= this.victoryScore) {
-            this.setStatus(ROOM_STATUS_VICTORY);
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
-            return;
-        }
-        if (this.blueScore >= this.victoryScore) {
-            this.setStatus(ROOM_STATUS_VICTORY);
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
-            return;
-        }
+        if (victoryJudgment()) return;
         for (int team : this.getPlayers().values()) {
             switch (team) {
                 case 1:
@@ -110,6 +90,26 @@ public class CTFModeRoom extends ClassicModeRoom {
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
         }
+    }
+
+    /**
+     * 队伍胜利判断
+     * @return 有队伍符合胜利条件
+     */
+    private boolean victoryJudgment() {
+        if (this.redScore >= this.victoryScore) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
+            return true;
+        }
+        if (this.blueScore >= this.victoryScore) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -176,18 +176,7 @@ public class CTFModeRoom extends ClassicModeRoom {
             Tools.sendRoundVictoryTitle(this, 2);
         }
         //房间胜利计算
-        if (this.redScore >= this.victoryScore) {
-            this.setStatus(ROOM_STATUS_VICTORY);
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
-            return;
-        }
-        if (this.blueScore >= this.victoryScore) {
-            this.setStatus(ROOM_STATUS_VICTORY);
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
-            return;
-        }
+        if (victoryJudgment()) return;
         this.roundStart();
     }
 
