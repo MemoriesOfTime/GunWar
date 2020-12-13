@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基础/通用 房间类
  * @author lt_name
  */
-public abstract class BaseRoom implements IRoom {
+public abstract class BaseRoom implements IRoom, ITimeTask {
 
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
@@ -112,7 +112,7 @@ public abstract class BaseRoom implements IRoom {
         for (String name : this.getListeners()) {
             this.gunWar.getGameListeners().get(name).addListenerRoom(this);
         }
-        this.status = ROOM_STATUS_TASK_NEED_INITIALIZED;
+        this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
     }
 
     public final void setGameMode(String gameMode) {
@@ -154,9 +154,31 @@ public abstract class BaseRoom implements IRoom {
     /**
      * @return 使用的监听器
      */
-    public abstract List<String> getListeners();
+    public List<String> getListeners() {
+        return new ArrayList<>(Arrays.asList(
+                "RoomLevelProtection",
+                "DefaultChatListener",
+                "DefaultGameListener",
+                "DefaultDamageListener"));
+    }
 
-    public abstract ITimeTask getTimeTask();
+    public ITimeTask getTimeTask() {
+        return this;
+    }
+
+    @Override
+    public void timeTask() {
+        if (this.getPlayers().isEmpty()) {
+            this.endGame();
+            return;
+        }
+        if (this.gameTime <= 0) {
+            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
+            this.gameTime = this.getSetGameTime();
+            return;
+        }
+        this.gameTime--;
+    }
 
     /**
      * 初始化Task （等待状态）
