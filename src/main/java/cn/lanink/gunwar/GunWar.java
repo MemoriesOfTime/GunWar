@@ -11,6 +11,7 @@ import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
@@ -91,6 +92,7 @@ public class GunWar extends PluginBase {
 
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("ctf", CTFModeRoom.class);
+        registerRoom("blasting", BlastingModeRoom.class);
     }
 
     @Override

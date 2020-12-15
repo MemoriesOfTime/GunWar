@@ -40,13 +40,18 @@ import java.util.Random;
 
 public class Tools {
 
-    public static List<Vector3> getRoundEdgePoint(Vector3 center, double diameter) {
-        List<Vector3> list = new LinkedList<>();
+    /**
+     * @param center 圆心
+     * @param diameter 半径
+     * @return 园边上的点
+     */
+    public static LinkedList<Vector3> getRoundEdgePoint(Vector3 center, double diameter) {
+        LinkedList<Vector3> list = new LinkedList<>();
         Vector3 point = center.clone();
         point.x += diameter;
         double xDistance = point.x - center.x;
         double zDistance = point.z - center.z;
-        for (int i = 0; i < 360; i += 10) {
+        for (int i = 0; i < 360; i += 1) {
             list.add(new Vector3(
                     xDistance * Math.cos(i) - zDistance * Math.sin(i) + center.x,
                     center.y,
