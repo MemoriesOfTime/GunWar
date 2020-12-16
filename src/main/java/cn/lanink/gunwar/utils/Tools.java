@@ -85,7 +85,11 @@ public class Tools {
     }
 
     public static String getShowStringMagazine(int now, int max) {
-        StringBuilder string = new StringBuilder("§e" + now + "/" + max + "  ");
+        return "§e" + now + "/" + max + "  " + getShowStringProgress(now, max);
+    }
+
+    public static String getShowStringProgress(int now, int max) {
+        StringBuilder string = new StringBuilder();
         for (int j = 0; j < max; j++) {
             if (j < now) {
                 string.append("§a▍");
@@ -277,6 +281,12 @@ public class Tools {
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 12));
                 item.setCustomName(language.itemTeamSelectBlue);
+                return item;
+            case 201: //爆破模式 炸弹
+                item = Item.get(46);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 201));
                 return item;
             default:
                 return item;

@@ -1,14 +1,19 @@
 package cn.lanink.gunwar.room.blasting;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
+import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Tools;
+import cn.nukkit.Player;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class BlastingModeRoom extends BaseRoom {
@@ -31,14 +36,44 @@ public class BlastingModeRoom extends BaseRoom {
     }
 
     @Override
+    public List<String> getListeners() {
+        List<String> list = super.getListeners();
+        list.add("BlastingGameListener");
+        return list;
+    }
+
+    @Override
+    public void playerRespawn(Player player) {
+        super.playerRespawn(player);
+        if (GunWar.debug && "ltname".equals(player.getName())) {
+            player.getInventory().addItem(Tools.getItem(201));
+        }
+    }
+
+    @Override
     public void timeTask() {
         super.timeTask();
         //显示爆破点
         CompletableFuture.runAsync(() -> {
-            for (Vector3 vector3 : Tools.getRoundEdgePoint(this.getBlastingPointA(), 5)) {
-                this.getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST);
-            }
-            for (Vector3 vector3 : Tools.getRoundEdgePoint(this.getBlastingPointB(), 5)) {
+            LinkedList<Vector3> list = Tools.getRoundEdgePoint(this.getBlastingPointA(), this.getBlastingPointRadius());
+            list.addAll(Tools.getRoundEdgePoint(this.getBlastingPointB(), this.getBlastingPointRadius()));
+            for (Vector3 vector3 : list) {
+                vector3.y += 0.1;
+                if (this.getLevel().getBlock(vector3).getId() == BlockID.AIR) {
+                    for (int y = vector3.getFloorY(); y > y-5; y--) {
+                        if (this.getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() != BlockID.AIR) {
+                            vector3.y = y + 1.1;
+                            break;
+                        }
+                    }
+                }else {
+                    for (int y = vector3.getFloorY(); y < y+5; y++) {
+                        if (this.getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() == BlockID.AIR) {
+                            vector3.y = y + 0.1;
+                            break;
+                        }
+                    }
+                }
                 this.getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST);
             }
         });
@@ -64,6 +99,20 @@ public class BlastingModeRoom extends BaseRoom {
                 Integer.parseInt(s[1]),
                 Integer.parseInt(s[2]),
                 this.getLevel());
+    }
+
+    /**
+     * @return 爆破点范围半径
+     */
+    public double getBlastingPointRadius() {
+        return 5;
+    }
+
+    /**
+     * @return 炸弹安装用时 (tick)
+     */
+    public double getPlantBombTime() {
+        return 5 * 20;
     }
 
 }

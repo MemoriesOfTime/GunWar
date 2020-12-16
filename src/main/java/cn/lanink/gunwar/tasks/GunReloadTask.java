@@ -15,11 +15,11 @@ public class GunReloadTask extends PluginTask<GunWar> {
     private final Player player;
     private final GunWeapon gunWeapon;
     private final float base;
-    private int initialQuantity;
+    private final int initialQuantity;
     private float bulletsFloat;
 
-    public GunReloadTask(GunWar owner, Player player, GunWeapon gunWeapon, float base) {
-        super(owner);
+    public GunReloadTask(Player player, GunWeapon gunWeapon, float base) {
+        super(GunWar.getInstance());
         this.player = player;
         this.gunWeapon = gunWeapon;
         this.base = base;

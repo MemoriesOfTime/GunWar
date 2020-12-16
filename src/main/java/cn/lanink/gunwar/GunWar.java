@@ -8,6 +8,7 @@ import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.gui.GuiListener;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
+import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
@@ -89,6 +90,7 @@ public class GunWar extends PluginBase {
         registerListener("DefaultGameListener", DefaultGameListener.class);
         registerListener("DefaultDamageListener", DefaultDamageListener.class);
         registerListener("CTFDamageListener", CTFDamageListener.class);
+        registerListener("BlastingGameListener", BlastingGameListener.class);
 
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("ctf", CTFModeRoom.class);
