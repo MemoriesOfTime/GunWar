@@ -1,10 +1,8 @@
 package cn.lanink.gunwar.command.adminsub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
-import cn.lanink.gunwar.event.GunWarRoomStartEvent;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 
@@ -34,7 +32,7 @@ public class StartRoom extends BaseSubCommand {
         if (room != null) {
             if (room.getPlayers().size() >= 2) {
                 if (room.getStatus() == 1) {
-                    Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent(room));
+                    room.startGame();
                     sender.sendMessage(this.language.adminStartRoom);
                 }else {
                     sender.sendMessage(this.language.adminStartRoomIsPlaying);

@@ -204,6 +204,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     @Override
     public void startGame() {
         this.setStatus(ROOM_STATUS_GAME);
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent(this));
         this.assignTeam();
         this.roundStart();
         Server.getInstance().getScheduler().scheduleRepeatingTask(
