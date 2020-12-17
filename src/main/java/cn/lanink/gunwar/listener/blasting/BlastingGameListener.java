@@ -35,8 +35,10 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
                     block.distance(room.getBlastingPointA()) < room.getBlastingPointRadius()) ||
                     (player.distance(room.getBlastingPointB()) < room.getBlastingPointRadius() &&
                             block.distance(room.getBlastingPointB()) < room.getBlastingPointRadius())) {
-                Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
-                        new PlantBombTask(room, player, block, PlantBombTask.maxPlacementProgress/room.getPlantBombTime()), 1, true);
+                if (!PlantBombTask.PLANT_BOMB_PLAYERS.contains(player)) {
+                    Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
+                            new PlantBombTask(room, player, block, PlantBombTask.maxPlacementProgress / room.getPlantBombTime()), 1, true);
+                }
             }
         }
 

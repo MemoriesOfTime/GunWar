@@ -10,8 +10,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
+import java.util.HashSet;
+
 public class PlantBombTask extends PluginTask<GunWar> {
 
+    public static final HashSet<Player> PLANT_BOMB_PLAYERS = new HashSet<>();
     private final BlastingModeRoom room;
     private final Player player;
     private final Vector3 playerPosition;
@@ -30,6 +33,11 @@ public class PlantBombTask extends PluginTask<GunWar> {
         this.placePoint.x += 0.5;
         this.placePoint.z += 0.5;
         this.base = base;
+        if (PLANT_BOMB_PLAYERS.contains(player)) {
+            this.cancel();
+            return;
+        }
+        PLANT_BOMB_PLAYERS.add(player);
     }
 
     @Override
@@ -60,6 +68,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
             this.player.sendTitle("", "§c取消安装");
         }
         this.player.sendTip(" ");
+        PLANT_BOMB_PLAYERS.remove(this.player);
         super.cancel();
     }
 
