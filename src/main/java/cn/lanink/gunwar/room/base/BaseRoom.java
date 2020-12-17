@@ -241,6 +241,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         Player cache;
         while (true) {
             if (noTeam.size() > 0) {
+                Collections.shuffle(noTeam, GunWar.RANDOM);
                 for (Player player : noTeam) {
                     if (redTeam.size() > blueTeam.size()) {
                         blueTeam.add(player);
