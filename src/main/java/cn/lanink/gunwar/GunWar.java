@@ -85,6 +85,7 @@ public class GunWar extends PluginBase {
             this.getLogger().warning("Language 文件夹初始化失败");
         }
 
+        //注册监听器
         registerListener("RoomLevelProtection", RoomLevelProtection.class);
         registerListener("DefaultChatListener", DefaultChatListener.class);
         registerListener("DefaultGameListener", DefaultGameListener.class);
@@ -92,6 +93,7 @@ public class GunWar extends PluginBase {
         registerListener("CTFDamageListener", CTFDamageListener.class);
         registerListener("BlastingGameListener", BlastingGameListener.class);
 
+        //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("ctf", CTFModeRoom.class);
         registerRoom("blasting", BlastingModeRoom.class);

@@ -16,6 +16,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * @author lt_name
+ */
 public class BlastingModeRoom extends BaseRoom {
 
     protected final String blastingPointA, blastingPointB;

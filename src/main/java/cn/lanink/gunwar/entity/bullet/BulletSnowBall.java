@@ -20,10 +20,6 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
  */
 public class BulletSnowBall extends EntitySnowball implements IBullet {
 
-    static {
-        Entity.registerEntity("BulletSnowBall", BulletSnowBall.class);
-    }
-
     protected float gravity = 0.03F;
     protected ParticleEffect particleEffect;
 
@@ -59,23 +55,21 @@ public class BulletSnowBall extends EntitySnowball implements IBullet {
                         .add(new FloatTag("", (float)player.yaw))
                         .add(new FloatTag("", (float)player.pitch)));
         nbt.putCompound(BaseItem.GUN_WAR_ITEM_TAG, compoundTag);
-        BulletSnowBall bulletSnowBall = (BulletSnowBall) Entity.createEntity("BulletSnowBall", player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
-        if (bulletSnowBall != null) {
-            bulletSnowBall.setGravity(gravity);
-            bulletSnowBall.setParticleEffect(particleEffect);
-            bulletSnowBall.setMotion(bulletSnowBall.getMotion().multiply(motionMultiply));
-            for (Player p : player.getLevel().getChunkPlayers(player.getFloorX() >> 4, player.getFloorZ() >> 4).values()) {
-                if (p != player) {
-                    bulletSnowBall.spawnTo(p);
-                }
+        BulletSnowBall bulletSnowBall = new BulletSnowBall(player.getChunk(), nbt, player);
+        bulletSnowBall.setGravity(gravity);
+        bulletSnowBall.setParticleEffect(particleEffect);
+        bulletSnowBall.setMotion(bulletSnowBall.getMotion().multiply(motionMultiply));
+        for (Player p : player.getLevel().getChunkPlayers(player.getFloorX() >> 4, player.getFloorZ() >> 4).values()) {
+            if (p != player) {
+                bulletSnowBall.spawnTo(p);
             }
-            Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
-                if (!bulletSnowBall.isClosed()) {
-                    bulletSnowBall.spawnTo(player);
-                }
-            }, 10);
-            player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
         }
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
+            if (!bulletSnowBall.isClosed()) {
+                bulletSnowBall.spawnTo(player);
+            }
+        }, 10);
+        player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
     }
 
     public void setGravity(float gravity) {

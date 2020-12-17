@@ -12,6 +12,9 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 
+/**
+ * @author lt_name
+ */
 public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
 
     @EventHandler
@@ -33,7 +36,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
                     (player.distance(room.getBlastingPointB()) < room.getBlastingPointRadius() &&
                             block.distance(room.getBlastingPointB()) < room.getBlastingPointRadius())) {
                 Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
-                        new PlantBombTask(room, player, PlantBombTask.maxPlacementProgress/room.getPlantBombTime()), 1, true);
+                        new PlantBombTask(room, player, block, PlantBombTask.maxPlacementProgress/room.getPlantBombTime()), 1, true);
             }
         }
 
