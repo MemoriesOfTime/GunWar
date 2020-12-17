@@ -50,7 +50,8 @@ public class PlantBombTask extends PluginTask<GunWar> {
         if (!item.hasCompoundTag() ||
                 item.getNamedTag().getInt("GunWarItemType") != 201 ||
                 this.playerPosition.distance(this.player) > 0.5 ||
-                this.placementProgress >= maxPlacementProgress) {
+                this.placementProgress >= maxPlacementProgress ||
+                !PLANT_BOMB_PLAYERS.contains(this.player)) {
             this.cancel();
         }
     }
