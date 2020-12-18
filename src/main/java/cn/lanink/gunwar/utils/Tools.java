@@ -1,9 +1,7 @@
 package cn.lanink.gunwar.utils;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.entity.EntityPlayerCorpse;
+import cn.lanink.gunwar.entity.*;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.room.base.BaseRoom;
@@ -177,7 +175,9 @@ public class Tools {
             if (!(entity instanceof Player)) {
                 if (entity instanceof EntityPlayerCorpse ||
                         entity instanceof EntityFlag ||
-                        entity instanceof EntityFlagStand) {
+                        entity instanceof EntityFlagStand ||
+                        entity instanceof EntityGunWarBomb ||
+                        entity instanceof EntityGunWarBombBlock) {
                     if (!all) {
                         continue;
                     }

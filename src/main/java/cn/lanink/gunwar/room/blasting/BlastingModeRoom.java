@@ -3,6 +3,7 @@ package cn.lanink.gunwar.room.blasting;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
+import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -27,7 +28,10 @@ public class BlastingModeRoom extends BaseRoom {
 
     protected final String blastingPointA, blastingPointB;
     protected EntityGunWarBomb entityGunWarBomb;
+    private EntityGunWarBombBlock entityGunWarBombBlock;
     protected final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
+    protected boolean bombWasFound = false;
+    protected Player demolitionBombPlayer;
 
     /**
      * 初始化
@@ -52,25 +56,41 @@ public class BlastingModeRoom extends BaseRoom {
     }
 
     @Override
-    public void playerRespawn(Player player) {
-        super.playerRespawn(player);
-        if (GunWar.debug && "ltname".equals(player.getName())) {
-            player.getInventory().addItem(Tools.getItem(201));
-        }
-    }
-
-    @Override
     public void timeTask() {
         super.timeTask();
         //Boss血条显示炸弹爆炸倒计时
         if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
                 this.entityGunWarBomb.getExplosionTime() > 0) {
+            double discoveryDistance = this.getBlastingPointRadius() * 0.8 + 5;
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == 2) {
+                    if (entry.getKey().distance(this.getBlastingPointA()) <= discoveryDistance ||
+                            entry.getKey().distance(this.getBlastingPointB()) <= discoveryDistance) {
+                        this.bombWasFound = true;
+                    }
+                }
+            }
+            String s = "";
+            if (this.bombWasFound) {
+                if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
+                    s += "§cA";
+                }else {
+                    s += "§9B";
+                }
+                s += "§a点发现炸弹  ";
+            }
+            s += "§e炸弹爆炸倒计时：§l§c" + this.entityGunWarBomb.getExplosionTime();
             for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
                 Tools.createBossBar(entry.getKey(), this.bossBarMap);
                 DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
-                bossBar.setText("§e炸弹爆炸倒计时：§l§c" + this.entityGunWarBomb.getExplosionTime());
+                bossBar.setText(s);
                 bossBar.setLength(this.entityGunWarBomb.getExplosionTime() / 50F * 100);
             }
+        }else if (!this.bossBarMap.isEmpty()) {
+            for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
+                entry.getKey().removeBossBar(entry.getValue().getBossBarId());
+            }
+            this.bossBarMap.clear();
         }
         //显示爆破点
         CompletableFuture.runAsync(() -> {
@@ -102,23 +122,79 @@ public class BlastingModeRoom extends BaseRoom {
     protected void initData() {
         super.initData();
         this.entityGunWarBomb = null;
-        if (this.bossBarMap != null) {
+        this.entityGunWarBombBlock = null;
+        if (this.bossBarMap != null && !this.bossBarMap.isEmpty()) {
+            for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
+                entry.getKey().removeBossBar(entry.getValue().getBossBarId());
+            }
             this.bossBarMap.clear();
         }
+        this.bombWasFound = false;
+        this.demolitionBombPlayer = null;
+    }
+
+    @Override
+    public void roundStart() {
+        //TODO 判断回合 交换队伍
+        super.roundStart();
+        LinkedList<Player> list = new LinkedList<>();
+        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            if (entry.getValue() == 1) {
+                list.add(entry.getKey());
+            }
+        }
+        Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
+        player.getInventory().addItem(Tools.getItem(201));
+        player.sendTitle("", "你携带着炸弹！");
+    }
+
+    @Override
+    public void roundEnd(int victory) {
+        super.roundEnd(victory);
+        this.entityGunWarBomb = null;
+        this.entityGunWarBombBlock = null;
+        if (!this.bossBarMap.isEmpty()) {
+            for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
+                entry.getKey().removeBossBar(entry.getValue().getBossBarId());
+            }
+            this.bossBarMap.clear();
+        }
+        this.bombWasFound = false;
+        this.demolitionBombPlayer = null;
     }
 
     public void setEntityGunWarBomb(EntityGunWarBomb entityGunWarBomb) {
         this.entityGunWarBomb = entityGunWarBomb;
     }
 
+    public EntityGunWarBomb getEntityGunWarBomb() {
+        return this.entityGunWarBomb;
+    }
+
+    public void setEntityGunWarBombBlock(EntityGunWarBombBlock entityGunWarBombBlock) {
+        this.entityGunWarBombBlock = entityGunWarBombBlock;
+    }
+
+    public EntityGunWarBombBlock getEntityGunWarBombBlock() {
+        return this.entityGunWarBombBlock;
+    }
+
+    public void setDemolitionBombPlayer(Player demolitionBombPlayer) {
+        this.demolitionBombPlayer = demolitionBombPlayer;
+    }
+
+    public Player getDemolitionBombPlayer() {
+        return this.demolitionBombPlayer;
+    }
+
     /**
      * 炸弹爆炸
      */
     public void bombExplosion() {
-        //TODO
         for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
             entry.getKey().removeBossBar(entry.getValue().getBossBarId());
         }
+        this.roundEnd(1);
     }
 
     /**
@@ -151,9 +227,16 @@ public class BlastingModeRoom extends BaseRoom {
     }
 
     /**
-     * @return 炸弹安装用时 (tick)
+     * @return 安装炸弹用时 (tick)
      */
     public int getPlantBombTime() {
+        return 5 * 20;
+    }
+
+    /**
+     * @return 拆除炸弹那用时 (tick)
+     */
+    public int getDemolitionBombTime() {
         return 5 * 20;
     }
 

@@ -323,7 +323,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                 this.quitRoom(entry.getKey());
             }
         }
-        initData();
+        this.initData();
         Tools.cleanEntity(getLevel(), true);
         List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
         List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
