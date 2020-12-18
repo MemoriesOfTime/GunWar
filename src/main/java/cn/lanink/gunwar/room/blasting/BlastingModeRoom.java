@@ -7,6 +7,7 @@ import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
@@ -57,7 +58,16 @@ public class BlastingModeRoom extends BaseRoom {
 
     @Override
     public void timeTask() {
-        super.timeTask();
+        if (this.getPlayers().isEmpty()) {
+            this.endGame();
+            return;
+        }
+        if (this.gameTime <= 0) {
+            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+            this.gameTime = this.getSetGameTime();
+            return;
+        }
+        this.gameTime--;
         //Boss血条显示炸弹爆炸倒计时
         if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
                 this.entityGunWarBomb.getExplosionTime() > 0) {
@@ -91,6 +101,23 @@ public class BlastingModeRoom extends BaseRoom {
                 entry.getKey().removeBossBar(entry.getValue().getBossBarId());
             }
             this.bossBarMap.clear();
+        }
+        int red = 0, blue = 0;
+        for (int team : this.getPlayers().values()) {
+            if (team == 1) {
+                red++;
+            } else if (team == 2) {
+                blue++;
+            }
+        }
+        if (red == 0) {
+            if (this.entityGunWarBomb == null) {
+                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+                this.gameTime = this.getSetGameTime();
+            }
+        } else if (blue == 0) {
+            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(1));
+            this.gameTime = this.getSetGameTime();
         }
         //显示爆破点
         CompletableFuture.runAsync(() -> {

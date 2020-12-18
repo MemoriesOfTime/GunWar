@@ -43,16 +43,17 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
     @Override
     public void cancel() {
         if (this.demolitionProgress >= MAX_DEMOLITION_PROGRESS) {
-            Tools.sendTitle(this.room, "", "§a已拆除炸弹");
+            Tools.sendTitle(this.room, "", "§a炸弹已被拆除");
             this.room.getEntityGunWarBomb().close();
             this.room.getEntityGunWarBombBlock().close();
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.owner,
-                    () -> this.room.roundEnd(2), 60);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.owner, () -> {
+                this.room.roundEnd(2);
+                this.room.setDemolitionBombPlayer(null);
+                }, 60);
         }else {
             this.player.sendTitle("", "§c取消拆除");
         }
         this.player.sendTip(" ");
-        this.room.setDemolitionBombPlayer(null);
         super.cancel();
     }
 }
