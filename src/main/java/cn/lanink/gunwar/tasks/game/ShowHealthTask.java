@@ -5,6 +5,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.DummyBossBar;
@@ -31,12 +32,7 @@ public class ShowHealthTask extends PluginTask<GunWar> {
             return;
         }
         for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
-            if (!this.bossBarMap.containsKey(entry.getKey())) {
-                DummyBossBar bossBar = new DummyBossBar.Builder(entry.getKey()).build();
-                bossBar.setColor(255, 0, 0);
-                entry.getKey().createBossBar(bossBar);
-                this.bossBarMap.put(entry.getKey(), bossBar);
-            }
+            Tools.createBossBar(entry.getKey(), this.bossBarMap);
             DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
             switch (entry.getValue()) {
                 case 11:

@@ -61,10 +61,11 @@ public class PlantBombTask extends PluginTask<GunWar> {
         if (this.placementProgress >= maxPlacementProgress) {
             Tools.sendTitle(this.room, "", "§c炸弹§e已安装！");
             this.player.getInventory().remove(Tools.getItem(201));
-            //TODO
-            EntityGunWarBomb entityBomb = new EntityGunWarBomb(this.player.getChunk(), Entity.getDefaultNBT(this.placePoint), this.player);
+            EntityGunWarBomb entityBomb = new EntityGunWarBomb(
+                    this.player.getChunk(), Entity.getDefaultNBT(this.placePoint),this.room, this.player);
             entityBomb.setPosition(this.placePoint);
             entityBomb.spawnToAll();
+            this.room.setEntityGunWarBomb(entityBomb);
         }else {
             this.player.sendTitle("", "§c取消安装");
         }

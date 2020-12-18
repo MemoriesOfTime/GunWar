@@ -11,6 +11,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.Vector3;
 
 /**
  * @author lt_name
@@ -31,15 +32,22 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         Item item = player.getInventory().getItemInHand();
         if (item.hasCompoundTag() && item.getNamedTag().getInt("GunWarItemType") == 201) {
             event.setCancelled(true);
+            Vector3 placePoint = block.clone();
+            placePoint.y += 1;
+            if (player.getLevel().getBlock(placePoint).getId() != BlockID.AIR) {
+                return;
+            }
             if ((player.distance(room.getBlastingPointA()) < room.getBlastingPointRadius() &&
-                    block.distance(room.getBlastingPointA()) < room.getBlastingPointRadius()) ||
+                    placePoint.distance(room.getBlastingPointA()) < room.getBlastingPointRadius()) ||
                     (player.distance(room.getBlastingPointB()) < room.getBlastingPointRadius() &&
-                            block.distance(room.getBlastingPointB()) < room.getBlastingPointRadius())) {
+                            placePoint.distance(room.getBlastingPointB()) < room.getBlastingPointRadius())) {
                 if (PlantBombTask.PLANT_BOMB_PLAYERS.contains(player)) {
                     PlantBombTask.PLANT_BOMB_PLAYERS.remove(player);
                 }else {
                     Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
-                            new PlantBombTask(room, player, block, PlantBombTask.maxPlacementProgress / room.getPlantBombTime()), 1, true);
+                            new PlantBombTask(room, player, placePoint,
+                                    PlantBombTask.maxPlacementProgress / (room.getPlantBombTime() * 1D)),
+                            1, true);
                 }
             }
         }

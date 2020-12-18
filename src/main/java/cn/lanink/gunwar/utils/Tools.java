@@ -31,19 +31,30 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Tools {
 
+    public static void createBossBar(Player player, ConcurrentHashMap<Player, DummyBossBar> bossBarMap) {
+        if (!bossBarMap.containsKey(player)) {
+            DummyBossBar bossBar = new DummyBossBar.Builder(player).build();
+            bossBar.setColor(255, 0, 0);
+            player.createBossBar(bossBar);
+            bossBarMap.put(player, bossBar);
+        }
+    }
+
     /**
      * @param center 圆心
      * @param diameter 半径
-     * @return 园边上的点
+     * @return 圆边上的点
      */
     public static LinkedList<Vector3> getRoundEdgePoint(Vector3 center, double diameter) {
         LinkedList<Vector3> list = new LinkedList<>();

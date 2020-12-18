@@ -2,6 +2,7 @@ package cn.lanink.gunwar.room.blasting;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -11,10 +12,13 @@ import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.DummyBossBar;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lt_name
@@ -22,6 +26,8 @@ import java.util.concurrent.CompletableFuture;
 public class BlastingModeRoom extends BaseRoom {
 
     protected final String blastingPointA, blastingPointB;
+    protected EntityGunWarBomb entityGunWarBomb;
+    protected final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
 
     /**
      * 初始化
@@ -56,6 +62,16 @@ public class BlastingModeRoom extends BaseRoom {
     @Override
     public void timeTask() {
         super.timeTask();
+        //Boss血条显示炸弹爆炸倒计时
+        if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
+                this.entityGunWarBomb.getExplosionTime() > 0) {
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                Tools.createBossBar(entry.getKey(), this.bossBarMap);
+                DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
+                bossBar.setText("§e炸弹爆炸倒计时：§l§c" + this.entityGunWarBomb.getExplosionTime());
+                bossBar.setLength(this.entityGunWarBomb.getExplosionTime() / 50F * 100);
+            }
+        }
         //显示爆破点
         CompletableFuture.runAsync(() -> {
             LinkedList<Vector3> list = Tools.getRoundEdgePoint(this.getBlastingPointA(), this.getBlastingPointRadius());
@@ -80,6 +96,29 @@ public class BlastingModeRoom extends BaseRoom {
                 this.getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST);
             }
         });
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+        this.entityGunWarBomb = null;
+        if (this.bossBarMap != null) {
+            this.bossBarMap.clear();
+        }
+    }
+
+    public void setEntityGunWarBomb(EntityGunWarBomb entityGunWarBomb) {
+        this.entityGunWarBomb = entityGunWarBomb;
+    }
+
+    /**
+     * 炸弹爆炸
+     */
+    public void bombExplosion() {
+        //TODO
+        for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
+            entry.getKey().removeBossBar(entry.getValue().getBossBarId());
+        }
     }
 
     /**
@@ -114,7 +153,7 @@ public class BlastingModeRoom extends BaseRoom {
     /**
      * @return 炸弹安装用时 (tick)
      */
-    public double getPlantBombTime() {
+    public int getPlantBombTime() {
         return 5 * 20;
     }
 

@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.entity;
 
+import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.entity.item.EntityPrimedTNT;
@@ -13,10 +14,12 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class EntityGunWarBomb extends EntityPrimedTNT {
 
+    private final BlastingModeRoom room;
     private final Player source;
 
-    public EntityGunWarBomb(FullChunk chunk, CompoundTag nbt, Player source) {
+    public EntityGunWarBomb(FullChunk chunk, CompoundTag nbt, BlastingModeRoom room, Player source) {
         super(chunk, nbt, source);
+        this.room = room;
         this.source = source;
         this.setNameTagAlwaysVisible(false);
         this.fuse = 50*20;
@@ -40,9 +43,10 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
             this.level.addParticle(new HugeExplodeSeedParticle(this));
             this.kill();
             this.close();
+            this.room.bombExplosion();
             return false;
         }
-        this.setNameTag(String.valueOf(this.fuse/20));
+        this.setNameTag(String.valueOf(this.getExplosionTime()));
         this.lastUpdate = currentTick;
         this.entityBaseTick(tickDiff);
         if (isAlive()) {
@@ -70,6 +74,13 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
     @Override
     public Player getSource() {
         return this.source;
+    }
+
+    /**
+     * @return 爆炸倒计时
+     */
+    public int getExplosionTime() {
+        return this.fuse / 20;
     }
 
 }
