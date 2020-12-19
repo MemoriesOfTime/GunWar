@@ -33,6 +33,7 @@ public class BlastingModeRoom extends BaseRoom {
     protected final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
     protected boolean bombWasFound = false;
     protected Player demolitionBombPlayer;
+    protected boolean changeTeam = false;
 
     /**
      * 初始化
@@ -158,11 +159,39 @@ public class BlastingModeRoom extends BaseRoom {
         }
         this.bombWasFound = false;
         this.demolitionBombPlayer = null;
+        this.changeTeam = false;
     }
 
     @Override
     public void roundStart() {
-        //TODO 判断回合 交换队伍
+        if (!this.changeTeam && (this.redScore + this.blueScore) >= this.victoryScore * 0.6) {
+            //TODO 提示信息
+
+            this.changeTeam = true;
+            LinkedList<Player> oldRedTeam = new LinkedList<>();
+            LinkedList<Player> oldBlueTeam = new LinkedList<>();
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                switch (entry.getValue()) {
+                    case 1:
+                    case 11:
+                        oldRedTeam.add(entry.getKey());
+                        break;
+                    case 2:
+                    case 12:
+                        oldBlueTeam.add(entry.getKey());
+                        break;
+                }
+            }
+            for (Player player : oldRedTeam) {
+                this.players.put(player, 2);
+            }
+            for (Player player : oldBlueTeam) {
+                this.players.put(player, 1);
+            }
+            int cache = this.redScore;
+            this.redScore = this.blueScore;
+            this.blueScore = cache;
+        }
         super.roundStart();
         LinkedList<Player> list = new LinkedList<>();
         for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
