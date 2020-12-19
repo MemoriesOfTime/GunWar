@@ -12,7 +12,7 @@ import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 /**
  * @author lt_name
  */
-public class DefaultChatListener extends BaseGameListener {
+public class DefaultChatListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
 

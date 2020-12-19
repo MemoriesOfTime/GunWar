@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gunwar.listener.base.BaseGameListener;
+import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.block.*;
@@ -19,7 +20,7 @@ import cn.nukkit.level.Level;
  * 游戏地图保护
  * @author lt_name
  */
-public class RoomLevelProtection extends BaseGameListener {
+public class RoomLevelProtection extends BaseGameListener<BaseRoom> {
 
     /**
      * 物品合成事件

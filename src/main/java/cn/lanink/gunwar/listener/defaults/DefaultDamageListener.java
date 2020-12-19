@@ -22,7 +22,7 @@ import cn.nukkit.potion.Effect;
 /**
  * @author lt_name
  */
-public class DefaultDamageListener extends BaseGameListener {
+public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
 

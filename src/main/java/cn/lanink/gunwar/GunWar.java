@@ -8,9 +8,11 @@ import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.gui.GuiListener;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
+import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
@@ -83,14 +85,18 @@ public class GunWar extends PluginBase {
             this.getLogger().warning("Language 文件夹初始化失败");
         }
 
+        //注册监听器
         registerListener("RoomLevelProtection", RoomLevelProtection.class);
         registerListener("DefaultChatListener", DefaultChatListener.class);
         registerListener("DefaultGameListener", DefaultGameListener.class);
         registerListener("DefaultDamageListener", DefaultDamageListener.class);
         registerListener("CTFDamageListener", CTFDamageListener.class);
+        registerListener("BlastingGameListener", BlastingGameListener.class);
 
+        //注册房间类
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("ctf", CTFModeRoom.class);
+        registerRoom("blasting", BlastingModeRoom.class);
     }
 
     @Override

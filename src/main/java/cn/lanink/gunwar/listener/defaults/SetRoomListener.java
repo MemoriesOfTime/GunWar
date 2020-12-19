@@ -43,35 +43,32 @@ public class SetRoomListener implements Listener {
             if (block.getFloorX() == 0 && block.getFloorY() == 0 && block.getFloorZ() == 0) {
                 return;
             }
+            event.setCancelled(true);
             Config config = this.gunWar.getRoomConfig(player.getLevel());
             SetRoomTask task = this.gunWar.setRoomTask.get(player);
             switch (item.getNamedTag().getInt("GunWarItemType")) {
                 case 110: //上一步
                     switch (task.getSetRoomSchedule()) {
                         case 10:
-                            break;
+                            return;
                         case 50:
                             if (task.isAutoNext()) {
                                 config.remove("waitTime");
                                 config.remove("gameTime");
                                 config.remove("victoryScore");
                             }
-                            task.setRoomSchedule(40);
                             break;
                         case 60:
                             if (task.isAutoNext()) {
                                 config.remove("minPlayers");
                                 config.remove("maxPlayers");
                             }
-                            task.setRoomSchedule(50);
-                            break;
-                        default:
-                            task.setRoomSchedule(task.getSetRoomSchedule() - 10);
                             break;
                     }
+                    task.setRoomSchedule(task.getBackRoomSchedule());
                     break;
                 case 111: //下一步
-                    task.setRoomSchedule(task.getSetRoomSchedule() + 10);
+                    task.setRoomSchedule(task.getNextRoomSchedule());
                     break;
                 case 112: //保存设置
                     task.setRoomSchedule(70);
@@ -86,12 +83,12 @@ public class SetRoomListener implements Listener {
                         case 20:
                             config.set("redSpawn", pos);
                             player.sendMessage(this.gunWar.getLanguage().adminSetRedSpawn);
-                            task.setRoomSchedule(30);
+                            task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
                         case 30:
                             config.set("blueSpawn", pos);
                             player.sendMessage(this.gunWar.getLanguage().adminSetBlueSpawn);
-                            task.setRoomSchedule(40);
+                            task.setRoomSchedule(task.getNextRoomSchedule());
                             if (task.isAutoNext()) {
                                 GuiCreate.sendAdminTimeMenu(player);
                             }
@@ -105,10 +102,19 @@ public class SetRoomListener implements Listener {
                         case 60:
                             GuiCreate.sendAdminModeMenu(player);
                             break;
+                        case 200:
+                            config.set("blastingPointA", pos);
+                            player.sendMessage("爆破点A已设置");
+                            task.setRoomSchedule(task.getNextRoomSchedule());
+                            break;
+                        case 210:
+                            config.set("blastingPointB", pos);
+                            player.sendMessage("爆破点B已设置");
+                            task.setRoomSchedule(task.getNextRoomSchedule());
+                            break;
                     }
                     break;
             }
-            event.setCancelled(true);
         }
     }
 

@@ -4,7 +4,6 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
-import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
@@ -18,7 +17,7 @@ import cn.nukkit.math.Vector3;
 /**
  * @author lt_name
  */
-public class CTFDamageListener extends BaseGameListener {
+public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
 
     /**
      * 实体受到另一实体伤害事件
@@ -29,11 +28,7 @@ public class CTFDamageListener extends BaseGameListener {
         if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player)) {
             Player damagePlayer = (Player) event.getDamager();
             if (damagePlayer == null) return;
-            BaseRoom baseRoom = this.getListenerRoom(damagePlayer.getLevel());
-            CTFModeRoom room = null;
-            if (baseRoom instanceof CTFModeRoom) {
-                room = (CTFModeRoom) baseRoom;
-            }
+            CTFModeRoom room = this.getListenerRoom(damagePlayer.getLevel());
             if (room == null || !room.isPlaying(damagePlayer)) {
                 return;
             }

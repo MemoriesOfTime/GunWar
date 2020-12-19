@@ -105,6 +105,17 @@ public class Language {
     public String game_ctf_playerPickUpTheFlag = "§e%player% §a拿到了 %team% §a的旗帜";
     public String game_ctf_overtime = "§e加时!";
     public String game_ctf_draw = "平局";
+    public String game_blasting_plantBomb = "§c炸弹§e已安装！";
+    public String game_blasting_cancelPlantBomb = "§c取消安装";
+    public String game_blasting_bombHasBeenDismantled = "§a炸弹已被拆除";
+    public String game_blasting_cancelDemolition = "§c取消拆除";
+    public String game_blasting_bombFound = "%point% §a点发现炸弹  ";
+    public String game_blasting_countdownToBombExplosion = "§e炸弹爆炸倒计时：§l§c %time%";
+    public String game_blasting_changeTeam = "§e交换队伍";
+    public String game_blasting_youCarryBomb = "你携带着炸弹!";
+    public String game_blasting_bombHasExploded = "§c炸弹已爆炸！";
+    public String game_blasting_bombHasFallen = "§c炸弹已掉落！";
+    public String game_blasting_bombHasBeenPickedUp = "§a炸弹已被拾取！";
     //ScoreBoardTask
     public String scoreBoardTitle = "§eGunWar";
     public String waitTimeScoreBoard = " 所属队伍: %team% \n 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";
@@ -182,6 +193,7 @@ public class Language {
     public String itemQuitRoomLore = "手持点击,即可退出房间";
     public String itemTeamSelectRed = "§c选择红队";
     public String itemTeamSelectBlue = "§9选择蓝队";
+    public String item_Bomb_Name = "炸弹";
 
     public Language(Config config) {
         this.roomLevelBackup = config.get("roomLevelBackup", this.roomLevelBackup);
@@ -266,6 +278,17 @@ public class Language {
         this.game_ctf_playerPickUpTheFlag = config.getString("game_ctf_playerPickUpTheFlag", this.game_ctf_playerPickUpTheFlag);
         this.game_ctf_overtime = config.getString("game_ctf_overtime", this.game_ctf_overtime);
         this.game_ctf_draw = config.getString("game_ctf_draw", this.game_ctf_draw);
+        this.game_blasting_plantBomb = config.get("game_blasting_plantBomb", this.game_blasting_plantBomb);
+        this.game_blasting_cancelPlantBomb = config.getString("game_blasting_cancelPlantBomb", this.game_blasting_cancelPlantBomb);
+        this.game_blasting_bombHasBeenDismantled = config.getString("game_blasting_bombHasBeenDismantled", this.game_blasting_bombHasBeenDismantled);
+        this.game_blasting_cancelDemolition = config.getString("game_blasting_cancelDemolition", this.game_blasting_cancelDemolition);
+        this.game_blasting_bombFound = config.getString("game_blasting_bombFound", this.game_blasting_bombFound);
+        this.game_blasting_countdownToBombExplosion = config.getString("game_blasting_countdownToBombExplosion", this.game_blasting_countdownToBombExplosion);
+        this.game_blasting_changeTeam = config.getString("game_blasting_changeTeam", this.game_blasting_changeTeam);
+        this.game_blasting_youCarryBomb = config.getString("game_blasting_youCarryBomb", this.game_blasting_youCarryBomb);
+        this.game_blasting_bombHasExploded = config.getString("game_blasting_bombHasExploded", this.game_blasting_bombHasExploded);
+        this.game_blasting_bombHasFallen = config.getString("game_blasting_bombHasFallen", this.game_blasting_bombHasFallen);
+        this.game_blasting_bombHasBeenPickedUp = config.getString("game_blasting_bombHasBeenPickedUp", this.game_blasting_bombHasBeenPickedUp);
         //tips
         this.scoreBoardTitle = config.getString("scoreBoardTitle", this.scoreBoardTitle);
         this.waitTimeScoreBoard = config.getString("waitTimeScoreBoard", this.waitTimeScoreBoard);
@@ -338,6 +361,7 @@ public class Language {
         this.itemQuitRoomLore = config.getString("itemQuitRoomLore", this.itemQuitRoomLore);
         this.itemTeamSelectRed = config.getString("itemTeamSelectRed", this.itemTeamSelectRed);
         this.itemTeamSelectBlue = config.getString("itemTeamSelectBlue", this.itemTeamSelectBlue);
+        this.item_Bomb_Name = config.getString("item_Bomb_Name", this.item_Bomb_Name);
     }
 
 }

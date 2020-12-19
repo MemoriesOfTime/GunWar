@@ -23,6 +23,8 @@ import java.util.concurrent.CompletableFuture;
 public class SetRoomTask extends PluginTask<GunWar> {
 
     private int setRoomSchedule = 10;
+    private int backRoomSchedule = 10;
+    private int nextRoomSchedule = 20;
     private boolean autoNext = false;
 
     private final Player player;
@@ -68,6 +70,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
         Config config = this.owner.getRoomConfig(player.getLevel());
         switch (this.setRoomSchedule) {
             case 10: //设置等待出生点
+                this.nextRoomSchedule = 20;
                 this.player.sendTip(this.owner.getLanguage().admin_setRoom_setWaitSpawn);
                 item = Item.get(138);
                 item.setNamedTag(new CompoundTag()
@@ -79,6 +82,8 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 }
                 break;
             case 20: //设置红队出生点
+                this.backRoomSchedule = 10;
+                this.nextRoomSchedule = 30;
                 this.player.sendTip(this.owner.getLanguage().admin_setRoom_setTeamSpawn
                         .replace("%team%", this.owner.getLanguage().teamNameRed));
                 item = Item.get(241, 14);
@@ -92,6 +97,8 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 }
                 break;
             case 30: //设置蓝队出生点
+                this.backRoomSchedule = 20;
+                this.nextRoomSchedule = 40;
                 this.player.sendTip(this.owner.getLanguage().admin_setRoom_setTeamSpawn
                         .replace("%team%", this.owner.getLanguage().teamNameBlue));
                 item = Item.get(241, 11);
@@ -105,6 +112,8 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 }
                 break;
             case 40: //设置更多参数
+                this.backRoomSchedule = 30;
+                this.nextRoomSchedule = 50;
                 this.player.sendTip(this.owner.getLanguage().admin_setRoom_setMoreParameters);
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
@@ -115,7 +124,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                         config.getInt("gameTime") > 0 &&
                         config.getInt("victoryScore") > 0) {
                     if (autoNext) {
-                        this.setRoomSchedule(50);
+                        this.setRoomSchedule(this.nextRoomSchedule);
                         GuiCreate.sendAdminPlayersMenu(player);
                     }else {
                         canNext = true;
@@ -123,6 +132,8 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 }
                 break;
             case 50: //设置房间人数
+                this.backRoomSchedule = 40;
+                this.nextRoomSchedule = 60;
                 this.player.sendTip(this.owner.getLanguage().admin_setRoom_setRoomPlayers);
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
@@ -132,7 +143,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 if (config.getInt("minPlayers") > 0 &&
                         config.getInt("maxPlayers") > 0) {
                     if (autoNext) {
-                        this.setRoomSchedule(60);
+                        this.setRoomSchedule(this.nextRoomSchedule);
                         GuiCreate.sendAdminModeMenu(player);
                     }else {
                         canNext = true;
@@ -140,15 +151,21 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 }
                 break;
             case 60: //设置游戏模式
+                this.backRoomSchedule = 50;
+                this.nextRoomSchedule = 70;
                 this.player.sendTip(this.owner.getLanguage().admin_setRoom_setGameMode);
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
                         .putInt("GunWarItemType", 113));
                 item.setCustomName(this.owner.getLanguage().admin_setRoom_setGameMode);
                 this.player.getInventory().setItem(4, item);
-                if (!"".equals(config.getString("gameMode", "").trim())) {
+                String setMode = config.getString("gameMode", "").trim();
+                if (!"".equals(setMode)) {
+                    if ("blasting".equals(setMode)) {
+                        this.nextRoomSchedule = 200;
+                    }
                     if (autoNext) {
-                        this.setRoomSchedule(70);
+                        this.setRoomSchedule(this.nextRoomSchedule);
                     }else {
                         canNext = true;
                     }
@@ -161,11 +178,39 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.owner.loadRoom(this.level.getFolderName());
                 this.cancel();
                 return;
+            case 200: //设置爆破点A
+                this.backRoomSchedule = 60;
+                this.nextRoomSchedule = 210;
+                //TODO
+                this.player.sendTip("设置爆破点A");
+                item = Item.get(46);
+                item.setNamedTag(new CompoundTag()
+                        .putInt("GunWarItemType", 113));
+                item.setCustomName("设置爆破点A");
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("blastingPointA").trim())) {
+                    canNext = true;
+                }
+                break;
+            case 210: //设置爆破点B
+                this.backRoomSchedule = 200;
+                this.nextRoomSchedule = 70;
+                //TODO
+                this.player.sendTip("设置爆破点B");
+                item = Item.get(46);
+                item.setNamedTag(new CompoundTag()
+                        .putInt("GunWarItemType", 113));
+                item.setCustomName("设置爆破点B");
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("blastingPointB").trim())) {
+                    canNext = true;
+                }
+                break;
         }
         //判断给 下一步/保存 物品
         if (canNext) {
             item = Item.get(340);
-            if (this.setRoomSchedule >= 60) {
+            if (this.nextRoomSchedule == 70) {
                 item.setNamedTag(new CompoundTag()
                         .putInt("GunWarItemType", 112));
                 item.setCustomName(this.owner.getLanguage().admin_setRoom_save);
@@ -236,6 +281,14 @@ public class SetRoomTask extends PluginTask<GunWar> {
 
     public void setRoomSchedule(int setRoomSchedule) {
         this.setRoomSchedule = setRoomSchedule;
+    }
+
+    public int getBackRoomSchedule() {
+        return this.backRoomSchedule;
+    }
+
+    public int getNextRoomSchedule() {
+        return this.nextRoomSchedule;
     }
 
     public boolean isAutoNext() {

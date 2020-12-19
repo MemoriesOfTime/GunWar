@@ -11,6 +11,7 @@ import cn.lanink.gunwar.tasks.game.ctf.FlagTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
@@ -196,7 +197,7 @@ public class CTFModeRoom extends BaseRoom {
     }
 
     @Override
-    public void playerDeath(Player player, Player damager, String killMessage) {
+    public void playerDeath(Player player, Entity damager, String killMessage) {
         super.playerDeath(player, damager, killMessage);
         this.getPlayerRespawnTime().put(player, 20);
         if (this.haveRedFlag == player) {

@@ -1,9 +1,7 @@
 package cn.lanink.gunwar.utils;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.entity.EntityPlayerCorpse;
+import cn.lanink.gunwar.entity.*;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.room.base.BaseRoom;
@@ -31,22 +29,39 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Tools {
 
-    public static List<Vector3> getRoundEdgePoint(Vector3 center, double diameter) {
-        List<Vector3> list = new LinkedList<>();
+    public static void createBossBar(Player player, ConcurrentHashMap<Player, DummyBossBar> bossBarMap) {
+        if (!bossBarMap.containsKey(player)) {
+            DummyBossBar bossBar = new DummyBossBar.Builder(player).build();
+            bossBar.setColor(255, 0, 0);
+            player.createBossBar(bossBar);
+            bossBarMap.put(player, bossBar);
+        }
+    }
+
+    /**
+     * @param center 圆心
+     * @param diameter 半径
+     * @return 圆边上的点
+     */
+    public static LinkedList<Vector3> getRoundEdgePoint(Vector3 center, double diameter) {
+        LinkedList<Vector3> list = new LinkedList<>();
         Vector3 point = center.clone();
         point.x += diameter;
         double xDistance = point.x - center.x;
         double zDistance = point.z - center.z;
-        for (int i = 0; i < 360; i += 10) {
+        for (int i = 0; i < 360; i += 1) {
             list.add(new Vector3(
                     xDistance * Math.cos(i) - zDistance * Math.sin(i) + center.x,
                     center.y,
@@ -80,7 +95,11 @@ public class Tools {
     }
 
     public static String getShowStringMagazine(int now, int max) {
-        StringBuilder string = new StringBuilder("§e" + now + "/" + max + "  ");
+        return "§e" + now + "/" + max + "  " + getShowStringProgress(now, max);
+    }
+
+    public static String getShowStringProgress(int now, int max) {
+        StringBuilder string = new StringBuilder();
         for (int j = 0; j < max; j++) {
             if (j < now) {
                 string.append("§a▍");
@@ -97,9 +116,31 @@ public class Tools {
         }
     }
 
+    public static void sendTitle(BaseRoom room, String title) {
+        Tools.sendTitle(room, title, "");
+    }
+
     public static void sendTitle(BaseRoom room, String title, String subtitle) {
         for (Player player : room.getPlayers().keySet()) {
             player.sendTitle(title, subtitle);
+        }
+    }
+
+    public static void sendTitle(BaseRoom room, int team, String title) {
+        sendTitle(room, team, title, "");
+    }
+
+    public static void sendTitle(BaseRoom room, int team, String title, String subtitle) {
+        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            if (team == 1) {
+                if (entry.getValue() == 1 || entry.getValue() == 11) {
+                    entry.getKey().sendTitle(title, subtitle);
+                }
+            }else {
+                if (entry.getValue() == 2 || entry.getValue() == 12) {
+                    entry.getKey().sendTitle(title, subtitle);
+                }
+            }
         }
     }
 
@@ -157,7 +198,9 @@ public class Tools {
             if (!(entity instanceof Player)) {
                 if (entity instanceof EntityPlayerCorpse ||
                         entity instanceof EntityFlag ||
-                        entity instanceof EntityFlagStand) {
+                        entity instanceof EntityFlagStand ||
+                        entity instanceof EntityGunWarBomb ||
+                        entity instanceof EntityGunWarBombBlock) {
                     if (!all) {
                         continue;
                     }
@@ -272,6 +315,13 @@ public class Tools {
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 12));
                 item.setCustomName(language.itemTeamSelectBlue);
+                return item;
+            case 201: //爆破模式 炸弹
+                item = Item.get(46);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 201));
+                item.setCustomName(language.item_Bomb_Name);
                 return item;
             default:
                 return item;

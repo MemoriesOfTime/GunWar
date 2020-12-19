@@ -204,6 +204,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     @Override
     public void startGame() {
         this.setStatus(ROOM_STATUS_GAME);
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent(this));
         this.assignTeam();
         this.roundStart();
         Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -240,6 +241,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         Player cache;
         while (true) {
             if (noTeam.size() > 0) {
+                Collections.shuffle(noTeam, GunWar.RANDOM);
                 for (Player player : noTeam) {
                     if (redTeam.size() > blueTeam.size()) {
                         blueTeam.add(player);
@@ -321,7 +323,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                 this.quitRoom(entry.getKey());
             }
         }
-        initData();
+        this.initData();
         Tools.cleanEntity(getLevel(), true);
         List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
         List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
@@ -516,7 +518,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         return this.playerHealth.get(player);
     }
 
-    public synchronized float lessHealth(Player player, Player damager, float health) {
+    public synchronized float lessHealth(Player player, Entity damager, float health) {
         return this.lessHealth(player, damager, health, "");
     }
 
@@ -525,7 +527,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param player 玩家
      * @param health 血量
      */
-    public synchronized float lessHealth(Player player, Player damager, float health, String killMessage) {
+    public synchronized float lessHealth(Player player, Entity damager, float health, String killMessage) {
         float nowHealth = this.playerHealth.get(player) - health;
         if (nowHealth < 1) {
             this.playerHealth.put(player, 0F);
@@ -654,11 +656,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         }, 10);
     }
 
-    public void playerDeath(Player player, Player damager) {
+    public void playerDeath(Player player, Entity damager) {
         this.playerDeath(player, damager, "");
     }
 
-    public void playerDeath(Player player, Player damager, String killMessage) {
+    public void playerDeath(Player player, Entity damager, String killMessage) {
         GunWarPlayerDeathEvent ev = new GunWarPlayerDeathEvent(this, player, damager);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -669,7 +671,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             this.getPlayers().keySet().forEach(p -> p.sendMessage(language.suicideMessage
                     .replace("%player%", player.getName())));
         }else {
-            GameRecord.addPlayerRecord(damager, RecordType.KILLS);
+            if (damager instanceof Player) {
+                GameRecord.addPlayerRecord((Player) damager, RecordType.KILLS);
+            }
             player.sendTitle(language.titleDeathTitle,
                     language.titleDeathSubtitle.replace("%player%", damager.getName()),
                     10, 30, 10);
