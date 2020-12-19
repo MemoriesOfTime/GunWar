@@ -9,6 +9,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import java.util.Map;
+
 /**
  * @author lt_name
  */
@@ -41,6 +43,14 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
         if (this.fuse <= 0) {
             this.level.addSound(this, Sound.RANDOM_EXPLODE);
             this.level.addParticle(new HugeExplodeSeedParticle(this));
+            for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
+                double distance = entry.getKey().distance(this);
+                if ((entry.getValue() == 1 || entry.getValue() == 2) &&
+                        distance < this.room.getBlastingPointRadius()) {
+                    this.room.lessHealth(entry.getKey(), entry.getKey(),
+                            (float) (20 * (this.room.getBlastingPointRadius() - distance) / this.room.getBlastingPointRadius()) + 5);
+                }
+            }
             this.kill();
             this.close();
             this.room.bombExplosion();

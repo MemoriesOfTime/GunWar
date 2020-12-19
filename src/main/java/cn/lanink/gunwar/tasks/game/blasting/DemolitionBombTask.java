@@ -34,7 +34,9 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
         if (i%5 == 0) {
             this.player.sendTip(Tools.getShowStringProgress((int) this.demolitionProgress, MAX_DEMOLITION_PROGRESS));
         }
-        if (this.playerPosition.distance(this.player) > 0.5 ||
+        if (this.room.getEntityGunWarBomb() == null ||
+                this.room.getEntityGunWarBomb().isClosed() ||
+                this.playerPosition.distance(this.player) > 0.5 ||
                 this.demolitionProgress >= MAX_DEMOLITION_PROGRESS) {
             this.cancel();
         }
@@ -44,14 +46,14 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
     public void cancel() {
         if (this.demolitionProgress >= MAX_DEMOLITION_PROGRESS) {
             Tools.sendTitle(this.room, "", "§a炸弹已被拆除");
+            this.room.setRoundIsEnd(true);
             this.room.getEntityGunWarBomb().close();
             this.room.getEntityGunWarBombBlock().close();
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.owner, () -> {
-                this.room.roundEnd(2);
-                this.room.setDemolitionBombPlayer(null);
-                }, 60);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.owner,
+                    () -> this.room.roundEnd(2), 60);
         }else {
             this.player.sendTitle("", "§c取消拆除");
+            this.room.demolitionBombPlayer = null;
         }
         this.player.sendTip(" ");
         super.cancel();

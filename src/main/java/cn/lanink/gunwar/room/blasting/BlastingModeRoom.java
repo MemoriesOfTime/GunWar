@@ -9,6 +9,7 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
@@ -32,8 +33,9 @@ public class BlastingModeRoom extends BaseRoom {
     private EntityGunWarBombBlock entityGunWarBombBlock;
     protected final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
     protected boolean bombWasFound = false;
-    protected Player demolitionBombPlayer;
+    public Player demolitionBombPlayer;
     protected boolean changeTeam = false;
+    private boolean roundIsEnd = false; //防止重复执行回合结束方法
 
     /**
      * 初始化
@@ -63,12 +65,6 @@ public class BlastingModeRoom extends BaseRoom {
             this.endGame();
             return;
         }
-        if (this.gameTime <= 0) {
-            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
-            this.gameTime = this.getSetGameTime();
-            return;
-        }
-        this.gameTime--;
         //Boss血条显示炸弹爆炸倒计时
         if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
                 this.entityGunWarBomb.getExplosionTime() > 0) {
@@ -103,22 +99,30 @@ public class BlastingModeRoom extends BaseRoom {
             }
             this.bossBarMap.clear();
         }
-        int red = 0, blue = 0;
-        for (int team : this.getPlayers().values()) {
-            if (team == 1) {
-                red++;
-            } else if (team == 2) {
-                blue++;
-            }
-        }
-        if (red == 0) {
-            if (this.entityGunWarBomb == null) {
+        if (!roundIsEnd) {
+            if (this.gameTime <= 0 && (this.entityGunWarBomb == null || this.entityGunWarBomb.isClosed())) {
                 Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
                 this.gameTime = this.getSetGameTime();
+                return;
             }
-        } else if (blue == 0) {
-            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(1));
-            this.gameTime = this.getSetGameTime();
+            this.gameTime--;
+            int red = 0, blue = 0;
+            for (int team : this.getPlayers().values()) {
+                if (team == 1) {
+                    red++;
+                } else if (team == 2) {
+                    blue++;
+                }
+            }
+            if (red == 0) {
+                if (this.entityGunWarBomb == null) {
+                    Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+                    this.gameTime = this.getSetGameTime();
+                }
+            } else if (blue == 0) {
+                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(1));
+                this.gameTime = this.getSetGameTime();
+            }
         }
         //显示爆破点
         CompletableFuture.runAsync(() -> {
@@ -160,13 +164,15 @@ public class BlastingModeRoom extends BaseRoom {
         this.bombWasFound = false;
         this.demolitionBombPlayer = null;
         this.changeTeam = false;
+        this.roundIsEnd = false;
     }
 
     @Override
     public void roundStart() {
+        int delay = 0;
         if (!this.changeTeam && (this.redScore + this.blueScore) >= this.victoryScore * 0.6) {
-            //TODO 提示信息
-
+            delay = 60;
+            Tools.sendTitle(this, "§e交换队伍");
             this.changeTeam = true;
             LinkedList<Player> oldRedTeam = new LinkedList<>();
             LinkedList<Player> oldBlueTeam = new LinkedList<>();
@@ -192,16 +198,18 @@ public class BlastingModeRoom extends BaseRoom {
             this.redScore = this.blueScore;
             this.blueScore = cache;
         }
-        super.roundStart();
-        LinkedList<Player> list = new LinkedList<>();
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-            if (entry.getValue() == 1) {
-                list.add(entry.getKey());
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
+            super.roundStart();
+            LinkedList<Player> list = new LinkedList<>();
+            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == 1) {
+                    list.add(entry.getKey());
+                }
             }
-        }
-        Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
-        player.getInventory().addItem(Tools.getItem(201));
-        player.sendTitle("", "你携带着炸弹！");
+            Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
+            player.getInventory().addItem(Tools.getItem(201));
+            player.sendTitle("", "你携带着炸弹！");
+        }, delay);
     }
 
     @Override
@@ -217,6 +225,19 @@ public class BlastingModeRoom extends BaseRoom {
         }
         this.bombWasFound = false;
         this.demolitionBombPlayer = null;
+        this.roundIsEnd = false;
+    }
+
+    @Override
+    public void playerDeath(Player player, Player damager, String killMessage) {
+        Item bomb = Tools.getItem(201);
+        for (Item item : player.getInventory().getContents().values()) {
+            if (bomb.equals(item)) {
+                this.getLevel().dropItem(player, bomb);
+                break;
+            }
+        }
+        super.playerDeath(player, damager, killMessage);
     }
 
     public void setEntityGunWarBomb(EntityGunWarBomb entityGunWarBomb) {
@@ -235,22 +256,20 @@ public class BlastingModeRoom extends BaseRoom {
         return this.entityGunWarBombBlock;
     }
 
-    public void setDemolitionBombPlayer(Player demolitionBombPlayer) {
-        this.demolitionBombPlayer = demolitionBombPlayer;
-    }
-
-    public Player getDemolitionBombPlayer() {
-        return this.demolitionBombPlayer;
+    public void setRoundIsEnd(boolean roundIsEnd) {
+        this.roundIsEnd = roundIsEnd;
     }
 
     /**
      * 炸弹爆炸
      */
     public void bombExplosion() {
+        this.roundIsEnd = true;
+        Tools.sendTitle(this, "§c炸弹已爆炸！");
         for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
             entry.getKey().removeBossBar(entry.getValue().getBossBarId());
         }
-        this.roundEnd(1);
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> this.roundEnd(1), 60);
     }
 
     /**

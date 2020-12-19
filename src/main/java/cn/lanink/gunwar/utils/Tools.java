@@ -115,6 +115,10 @@ public class Tools {
         }
     }
 
+    public static void sendTitle(BaseRoom room, String title) {
+        Tools.sendTitle(room, title, "");
+    }
+
     public static void sendTitle(BaseRoom room, String title, String subtitle) {
         for (Player player : room.getPlayers().keySet()) {
             player.sendTitle(title, subtitle);

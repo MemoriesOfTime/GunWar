@@ -6,16 +6,25 @@ import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.tasks.game.blasting.DemolitionBombTask;
 import cn.lanink.gunwar.tasks.game.blasting.PlantBombTask;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.EventHandler;
+import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.ItemSpawnEvent;
+import cn.nukkit.event.inventory.InventoryPickupItemEvent;
+import cn.nukkit.event.player.PlayerDropItemEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+
+import java.util.Map;
 
 /**
  * @author lt_name
@@ -71,12 +80,84 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             if (room == null || !room.isPlaying(player)) {
                 return;
             }
-            if (room.getPlayers(player) == 2 && room.getDemolitionBombPlayer() == null) {
-                room.setDemolitionBombPlayer(player);
+            if (room.getPlayers(player) == 2 && room.demolitionBombPlayer == null) {
+                room.demolitionBombPlayer = player;
                 Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
                         new DemolitionBombTask(room, player,
                                 DemolitionBombTask.MAX_DEMOLITION_PROGRESS / (room.getDemolitionBombTime() * 1D)),
                         1, true);
+            }
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * 玩家丢出物品事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onDropItem(PlayerDropItemEvent event) {
+        Player player = event.getPlayer();
+        Item item = event.getItem();
+        if (player == null || item == null || !item.hasCompoundTag()) {
+            return;
+        }
+        BlastingModeRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null) {
+            return;
+        }
+        if (Tools.getItem(201).equals(item)) {
+            event.setCancelled(false);
+        }
+    }
+
+    /**
+     * 掉落物生成事件
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onItemSpawn(ItemSpawnEvent event) {
+        EntityItem entityItem = event.getEntity();
+        if (entityItem == null) {
+            return;
+        }
+        BlastingModeRoom room = this.getListenerRoom(entityItem.getLevel());
+        if (room == null) {
+            return;
+        }
+        if (Tools.getItem(201).equals(entityItem.getItem())) {
+            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                if (entry.getValue() == 1) {
+                    entry.getKey().sendTitle("", "§c炸弹已掉落！");
+                }
+            }
+        }
+    }
+
+    /**
+     * 拾取掉落物品事件
+     * @param event 事件
+     */
+    @EventHandler
+    public void onInventoryPickupItem(InventoryPickupItemEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+        Item item = event.getItem().getItem();
+        if (!item.hasCompoundTag()) {
+            return;
+        }
+        Level level = event.getItem().getLevel();
+        BlastingModeRoom room = this.getListenerRoom(level);
+        if (room == null) {
+            return;
+        }
+        if (Tools.getItem(201).equals(item)) {
+            if (event.getInventory().getHolder() instanceof Player) {
+                Player player = (Player) event.getInventory().getHolder();
+                if (room.getPlayers(player) == 1) {
+                    return;
+                }
             }
             event.setCancelled(true);
         }
