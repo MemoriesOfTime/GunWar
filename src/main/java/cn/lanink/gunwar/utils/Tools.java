@@ -34,6 +34,7 @@ import cn.nukkit.utils.DyeColor;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -122,6 +123,24 @@ public class Tools {
     public static void sendTitle(BaseRoom room, String title, String subtitle) {
         for (Player player : room.getPlayers().keySet()) {
             player.sendTitle(title, subtitle);
+        }
+    }
+
+    public static void sendTitle(BaseRoom room, int team, String title) {
+        sendTitle(room, team, title, "");
+    }
+
+    public static void sendTitle(BaseRoom room, int team, String title, String subtitle) {
+        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            if (team == 1) {
+                if (entry.getValue() == 1 || entry.getValue() == 11) {
+                    entry.getKey().sendTitle(title, subtitle);
+                }
+            }else {
+                if (entry.getValue() == 2 || entry.getValue() == 12) {
+                    entry.getKey().sendTitle(title, subtitle);
+                }
+            }
         }
     }
 
@@ -302,6 +321,7 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 201));
+                item.setCustomName(language.item_Bomb_Name);
                 return item;
             default:
                 return item;

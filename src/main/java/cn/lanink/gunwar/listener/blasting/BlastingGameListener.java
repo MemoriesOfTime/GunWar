@@ -24,8 +24,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 
-import java.util.Map;
-
 /**
  * @author lt_name
  */
@@ -126,11 +124,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             return;
         }
         if (Tools.getItem(201).equals(entityItem.getItem())) {
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                if (entry.getValue() == 1) {
-                    entry.getKey().sendTitle("", "§c炸弹已掉落！");
-                }
-            }
+            Tools.sendTitle(room, 1, "", GunWar.getInstance().getLanguage().game_blasting_bombHasFallen);
         }
     }
 

@@ -9,6 +9,7 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
@@ -69,24 +70,33 @@ public class BlastingModeRoom extends BaseRoom {
         if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
                 this.entityGunWarBomb.getExplosionTime() > 0) {
             double discoveryDistance = this.getBlastingPointRadius() * 0.8 + 5;
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == 2) {
-                    if (entry.getKey().distance(this.getBlastingPointA()) <= discoveryDistance ||
-                            entry.getKey().distance(this.getBlastingPointB()) <= discoveryDistance) {
-                        this.bombWasFound = true;
+            if (!this.bombWasFound) {
+                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                    if (entry.getValue() == 2) {
+                        if (entry.getKey().distance(this.getBlastingPointA()) <= discoveryDistance ||
+                                entry.getKey().distance(this.getBlastingPointB()) <= discoveryDistance) {
+                            this.bombWasFound = true;
+                            String s;
+                            if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
+                                s = this.language.game_blasting_bombFound.replace("%point%", "§cA");
+                            }else {
+                                s = this.language.game_blasting_bombFound.replace("%point%", "§9B");
+                            }
+                            Tools.sendTitle(this, 2, "", s);
+                        }
                     }
                 }
             }
             String s = "";
             if (this.bombWasFound) {
                 if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
-                    s += "§cA";
+                    s += this.language.game_blasting_bombFound.replace("%point%", "§cA");
                 }else {
-                    s += "§9B";
+                    s += this.language.game_blasting_bombFound.replace("%point%", "§9B");
                 }
-                s += "§a点发现炸弹  ";
             }
-            s += "§e炸弹爆炸倒计时：§l§c" + this.entityGunWarBomb.getExplosionTime();
+            s += this.language.game_blasting_countdownToBombExplosion
+                    .replace("%time%", this.entityGunWarBomb.getExplosionTime() + "");
             for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
                 Tools.createBossBar(entry.getKey(), this.bossBarMap);
                 DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
@@ -172,7 +182,7 @@ public class BlastingModeRoom extends BaseRoom {
         int delay = 0;
         if (!this.changeTeam && (this.redScore + this.blueScore) >= this.victoryScore * 0.6) {
             delay = 60;
-            Tools.sendTitle(this, "§e交换队伍");
+            Tools.sendTitle(this, this.language.game_blasting_changeTeam);
             this.changeTeam = true;
             LinkedList<Player> oldRedTeam = new LinkedList<>();
             LinkedList<Player> oldBlueTeam = new LinkedList<>();
@@ -208,7 +218,7 @@ public class BlastingModeRoom extends BaseRoom {
             }
             Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
             player.getInventory().addItem(Tools.getItem(201));
-            player.sendTitle("", "你携带着炸弹！");
+            player.sendTitle("", this.language.game_blasting_youCarryBomb);
         }, delay);
     }
 
@@ -229,7 +239,7 @@ public class BlastingModeRoom extends BaseRoom {
     }
 
     @Override
-    public void playerDeath(Player player, Player damager, String killMessage) {
+    public void playerDeath(Player player, Entity damager, String killMessage) {
         Item bomb = Tools.getItem(201);
         for (Item item : player.getInventory().getContents().values()) {
             if (bomb.equals(item)) {
@@ -265,7 +275,7 @@ public class BlastingModeRoom extends BaseRoom {
      */
     public void bombExplosion() {
         this.roundIsEnd = true;
-        Tools.sendTitle(this, "§c炸弹已爆炸！");
+        Tools.sendTitle(this, this.language.game_blasting_bombHasExploded);
         for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
             entry.getKey().removeBossBar(entry.getValue().getBossBarId());
         }

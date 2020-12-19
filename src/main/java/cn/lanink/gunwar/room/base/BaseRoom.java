@@ -518,7 +518,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         return this.playerHealth.get(player);
     }
 
-    public synchronized float lessHealth(Player player, Player damager, float health) {
+    public synchronized float lessHealth(Player player, Entity damager, float health) {
         return this.lessHealth(player, damager, health, "");
     }
 
@@ -527,7 +527,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param player 玩家
      * @param health 血量
      */
-    public synchronized float lessHealth(Player player, Player damager, float health, String killMessage) {
+    public synchronized float lessHealth(Player player, Entity damager, float health, String killMessage) {
         float nowHealth = this.playerHealth.get(player) - health;
         if (nowHealth < 1) {
             this.playerHealth.put(player, 0F);
@@ -656,11 +656,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         }, 10);
     }
 
-    public void playerDeath(Player player, Player damager) {
+    public void playerDeath(Player player, Entity damager) {
         this.playerDeath(player, damager, "");
     }
 
-    public void playerDeath(Player player, Player damager, String killMessage) {
+    public void playerDeath(Player player, Entity damager, String killMessage) {
         GunWarPlayerDeathEvent ev = new GunWarPlayerDeathEvent(this, player, damager);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -671,7 +671,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             this.getPlayers().keySet().forEach(p -> p.sendMessage(language.suicideMessage
                     .replace("%player%", player.getName())));
         }else {
-            GameRecord.addPlayerRecord(damager, RecordType.KILLS);
+            if (damager instanceof Player) {
+                GameRecord.addPlayerRecord((Player) damager, RecordType.KILLS);
+            }
             player.sendTitle(language.titleDeathTitle,
                     language.titleDeathSubtitle.replace("%player%", damager.getName()),
                     10, 30, 10);

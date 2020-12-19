@@ -42,8 +42,8 @@ public class ShowHealthTask extends PluginTask<GunWar> {
                         bossBar.setText(this.language.gameTimeRespawnBottom
                                 .replace("%time%", respawnTime + ""));
                         bossBar.setLength(100 - (respawnTime / 20F * 100));
+                        break;
                     }
-                    break;
                 default:
                     float health = this.room.getPlayerHealth(entry.getKey());
                     bossBar.setText(this.language.gameTimeBottom

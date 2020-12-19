@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.entity;
 
+import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntEntityData;
@@ -28,6 +29,11 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
     }
 
     @Override
+    public String getName() {
+        return GunWar.getInstance().getLanguage().item_Bomb_Name;
+    }
+
+    @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
             return false;
@@ -47,7 +53,7 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
                 double distance = entry.getKey().distance(this);
                 if ((entry.getValue() == 1 || entry.getValue() == 2) &&
                         distance < this.room.getBlastingPointRadius()) {
-                    this.room.lessHealth(entry.getKey(), entry.getKey(),
+                    this.room.lessHealth(entry.getKey(), this,
                             (float) (20 * (this.room.getBlastingPointRadius() - distance) / this.room.getBlastingPointRadius()) + 5);
                 }
             }
