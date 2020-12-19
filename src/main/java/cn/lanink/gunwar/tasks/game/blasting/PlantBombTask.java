@@ -71,6 +71,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
             EntityGunWarBombBlock entityBombBlock =
                     new EntityGunWarBombBlock(this.player.getChunk(), nbt);
             entityBombBlock.setPosition(this.placePoint);
+            entityBombBlock.setSkin(this.owner.getCorpseSkin());
             entityBombBlock.spawnToAll();
             this.room.setEntityGunWarBombBlock(entityBombBlock);
         }else {
