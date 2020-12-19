@@ -37,7 +37,7 @@ import cn.nukkit.potion.Effect;
 
 import java.util.Map;
 
-public class DefaultGameListener extends BaseGameListener {
+public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
     private final Language language = GunWar.getInstance().getLanguage();

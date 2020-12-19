@@ -127,8 +127,7 @@ public class GunWeapon extends BaseWeapon {
         if (this.getMagazine(player) < this.getMaxMagazine() &&
                 !this.reloadTask.containsKey(player)) {
             PluginTask<GunWar> task = new GunReloadTask(
-                    GunWar.getInstance(), player, this,
-                    (this.getMaxMagazine() / this.getReloadTime()));
+                    player, this, (this.getMaxMagazine() / this.getReloadTime()));
             Server.getInstance().getScheduler().scheduleRepeatingTask(task, 1, true);
             this.reloadTask.put(player, task);
         }
