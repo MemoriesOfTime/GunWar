@@ -216,6 +216,9 @@ public class BlastingModeRoom extends BaseRoom {
                     list.add(entry.getKey());
                 }
             }
+            if (list.isEmpty()) {
+                return;
+            }
             Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
             player.getInventory().addItem(Tools.getItem(201));
             player.sendTitle("", this.language.game_blasting_youCarryBomb);

@@ -150,6 +150,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             if (event.getInventory().getHolder() instanceof Player) {
                 Player player = (Player) event.getInventory().getHolder();
                 if (room.getPlayers(player) == 1) {
+                    Tools.sendTitle(room, 1, "", GunWar.getInstance().getLanguage().game_blasting_bombHasBeenPickedUp);
                     return;
                 }
             }

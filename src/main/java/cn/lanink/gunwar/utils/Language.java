@@ -115,6 +115,7 @@ public class Language {
     public String game_blasting_youCarryBomb = "你携带着炸弹!";
     public String game_blasting_bombHasExploded = "§c炸弹已爆炸！";
     public String game_blasting_bombHasFallen = "§c炸弹已掉落！";
+    public String game_blasting_bombHasBeenPickedUp = "§a炸弹已被拾取！";
     //ScoreBoardTask
     public String scoreBoardTitle = "§eGunWar";
     public String waitTimeScoreBoard = " 所属队伍: %team% \n 玩家: §a%playerNumber%/10 \n §a开始倒计时: §e%time% ";
@@ -287,6 +288,7 @@ public class Language {
         this.game_blasting_youCarryBomb = config.getString("game_blasting_youCarryBomb", this.game_blasting_youCarryBomb);
         this.game_blasting_bombHasExploded = config.getString("game_blasting_bombHasExploded", this.game_blasting_bombHasExploded);
         this.game_blasting_bombHasFallen = config.getString("game_blasting_bombHasFallen", this.game_blasting_bombHasFallen);
+        this.game_blasting_bombHasBeenPickedUp = config.getString("game_blasting_bombHasBeenPickedUp", this.game_blasting_bombHasBeenPickedUp);
         //tips
         this.scoreBoardTitle = config.getString("scoreBoardTitle", this.scoreBoardTitle);
         this.waitTimeScoreBoard = config.getString("waitTimeScoreBoard", this.waitTimeScoreBoard);

@@ -101,6 +101,7 @@ game_blasting_changeTeam: "§e交换队伍"
 game_blasting_youCarryBomb: "你携带着炸弹!"
 game_blasting_bombHasExploded: "§c炸弹已爆炸！"
 game_blasting_bombHasFallen: "§c炸弹已掉落！"
+game_blasting_bombHasBeenPickedUp: "§a炸弹已被拾取！"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   所属队伍: %team%
