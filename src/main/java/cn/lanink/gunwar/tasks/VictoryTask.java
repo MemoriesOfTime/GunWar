@@ -30,7 +30,7 @@ public class VictoryTask extends PluginTask<GunWar> {
             LinkedList<String> ms = new LinkedList<>();
             switch (this.victory) {
                 case 1:
-                    if (entry.getValue() == 1) {
+                    if (entry.getValue() == 1 || entry.getValue() == 11) {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
@@ -40,19 +40,20 @@ public class VictoryTask extends PluginTask<GunWar> {
                     entry.getKey().sendTitle(this.language.victoryRed, "", 10, 40, 20);
                     break;
                 case 2:
-                    if (entry.getValue() == 2) {
+                    if (entry.getValue() == 2 || entry.getValue() == 12) {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
                     }
-                    ms.add(this.language.game_ctf_draw);
+                    ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameBlue));
                     owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
-                    entry.getKey().sendTitle(this.language.game_ctf_draw, "", 10, 40, 20);
+                    entry.getKey().sendTitle(this.language.victoryBlue, "", 10, 40, 20);
                     break;
                 default:
                     ms.add(this.language.game_ctf_draw);
                     owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
                     entry.getKey().sendTitle(this.language.game_ctf_draw, "", 10, 40, 20);
+                    break;
             }
         }
     }
