@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>GunWar</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-PM1E</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -18,7 +18,7 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>GunWar-PM1E-v${project.version}</finalName>
+        <finalName>GunWar-v${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

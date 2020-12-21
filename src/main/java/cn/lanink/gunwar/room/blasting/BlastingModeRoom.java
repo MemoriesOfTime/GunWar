@@ -155,7 +155,8 @@ public class BlastingModeRoom extends BaseRoom {
                         }
                     }
                 }
-                this.getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST);
+                this.getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST, -1,
+                        this.getLevel().getDimension(), this.getPlayers().keySet().toArray(new Player[0]));
             }
         });
     }
