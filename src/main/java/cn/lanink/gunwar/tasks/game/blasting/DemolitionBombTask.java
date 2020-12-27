@@ -8,11 +8,14 @@ import cn.nukkit.Server;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
+import java.util.HashSet;
+
 /**
  * @author lt_name
  */
 public class DemolitionBombTask extends PluginTask<GunWar> {
 
+    public static final HashSet<Player> DEMOLITION_BOMB_PLAYERS = new HashSet<>();
     private final BlastingModeRoom room;
     private final Player player;
     private final Vector3 playerPosition;
@@ -26,6 +29,7 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
         this.player = player;
         this.playerPosition = player.clone();
         this.base = base;
+        DEMOLITION_BOMB_PLAYERS.add(player);
     }
 
     @Override
@@ -34,7 +38,8 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
         if (i%5 == 0) {
             this.player.sendTip(Tools.getShowStringProgress((int) this.demolitionProgress, MAX_DEMOLITION_PROGRESS));
         }
-        if (this.room.getEntityGunWarBomb() == null ||
+        if (!DEMOLITION_BOMB_PLAYERS.contains(this.player) ||
+                this.room.getEntityGunWarBomb() == null ||
                 this.room.getEntityGunWarBomb().isClosed() ||
                 this.playerPosition.distance(this.player) > 0.5 ||
                 this.demolitionProgress >= MAX_DEMOLITION_PROGRESS) {
@@ -56,6 +61,7 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
             this.room.demolitionBombPlayer = null;
         }
         this.player.sendTip(" ");
+        DEMOLITION_BOMB_PLAYERS.remove(this.player);
         super.cancel();
     }
 }
