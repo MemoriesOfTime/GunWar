@@ -64,6 +64,16 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         }
     }
 
+    @EventHandler
+    public void onDamage(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player) {
+            //不需要检查 直接删除即可
+            Player player = (Player) event.getEntity();
+            PlantBombTask.PLANT_BOMB_PLAYERS.remove(player);
+            DemolitionBombTask.DEMOLITION_BOMB_PLAYERS.remove(player);
+        }
+    }
+
     /**
      * 实体受到另一实体伤害事件
      * @param event 事件

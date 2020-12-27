@@ -1,6 +1,7 @@
 name: GunWar
 main: cn.lanink.gunwar.GunWar
-version: "1.1.1-PM1E"
+<<<<<<< HEAD
+version: "1.1.1.1-PM1E"
 api: ["PM1E"]
 load: POSTWORLD
 author: "LT_Name"

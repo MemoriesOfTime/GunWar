@@ -6,6 +6,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.tasks.game.blasting.DemolitionBombTask;
 import cn.lanink.gunwar.tasks.game.blasting.PlantBombTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -69,6 +70,7 @@ public class PlayerJoinAndQuit implements Listener {
             weapon.getMagazineMap().remove(player);
         }
         PlantBombTask.PLANT_BOMB_PLAYERS.remove(player);
+        DemolitionBombTask.DEMOLITION_BOMB_PLAYERS.remove(player);
     }
 
     @EventHandler
