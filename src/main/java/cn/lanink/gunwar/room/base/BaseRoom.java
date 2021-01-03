@@ -60,6 +60,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     public int redScore, blueScore; //队伍得分
     public final int victoryScore; //胜利需要分数
+    protected boolean roundIsEnd = false; //防止重复执行回合结束方法
 
     /**
      * 初始化
@@ -172,12 +173,14 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             this.endGame();
             return;
         }
-        if (this.gameTime <= 0) {
-            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
-            this.gameTime = this.getSetGameTime();
-            return;
+        if(!this.roundIsEnd) {
+            if (this.gameTime <= 0) {
+                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
+                this.gameTime = this.getSetGameTime();
+                return;
+            }
+            this.gameTime--;
         }
-        this.gameTime--;
     }
 
     /**
@@ -199,6 +202,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         this.blueScore = 0;
         this.players.clear();
         this.playerHealth.clear();
+        this.roundIsEnd = false;
     }
 
     @Override
@@ -352,6 +356,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         if (ev.isCancelled()) {
             return;
         }
+        this.roundIsEnd = false;
         this.gameTime = this.getSetGameTime();
         for (Player player : this.getPlayers().keySet()) {
             this.playerRespawn(player);
@@ -364,6 +369,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         if (ev.isCancelled()) {
             return;
         }
+        this.roundIsEnd = true;
         int v = ev.getVictory();
         Tools.cleanEntity(this.getLevel(), true);
         //本回合胜利计算

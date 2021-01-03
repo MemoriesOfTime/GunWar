@@ -18,6 +18,7 @@ import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
+import cn.lanink.gunwar.utils.RsNpcXVariable;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -25,6 +26,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import com.smallaswater.npc.variable.VariableManage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -112,6 +114,12 @@ public class GunWar extends PluginBase {
                 throw new Exception("Not Loaded");
             }
             hasTips = true;
+        } catch (Exception ignored) {
+
+        }
+        try {
+            Class.forName("com.smallaswater.npc.RsNpcX");
+            VariableManage.addVariable("GunWarVariable", new RsNpcXVariable());
         } catch (Exception ignored) {
 
         }

@@ -36,7 +36,6 @@ public class BlastingModeRoom extends BaseRoom {
     protected boolean bombWasFound = false;
     public Player demolitionBombPlayer;
     protected boolean changeTeam = false;
-    private boolean roundIsEnd = false; //防止重复执行回合结束方法
 
     /**
      * 初始化
@@ -66,50 +65,51 @@ public class BlastingModeRoom extends BaseRoom {
             this.endGame();
             return;
         }
-        //Boss血条显示炸弹爆炸倒计时
-        if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
-                this.entityGunWarBomb.getExplosionTime() > 0) {
-            double discoveryDistance = this.getBlastingPointRadius() * 0.8 + 5;
-            if (!this.bombWasFound) {
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                    if (entry.getValue() == 2) {
-                        if (entry.getKey().distance(this.getBlastingPointA()) <= discoveryDistance ||
-                                entry.getKey().distance(this.getBlastingPointB()) <= discoveryDistance) {
-                            this.bombWasFound = true;
-                            String s;
-                            if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
-                                s = this.language.game_blasting_bombFound.replace("%point%", "§cA");
-                            }else {
-                                s = this.language.game_blasting_bombFound.replace("%point%", "§9B");
+        if (!roundIsEnd) {
+            //Boss血条显示炸弹爆炸倒计时
+            if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
+                    this.entityGunWarBomb.getExplosionTime() > 0) {
+                double discoveryDistance = this.getBlastingPointRadius() * 0.8 + 5;
+                if (!this.bombWasFound) {
+                    for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                        if (entry.getValue() == 2) {
+                            if (entry.getKey().distance(this.getBlastingPointA()) <= discoveryDistance ||
+                                    entry.getKey().distance(this.getBlastingPointB()) <= discoveryDistance) {
+                                this.bombWasFound = true;
+                                String s;
+                                if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
+                                    s = this.language.game_blasting_bombFound.replace("%point%", "§cA");
+                                }else {
+                                    s = this.language.game_blasting_bombFound.replace("%point%", "§9B");
+                                }
+                                Tools.sendTitle(this, 2, "", s);
                             }
-                            Tools.sendTitle(this, 2, "", s);
                         }
                     }
                 }
-            }
-            String s = "";
-            if (this.bombWasFound) {
-                if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
-                    s += this.language.game_blasting_bombFound.replace("%point%", "§cA");
-                }else {
-                    s += this.language.game_blasting_bombFound.replace("%point%", "§9B");
+                String s = "";
+                if (this.bombWasFound) {
+                    if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
+                        s += this.language.game_blasting_bombFound.replace("%point%", "§cA");
+                    }else {
+                        s += this.language.game_blasting_bombFound.replace("%point%", "§9B");
+                    }
                 }
+                s += this.language.game_blasting_countdownToBombExplosion
+                        .replace("%time%", this.entityGunWarBomb.getExplosionTime() + "");
+                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                    Tools.createBossBar(entry.getKey(), this.bossBarMap);
+                    DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
+                    bossBar.setText(s);
+                    bossBar.setLength(this.entityGunWarBomb.getExplosionTime() / 50F * 100);
+                }
+            }else if (!this.bossBarMap.isEmpty()) {
+                for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
+                    entry.getKey().removeBossBar(entry.getValue().getBossBarId());
+                }
+                this.bossBarMap.clear();
             }
-            s += this.language.game_blasting_countdownToBombExplosion
-                    .replace("%time%", this.entityGunWarBomb.getExplosionTime() + "");
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                Tools.createBossBar(entry.getKey(), this.bossBarMap);
-                DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
-                bossBar.setText(s);
-                bossBar.setLength(this.entityGunWarBomb.getExplosionTime() / 50F * 100);
-            }
-        }else if (!this.bossBarMap.isEmpty()) {
-            for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
-                entry.getKey().removeBossBar(entry.getValue().getBossBarId());
-            }
-            this.bossBarMap.clear();
-        }
-        if (!roundIsEnd) {
+
             if (this.gameTime <= 0 && (this.entityGunWarBomb == null || this.entityGunWarBomb.isClosed())) {
                 Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
                 this.gameTime = this.getSetGameTime();
@@ -175,7 +175,6 @@ public class BlastingModeRoom extends BaseRoom {
         this.bombWasFound = false;
         this.demolitionBombPlayer = null;
         this.changeTeam = false;
-        this.roundIsEnd = false;
     }
 
     @Override
@@ -217,17 +216,22 @@ public class BlastingModeRoom extends BaseRoom {
                     list.add(entry.getKey());
                 }
             }
-            if (list.isEmpty()) {
-                return;
+            if (!list.isEmpty()) {
+                Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
+                player.getInventory().addItem(Tools.getItem(201));
+                player.sendTitle("", this.language.game_blasting_youCarryBomb);
             }
-            Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
-            player.getInventory().addItem(Tools.getItem(201));
-            player.sendTitle("", this.language.game_blasting_youCarryBomb);
         }, delay);
     }
 
     @Override
     public void roundEnd(int victory) {
+        if (this.entityGunWarBomb != null) {
+            this.entityGunWarBomb.close();
+        }
+        if (this.entityGunWarBombBlock != null) {
+            this.entityGunWarBombBlock.close();
+        }
         super.roundEnd(victory);
         this.entityGunWarBomb = null;
         this.entityGunWarBombBlock = null;
@@ -239,7 +243,6 @@ public class BlastingModeRoom extends BaseRoom {
         }
         this.bombWasFound = false;
         this.demolitionBombPlayer = null;
-        this.roundIsEnd = false;
     }
 
     @Override
