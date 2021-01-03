@@ -31,12 +31,12 @@ public class JoinCommand extends BaseSubCommand {
         Player player = (Player) sender;
         if (this.gunWar.getRooms().size() > 0) {
             if (player.riding != null) {
-                sender.sendMessage(this.language.joinRoomIsRiding);
+                sender.sendMessage(this.languageOld.joinRoomIsRiding);
                 return true;
             }
             for (BaseRoom room : this.gunWar.getRooms().values()) {
                 if (room.isPlaying(player)) {
-                    sender.sendMessage(this.language.joinRoomIsInRoom);
+                    sender.sendMessage(this.languageOld.joinRoomIsInRoom);
                     return true;
                 }
             }
@@ -46,7 +46,7 @@ public class JoinCommand extends BaseSubCommand {
                     if (room.canJoin()) {
                         if (room.getPlayers().size() > 0) {
                             room.joinRoom(player);
-                            sender.sendMessage(this.language.joinRandomRoom);
+                            sender.sendMessage(this.languageOld.joinRandomRoom);
                             return true;
                         }
                         rooms.add(room);
@@ -55,7 +55,7 @@ public class JoinCommand extends BaseSubCommand {
                 if (rooms.size() > 0) {
                     BaseRoom room = rooms.get(GunWar.RANDOM.nextInt(rooms.size()));
                     room.joinRoom(player);
-                    sender.sendMessage(this.language.joinRandomRoom);
+                    sender.sendMessage(this.languageOld.joinRandomRoom);
                     return true;
                 }
             }else {
@@ -67,7 +67,7 @@ public class JoinCommand extends BaseSubCommand {
                         if (room.canJoin() && room.getGameMode().equals(modeName)) {
                             if (room.getPlayers().size() > 0) {
                                 room.joinRoom(player);
-                                sender.sendMessage(this.language.joinRandomRoom);
+                                sender.sendMessage(this.languageOld.joinRandomRoom);
                                 return true;
                             }
                             rooms.add(room);
@@ -76,28 +76,28 @@ public class JoinCommand extends BaseSubCommand {
                     if (rooms.size() > 0) {
                         BaseRoom room = rooms.get(GunWar.RANDOM.nextInt(rooms.size()));
                         room.joinRoom(player);
-                        sender.sendMessage(this.language.joinRandomRoom);
+                        sender.sendMessage(this.languageOld.joinRandomRoom);
                         return true;
                     }
-                    sender.sendMessage(this.language.joinRoomIsNotFound);
+                    sender.sendMessage(this.languageOld.joinRoomIsNotFound);
                     return true;
                 }else if (this.gunWar.getRooms().containsKey(args[1])) {
                     BaseRoom room = this.gunWar.getRooms().get(args[1]);
                     if (room.getStatus() != 0 && room.getStatus() != 1) {
-                        sender.sendMessage(this.language.joinRoomIsPlaying);
+                        sender.sendMessage(this.languageOld.joinRoomIsPlaying);
                     } else if (room.getPlayers().size() >= room.getMaxPlayers()) {
-                        sender.sendMessage(this.language.joinRoomIsFull);
+                        sender.sendMessage(this.languageOld.joinRoomIsFull);
                     } else {
                         room.joinRoom(player);
                     }
                     return true;
                 } else {
-                    sender.sendMessage(this.language.joinRoomIsNotFound);
+                    sender.sendMessage(this.languageOld.joinRoomIsNotFound);
                     return true;
                 }
             }
         }
-        sender.sendMessage(this.language.joinRoomNotAvailable);
+        sender.sendMessage(this.languageOld.joinRoomNotAvailable);
         return true;
     }
 

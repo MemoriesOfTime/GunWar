@@ -41,7 +41,7 @@ public class CreateRoom extends BaseSubCommand {
                         this.gunWar.setRoomTask.get(player).cancel();
                     }
                     this.gunWar.getRoomConfig(args[1]);
-                    sender.sendMessage(this.language.admin_createRoom_success.replace("%name%", args[1]));
+                    sender.sendMessage(this.languageOld.admin_createRoom_success.replace("%name%", args[1]));
                     if (player.getLevel() != level) {
                         player.teleport(level.getSafeSpawn());
                     }
@@ -51,10 +51,10 @@ public class CreateRoom extends BaseSubCommand {
                         this.gunWar.setRoomTask.get(player).setAutoNext(true);
                     }
                 }else {
-                    sender.sendMessage(this.language.world_doesNotExist.replace("%name%", args[1]));
+                    sender.sendMessage(this.languageOld.world_doesNotExist.replace("%name%", args[1]));
                 }
             }else {
-                sender.sendMessage(this.language.admin_createRoom_exist);
+                sender.sendMessage(this.languageOld.admin_createRoom_exist);
             }
         }
         return true;

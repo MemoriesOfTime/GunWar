@@ -16,7 +16,7 @@ import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
 import cn.lanink.gunwar.tasks.game.ShowHealthTask;
 import cn.lanink.gunwar.tasks.game.TimeTask;
-import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class BaseRoom implements IRoom, ITimeTask {
 
     protected final GunWar gunWar = GunWar.getInstance();
-    protected final Language language = GunWar.getInstance().getLanguage();
+    protected final LanguageOld languageOld = GunWar.getInstance().getLanguageOld();
     private String gameMode = null;
     protected int status;
     private Level level;
@@ -86,7 +86,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         this.victoryScore = config.getInt("victoryScore", 5);
         File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
-            this.gunWar.getLogger().info(this.language.roomLevelBackup.replace("%name%", this.levelName));
+            this.gunWar.getLogger().info(this.languageOld.roomLevelBackup.replace("%name%", this.levelName));
             Server.getInstance().unloadLevel(this.level, true);
             if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
                 Server.getInstance().loadLevel(this.levelName);
@@ -274,12 +274,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         }
         for (Player player : redTeam) {
             this.getPlayers().put(player, 1);
-            player.sendTitle(this.language.teamNameRed, "", 10, 30, 10);
+            player.sendTitle(this.languageOld.teamNameRed, "", 10, 30, 10);
             player.setNameTag("§c" + player.getName());
         }
         for (Player player : blueTeam) {
             this.getPlayers().put(player, 2);
-            player.sendTitle(this.language.teamNameBlue, "", 10, 30, 10);
+            player.sendTitle(this.languageOld.teamNameBlue, "", 10, 30, 10);
             player.setNameTag("§9" + player.getName());
         }
     }
@@ -442,7 +442,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         if (GunWar.getInstance().isHasTips()) {
             Tips.closeTipsShow(this.getLevelName(), player);
         }
-        player.sendMessage(this.language.joinRoom.replace("%name%", this.getLevelName()));
+        player.sendMessage(this.languageOld.joinRoom.replace("%name%", this.getLevelName()));
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
             if (player.getLevel() != getLevel()) {
                 quitRoom(player);
@@ -468,7 +468,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             p.showPlayer(player);
             player.showPlayer(p);
         }
-        player.sendMessage(this.language.quitRoom);
+        player.sendMessage(this.languageOld.quitRoom);
     }
 
     /**
@@ -674,17 +674,17 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         }
         GameRecord.addPlayerRecord(player, RecordType.DEATHS);
         if (player == damager) {
-            this.getPlayers().keySet().forEach(p -> p.sendMessage(language.suicideMessage
+            this.getPlayers().keySet().forEach(p -> p.sendMessage(languageOld.suicideMessage
                     .replace("%player%", player.getName())));
         }else {
             if (damager instanceof Player) {
                 GameRecord.addPlayerRecord((Player) damager, RecordType.KILLS);
             }
-            player.sendTitle(language.titleDeathTitle,
-                    language.titleDeathSubtitle.replace("%player%", damager.getName()),
+            player.sendTitle(languageOld.titleDeathTitle,
+                    languageOld.titleDeathSubtitle.replace("%player%", damager.getName()),
                     10, 30, 10);
             if (killMessage == null || "".equals(killMessage.trim())) {
-                this.getPlayers().keySet().forEach(p -> p.sendMessage(language.killMessage
+                this.getPlayers().keySet().forEach(p -> p.sendMessage(languageOld.killMessage
                         .replace("%damagePlayer%", damager.getName())
                         .replace("%player%", player.getName())));
             }else {
@@ -752,7 +752,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
         File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
-            this.gunWar.getLogger().error(this.gunWar.getLanguage()
+            this.gunWar.getLogger().error(this.gunWar.getLanguageOld()
                     .roomLevelBackupNotExist.replace("%name%", this.levelName));
             this.gunWar.unloadRoom(this.levelName);
         }
@@ -765,7 +765,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                     this.gunWar.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
                 }
             }else {
-                this.gunWar.getLogger().error(this.gunWar.getLanguage()
+                this.gunWar.getLogger().error(this.gunWar.getLanguageOld()
                         .roomLevelRestoreLevelFailure.replace("%name%", this.levelName));
                 this.gunWar.unloadRoom(this.levelName);
             }

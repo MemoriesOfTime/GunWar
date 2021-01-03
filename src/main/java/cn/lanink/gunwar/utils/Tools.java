@@ -149,13 +149,13 @@ public class Tools {
             String title;
             switch (v) {
                 case 1:
-                    title = GunWar.getInstance().getLanguage().roundVictoryRed;
+                    title = GunWar.getInstance().getLanguageOld().roundVictoryRed;
                     break;
                 case 2:
-                    title = GunWar.getInstance().getLanguage().roundVictoryBlue;
+                    title = GunWar.getInstance().getLanguageOld().roundVictoryBlue;
                     break;
                 default:
-                    title = GunWar.getInstance().getLanguage().roundVictoryDraw;
+                    title = GunWar.getInstance().getLanguageOld().roundVictoryDraw;
                     break;
             }
             player.sendTitle(title, "", 10, 20, 10);
@@ -291,7 +291,7 @@ public class Tools {
      * @return 物品
      */
     public static Item getItem(int type) {
-        Language language = GunWar.getInstance().getLanguage();
+        LanguageOld languageOld = GunWar.getInstance().getLanguageOld();
         Item item = Item.get(0);
         switch (type) {
             case 10:
@@ -299,29 +299,29 @@ public class Tools {
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 10));
-                item.setCustomName(language.itemQuitRoom);
-                item.setLore(language.itemQuitRoomLore.split("\n"));
+                item.setCustomName(languageOld.itemQuitRoom);
+                item.setLore(languageOld.itemQuitRoomLore.split("\n"));
                 return item;
             case 11:
                 item = Item.get(241, 14, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 11));
-                item.setCustomName(language.itemTeamSelectRed);
+                item.setCustomName(languageOld.itemTeamSelectRed);
                 return item;
             case 12:
                 item = Item.get(241, 11, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 12));
-                item.setCustomName(language.itemTeamSelectBlue);
+                item.setCustomName(languageOld.itemTeamSelectBlue);
                 return item;
             case 201: //爆破模式 炸弹
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 201));
-                item.setCustomName(language.item_Bomb_Name);
+                item.setCustomName(languageOld.item_Bomb_Name);
                 return item;
             default:
                 return item;

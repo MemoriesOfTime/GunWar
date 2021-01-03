@@ -57,7 +57,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
     @Override
     public void cancel() {
         if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
-            Tools.sendTitle(this.room, "", this.owner.getLanguage().game_blasting_plantBomb);
+            Tools.sendTitle(this.room, "", this.owner.getLanguageOld().game_blasting_plantBomb);
             this.player.getInventory().remove(Tools.getItem(201));
             CompoundTag nbt = Entity.getDefaultNBT(this.placePoint);
             EntityGunWarBomb entityBomb = new EntityGunWarBomb(
@@ -74,7 +74,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
             entityBombBlock.spawnToAll();
             this.room.setEntityGunWarBombBlock(entityBombBlock);
         }else {
-            this.player.sendTitle("", this.owner.getLanguage().game_blasting_cancelPlantBomb);
+            this.player.sendTitle("", this.owner.getLanguageOld().game_blasting_cancelPlantBomb);
         }
         this.player.sendTip(" ");
         PLANT_BOMB_PLAYERS.remove(this.player);

@@ -31,7 +31,7 @@ public class QuitCommand extends BaseSubCommand {
                 return true;
             }
         }
-        sender.sendMessage(this.language.quitRoomNotInRoom);
+        sender.sendMessage(this.languageOld.quitRoomNotInRoom);
         return true;
     }
 

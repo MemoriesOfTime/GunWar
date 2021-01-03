@@ -5,7 +5,7 @@ import cn.nukkit.utils.Config;
 /**
  * @author lt_name
  */
-public class Language {
+public class LanguageOld {
 
     /**
      * 将配置读取成变量，防止使用时错误调用
@@ -195,7 +195,7 @@ public class Language {
     public String itemTeamSelectBlue = "§9选择蓝队";
     public String item_Bomb_Name = "炸弹";
 
-    public Language(Config config) {
+    public LanguageOld(Config config) {
         this.roomLevelBackup = config.get("roomLevelBackup", this.roomLevelBackup);
         this.roomLevelBackupExist = config.getString("roomLevelBackupExist", this.roomLevelBackupExist);
         this.roomLevelBackupNotExist = config.getString("roomLevelBackupNotExist", this.roomLevelBackupNotExist);

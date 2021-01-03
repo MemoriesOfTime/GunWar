@@ -3,6 +3,7 @@ package cn.lanink.gunwar;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.gui.GuiListener;
@@ -16,7 +17,7 @@ import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
-import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -39,6 +40,8 @@ public class GunWar extends PluginBase {
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
+    @Deprecated
+    private LanguageOld languageOld;
     private Config config, gameRecord;
 
     private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
@@ -203,6 +206,11 @@ public class GunWar extends PluginBase {
         return this.language;
     }
 
+    @Deprecated
+    public LanguageOld getLanguageOld() {
+        return this.languageOld;
+    }
+
     public IScoreboard getScoreboard() {
         return this.scoreboard;
     }
@@ -334,10 +342,10 @@ public class GunWar extends PluginBase {
         File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
             getLogger().info("§aLanguage: " + s + " loaded !");
-            this.language = new Language(new Config(languageFile, 2));
+            this.languageOld = new LanguageOld(new Config(languageFile, 2));
         }else {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
-            this.language = new Language(new Config());
+            this.languageOld = new LanguageOld(new Config());
         }
         //加载默认尸体皮肤
         BufferedImage skinData = null;

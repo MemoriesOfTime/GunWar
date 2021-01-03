@@ -3,7 +3,7 @@ package cn.lanink.gunwar.tasks;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
@@ -15,12 +15,12 @@ import java.util.Map;
 
 public class WaitTask extends PluginTask<GunWar> {
 
-    private final Language language;
+    private final LanguageOld languageOld;
     private final BaseRoom room;
 
     public WaitTask(GunWar owner, BaseRoom room) {
         super(owner);
-        this.language = owner.getLanguage();
+        this.languageOld = owner.getLanguageOld();
         this.room = room;
     }
 
@@ -45,30 +45,30 @@ public class WaitTask extends PluginTask<GunWar> {
                     Tools.addSound(this.room, Sound.RANDOM_CLICK);
                 }
                 for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                    entry.getKey().sendActionBar(language.waitTimeBottom
+                    entry.getKey().sendActionBar(languageOld.waitTimeBottom
                             .replace("%playerNumber%", room.getPlayers().size() + "")
                             .replace("%time%", room.waitTime + ""));
                     String team;
                     switch (entry.getValue()) {
                         case 1:
                         case 11:
-                            team = language.teamNameRed;
+                            team = languageOld.teamNameRed;
                             break;
                         case 2:
                         case 12:
-                            team = language.teamNameBlue;
+                            team = languageOld.teamNameBlue;
                             break;
                         default:
-                            team = language.noTeamSelect;
+                            team = languageOld.noTeamSelect;
                             break;
                     }
                     LinkedList<String> ms = new LinkedList<>();
-                    for (String string : this.language.waitTimeScoreBoard.split("\n")) {
+                    for (String string : this.languageOld.waitTimeScoreBoard.split("\n")) {
                         ms.add(string.replace("%team%", team)
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
-                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.languageOld.scoreBoardTitle, ms);
                 }
             }else {
                 this.room.startGame();
@@ -79,28 +79,28 @@ public class WaitTask extends PluginTask<GunWar> {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                entry.getKey().sendActionBar(language.waitBottom
+                entry.getKey().sendActionBar(languageOld.waitBottom
                         .replace("%playerNumber%", room.getPlayers().size() + ""));
                 String team;
                 switch (entry.getValue()) {
                     case 1:
                     case 11:
-                        team = language.teamNameRed;
+                        team = languageOld.teamNameRed;
                         break;
                     case 2:
                     case 12:
-                        team = language.teamNameBlue;
+                        team = languageOld.teamNameBlue;
                         break;
                     default:
-                        team = language.noTeamSelect;
+                        team = languageOld.noTeamSelect;
                         break;
                 }
                 LinkedList<String> ms = new LinkedList<>();
-                for (String string : language.waitScoreBoard.split("\n")) {
+                for (String string : languageOld.waitScoreBoard.split("\n")) {
                     ms.add(string.replace("%team%", team)
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.languageOld.scoreBoardTitle, ms);
             }
         }else {
             this.room.endGame();

@@ -12,7 +12,7 @@ import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -40,7 +40,7 @@ import java.util.Map;
 public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
-    private final Language language = GunWar.getInstance().getLanguage();
+    private final LanguageOld languageOld = GunWar.getInstance().getLanguageOld();
 
     /**
      * 伤害事件
@@ -92,12 +92,12 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 case 11:
                     room.getPlayers().put(player, 1);
                     player.getInventory().setArmorContents(Tools.getArmors(1));
-                    player.sendTitle(this.language.teamNameRed, this.language.playerTeamSelect, 10, 40, 20);
+                    player.sendTitle(this.languageOld.teamNameRed, this.languageOld.playerTeamSelect, 10, 40, 20);
                     break;
                 case 12:
                     room.getPlayers().put(player, 2);
                     player.getInventory().setArmorContents(Tools.getArmors(2));
-                    player.sendTitle(this.language.teamNameBlue, this.language.playerTeamSelect, 10, 40, 20);
+                    player.sendTitle(this.languageOld.teamNameBlue, this.languageOld.playerTeamSelect, 10, 40, 20);
                     break;
             }
             event.setCancelled(true);
@@ -141,7 +141,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
         if (event.getSlot() >= event.getInventory().getSize()) {
             event.setCancelled(true);
-            player.sendMessage(this.language.gameArmor);
+            player.sendMessage(this.languageOld.gameArmor);
         }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             event.setCancelled(true);
         }

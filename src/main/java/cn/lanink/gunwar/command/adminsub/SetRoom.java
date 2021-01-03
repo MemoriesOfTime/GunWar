@@ -46,9 +46,9 @@ public class SetRoom extends BaseSubCommand {
                     SetRoomTask task = new SetRoomTask(this.gunWar, player, level);
                     this.gunWar.setRoomTask.put(player, task);
                     Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar, task, 10);
-                    sender.sendMessage(this.language.admin_setRoom_start.replace("%name%", args[1]));
+                    sender.sendMessage(this.languageOld.admin_setRoom_start.replace("%name%", args[1]));
                 }else {
-                    sender.sendMessage(this.language.admin_setRoom_noExist);
+                    sender.sendMessage(this.languageOld.admin_setRoom_noExist);
                 }
             }
         }

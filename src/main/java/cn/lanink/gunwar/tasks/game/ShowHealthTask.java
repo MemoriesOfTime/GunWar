@@ -4,7 +4,7 @@ import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
-import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -15,13 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ShowHealthTask extends PluginTask<GunWar> {
 
-    private final Language language;
+    private final LanguageOld languageOld;
     private final BaseRoom room;
     private final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
 
     public ShowHealthTask(GunWar owner, BaseRoom room) {
         super(owner);
-        this.language = owner.getLanguage();
+        this.languageOld = owner.getLanguageOld();
         this.room = room;
     }
 
@@ -39,14 +39,14 @@ public class ShowHealthTask extends PluginTask<GunWar> {
                 case 12:
                     if (this.room instanceof CTFModeRoom) {
                         int respawnTime = ((CTFModeRoom) this.room).getPlayerRespawnTime(entry.getKey());
-                        bossBar.setText(this.language.gameTimeRespawnBottom
+                        bossBar.setText(this.languageOld.gameTimeRespawnBottom
                                 .replace("%time%", respawnTime + ""));
                         bossBar.setLength(100 - (respawnTime / 20F * 100));
                         break;
                     }
                 default:
                     float health = this.room.getPlayerHealth(entry.getKey());
-                    bossBar.setText(this.language.gameTimeBottom
+                    bossBar.setText(this.languageOld.gameTimeBottom
                             .replace("%health%", "§c" + String.format("%.1f", health) + "/20  "));
                     bossBar.setLength(health / 20 * 100);
                     break;

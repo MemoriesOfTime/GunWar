@@ -33,7 +33,7 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
             return;
         }
         event.setCancelled(true);
-        player.sendMessage(this.gunWar.getLanguage().useCmdInRoom);
+        player.sendMessage(this.gunWar.getLanguageOld().useCmdInRoom);
     }
 
     /**
@@ -49,7 +49,7 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
         if (room == null || !room.isPlaying(player) || room.getStatus() != 2) {
             return;
         }
-        message = this.gunWar.getLanguage().playerTeamChat.replace("%player%", player.getName())
+        message = this.gunWar.getLanguageOld().playerTeamChat.replace("%player%", player.getName())
                 .replace("%message%", message);
         int team = room.getPlayers(player);
         for (Player p : room.getPlayers().keySet()) {

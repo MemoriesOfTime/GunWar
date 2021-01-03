@@ -83,11 +83,11 @@ public class PlayerJoinAndQuit implements Listener {
             LinkedHashMap<String, BaseRoom> room =  this.gunWar.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.gunWar.getLanguage().tpQuitRoomLevel);
+                player.sendMessage(this.gunWar.getLanguageOld().tpQuitRoomLevel);
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.gunWar.getLanguage().tpJoinRoomLevel);
+                player.sendMessage(this.gunWar.getLanguageOld().tpJoinRoomLevel);
             }
         }
     }

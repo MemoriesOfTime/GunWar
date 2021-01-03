@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.command.base;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.utils.Language;
+import cn.lanink.gunwar.utils.LanguageOld;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 
@@ -13,7 +13,7 @@ public abstract class BaseSubCommand {
 
     protected GunWar gunWar = GunWar.getInstance();
 
-    protected Language language = gunWar.getLanguage();
+    protected LanguageOld languageOld = gunWar.getLanguageOld();
 
     private String name;
 
