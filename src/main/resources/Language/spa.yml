@@ -1,19 +1,19 @@
 # Translated by Jassyel
 # You can help me improve the translation through github
 # https://github.com/lt-name/GunWar_Nukkit
-roomLevelBackup: "§aRoom: %name% did not detect the map backup, the map is being backed up..."
-roomLevelBackupExist: "§aRoom: %name% detected map backup!"
-roomLevelBackupNotExist: "§aRoom: %name% map backup does not exist! Unable to restore the map!"
+roomLevelBackup: "§aRoom: %1% did not detect the map backup, the map is being backed up..."
+roomLevelBackupExist: "§aRoom: %1% detected map backup!"
+roomLevelBackupNotExist: "§aRoom: %1% map backup does not exist! Unable to restore the map!"
 roomLevelRestoreLevelFailure: "§cRoom: %name% map restoration failed!"
 useCmdInRoom: "§e >> §cNo puedes usar este comando aquí!"
-cmdHelp: "§ePara mas ayuda, por favor usa: §b/%cmdName% help"
+cmdHelp: "§ePara mas ayuda, por favor usa: §b/%1% help"
 userHelp: |-
   §eGunWar--Ayuda
-  §a/%cmdName% §eAbrir UI
-  §a/%cmdName% join <roomName> §eEntrar a una partida
-  §a/%cmdName% quit §eSalir de una partida
-  §a/%cmdName% list §eVer la lista de todas las partidas
-  §a/%cmdName% record §eMira los records(lista de records)
+  §a/%1% §eAbrir UI
+  §a/%1% join <roomName> §eEntrar a una partida
+  §a/%1% quit §eSalir de una partida
+  §a/%1% list §eVer la lista de todas las partidas
+  §a/%1% record §eMira los records(lista de records)
 noPermission: "§cLo siento, no tienes suficientes permisos para esto!"
 joinRoom: "§aHas entrado a la partida: §2%name%"
 joinRoomOnRoom: "§c No puedes entrar porqué tu ya estas en una partida ahora mismo"
@@ -29,14 +29,14 @@ listRoom: "§eLista de arenas: §a %list%"
 useCmdInCon: "Utiliza el comando de juego!"
 adminHelp: |-
   §eGunWar--Ayuda
-  §a/%cmdName% §eAbrir UI
-  §a/%cmdName% CreateRoom §eCreate room
-  §a/%cmdName% SetRoom §eSet up the room
-  §a/%cmdName% startroom §eInicie el juego de sala del mapa de ubicación
-  §a/%cmdName% stoproom §eCerrar a la fuerza la habitación en el mapa de ubicación
-  §a/%cmdName% reloadroom §eRecargar todas las habitaciones
-  §a/%cmdName% unloadroom §eCierre todas las habitaciones y desinstale la configuración
-  §a/%cmdName% AddWeapon §eOpen the add weapon gui
+  §a/%1% §eAbrir UI
+  §a/%1% CreateRoom §eCreate room
+  §a/%1% SetRoom §eSet up the room
+  §a/%1% startroom §eInicie el juego de sala del mapa de ubicación
+  §a/%1% stoproom §eCerrar a la fuerza la habitación en el mapa de ubicación
+  §a/%1% reloadroom §eRecargar todas las habitaciones
+  §a/%1% unloadroom §eCierre todas las habitaciones y desinstale la configuración
+  §a/%1% AddWeapon §eOpen the add weapon gui
 adminSetWaitSpawn: "§aEspere a que el punto de generación se establezca correctamente!"
 adminSetRedSpawn: "§aEl punto de aparición del equipo rojo se estableció correctamente!"
 adminSetBlueSpawn: "§aEl punto de aparición del equipo azul se estableció correctamente!"
@@ -44,11 +44,11 @@ adminNotNumber: "§a¡El parámetro introducido no es un número!"
 adminSetWaitTime: "§aEl tiempo de espera se ha establecido en: %time%"
 adminSetGameTime: "§aEl tiempo de juego se ha establecido en: %time%"
 adminSetGameTimeShort: "§aEl tiempo mínimo de juego no puede ser inferior a 1 minuto!"
-adminSetVictoryScore: "§aLa puntuación de la victoria se ha establecido en: %score%"
-adminSetGameMode: "§aEl modo de juego de sala se ha configurado en: %gameMode%"
-gameMode_NotFound: "§cGame Mode: %gameMode% does not exist!"
-adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
-adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
+adminSetVictoryScore: "§aLa puntuación de la victoria se ha establecido en: %1%"
+adminSetGameMode: "§aEl modo de juego de sala se ha configurado en: %1%"
+gameMode_NotFound: "§cGame Mode: %1% does not exist!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %1%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %1%"
 adminStartRoom: "§aEl juego se ha iniciado a la fuerza.!"
 adminStartRoomNoPlayer: "§aNo hay suficientes personas en la sala para comenzar el juego!"
 adminStartRoomIsPlaying: "§cLa habitación ha comenzado!"
@@ -56,9 +56,9 @@ adminLevelNoRoom: "§cEl mapa actual no es una sala de juegos!"
 adminStopRoom: "§aLa habitación ha sido terminada a la fuerza!"
 adminReload: "§aLa recarga de la configuración está completa! ¡Compruebe la información en segundo plano"
 adminUnload: "§aTodas las habitaciones han sido descargadas! Verifique la información en segundo plano!"
-world_doesNotExist: "§cWorld: %name% does not exist"
+world_doesNotExist: "§cWorld: %1% does not exist"
 admin_createRoom_exist: "§cThis map already exists in the game room!"
-admin_createRoom_success: "§aRoom: %name% created successfully!"
+admin_createRoom_success: "§aRoom: %1% created successfully!"
 admin_setRoom_start: "§aSetting up room: %name%!"
 admin_setRoom_noExist: "§cThe room does not exist, please create a room first!"
 admin_setRoom_cancel: "§cThe room has been cancelled!"
@@ -115,7 +115,7 @@ waitScoreBoard: |-
   Jugadores: §a %playerNumber%/10
   2 jugadores requeridos
   Esperando jugadores
-waitTimeBottom: "§aAún quedan: %time% segundos!"
+waitTimeBottom: "§aAún quedan: %1% segundos!"
 waitBottom: "§cEsperando jugadores para iniciar, actualmente hay: %playerNumber% jugadores"
 gameTimeScoreBoard: |-
   §l§aEquipo: %team%
@@ -129,12 +129,12 @@ gameTimeScoreBoard: |-
   §l§9Azúl: %blueRound% Puntos
 gameTimeBoosBar: "§l§cSalud: %health%"
 gameTimeRespawnBoosBar: "§l§cCuenta regresiva de resurrección: %time%"
-victoryMessage: "§eFelicidades a %teamName% §e por ganar, GG"
+victoryMessage: "§eFelicidades a %1% §e por ganar, GG"
 userMenuButton1: "§eEntrar a una partida aleatoria"
 userMenuButton2: "§eSalir de esta partida"
 userMenuButton3: "§eLista de partidas"
 userMenuButton4: "§eVer la lista de rangos"
-adminMenuSetLevel: "Mapa:%name%"
+adminMenuSetLevel: "Mapa:%1%"
 gui_admin_room_selectWorld: "§aSelect map"
 gui_admin_room_selectRoom: "§aChoose a room"
 gui_admin_main_createRoom: "§eCreate new room"
@@ -146,7 +146,7 @@ adminTimeMenuInputText2: "Tiempo para jugar(s)"
 adminTimeMenuInputText3: "Puntos necesarios para ganar"
 adminPlayersMenuInputText1: "Minimum number of players in the room"
 adminPlayersMenuInputText2: "Maximum number of players in the room"
-joinRoomOK: "§l§aConfirmar para entrar a: %name% §l§a?"
+joinRoomOK: "§l§aConfirmar para entrar a: %1% §l§a?"
 buttonOK: "§aConfirmar"
 buttonReturn: "§cAtrás"
 #TODO translate
@@ -170,9 +170,9 @@ gui_admin_item_weapon_reloadTime: "换弹时间"
 gui_admin_item_weapon_reloadInterrupted: "换弹允许中断"
 gui_admin_item_weapon_bulletGravity: "子弹重力"
 gui_admin_item_weapon_bulletMotionMultiply: "子弹移动倍速"
-gui_admin_item_add_error_exist: "§c物品：%name% 已存在！"
-gui_admin_item_add_error_var: "§c物品：%name% 参数：%var% 输入错误！"
-gui_admin_item_add_success: "§a物品：%name% 添加成功！您可以通过配置文件修改更多内容！"
+gui_admin_item_add_error_exist: "§c物品：%1% 已存在！"
+gui_admin_item_add_error_var: "§c物品：%1% 参数：%2% 输入错误！"
+gui_admin_item_add_success: "§a物品：%1% 添加成功！您可以通过配置文件修改更多内容！"
 recordListButton1: "§eVer records personales"
 recordListButton2: "§eVer la tabla de clasificación de asesinatos"
 recordListButton3: "§eVer tabla de clasificación de muertes"

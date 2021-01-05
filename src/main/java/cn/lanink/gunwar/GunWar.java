@@ -342,7 +342,7 @@ public class GunWar extends PluginBase {
         if (languageFile.exists()) {
             getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
-            //wtf nk, Why are files forced to be saved? Cannot use get Resource()
+            //wtf nk, Why are files forced to be saved? Cannot use getResource()
             this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
             this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
         }else {
