@@ -26,7 +26,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
-import com.smallaswater.npc.variable.VariableManage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -118,8 +117,8 @@ public class GunWar extends PluginBase {
 
         }
         try {
-            Class.forName("com.smallaswater.npc.RsNpcX");
-            VariableManage.addVariable("GunWarVariable", new RsNpcXVariable());
+            Class.forName("com.smallaswater.npc.variable.VariableManage");
+            com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcXVariable.class);
         } catch (Exception ignored) {
 
         }
