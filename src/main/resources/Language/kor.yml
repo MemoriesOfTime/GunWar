@@ -126,8 +126,8 @@ gameTimeScoreBoard: |-
   §l§a점수:
   §l§c빨간 팀: %redRound%점
   §l§9파란 팀: %blueRound%점
-gameTimeBottom: "§l§c체력: %health%"
-gameTimeRespawnBottom: "§l§c부활 까지 남은 시간: %time%"
+gameTimeBoosBar: "§l§c체력: %health%"
+gameTimeRespawnBoosBar: "§l§c부활 까지 남은 시간: %time%"
 victoryMessage: "§e축하합니다! %teamName%§e이 승리하였습니다!"
 userMenuButton1 : "§e무작위로 방 참가"
 userMenuButton2: "§e현재 참여한 게임에서 나가기"

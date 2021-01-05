@@ -127,8 +127,8 @@ gameTimeScoreBoard: |-
   §l§aRecords:
   §l§cRojo: %redRound% Puntos
   §l§9Azúl: %blueRound% Puntos
-gameTimeBottom: "§l§cSalud: %health%"
-gameTimeRespawnBottom: "§l§cCuenta regresiva de resurrección: %time%"
+gameTimeBoosBar: "§l§cSalud: %health%"
+gameTimeRespawnBoosBar: "§l§cCuenta regresiva de resurrección: %time%"
 victoryMessage: "§eFelicidades a %teamName% §e por ganar, GG"
 userMenuButton1: "§eEntrar a una partida aleatoria"
 userMenuButton2: "§eSalir de esta partida"

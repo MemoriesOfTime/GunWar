@@ -127,8 +127,8 @@ gameTimeScoreBoard: |-
   §l§aTeam Score:
   §l§cRed: %redRound% Score
   §l§9Blue: %blueRound% Score
-gameTimeBottom: "§l§cHealth: %health%"
-gameTimeRespawnBottom: "§l§cResurrection countdown: %time%"
+gameTimeBoosBar: "§l§cHealth: %health%"
+gameTimeRespawnBoosBar: "§l§cResurrection countdown: %time%"
 victoryMessage: "§eCongratulations to %teamName% §e for winning"
 userMenuButton1: "§eJoin a room randomly"
 userMenuButton2: "§eQuit this room"

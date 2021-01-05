@@ -39,13 +39,13 @@ public class ShowHealthTask extends PluginTask<GunWar> {
                 case 12:
                     if (this.room instanceof CTFModeRoom) {
                         int respawnTime = ((CTFModeRoom) this.room).getPlayerRespawnTime(entry.getKey());
-                        bossBar.setText(this.language.translateString("gameTimeRespawnBottom", respawnTime));
+                        bossBar.setText(this.language.translateString("gameTimeRespawnBoosBar", respawnTime));
                         bossBar.setLength(100 - (respawnTime / 20F * 100));
                         break;
                     }
                 default:
                     float health = this.room.getPlayerHealth(entry.getKey());
-                    bossBar.setText(this.language.translateString("gameTimeBottom",
+                    bossBar.setText(this.language.translateString("gameTimeBoosBar",
                             "§c" + String.format("%.1f", health) + "/20  "));
                     bossBar.setLength(health / 20 * 100);
                     break;

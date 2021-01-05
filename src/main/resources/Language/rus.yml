@@ -127,8 +127,8 @@ gameTimeScoreBoard: |-
   §l§aКомандный счет:
   §l§cКрасная: %redRound% счет
   §l§9Синяя: %blueRound% счет
-gameTimeBottom: "§l§cЗдоровье: %health%"
-gameTimeRespawnBottom: "§l§cВозрождение через: %time%"
+gameTimeBoosBar: "§l§cЗдоровье: %health%"
+gameTimeRespawnBoosBar: "§l§cВозрождение через: %time%"
 victoryMessage: "§eПоздравляем %teamName% §e с победой!"
 userMenuButton1: "§eПрисоединиться к случайной комнате"
 userMenuButton2: "§eВыйти из комнаты"
