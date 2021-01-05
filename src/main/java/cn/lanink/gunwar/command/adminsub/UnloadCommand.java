@@ -23,7 +23,7 @@ public class UnloadCommand extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         this.gunWar.unloadAllRoom();
-        sender.sendMessage(this.languageOld.adminUnload);
+        sender.sendMessage(this.language.translateString("adminUnload"));
         return true;
     }
 

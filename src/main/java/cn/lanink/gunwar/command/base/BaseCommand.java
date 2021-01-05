@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.command.base;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.utils.LanguageOld;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -19,7 +19,7 @@ abstract public class BaseCommand extends Command {
     private final ArrayList<BaseSubCommand> subCommand = new ArrayList<>();
     private final ConcurrentHashMap<String, Integer> subCommands = new ConcurrentHashMap<>();
     protected GunWar gunWar = GunWar.getInstance();
-    protected LanguageOld languageOld = gunWar.getLanguageOld();
+    protected Language language = gunWar.getLanguage();
 
     public BaseCommand(String name, String description) {
         super(name,description);
@@ -44,9 +44,9 @@ abstract public class BaseCommand extends Command {
                     if (command.canUser(sender)) {
                         return command.execute(sender, s, args);
                     }else if (sender.isPlayer()) {
-                        sender.sendMessage(this.languageOld.noPermission);
+                        sender.sendMessage(this.language.translateString("noPermission"));
                     }else {
-                        sender.sendMessage(this.languageOld.useCmdInCon);
+                        sender.sendMessage(this.language.translateString("useCmdInCon"));
                         return true;
                     }
                 }else {
@@ -62,7 +62,7 @@ abstract public class BaseCommand extends Command {
                 return true;
             }
         }
-        sender.sendMessage(this.languageOld.noPermission);
+        sender.sendMessage(this.language.translateString("noPermission"));
         return true;
     }
 
