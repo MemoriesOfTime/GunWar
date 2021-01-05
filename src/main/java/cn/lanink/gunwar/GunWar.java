@@ -17,7 +17,6 @@ import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
-import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.RsNpcXVariable;
 import cn.nukkit.Player;
@@ -42,8 +41,6 @@ public class GunWar extends PluginBase {
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
-    @Deprecated
-    private LanguageOld languageOld;
     private Config config, gameRecord;
 
     private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
@@ -210,13 +207,8 @@ public class GunWar extends PluginBase {
         return this.restoreWorld;
     }
 
-    public Language getLanguage() {
+    public cn.lanink.gamecore.utils.Language getLanguage() {
         return this.language;
-    }
-
-    @Deprecated
-    public LanguageOld getLanguageOld() {
-        return this.languageOld;
     }
 
     public IScoreboard getScoreboard() {
@@ -341,19 +333,20 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         getLogger().info("§e开始加载资源文件");
         //语言文件
-        saveResource("Language/zh_CN.yml", false);
+        saveResource("Language/chs.yml", false);
         saveResource("Language/ko_KR.yml", false);
         saveResource("Language/en_US.yml", false);
         saveResource("Language/ru_RU.yml", false);
         saveResource("Language/es_MX.yml", false);
-        String s = this.config.getString("language", "zh_CN");
+        String s = this.config.getString("language", "chs");
         File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
             getLogger().info("§aLanguage: " + s + " loaded !");
-            this.languageOld = new LanguageOld(new Config(languageFile, 2));
+            this.language = new Language(new Config(languageFile, Config.YAML));
+            this.language.update(new Config(this.getClass().getResource("/Language/" + s + ".yml").getPath(), Config.YAML));
         }else {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
-            this.languageOld = new LanguageOld(new Config());
+            this.language = new Language(new Config());
         }
         //加载默认尸体皮肤
         BufferedImage skinData = null;

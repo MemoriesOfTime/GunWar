@@ -1,11 +1,11 @@
 package cn.lanink.gunwar.gui;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
-import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.exception.item.weapon.ProjectileWeaponLoadException;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
@@ -27,11 +27,11 @@ import java.util.LinkedList;
 public class GuiListener implements Listener {
 
     private final GunWar gunWar;
-    private final LanguageOld languageOld;
+    private final Language language;
 
     public GuiListener(GunWar gunWar) {
         this.gunWar = gunWar;
-        this.languageOld = gunWar.getLanguageOld();
+        this.language = gunWar.getLanguage();
     }
 
     /**
@@ -75,7 +75,7 @@ public class GuiListener implements Listener {
                 }
                 break;
             case ROOM_LIST_MENU:
-                if (simple.getResponse().getClickedButton().getText().equals(languageOld.buttonReturn)) {
+                if (simple.getResponse().getClickedButton().getText().equals(language.translateString("buttonReturn"))) {
                     GuiCreate.sendUserMenu(player);
                 }else {
                     GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText().split("\n")[0]);
@@ -160,11 +160,11 @@ public class GuiListener implements Listener {
                     config.set("gameTime", gameTime);
                     config.set("victoryScore", victoryScore);
                     config.save();
-                    player.sendMessage(this.languageOld.adminSetWaitTime.replace("%time%", waitTime + ""));
-                    player.sendMessage(this.languageOld.adminSetGameTime.replace("%time%", gameTime + ""));
-                    player.sendMessage(this.languageOld.adminSetVictoryScore.replace("%score%", victoryScore + ""));
+                    player.sendMessage(this.language.translateString("adminSetWaitTime", waitTime));
+                    player.sendMessage(this.language.translateString("adminSetGameTime", gameTime));
+                    player.sendMessage(this.language.translateString("adminSetVictoryScore", victoryScore));
                 } catch (Exception e) {
-                    player.sendMessage(this.languageOld.adminNotNumber);
+                    player.sendMessage(this.language.translateString("adminNotNumber"));
                 }
                 break;
             case ADMIN_PLAYERS_MENU:
@@ -178,10 +178,10 @@ public class GuiListener implements Listener {
                     config.set("minPlayers", minPlayers);
                     config.set("maxPlayers", maxPlayers);
                     config.save();
-                    player.sendMessage(this.languageOld.adminSetMinPlayers.replace("%minPlayers%", minPlayers + ""));
-                    player.sendMessage(this.languageOld.adminSetMaxPlayers.replace("%maxPlayers%", maxPlayers + ""));
+                    player.sendMessage(this.language.translateString("adminSetMinPlayers", minPlayers));
+                    player.sendMessage(this.language.translateString("adminSetMaxPlayers", maxPlayers));
                 } catch (Exception e) {
-                    player.sendMessage(this.languageOld.adminNotNumber);
+                    player.sendMessage(this.language.translateString("adminNotNumber"));
                 }
                 break;
             case ADMIN_MODE_MENU:
@@ -190,9 +190,9 @@ public class GuiListener implements Listener {
                     Config config = this.gunWar.getRoomConfig(player.getLevel());
                     config.set("gameMode", gameMode);
                     config.save();
-                    player.sendMessage(this.languageOld.adminSetGameMode.replace("%gameMode%", gameMode));
+                    player.sendMessage(this.language.translateString("adminSetGameMode", gameMode));
                 }else {
-                    player.sendMessage(this.languageOld.gameMode_NotFound.replace("%gameMode%", gameMode));
+                    player.sendMessage(this.language.translateString("gameMode_NotFound", gameMode));
                 }
                 break;
             case ADMIN_ITEM_ADD_WEAPON_MELEE:
@@ -210,7 +210,7 @@ public class GuiListener implements Listener {
     private void onClick(Player player, FormWindowModal modal, GuiType guiType) {
         switch (guiType) {
             case ROOM_JOIN_OK:
-                if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(languageOld.buttonReturn)) {
+                if (modal.getResponse().getClickedButtonId() == 0 && !modal.getButton1().equals(language.translateString("buttonReturn"))) {
                     String[] s = modal.getContent().split("\"");
                     GunWar.getInstance().getServer().dispatchCommand(
                             player, this.gunWar.getCmdUser() + " join " + s[1].replace("§e", "").trim());
@@ -231,7 +231,7 @@ public class GuiListener implements Listener {
         String name = custom.getResponse().getInputResponse(0);
         File file = new File(this.gunWar.getItemManage().getMeleeWeaponFolder() + "/" + name + ".yml");
         if (file.exists()) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_exist.replace("%name%", name));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_exist", name));
             return;
         }
         Config config = new Config(Config.YAML);
@@ -247,9 +247,8 @@ public class GuiListener implements Listener {
             }
             config.set("id", stringID);
         } catch (Exception e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_id));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                            name, this.language.translateString("gui_admin_item_id")));
             return;
         }
         config.set("lore", custom.getResponse().getInputResponse(3));
@@ -260,27 +259,25 @@ public class GuiListener implements Listener {
             Integer.parseInt(maxDamage);
             config.set("damage", minDamage + "-" + maxDamage);
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_minDamage + "/" +
-                                    this.languageOld.gui_admin_item_weapon_maxDamage));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_minDamage") + "/" +
+                            this.language.translateString("gui_admin_item_weapon_maxDamage")));
             return;
         }
         config.set("effect", new LinkedList<>());
         try {
             config.set("attackCooldown", Integer.parseInt(custom.getResponse().getInputResponse(6)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_attackCooldown));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_attackCooldown")));
             return;
         }
         try {
             config.set("knockBack", Double.parseDouble(custom.getResponse().getInputResponse(7)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_knockBack));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_knockBack"))
+                    .replace("%name%", name));
             return;
         }
         config.set("infiniteDurability", custom.getResponse().getToggleResponse(8));
@@ -288,14 +285,14 @@ public class GuiListener implements Listener {
         config.set("killMessage", custom.getResponse().getInputResponse(9));
         config.save(file, true);
         ItemManage.getMeleeWeaponMap().put(name, new MeleeWeapon(name, config));
-        player.sendMessage(this.languageOld.gui_admin_item_add_success.replace("%name%", name));
+        player.sendMessage(this.language.translateString("gui_admin_item_add_success", name));
     }
 
     private void adminItemAddWeaponProjectile(Player player, FormWindowCustom custom) {
         String name = custom.getResponse().getInputResponse(0);
         File file = new File(this.gunWar.getItemManage().getProjectileWeaponFolder() + "/" + name + ".yml");
         if (file.exists()) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_exist.replace("%name%", name));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_exist", name));
             return;
         }
         Config config = new Config(Config.YAML);
@@ -311,9 +308,9 @@ public class GuiListener implements Listener {
             }
             config.set("id", stringID);
         } catch (Exception e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_id));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_id"))
+                    .replace("%name%", name));
             return;
         }
         config.set("lore", custom.getResponse().getInputResponse(3));
@@ -324,10 +321,9 @@ public class GuiListener implements Listener {
             Integer.parseInt(maxDamage);
             config.set("damage", minDamage + "-" + maxDamage);
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_minDamage + "/" +
-                            this.languageOld.gui_admin_item_weapon_maxDamage));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_minDamage") + "/" +
+                            this.language.translateString("gui_admin_item_weapon_maxDamage")));
             return;
         }
         config.set("effect", new LinkedList<>());
@@ -335,17 +331,15 @@ public class GuiListener implements Listener {
         try {
             config.set("attackCooldown", Integer.parseInt(custom.getResponse().getInputResponse(7)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_attackCooldown));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_attackCooldown")));
             return;
         }
         try {
             config.set("range", Double.parseDouble(custom.getResponse().getInputResponse(8)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_range));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_range")));
             return;
         }
         config.set("enchantment", new LinkedList<>());
@@ -356,14 +350,14 @@ public class GuiListener implements Listener {
         } catch (ProjectileWeaponLoadException e) {
             e.printStackTrace();
         }
-        player.sendMessage(this.languageOld.gui_admin_item_add_success.replace("%name%", name));
+        player.sendMessage(this.language.translateString("gui_admin_item_add_success", name));
     }
 
     private void adminItemAddWeaponGun(Player player, FormWindowCustom custom) {
         String name = custom.getResponse().getInputResponse(0);
         File file = new File(this.gunWar.getItemManage().getGunWeaponFolder() + "/" + name + ".yml");
         if (file.exists()) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_exist.replace("%name%", name));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_exist", name));
             return;
         }
         Config config = new Config(Config.YAML);
@@ -379,9 +373,8 @@ public class GuiListener implements Listener {
             }
             config.set("id", stringID);
         } catch (Exception e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_id));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_id")));
             return;
         }
         config.set("lore", custom.getResponse().getInputResponse(3));
@@ -392,52 +385,46 @@ public class GuiListener implements Listener {
             Integer.parseInt(maxDamage);
             config.set("damage", minDamage + "-" + maxDamage);
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_minDamage + "/" +
-                            this.languageOld.gui_admin_item_weapon_maxDamage));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_minDamage") + "/" +
+                            this.language.translateString("gui_admin_item_weapon_maxDamage")));
             return;
         }
         config.set("effect", new LinkedList<>());
         try {
             config.set("attackCooldown", Integer.parseInt(custom.getResponse().getInputResponse(6)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_attackCooldown));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_attackCooldown")));
             return;
         }
         try {
             config.set("maxMagazine", Integer.parseInt(custom.getResponse().getInputResponse(7)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_maxMagazine));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_maxMagazine")));
             return;
         }
         try {
             config.set("reloadTime", Integer.parseInt(custom.getResponse().getInputResponse(8)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_reloadTime));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_reloadTime")));
             return;
         }
         config.set("reloadInterrupted", custom.getResponse().getToggleResponse(9));
         try {
             config.set("gravity", Double.parseDouble(custom.getResponse().getInputResponse(10)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_bulletGravity));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_bulletGravity")));
             return;
         }
         try {
             config.set("motionMultiply", Double.parseDouble(custom.getResponse().getInputResponse(11)));
         } catch (NumberFormatException e) {
-            player.sendMessage(this.languageOld.gui_admin_item_add_error_var
-                    .replace("%name%", name)
-                    .replace("%var%", this.languageOld.gui_admin_item_weapon_bulletMotionMultiply));
+            player.sendMessage(this.language.translateString("gui_admin_item_add_error_var",
+                    name, this.language.translateString("gui_admin_item_weapon_bulletMotionMultiply")));
             return;
         }
         config.set("enchantment", new LinkedList<>());
@@ -445,7 +432,7 @@ public class GuiListener implements Listener {
         config.set("killMessage", custom.getResponse().getInputResponse(12));
         config.save(file, true);
         ItemManage.getGunWeaponMap().put(name, new GunWeapon(name, config));
-        player.sendMessage(this.languageOld.gui_admin_item_add_success.replace("%name%", name));
+        player.sendMessage(this.language.translateString("gui_admin_item_add_success", name));
     }
 
 }

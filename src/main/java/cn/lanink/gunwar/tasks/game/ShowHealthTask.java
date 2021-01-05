@@ -1,10 +1,10 @@
 package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gamecore.room.IRoomStatus;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
-import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -15,13 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ShowHealthTask extends PluginTask<GunWar> {
 
-    private final LanguageOld languageOld;
+    private final Language language;
     private final BaseRoom room;
     private final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
 
     public ShowHealthTask(GunWar owner, BaseRoom room) {
         super(owner);
-        this.languageOld = owner.getLanguageOld();
+        this.language = owner.getLanguage();
         this.room = room;
     }
 
@@ -39,15 +39,14 @@ public class ShowHealthTask extends PluginTask<GunWar> {
                 case 12:
                     if (this.room instanceof CTFModeRoom) {
                         int respawnTime = ((CTFModeRoom) this.room).getPlayerRespawnTime(entry.getKey());
-                        bossBar.setText(this.languageOld.gameTimeRespawnBottom
-                                .replace("%time%", respawnTime + ""));
+                        bossBar.setText(this.language.translateString("gameTimeRespawnBottom", respawnTime));
                         bossBar.setLength(100 - (respawnTime / 20F * 100));
                         break;
                     }
                 default:
                     float health = this.room.getPlayerHealth(entry.getKey());
-                    bossBar.setText(this.languageOld.gameTimeBottom
-                            .replace("%health%", "§c" + String.format("%.1f", health) + "/20  "));
+                    bossBar.setText(this.language.translateString("gameTimeBottom",
+                            "§c" + String.format("%.1f", health) + "/20  "));
                     bossBar.setLength(health / 20 * 100);
                     break;
             }
