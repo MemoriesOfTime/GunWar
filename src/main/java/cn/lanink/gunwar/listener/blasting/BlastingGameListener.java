@@ -134,7 +134,8 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             return;
         }
         if (Tools.getItem(201).equals(entityItem.getItem())) {
-            Tools.sendTitle(room, 1, "", GunWar.getInstance().getLanguageOld().game_blasting_bombHasFallen);
+            Tools.sendTitle(room, 1, "",
+                    GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasFallen"));
         }
     }
 
@@ -160,7 +161,8 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             if (event.getInventory().getHolder() instanceof Player) {
                 Player player = (Player) event.getInventory().getHolder();
                 if (room.getPlayers(player) == 1) {
-                    Tools.sendTitle(room, 1, "", GunWar.getInstance().getLanguageOld().game_blasting_bombHasBeenPickedUp);
+                    Tools.sendTitle(room, 1, "",
+                            GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasBeenPickedUp"));
                     return;
                 }
             }

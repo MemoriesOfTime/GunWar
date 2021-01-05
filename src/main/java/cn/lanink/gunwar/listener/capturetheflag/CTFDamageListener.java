@@ -1,11 +1,11 @@
 package cn.lanink.gunwar.listener.capturetheflag;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
-import cn.lanink.gunwar.utils.LanguageOld;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
@@ -35,17 +35,17 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
             if (event.getEntity() instanceof EntityFlag && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlag entityFlag = (EntityFlag) event.getEntity();
                 int team = entityFlag.namedTag.getInt("GunWarTeam");
-                LanguageOld languageOld = GunWar.getInstance().getLanguageOld();
+                Language language = GunWar.getInstance().getLanguage();
                 if (team == 11 && room.getPlayers(damagePlayer) == 2) {
                     room.haveRedFlag = damagePlayer;
-                    Tools.sendTitle(room, "", languageOld.game_ctf_playerPickUpTheFlag
-                            .replace("%player%", damagePlayer.getName())
-                            .replace("%team%", languageOld.teamNameRed));
+                    Tools.sendTitle(room, "",
+                            language.translateString("game_ctf_playerPickUpTheFlag",
+                                    damagePlayer.getName(), language.translateString("teamNameRed")));
                 }else if (team == 12 && room.getPlayers(damagePlayer) == 1) {
                     room.haveBlueFlag = damagePlayer;
-                    Tools.sendTitle(room, "", languageOld.game_ctf_playerPickUpTheFlag
-                            .replace("%player%", damagePlayer.getName())
-                            .replace("%team%", languageOld.teamNameBlue));
+                    Tools.sendTitle(room, "",
+                            language.translateString("game_ctf_playerPickUpTheFlag",
+                                    damagePlayer.getName(), language.translateString("teamNameBlue")));
                 }
             }else if (event.getEntity() instanceof EntityFlagStand && event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
                 EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
