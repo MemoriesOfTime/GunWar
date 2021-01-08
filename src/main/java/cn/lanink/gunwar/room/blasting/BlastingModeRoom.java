@@ -199,9 +199,11 @@ public class BlastingModeRoom extends BaseRoom {
             }
             for (Player player : oldRedTeam) {
                 this.players.put(player, 2);
+                player.setNameTag("§9" + player.getName());
             }
             for (Player player : oldBlueTeam) {
                 this.players.put(player, 1);
+                player.setNameTag("§c" + player.getName());
             }
             int cache = this.redScore;
             this.redScore = this.blueScore;
