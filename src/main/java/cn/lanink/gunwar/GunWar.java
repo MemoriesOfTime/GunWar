@@ -333,6 +333,7 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§e开始加载资源文件");
         //语言文件
         this.saveResource("Language/chs.yml", false);
+        this.saveResource("Language/chs.yml", "/Language/cache/new_chs.yml", true);
         this.saveResource("Language/kor.yml", false);
         this.saveResource("Language/eng.yml", false);
         this.saveResource("Language/rus.yml", false);
@@ -342,9 +343,15 @@ public class GunWar extends PluginBase {
         if (languageFile.exists()) {
             getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
-            //wtf nk, Why are files forced to be saved? Cannot use getResource()
-            this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
-            this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+            if (this.getResource("Language/" + s + ".yml") != null) {
+                //wtf nk, Why are files forced to be saved? Cannot use getResource()
+                this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
+                this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+                if (GunWar.debug) {
+                    this.getLogger().info("[debug] 语言文件：" + s + " 更新完成");
+                }
+            }
+            this.language.update(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml", Config.YAML));
         }else {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
             this.language = new Language(new Config(this.getDataFolder() + "/Language/chs.yml"));
