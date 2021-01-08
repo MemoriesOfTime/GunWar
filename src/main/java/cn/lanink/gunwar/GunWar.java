@@ -354,7 +354,7 @@ public class GunWar extends PluginBase {
             this.language.update(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml", Config.YAML));
         }else {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
-            this.language = new Language(new Config(this.getDataFolder() + "/Language/chs.yml"));
+            this.language = new Language(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml"));
         }
         //加载默认尸体皮肤
         BufferedImage skinData = null;
