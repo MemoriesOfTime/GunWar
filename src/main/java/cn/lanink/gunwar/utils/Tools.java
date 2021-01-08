@@ -362,7 +362,7 @@ public class Tools {
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
         }
-        player.setAdventureSettings((new AdventureSettings(player)).set(AdventureSettings.Type.ALLOW_FLIGHT, false));
+        player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false).update();
     }
 
     /**
