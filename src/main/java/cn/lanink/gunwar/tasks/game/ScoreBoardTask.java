@@ -1,9 +1,9 @@
 package cn.lanink.gunwar.tasks.game;
 
 import cn.lanink.gamecore.room.IRoomStatus;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.utils.Language;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -45,13 +45,13 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                 switch (this.room.getPlayers(player)) {
                     case 1:
                     case 11:
-                        team = this.language.teamNameRed;
+                        team = this.language.translateString("teamNameRed");
                         break;
                     default:
-                        team = this.language.teamNameBlue;
+                        team = this.language.translateString("teamNameBlue");
                         break;
                 }
-                for (String string : this.language.gameTimeScoreBoard.split("\n")) {
+                for (String string : this.language.translateString("gameTimeScoreBoard").split("\n")) {
                     ms.add(string.replace("%team%", team)
                             .replace("%health%", String.format("%.1f", room.getPlayerHealth().getOrDefault(player, 0F)))
                             .replace("%time%", room.gameTime + "")
@@ -60,7 +60,7 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                             .replace("%redRound%", room.redScore + "")
                             .replace("%blueRound%", room.blueScore + ""));
                 }
-                owner.getScoreboard().showScoreboard(player, this.language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(player, this.language.translateString("scoreBoardTitle"), ms);
             }
         }
     }

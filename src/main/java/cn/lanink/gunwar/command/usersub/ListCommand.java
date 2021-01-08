@@ -26,7 +26,7 @@ public class ListCommand extends BaseSubCommand {
         for (String string : this.gunWar.getRooms().keySet()) {
             list.append(string).append(" ");
         }
-        sender.sendMessage(this.language.listRoom.replace("%list%", String.valueOf(list)));
+        sender.sendMessage(this.language.translateString("listRoom",  list));
         return true;
     }
 

@@ -1,8 +1,8 @@
 package cn.lanink.gunwar.tasks;
 
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
@@ -35,9 +35,10 @@ public class VictoryTask extends PluginTask<GunWar> {
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
                     }
-                    ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameRed));
-                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
-                    entry.getKey().sendTitle(this.language.victoryRed, "", 10, 40, 20);
+                    ms.add(this.language.translateString("victoryMessage",
+                            this.language.translateString("teamNameRed")));
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
+                    entry.getKey().sendTitle(this.language.translateString("victoryRed"), "", 10, 40, 20);
                     break;
                 case 2:
                     if (entry.getValue() == 2 || entry.getValue() == 12) {
@@ -45,14 +46,15 @@ public class VictoryTask extends PluginTask<GunWar> {
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
                     }
-                    ms.add(this.language.victoryMessage.replace("%teamName%", this.language.teamNameBlue));
-                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
-                    entry.getKey().sendTitle(this.language.victoryBlue, "", 10, 40, 20);
+                    ms.add(this.language.translateString("victoryMessage",
+                            this.language.translateString("teamNameBlue")));
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
+                    entry.getKey().sendTitle(this.language.translateString("victoryBlue"), "", 10, 40, 20);
                     break;
                 default:
-                    ms.add(this.language.game_ctf_draw);
-                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
-                    entry.getKey().sendTitle(this.language.game_ctf_draw, "", 10, 40, 20);
+                    ms.add(this.language.translateString("game_ctf_draw"));
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
+                    entry.getKey().sendTitle(this.language.translateString("game_ctf_draw"), "", 10, 40, 20);
                     break;
             }
         }
@@ -73,17 +75,19 @@ public class VictoryTask extends PluginTask<GunWar> {
                 for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                     if (entry.getValue() != 0) {
                         if (this.victory == 1) {
-                            entry.getKey().sendTip(this.language.victoryMessage.replace("%teamName%", this.language.teamNameRed));
+                            entry.getKey().sendTip(this.language.translateString("victoryMessage",
+                                    this.language.translateString("teamNameRed")));
                             if (entry.getValue() == 1) {
                                 Tools.spawnFirework(entry.getKey());
                             }
                         }else if (this.victory == 2) {
-                            entry.getKey().sendTip(this.language.victoryMessage.replace("%teamName%", this.language.teamNameBlue));
+                            entry.getKey().sendTip(this.language.translateString("victoryMessage",
+                                    this.language.translateString("teamNameBlue")));
                             if (entry.getValue() == 2) {
                                 Tools.spawnFirework(entry.getKey());
                             }
                         }else {
-                            entry.getKey().sendTip(this.language.game_ctf_draw);
+                            entry.getKey().sendTip(this.language.translateString("game_ctf_draw"));
                         }
                     }
                 }

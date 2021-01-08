@@ -1,19 +1,19 @@
 # using Google Translate
 # You can help me improve the translation through github
 # https://github.com/lt-name/GunWar_Nukkit
-roomLevelBackup: "§aRoom: %name% did not detect the map backup, the map is being backed up..."
-roomLevelBackupExist: "§aRoom: %name% detected map backup!"
-roomLevelBackupNotExist: "§aRoom: %name% map backup does not exist! Unable to restore the map!"
-roomLevelRestoreLevelFailure: "§cRoom: %name% map restoration failed!"
+roomLevelBackup: "§aRoom: %1% did not detect the map backup, the map is being backed up..."
+roomLevelBackupExist: "§aRoom: %1% detected map backup!"
+roomLevelBackupNotExist: "§aRoom: %1% map backup does not exist! Unable to restore the map!"
+roomLevelRestoreLevelFailure: "§cRoom: %1% map restoration failed!"
 useCmdInRoom: "§e >> §cYou can't use this commands here!"
-cmdHelp: "§eFor more help,please type: §b/%cmdName% help"
+cmdHelp: "§eFor more help,please type: §b/%1% help"
 userHelp: |-
   §eGunWar--Help
-  §a/%cmdName% §eOpen Game UI
-  §a/%cmdName% join <roomName> §eJoin a Game
-  §a/%cmdName% quit §eQuit a Game
-  §a/%cmdName% list §eSee Lists of All Game Rooms
-  §a/%cmdName% record §eSee record(ranking list)
+  §a/%1% §eOpen Game UI
+  §a/%1% join <roomName> §eJoin a Game
+  §a/%1% quit §eQuit a Game
+  §a/%1% list §eSee Lists of All Game Rooms
+  §a/%1% record §eSee record(ranking list)
 noPermission: "§cSORRY!But you don't have enough permission!"
 joinRoom: "§aYou joined the game room: %name%"
 joinRoomOnRoom: "§c You can't join a game because you've in a game room already!"
@@ -25,30 +25,30 @@ joinRoomIsNotFound: "§aCan't find this room!"
 joinRoomNotAvailable: "§aThere is no vacant room to use!"
 quitRoom: "§aYou have quit the room!"
 quitRoomNotInRoom: "§aYou are not in a room!"
-listRoom: "§eRoom list: §a %list%"
+listRoom: "§eRoom list: §a %1%"
 useCmdInCon: "Please use command in the game!"
 adminHelp: |-
   §eGunWar--Help
-  §a/%cmdName% §eOpen UI
-  §a/%cmdName% CreateRoom §eCreate room
-  §a/%cmdName% SetRoom §eSet up the room
-  §a/%cmdName% startroom §eStart the room game of the location map
-  §a/%cmdName% stoproom §eForcibly close the room in the location map
-  §a/%cmdName% reloadroom §eReload all the rooms
-  §a/%cmdName% unloadroom §eClose all rooms and uninstall config
-  §a/%cmdName% AddWeapon §eOpen the add weapon gui
+  §a/%1% §eOpen UI
+  §a/%1% CreateRoom §eCreate room
+  §a/%1% SetRoom §eSet up the room
+  §a/%1% startroom §eStart the room game of the location map
+  §a/%1% stoproom §eForcibly close the room in the location map
+  §a/%1% reloadroom §eReload all the rooms
+  §a/%1% unloadroom §eClose all rooms and uninstall config
+  §a/%1% AddWeapon §eOpen the add weapon gui
 adminSetWaitSpawn: "§aWait for the spawn point to be set successfully!"
 adminSetRedSpawn: "§aThe red team spawn point is set successfully!"
 adminSetBlueSpawn: "§aThe blue team's spawn point is set successfully!"
 adminNotNumber: "§aThe parameter entered is not a number!"
-adminSetWaitTime: "§aThe waiting time has been set to: %time%"
+adminSetWaitTime: "§aThe waiting time has been set to: %1%"
 adminSetGameTime: "§aThe game time has been set to: %time%"
 adminSetGameTimeShort: "§aThe minimum game time cannot be less than 1 minute!"
-adminSetVictoryScore: "§aThe victory score has been set to: %score%"
-adminSetGameMode: "§aThe room game mode has been set to: %gameMode%"
-gameMode_NotFound: "§cGame Mode: %gameMode% does not exist!"
-adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
-adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
+adminSetVictoryScore: "§aThe victory score has been set to: %1%"
+adminSetGameMode: "§aThe room game mode has been set to: %1%"
+gameMode_NotFound: "§cGame Mode: %1% does not exist!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %1%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %1%"
 adminStartRoom: "§aThe game has been forcibly started!"
 adminStartRoomNoPlayer: "§aThere are not enough people in the room to start the game!"
 adminStartRoomIsPlaying: "§cThe room has started!"
@@ -66,7 +66,7 @@ admin_setRoom_back: "§eback"
 admin_setRoom_next: "§eNext"
 admin_setRoom_save: "§eSave"
 admin_setRoom_setWaitSpawn: "§aSet waiting point"
-admin_setRoom_setTeamSpawn: "§aSet %team% §r§a spawn point"
+admin_setRoom_setTeamSpawn: "§aSet %1% §r§a spawn point"
 admin_setRoom_setMoreParameters: "§aSet more parameters"
 admin_setRoom_setRoomPlayers: "§aSet the number of people in the room"
 admin_setRoom_setGameMode: "§aSet game mode"
@@ -90,7 +90,7 @@ suicideMessage: "§e >> §c%player% Committed suicide"
 tpJoinRoomLevel: "§e >> §cTo enter the game map, please join the game first!"
 tpQuitRoomLevel: "§e >> §cPlease use the command to exit the room!"
 gameArmor: "§e >> §cThe armor cannot be taken off in the game!"
-playerTeamChat: "§a[Team]§f %player% §b >>> %message%"
+playerTeamChat: "§a[Team]§f %1% §b >>> %2%"
 game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
 game_ctf_overtime: "§eOvertime!"
 game_ctf_draw: "draw"
@@ -99,7 +99,7 @@ game_blasting_cancelPlantBomb: "§cCancel installation"
 game_blasting_bombHasBeenDismantled: "§aBomb has been dismantled"
 game_blasting_cancelDemolition: "§cCancel demolition"
 game_blasting_bombFound: "%point% §aPoint to find the bomb "
-game_blasting_countdownToBombExplosion: "§eCountdown to bomb explosion: §l§c %time%"
+game_blasting_countdownToBombExplosion: "§eCountdown to bomb explosion: §l§c %1%"
 game_blasting_changeTeam: "§eExchange team"
 game_blasting_youCarryBomb: "You carry a bomb!"
 game_blasting_bombHasExploded: "§cBomb has exploded!"
@@ -115,7 +115,7 @@ waitScoreBoard: |-
   Players: §a %playerNumber%/10
   Two players required
   Waiting for players
-waitTimeBottom: "§aThe game still has: %time% seconds!"
+waitTimeBottom: "§aThe game still has: %1% seconds!"
 waitBottom: "§cWaiting for players to join, currently there are: %playerNumber% players"
 gameTimeScoreBoard: |-
   §l§aTeam: %team%
@@ -127,14 +127,14 @@ gameTimeScoreBoard: |-
   §l§aTeam Score:
   §l§cRed: %redRound% Score
   §l§9Blue: %blueRound% Score
-gameTimeBottom: "§l§cHealth: %health%"
-gameTimeRespawnBottom: "§l§cResurrection countdown: %time%"
-victoryMessage: "§eCongratulations to %teamName% §e for winning"
+gameTimeBoosBar: "§l§cHealth: %1%"
+gameTimeRespawnBoosBar: "§l§cResurrection countdown: %1%"
+victoryMessage: "§eCongratulations to %1% §e for winning"
 userMenuButton1: "§eJoin a room randomly"
 userMenuButton2: "§eQuit this room"
 userMenuButton3: "§eList all the rooms"
 userMenuButton4: "§eView the ranking list"
-adminMenuSetLevel: "Map:%name%"
+adminMenuSetLevel: "Map:%1%"
 gui_admin_room_selectWorld: "§aSelect map"
 gui_admin_room_selectRoom: "§aChoose a room"
 gui_admin_main_createRoom: "§eCreate new room"
@@ -146,7 +146,7 @@ adminTimeMenuInputText2: "Playing Time(s)"
 adminTimeMenuInputText3: "Points required to win"
 adminPlayersMenuInputText1: "Minimum number of players in the room"
 adminPlayersMenuInputText2: "Maximum number of players in the room"
-joinRoomOK: "§l§aCofirm to join the room: %name% §l§a?"
+joinRoomOK: "§l§aCofirm to join the room: %1% §l§a?"
 buttonOK: "§aConfirm"
 buttonReturn: "§cBack"
 #TODO translate
@@ -170,9 +170,9 @@ gui_admin_item_weapon_reloadTime: "换弹时间"
 gui_admin_item_weapon_reloadInterrupted: "换弹允许中断"
 gui_admin_item_weapon_bulletGravity: "子弹重力"
 gui_admin_item_weapon_bulletMotionMultiply: "子弹移动倍速"
-gui_admin_item_add_error_exist: "§c物品：%name% 已存在！"
-gui_admin_item_add_error_var: "§c物品：%name% 参数：%var% 输入错误！"
-gui_admin_item_add_success: "§a物品：%name% 添加成功！您可以通过配置文件修改更多内容！"
+gui_admin_item_add_error_exist: "§c物品：%1% 已存在！"
+gui_admin_item_add_error_var: "§c物品：%1% 参数：%2% 输入错误！"
+gui_admin_item_add_success: "§a物品：%1% 添加成功！您可以通过配置文件修改更多内容！"
 recordListButton1: "§eView personal records"
 recordListButton2: "§eView the kill leaderboard"
 recordListButton3: "§eView death leaderboard"
