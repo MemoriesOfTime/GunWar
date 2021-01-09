@@ -13,7 +13,6 @@ import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Level;
-import cn.nukkit.scheduler.Task;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -309,22 +308,14 @@ public class GuiCreate {
     }
 
     public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
-        ConcurrentHashMap<Integer, GuiType> map;
-        if (!UI_CACHE.containsKey(player)) {
-            map = new ConcurrentHashMap<>();
-            UI_CACHE.put(player, map);
-        }else {
-            map = UI_CACHE.get(player);
-        }
+        ConcurrentHashMap<Integer, GuiType> map = UI_CACHE.computeIfAbsent(player, i -> new ConcurrentHashMap<>());
         int id = player.showFormWindow(window);
         map.put(id, guiType);
-        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), new Task() {
-            @Override
-            public void onRun(int i) {
-                if (UI_CACHE.containsKey(player))
-                    UI_CACHE.get(player).remove(id);
+        Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
+            if (UI_CACHE.containsKey(player)) {
+                UI_CACHE.get(player).remove(id);
             }
-        }, 2400);
+        }, 2400, true);
     }
 
 }
