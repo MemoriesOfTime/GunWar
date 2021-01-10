@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener.defaults;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.room.base.BaseRoom;
@@ -71,6 +72,7 @@ public class PlayerJoinAndQuit implements Listener {
         }
         PlantBombTask.PLANT_BOMB_PLAYERS.remove(player);
         DemolitionBombTask.DEMOLITION_BOMB_PLAYERS.remove(player);
+        GuiCreate.UI_CACHE.remove(player);
     }
 
     @EventHandler

@@ -41,12 +41,17 @@ public class GuiListener implements Listener {
     @EventHandler
     public void onPlayerFormResponded(PlayerFormRespondedEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getWindow() == null || event.getResponse() == null) {
+        if (player == null || event.getWindow() == null) {
             return;
         }
         GuiType guiType = GuiCreate.UI_CACHE.containsKey(player) ? GuiCreate.UI_CACHE.get(player).get(event.getFormID()) : null;
-        if (guiType == null) return;
+        if (guiType == null) {
+            return;
+        }
         GuiCreate.UI_CACHE.get(player).remove(event.getFormID());
+        if (event.getResponse() == null) {
+            return;
+        }
         if (event.getWindow() instanceof FormWindowSimple) {
             this.onClick(player, (FormWindowSimple) event.getWindow(), guiType);
         }else if (event.getWindow() instanceof FormWindowCustom) {
