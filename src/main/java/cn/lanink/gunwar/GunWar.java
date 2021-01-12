@@ -206,7 +206,7 @@ public class GunWar extends PluginBase {
         return this.restoreWorld;
     }
 
-    public cn.lanink.gamecore.utils.Language getLanguage() {
+    public Language getLanguage() {
         return this.language;
     }
 
@@ -332,8 +332,8 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         this.getLogger().info("§e开始加载资源文件");
         //语言文件
-        this.saveResource("Language/chs.yml", false);
         this.saveResource("Language/chs.yml", "/Language/cache/new_chs.yml", true);
+        this.saveResource("Language/chs.yml", false);
         this.saveResource("Language/kor.yml", false);
         this.saveResource("Language/eng.yml", false);
         this.saveResource("Language/rus.yml", false);
