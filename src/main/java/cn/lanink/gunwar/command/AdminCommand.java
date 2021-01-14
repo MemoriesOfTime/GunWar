@@ -24,7 +24,7 @@ public class AdminCommand extends BaseCommand {
 
     @Override
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage(this.language.adminHelp.replace("%cmdName%", this.getName()));
+        sender.sendMessage(this.language.translateString("adminHelp", this.getName()));
     }
 
     @Override

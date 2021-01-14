@@ -1,7 +1,6 @@
 package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gamecore.room.IRoomStatus;
-import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
@@ -23,8 +22,6 @@ import cn.nukkit.potion.Effect;
  * @author lt_name
  */
 public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
-
-    private final GunWar gunWar = GunWar.getInstance();
 
     /**
      * 实体受到另一实体伤害事件

@@ -3,6 +3,7 @@ package cn.lanink.gunwar;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.gui.GuiListener;
@@ -16,7 +17,6 @@ import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
-import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.RsNpcXVariable;
 import cn.nukkit.Player;
@@ -330,21 +330,31 @@ public class GunWar extends PluginBase {
     }
 
     private void loadResources() {
-        getLogger().info("§e开始加载资源文件");
+        this.getLogger().info("§e开始加载资源文件");
         //语言文件
-        saveResource("Language/zh_CN.yml", false);
-        saveResource("Language/ko_KR.yml", false);
-        saveResource("Language/en_US.yml", false);
-        saveResource("Language/ru_RU.yml", false);
-        saveResource("Language/es_MX.yml", false);
-        String s = this.config.getString("language", "zh_CN");
-        File languageFile = new File(getDataFolder() + "/Language/" + s + ".yml");
+        this.saveResource("Language/chs.yml", "/Language/cache/new_chs.yml", true);
+        this.saveResource("Language/chs.yml", false);
+        this.saveResource("Language/kor.yml", false);
+        this.saveResource("Language/eng.yml", false);
+        this.saveResource("Language/rus.yml", false);
+        this.saveResource("Language/spa.yml", false);
+        String s = this.config.getString("language", "chs");
+        File languageFile = new File(this.getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
             getLogger().info("§aLanguage: " + s + " loaded !");
-            this.language = new Language(new Config(languageFile, 2));
+            this.language = new Language(new Config(languageFile, Config.YAML));
+            if (this.getResource("Language/" + s + ".yml") != null) {
+                //wtf nk, Why are files forced to be saved? Cannot use getResource()
+                this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
+                this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+                if (GunWar.debug) {
+                    this.getLogger().info("[debug] 语言文件：" + s + " 更新完成");
+                }
+            }
+            this.language.update(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml", Config.YAML));
         }else {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
-            this.language = new Language(new Config());
+            this.language = new Language(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml"));
         }
         //加载默认尸体皮肤
         BufferedImage skinData = null;
@@ -358,10 +368,10 @@ public class GunWar extends PluginBase {
         this.corpseSkin.setSkinData(skinData);
         this.corpseSkin.setSkinId("defaultSkin");
         //加载旗帜皮肤
-        saveResource("Resources/Flag/Flag.json", false);
-        saveResource("Resources/Flag/FlagStand.json", false);
-        saveResource("Resources/Flag/RedFlag.png", false);
-        saveResource("Resources/Flag/BlueFlag.png", false);
+        this.saveResource("Resources/Flag/Flag.json", false);
+        this.saveResource("Resources/Flag/FlagStand.json", false);
+        this.saveResource("Resources/Flag/RedFlag.png", false);
+        this.saveResource("Resources/Flag/BlueFlag.png", false);
         File fileJson = new File(getDataFolder() + "/Resources/Flag/FlagStand.json");
         File fileImg = new File(getDataFolder() + "/Resources/Flag/RedFlag.png");
         this.loadFlagSkin(fileImg, fileJson, 1);

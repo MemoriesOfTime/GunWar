@@ -1,18 +1,19 @@
 # Translated by JuChanMin, good777LUCKY
 # You can help me improve the translation through github
 # https://github.com/lt-name/GunWar_Nukkit
-roomLevelBackup: "§aRoom: %name% did not detect the map backup, the map is being backed up..."
-roomLevelBackupExist: "§aRoom: %name% detected map backup!"
-roomLevelBackupNotExist: "§aRoom: %name% map backup does not exist! Unable to restore the map!"
-roomLevelRestoreLevelFailure: "§cRoom: %name% map restoration failed!"
+roomLevelBackup: "§aRoom: %1% did not detect the map backup, the map is being backed up..."
+roomLevelBackupExist: "§aRoom: %1% detected map backup!"
+roomLevelBackupNotExist: "§aRoom: %1% map backup does not exist! Unable to restore the map!"
+roomLevelRestoreLevelFailure: "§cRoom: %1% map restoration failed!"
 useCmdInRoom: "§e >>§c게임에 참가 중일 땐 명령어를 사용 하실 수 없습니다."
-cmdHelp: "§a도움말 보기 : /%cmdName% help"
+cmdHelp: "§a도움말 보기 : /%1% help"
 userHelp: |-
   §eGunWar--도움말 목록
-  §a/%cmdName% §e게임 UI를 엽니다
-  §a/%cmdName% join <방 이름> §e해당 방에 참가합니다
-  §a/%cmdName% quit §e참가한 게임에서 나갑니다
-  §a/%cmdName% list §e방 목록 보기
+  §a/%1% §e게임 UI를 엽니다
+  §a/%1% join <방 이름> §e해당 방에 참가합니다
+  §a/%1% quit §e참가한 게임에서 나갑니다
+  §a/%1% list §e방 목록 보기
+  §a/%1% record §eSee record(ranking list)
 noPermission: "§c권한이 없습니다!"
 joinRoom: "§a%name%님께서 게임에 참가하셨습니다!"
 joinRoomIsInRoom: "§c이미 방 안에 있습니다!"
@@ -28,26 +29,26 @@ listRoom: "§e방 목록: §a%list%"
 useCmdInCon: "플레이어만 사용 가능한 명령어입니다!"
 adminHelp: |-
   §eGunWar--도움말 목록
-  §a/%cmdName% §eUI를 엽니다
-  §a/%cmdName% CreateRoom §eCreate room
-  §a/%cmdName% SetRoom §eSet up the room
-  §a/%cmdName% startroom §e현재 있는 방을 시작합니다
-  §a/%cmdName% stoproom §e현재 있는 방을 강제로 종료합니다
-  §a/%cmdName% reloadroom §e모든 방을 다시 불러옵니다
-  §a/%cmdName% unloadroom §e모든 방을 비활성화합니다
-  §a/%cmdName% AddWeapon §eOpen the add weapon gui
+  §a/%1% §eUI를 엽니다
+  §a/%1% CreateRoom §eCreate room
+  §a/%1% SetRoom §eSet up the room
+  §a/%1% startroom §e현재 있는 방을 시작합니다
+  §a/%1% stoproom §e현재 있는 방을 강제로 종료합니다
+  §a/%1% reloadroom §e모든 방을 다시 불러옵니다
+  §a/%1% unloadroom §e모든 방을 비활성화합니다
+  §a/%1% AddWeapon §eOpen the add weapon gui
 adminSetWaitSpawn: "§a대기 지점 설정 성공!"
 adminSetRedSpawn: "§a 빨간 팀 생성 지점 설정 성공!"
 adminSetBlueSpawn: "§a파란 팀 생성 지점 설정 성공!"
 adminNotNumber: "§a시간은 양수로만 설정할 수 있습니다!"
-adminSetWaitTime: "§a대기 시간이 %time%초로 설정되었습니다."
-adminSetGameTime: "§a게임 시간이 %time%초로 설정되었습니다."
+adminSetWaitTime: "§a대기 시간이 %1%초로 설정되었습니다."
+adminSetGameTime: "§a게임 시간이 %1%초로 설정되었습니다."
 adminSetGameTimeShort: "§a게임 시간은 1분 미만이 될 수 없습니다!"
-adminSetVictoryScore: "§a승리 점수가 설정되었습니다: %score%"
-adminSetGameMode: "§a게임 모드가 설정되었습니다: %gameMode%"
-gameMode_NotFound: "§cGame Mode: %gameMode% does not exist!"
-adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %minPlayers%"
-adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %maxPlayers%"
+adminSetVictoryScore: "§a승리 점수가 설정되었습니다: %1%"
+adminSetGameMode: "§a게임 모드가 설정되었습니다: %1%"
+gameMode_NotFound: "§cGame Mode: %1% does not exist!"
+adminSetMinPlayers: "§aThe minimum number of people in the room has been set to: %1%"
+adminSetMaxPlayers: "§aThe maximum number of people in the room has been set to: %1%"
 adminStartRoom: "§a게임이 강제로 시작되었습니다"
 adminStartRoomNoPlayer: "§a게임을 시작할 충분한 인원이 없습니다"
 adminStartRoomIsPlaying: "§c이미 게임은 진행 중입니다"
@@ -55,17 +56,17 @@ adminLevelNoRoom: "§a이 월드는 게임 방이 아닙니다"
 adminStopRoom: "§a게임이 강제로 종료되었습니다"
 adminReload: "§a모든 방 다시 불러오기 성공, 콘솔을 참조하십시오."
 adminUnload: "§a모든 방 비활성화 성공, 콘솔을 참조하십시오."
-world_doesNotExist: "§cWorld: %name% does not exist"
+world_doesNotExist: "§cWorld: %1% does not exist"
 admin_createRoom_exist: "§cThis map already exists in the game room!"
-admin_createRoom_success: "§aRoom: %name% created successfully!"
-admin_setRoom_start: "§aSetting up room: %name%!"
+admin_createRoom_success: "§aRoom: %1% created successfully!"
+admin_setRoom_start: "§aSetting up room: %1%!"
 admin_setRoom_noExist: "§cThe room does not exist, please create a room first!"
 admin_setRoom_cancel: "§cThe room has been cancelled!"
 admin_setRoom_back: "§eback"
 admin_setRoom_next: "§eNext"
 admin_setRoom_save: "§eSave"
 admin_setRoom_setWaitSpawn: "§aSet waiting point"
-admin_setRoom_setTeamSpawn: "§aSet %team% §r§a spawn point"
+admin_setRoom_setTeamSpawn: "§aSet %1% §r§a spawn point"
 admin_setRoom_setMoreParameters: "§aSet more parameters"
 admin_setRoom_setRoomPlayers: "§aSet the number of people in the room"
 admin_setRoom_setGameMode: "§aSet game mode"
@@ -84,13 +85,13 @@ victoryBlue: "§9파란 팀 승리!"
 roundVictoryDraw: "승자 없음!"
 titleDeathTitle: "죽었습니다!"
 titleDeathSubtitle: "%player%님에게 살해당했습니다."
-killMessage: "§e >> §c%damagePlayer%님께서 %player%님을 살해했습니다."
+killMessage: "§e >> §c%1%님께서 %2%님을 살해했습니다."
 suicideMessage: "§e >> §c%player%님께서 자살하셨습니다"
 tpJoinRoomLevel: "§e >> 해당 플레이어에게 순간이동 하시려면 먼저 게임에 참여하셔야 합니다!"
 tpQuitRoomLevel: "§e >> 게임에서 나가시려면 명령을 사용해 주세요!"
 gameArmor: "§e >> §c게임 중에는 갑옷을 벗을 수 없습니다!"
-playerTeamChat: "§c[팀] %player% + §b >> %message%"
-game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
+playerTeamChat: "§c[팀] %1% + §b >> %2%"
+game_ctf_playerPickUpTheFlag: "§e%1% §a got the banner of %2%"
 game_ctf_overtime: "§eOvertime!"
 game_ctf_draw: "draw"
 game_blasting_plantBomb: "§C Bomb§e is installed!"
@@ -98,7 +99,7 @@ game_blasting_cancelPlantBomb: "§cCancel installation"
 game_blasting_bombHasBeenDismantled: "§aBomb has been dismantled"
 game_blasting_cancelDemolition: "§cCancel demolition"
 game_blasting_bombFound: "%point% §aPoint to find the bomb "
-game_blasting_countdownToBombExplosion: "§eCountdown to bomb explosion: §l§c %time%"
+game_blasting_countdownToBombExplosion: "§eCountdown to bomb explosion: §l§c %1%"
 game_blasting_changeTeam: "§eExchange team"
 game_blasting_youCarryBomb: "You carry a bomb!"
 game_blasting_bombHasExploded: "§cBomb has exploded!"
@@ -114,7 +115,7 @@ waitScoreBoard: |-
   플레이어: §a %playerNumber%/10
   최소 게임 인원 2명
   다른 플레이어를 기다리는 중..
-waitTimeBottom: "§a아직 %time%초 남았습니다!"
+waitTimeBottom: "§a아직 %1%초 남았습니다!"
 waitBottom: "§c플레이어가 참가하기를 기다리는 중이고, 현재 %playerNumber%명의 플레이어가 있습니다"
 gameTimeScoreBoard: |-
   §l§a내 팀: %team%
@@ -126,14 +127,14 @@ gameTimeScoreBoard: |-
   §l§a점수:
   §l§c빨간 팀: %redRound%점
   §l§9파란 팀: %blueRound%점
-gameTimeBottom: "§l§c체력: %health%"
-gameTimeRespawnBottom: "§l§c부활 까지 남은 시간: %time%"
+gameTimeBoosBar: "§l§c체력: %health%"
+gameTimeRespawnBoosBar: "§l§c부활 까지 남은 시간: %time%"
 victoryMessage: "§e축하합니다! %teamName%§e이 승리하였습니다!"
-userMenuButton1 : "§e무작위로 방 참가"
+userMenuButton1: "§e무작위로 방 참가"
 userMenuButton2: "§e현재 참여한 게임에서 나가기"
 userMenuButton3: "§e참여 가능한 게임 목록"
 userMenuButton4: "§e게임 전적"
-adminMenuSetLevel: "현재 월드 설정: %name%"
+adminMenuSetLevel: "현재 월드 설정: %1%"
 gui_admin_room_selectWorld: "§aSelect map"
 gui_admin_room_selectRoom: "§aChoose a room"
 gui_admin_main_createRoom: "§eCreate new room"
@@ -148,30 +149,29 @@ adminPlayersMenuInputText2: "Maximum number of players in the room"
 joinRoomOK: "§l§a%name%§l§a님께서 게임에 초대하셨습니다, 수락하시겠습니까?"
 buttonOK: "§a수락"
 buttonReturn: "§c거절"
-#TODO translate
-gui_admin_item_add_weapon_melee: "添加近战类武器"
-gui_admin_item_add_weapon_projectile: "添加抛掷类武器"
-gui_admin_item_add_weapon_gun: "添加远程类武器"
-gui_admin_item_name: "物品名称"
-gui_admin_item_showName: "物品显示名称"
-gui_admin_item_id: "物品ID"
-gui_admin_item_lore: "物品lore"
-gui_admin_item_weapon_minDamage: "最小伤害"
-gui_admin_item_weapon_maxDamage: "最大伤害"
-gui_admin_item_weapon_attackCooldown: "攻击冷却(tick)"
-gui_admin_item_weapon_knockBack: "击退"
-gui_admin_item_weapon_infiniteDurability: "无限耐久"
-gui_admin_item_weapon_killMessage: "击杀提示"
-gui_admin_item_weapon_particle: "粒子"
-gui_admin_item_weapon_range: "伤害范围"
-gui_admin_item_weapon_maxMagazine: "弹夹容量"
-gui_admin_item_weapon_reloadTime: "换弹时间"
-gui_admin_item_weapon_reloadInterrupted: "换弹允许中断"
-gui_admin_item_weapon_bulletGravity: "子弹重力"
-gui_admin_item_weapon_bulletMotionMultiply: "子弹移动倍速"
-gui_admin_item_add_error_exist: "§c物品：%name% 已存在！"
-gui_admin_item_add_error_var: "§c物品：%name% 参数：%var% 输入错误！"
-gui_admin_item_add_success: "§a物品：%name% 添加成功！您可以通过配置文件修改更多内容！"
+gui_admin_item_add_weapon_melee: "Add melee weapons"
+gui_admin_item_add_weapon_projectile: "Add throwing weapons"
+gui_admin_item_add_weapon_gun: "Add ranged weapons"
+gui_admin_item_name: "Item Name"
+gui_admin_item_showName: "Item display name"
+gui_admin_item_id: "Item ID"
+gui_admin_item_lore: "Item lore"
+gui_admin_item_weapon_minDamage: "Minimal damage"
+gui_admin_item_weapon_maxDamage: "Maximum damage"
+gui_admin_item_weapon_attackCooldown: "Attack cooldown(tick)"
+gui_admin_item_weapon_knockBack: "knockBack"
+gui_admin_item_weapon_infiniteDurability: "Infinite durability"
+gui_admin_item_weapon_killMessage: "Kill tips"
+gui_admin_item_weapon_particle: "particle"
+gui_admin_item_weapon_range: "Damage range"
+gui_admin_item_weapon_maxMagazine: "Magazine capacity"
+gui_admin_item_weapon_reloadTime: "Reload time"
+gui_admin_item_weapon_reloadInterrupted: "Reload allows interruption"
+gui_admin_item_weapon_bulletGravity: "Bullet gravity"
+gui_admin_item_weapon_bulletMotionMultiply: "Bullet moving speed"
+gui_admin_item_add_error_exist: "§cItem: %1% already exists!"
+gui_admin_item_add_error_var: "§cItem: %1% Parameter: %2% Input error!"
+gui_admin_item_add_success: "§aItem: %1% added successfully! You can modify more content through the configuration file!"
 recordListButton1 : "§e개인 전적 보기"
 recordListButton2: "§e적 플레이어 살해 횟수"
 recordListButton3: "§e사망한 횟수"

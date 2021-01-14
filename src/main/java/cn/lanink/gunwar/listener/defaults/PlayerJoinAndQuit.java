@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener.defaults;
 import cn.lanink.gamecore.utils.SavePlayerInventory;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.gui.GuiCreate;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.room.base.BaseRoom;
@@ -71,6 +72,7 @@ public class PlayerJoinAndQuit implements Listener {
         }
         PlantBombTask.PLANT_BOMB_PLAYERS.remove(player);
         DemolitionBombTask.DEMOLITION_BOMB_PLAYERS.remove(player);
+        GuiCreate.UI_CACHE.remove(player);
     }
 
     @EventHandler
@@ -83,11 +85,11 @@ public class PlayerJoinAndQuit implements Listener {
             LinkedHashMap<String, BaseRoom> room =  this.gunWar.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.gunWar.getLanguage().tpQuitRoomLevel);
+                player.sendMessage(this.gunWar.getLanguage().translateString("tpQuitRoomLevel"));
             }else if (!player.isOp() && room.containsKey(toLevel) &&
                     !room.get(toLevel).isPlaying(player)) {
                 event.setCancelled(true);
-                player.sendMessage(this.gunWar.getLanguage().tpJoinRoomLevel);
+                player.sendMessage(this.gunWar.getLanguage().translateString("tpJoinRoomLevel"));
             }
         }
     }

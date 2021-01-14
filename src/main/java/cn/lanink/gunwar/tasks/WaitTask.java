@@ -1,9 +1,9 @@
 package cn.lanink.gunwar.tasks;
 
 import cn.lanink.gamecore.room.IRoomStatus;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
@@ -45,30 +45,29 @@ public class WaitTask extends PluginTask<GunWar> {
                     Tools.addSound(this.room, Sound.RANDOM_CLICK);
                 }
                 for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                    entry.getKey().sendActionBar(language.waitTimeBottom
-                            .replace("%playerNumber%", room.getPlayers().size() + "")
-                            .replace("%time%", room.waitTime + ""));
+                    entry.getKey().sendActionBar(
+                            this.language.translateString("waitTimeBottom", room.getPlayers().size(), this.room.waitTime));
                     String team;
                     switch (entry.getValue()) {
                         case 1:
                         case 11:
-                            team = language.teamNameRed;
+                            team = language.translateString("teamNameRed");
                             break;
                         case 2:
                         case 12:
-                            team = language.teamNameBlue;
+                            team = language.translateString("teamNameBlue");
                             break;
                         default:
-                            team = language.noTeamSelect;
+                            team = language.translateString("noTeamSelect");
                             break;
                     }
                     LinkedList<String> ms = new LinkedList<>();
-                    for (String string : this.language.waitTimeScoreBoard.split("\n")) {
+                    for (String string : this.language.translateString("waitTimeScoreBoard").split("\n")) {
                         ms.add(string.replace("%team%", team)
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
-                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+                    owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
                 }
             }else {
                 this.room.startGame();
@@ -79,28 +78,27 @@ public class WaitTask extends PluginTask<GunWar> {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
             for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                entry.getKey().sendActionBar(language.waitBottom
-                        .replace("%playerNumber%", room.getPlayers().size() + ""));
+                entry.getKey().sendActionBar(language.translateString("waitBottom", this.room.getPlayers().size()));
                 String team;
                 switch (entry.getValue()) {
                     case 1:
                     case 11:
-                        team = language.teamNameRed;
+                        team = language.translateString("teamNameRed");
                         break;
                     case 2:
                     case 12:
-                        team = language.teamNameBlue;
+                        team = language.translateString("teamNameBlue");
                         break;
                     default:
-                        team = language.noTeamSelect;
+                        team = language.translateString("noTeamSelect");
                         break;
                 }
                 LinkedList<String> ms = new LinkedList<>();
-                for (String string : language.waitScoreBoard.split("\n")) {
+                for (String string : language.translateString("waitScoreBoard").split("\n")) {
                     ms.add(string.replace("%team%", team)
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
-                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.scoreBoardTitle, ms);
+                owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
             }
         }else {
             this.room.endGame();

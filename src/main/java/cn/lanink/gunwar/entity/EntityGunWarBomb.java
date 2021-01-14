@@ -30,7 +30,7 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
 
     @Override
     public String getName() {
-        return GunWar.getInstance().getLanguage().item_Bomb_Name;
+        return GunWar.getInstance().getLanguage().translateString("item_Bomb_Name");
     }
 
     @Override

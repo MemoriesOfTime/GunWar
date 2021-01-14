@@ -23,7 +23,7 @@ public class UserCommand extends BaseCommand {
 
     @Override
     public void sendHelp(CommandSender sender) {
-        sender.sendMessage(this.language.userHelp.replace("%cmdName%", this.getName()));
+        sender.sendMessage(this.language.translateString("userHelp", this.getName()));
     }
 
     @Override
