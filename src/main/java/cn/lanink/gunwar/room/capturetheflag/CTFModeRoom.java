@@ -161,7 +161,7 @@ public class CTFModeRoom extends BaseRoom {
             }else if (!this.overtime) {
                 this.overtime = true;
                 this.gameTime = this.getSetGameTime() / 5;
-                Tools.sendTitle(this, this.language.game_ctf_overtime, "");
+                Tools.sendTitle(this, this.language.translateString("game_ctf_overtime"), "");
                 return;
             }else {
                 this.setStatus(3);

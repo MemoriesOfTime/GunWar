@@ -78,9 +78,9 @@ public class BlastingModeRoom extends BaseRoom {
                                 this.bombWasFound = true;
                                 String s;
                                 if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
-                                    s = this.language.game_blasting_bombFound.replace("%point%", "§cA");
+                                    s = this.language.translateString("game_blasting_bombFound", "§cA");
                                 }else {
-                                    s = this.language.game_blasting_bombFound.replace("%point%", "§9B");
+                                    s = this.language.translateString("game_blasting_bombFound", "§9B");
                                 }
                                 Tools.sendTitle(this, 2, "", s);
                             }
@@ -90,13 +90,13 @@ public class BlastingModeRoom extends BaseRoom {
                 String s = "";
                 if (this.bombWasFound) {
                     if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
-                        s += this.language.game_blasting_bombFound.replace("%point%", "§cA");
+                        s += this.language.translateString("game_blasting_bombFound", "§cA");
                     }else {
-                        s += this.language.game_blasting_bombFound.replace("%point%", "§9B");
+                        s += this.language.translateString("game_blasting_bombFound", "§9B");
                     }
                 }
-                s += this.language.game_blasting_countdownToBombExplosion
-                        .replace("%time%", this.entityGunWarBomb.getExplosionTime() + "");
+                s += this.language.translateString("game_blasting_countdownToBombExplosion",
+                        this.entityGunWarBomb.getExplosionTime());
                 for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
                     Tools.createBossBar(entry.getKey(), this.bossBarMap);
                     DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
@@ -182,7 +182,7 @@ public class BlastingModeRoom extends BaseRoom {
         int delay = 0;
         if (!this.changeTeam && (this.redScore + this.blueScore) >= this.victoryScore * 0.6) {
             delay = 60;
-            Tools.sendTitle(this, this.language.game_blasting_changeTeam);
+            Tools.sendTitle(this, this.language.translateString("game_blasting_changeTeam"));
             this.changeTeam = true;
             LinkedList<Player> oldRedTeam = new LinkedList<>();
             LinkedList<Player> oldBlueTeam = new LinkedList<>();
@@ -200,9 +200,11 @@ public class BlastingModeRoom extends BaseRoom {
             }
             for (Player player : oldRedTeam) {
                 this.players.put(player, 2);
+                player.setNameTag("§9" + player.getName());
             }
             for (Player player : oldBlueTeam) {
                 this.players.put(player, 1);
+                player.setNameTag("§c" + player.getName());
             }
             int cache = this.redScore;
             this.redScore = this.blueScore;
@@ -219,7 +221,7 @@ public class BlastingModeRoom extends BaseRoom {
             if (!list.isEmpty()) {
                 Player player = list.get(GunWar.RANDOM.nextInt(list.size()));
                 player.getInventory().addItem(Tools.getItem(201));
-                player.sendTitle("", this.language.game_blasting_youCarryBomb);
+                player.sendTitle("", this.language.translateString("game_blasting_youCarryBomb"));
             }
         }, delay);
     }
@@ -282,7 +284,7 @@ public class BlastingModeRoom extends BaseRoom {
      */
     public void bombExplosion() {
         this.roundIsEnd = true;
-        Tools.sendTitle(this, this.language.game_blasting_bombHasExploded);
+        Tools.sendTitle(this, this.language.translateString("game_blasting_bombHasExploded"));
         for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
             entry.getKey().removeBossBar(entry.getValue().getBossBarId());
         }

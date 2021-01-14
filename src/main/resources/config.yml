@@ -1,5 +1,5 @@
-# zh_CN | ko_KR | en_US | ru_RU
-language: zh_CN
+# chs | kor | eng | rus | spa
+language: chs
 restoreWorld: true
 cmdUser: gunwar
 cmdAdmin: gunwaradmin

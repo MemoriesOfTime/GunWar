@@ -1,18 +1,18 @@
-roomLevelBackup: "§a房间：%name% 未检测到地图备份，正在备份地图中..."
-roomLevelBackupExist: "§a房间：%name% 检测到地图备份！"
-roomLevelBackupNotExist: "§a房间：%name% 地图备份不存在！无法还原地图！"
-roomLevelRestoreLevelFailure: "§c房间：%name% 地图还原失败！"
+roomLevelBackup: "§a房间：%1% 未检测到地图备份，正在备份地图中..."
+roomLevelBackupExist: "§a房间：%1% 检测到地图备份！"
+roomLevelBackupNotExist: "§a房间：%1% 地图备份不存在！无法还原地图！"
+roomLevelRestoreLevelFailure: "§c房间：%1% 地图还原失败！"
 useCmdInRoom: "§e >> §c游戏中无法使用其他命令"
-cmdHelp: "§a查看帮助：/%cmdName% help"
+cmdHelp: "§a查看帮助：/%1% help"
 userHelp: |-
   §eGunWar--命令帮助
-  §a/%cmdName% §e打开ui(仅游戏内可用)
-  §a/%cmdName% join 房间名称 §e加入游戏
-  §a/%cmdName% quit §e退出游戏
-  §a/%cmdName% list §e查看房间列表
-  §a/%cmdName% record §e查看战绩(排行榜)
+  §a/%1% §e打开ui(仅游戏内可用)
+  §a/%1% join 房间名称 §e加入游戏
+  §a/%1% quit §e退出游戏
+  §a/%1% list §e查看房间列表
+  §a/%1% record §e查看战绩(排行榜)
 noPermission: "§c你没有权限使用这个命令！"
-joinRoom: "§a你已加入房间: %name%"
+joinRoom: "§a你已加入房间: %1%"
 joinRoomIsInRoom: "§c你已经在一个房间中了!"
 joinRoomIsRiding: "§a请勿在骑乘状态下进入房间！"
 joinRandomRoom: "§a已为你随机分配房间！"
@@ -22,30 +22,30 @@ joinRoomIsNotFound: "§a暂无符合条件的房间！"
 joinRoomNotAvailable: "§a暂无房间可用！"
 quitRoom: "§a你已退出房间"
 quitRoomNotInRoom: "§a你本来就不在游戏房间！"
-listRoom: "§e房间列表： §a %list%"
+listRoom: "§e房间列表： §a %1%"
 useCmdInCon: "请不要在控制台执行此指令!"
 adminHelp: |-
   §eGunWar--命令帮助
-  §a/%cmdName% §e打开ui(仅游戏内可用)
-  §a/%cmdName% CreateRoom §e创建房间
-  §a/%cmdName% SetRoom §e设置房间
-  §a/%cmdName% startroom §e开始所在地图的房间游戏
-  §a/%cmdName% stoproom §e强制关闭所在地图的房间
-  §a/%cmdName% reloadroom §e重载所有房间
-  §a/%cmdName% unloadroom §e关闭所有房间,并卸载配置
-  §a/%cmdName% AddWeapon §e打开添加武器界面
+  §a/%1% §e打开ui(仅游戏内可用)
+  §a/%1% CreateRoom §e创建房间
+  §a/%1% SetRoom §e设置房间
+  §a/%1% startroom §e开始所在地图的房间游戏
+  §a/%1% stoproom §e强制关闭所在地图的房间
+  §a/%1% reloadroom §e重载所有房间
+  §a/%1% unloadroom §e关闭所有房间,并卸载配置
+  §a/%1% AddWeapon §e打开添加武器界面
 adminSetWaitSpawn: "§a等待出生点设置成功！"
 adminSetRedSpawn: "§a红队出生点设置成功！"
 adminSetBlueSpawn: "§a蓝队出生点设置成功！"
 adminNotNumber: "§a输入的参数不是数字！"
-adminSetWaitTime: "§a等待时间已设置为：%time%"
-adminSetGameTime: "§a游戏时间已设置为：%time%"
+adminSetWaitTime: "§a等待时间已设置为：%1%"
+adminSetGameTime: "§a游戏时间已设置为：%1%"
 adminSetGameTimeShort: "§a游戏时间最小不能低于1分钟！"
-adminSetVictoryScore: "§a胜利分数已设置为: %score%"
-adminSetGameMode: "§a房间模式已设置为: %gameMode%"
-gameMode_NotFound: "§c游戏模式: %gameMode% 不存在！"
-adminSetMinPlayers: "§a房间最少人数已设置为: %minPlayers%"
-adminSetMaxPlayers: "§a房间最多人数已设置为: %maxPlayers%"
+adminSetVictoryScore: "§a胜利分数已设置为: %1%"
+adminSetGameMode: "§a房间模式已设置为: %1%"
+gameMode_NotFound: "§c游戏模式: %1% 不存在！"
+adminSetMinPlayers: "§a房间最少人数已设置为: %1%"
+adminSetMaxPlayers: "§a房间最多人数已设置为: %1%"
 adminStartRoom: "§a已强制开启游戏！"
 adminStartRoomNoPlayer: "§a房间人数不足两人,无法开始游戏！"
 adminStartRoomIsPlaying: "§c房间已经开始了！"
@@ -53,17 +53,17 @@ adminLevelNoRoom: "§c当前地图不是游戏房间！"
 adminStopRoom: "§a已强制结束房间！"
 adminReload: "§a配置重载完成！请在后台查看信息！"
 adminUnload: "§a已卸载所有房间！请在后台查看信息！"
-world_doesNotExist: "§c世界：%name% 不存在"
+world_doesNotExist: "§c世界：%1% 不存在"
 admin_createRoom_exist: "§c这个地图已经存在游戏房间了！"
-admin_createRoom_success: "§a房间：%name% 创建成功！"
-admin_setRoom_start: "§a正在设置房间：%name%！"
+admin_createRoom_success: "§a房间：%1% 创建成功！"
+admin_setRoom_start: "§a正在设置房间：%1%！"
 admin_setRoom_noExist: "§c房间不存在，请先创建房间！"
 admin_setRoom_cancel: "§c已取消设置房间！"
 admin_setRoom_back: "§e上一步"
 admin_setRoom_next: "§e下一步"
 admin_setRoom_save: "§e保存设置"
 admin_setRoom_setWaitSpawn: "§a设置等待出生点"
-admin_setRoom_setTeamSpawn: "§a设置 %team% §r§a出生点"
+admin_setRoom_setTeamSpawn: "§a设置 %1% §r§a出生点"
 admin_setRoom_setMoreParameters: "§a设置更多参数"
 admin_setRoom_setRoomPlayers: "§a设置房间人数"
 admin_setRoom_setGameMode: "§a设置游戏模式"
@@ -81,22 +81,22 @@ victoryRed: "§c红队获得胜利"
 victoryBlue: "§9蓝队获得胜利"
 roundVictoryDraw: "平局"
 titleDeathTitle: "死亡"
-titleDeathSubtitle: "你被 %player% 击杀了"
-killMessage: "§e >> §c%damagePlayer% 杀死了 %player%"
+titleDeathSubtitle: "你被 %1% 击杀了"
+killMessage: "§e >> §c%1% 杀死了 %2%"
 suicideMessage: "§e >> §c%player% 自杀了"
 tpJoinRoomLevel: "§e >> §c要进入游戏地图，请先加入游戏！"
 tpQuitRoomLevel: "§e >> §c退出房间请使用命令！"
 gameArmor: "§e >> §c游戏中无法脱下护甲！"
-playerTeamChat: "§a[队伍]§f %player% §b >>> %message%"
-game_ctf_playerPickUpTheFlag: "§e%player% §a拿到了 %team% §a的旗帜"
+playerTeamChat: "§a[队伍]§f %1% §b >>> %2%"
+game_ctf_playerPickUpTheFlag: "§e%1% §a拿到了 %2% §a的旗帜"
 game_ctf_overtime: "§e加时!"
 game_ctf_draw: "平局"
 game_blasting_plantBomb: "§c炸弹§e已安装！"
 game_blasting_cancelPlantBomb: "§c取消安装"
 game_blasting_bombHasBeenDismantled: "§a炸弹已被拆除"
 game_blasting_cancelDemolition: "§c取消拆除"
-game_blasting_bombFound: "%point% §a点发现炸弹  "
-game_blasting_countdownToBombExplosion: "§e炸弹爆炸倒计时：§l§c %time%"
+game_blasting_bombFound: "%1% §a点发现炸弹  "
+game_blasting_countdownToBombExplosion: "§e炸弹爆炸倒计时：§l§c %1%"
 game_blasting_changeTeam: "§e交换队伍"
 game_blasting_youCarryBomb: "你携带着炸弹!"
 game_blasting_bombHasExploded: "§c炸弹已爆炸！"
@@ -112,8 +112,8 @@ waitScoreBoard: |-
   玩家: §a %playerNumber%/10
   最低游戏人数为 2 人
   等待玩家加入中
-waitTimeBottom: "§a当前已有: %playerNumber% 位玩家 \n §a游戏还有: %time% 秒开始！"
-waitBottom: "§c等待玩家加入中,当前已有: %playerNumber% 位玩家"
+waitTimeBottom: "§a当前已有: %1% 位玩家 \n §a游戏还有: %2% 秒开始！"
+waitBottom: "§c等待玩家加入中,当前已有: %1% 位玩家"
 gameTimeScoreBoard: |-
   §l§a所属队伍: %team%
   §l§a当前血量:§e %health%
@@ -122,14 +122,14 @@ gameTimeScoreBoard: |-
   §l§c红: %red% 人 §9蓝: %blue% 人
   §l§a队伍得分：
   §l§c红: %redRound% 分 §9蓝: %blueRound% 分
-gameTimeBottom: "§l§c血量： %health%"
-gameTimeRespawnBottom: "§l§c复活倒计时: %time%"
-victoryMessage: "§e恭喜 %teamName% §e获得胜利"
+gameTimeBoosBar: "§l§c血量： %1%"
+gameTimeRespawnBoosBar: "§l§c复活倒计时: %1%"
+victoryMessage: "§e恭喜 %1% §e获得胜利"
 userMenuButton1: "§e随机加入房间"
 userMenuButton2: "§e退出当前房间"
 userMenuButton3: "§e查看房间列表"
 userMenuButton4: "§e查看战绩排行榜"
-adminMenuSetLevel: "当前设置地图：%name%"
+adminMenuSetLevel: "当前设置地图：%1%"
 gui_admin_room_selectWorld: "§a选择地图"
 gui_admin_room_selectRoom: "§a选择房间"
 gui_admin_main_createRoom: "§e创建新房间"
@@ -141,7 +141,7 @@ adminTimeMenuInputText2: "游戏时间（秒）"
 adminTimeMenuInputText3: "胜利所需分数"
 adminPlayersMenuInputText1: "房间最少游戏人数"
 adminPlayersMenuInputText2: "房间最多游戏人数"
-joinRoomOK: "§l§a确认要加入房间: %name% §l§a？"
+joinRoomOK: "§l§a确认要加入房间: %1% §l§a？"
 buttonOK: "§a确定"
 buttonReturn: "§c返回"
 gui_admin_item_add_weapon_melee: "添加近战类武器"
@@ -164,9 +164,9 @@ gui_admin_item_weapon_reloadTime: "换弹时间"
 gui_admin_item_weapon_reloadInterrupted: "换弹允许中断"
 gui_admin_item_weapon_bulletGravity: "子弹重力"
 gui_admin_item_weapon_bulletMotionMultiply: "子弹移动倍速"
-gui_admin_item_add_error_exist: "§c物品：%name% 已存在！"
-gui_admin_item_add_error_var: "§c物品：%name% 参数：%var% 输入错误！"
-gui_admin_item_add_success: "§a物品：%name% 添加成功！您可以通过配置文件修改更多内容！"
+gui_admin_item_add_error_exist: "§c物品：%1% 已存在！"
+gui_admin_item_add_error_var: "§c物品：%1% 参数：%2% 输入错误！"
+gui_admin_item_add_success: "§a物品：%1% 添加成功！您可以通过配置文件修改更多内容！"
 recordListButton1: "§e查看个人战绩"
 recordListButton2: "§e查看击杀排行榜"
 recordListButton3: "§e查看死亡排行榜"

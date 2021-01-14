@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gamecore.room.IRoomStatus;
+import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
@@ -12,7 +13,6 @@ import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.utils.Language;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -92,12 +92,16 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 case 11:
                     room.getPlayers().put(player, 1);
                     player.getInventory().setArmorContents(Tools.getArmors(1));
-                    player.sendTitle(this.language.teamNameRed, this.language.playerTeamSelect, 10, 40, 20);
+                    player.sendTitle(this.language.translateString("teamNameRed"),
+                            this.language.translateString("playerTeamSelect"),
+                            10, 40, 20);
                     break;
                 case 12:
                     room.getPlayers().put(player, 2);
                     player.getInventory().setArmorContents(Tools.getArmors(2));
-                    player.sendTitle(this.language.teamNameBlue, this.language.playerTeamSelect, 10, 40, 20);
+                    player.sendTitle(this.language.translateString("teamNameBlue"),
+                            this.language.translateString("playerTeamSelect"),
+                            10, 40, 20);
                     break;
             }
             event.setCancelled(true);
@@ -141,7 +145,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
         if (event.getSlot() >= event.getInventory().getSize()) {
             event.setCancelled(true);
-            player.sendMessage(this.language.gameArmor);
+            player.sendMessage(this.language.translateString("gameArmor"));
         }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             event.setCancelled(true);
         }
