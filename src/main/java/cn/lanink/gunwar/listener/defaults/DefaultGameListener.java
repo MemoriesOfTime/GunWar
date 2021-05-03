@@ -16,6 +16,7 @@ import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
@@ -75,11 +76,30 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
         Item item = event.getItem();
-        if (player == null || item == null) {
+        if (player == null) {
             return;
         }
         BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+    
+        Block block = event.getBlock();
+        switch (block.getId()) {
+            case Item.CRAFTING_TABLE:
+            case Item.CHEST:
+            case Item.ENDER_CHEST:
+            case Item.ANVIL:
+            case Item.SHULKER_BOX:
+            case Item.UNDYED_SHULKER_BOX:
+            case Item.FURNACE:
+                event.setCancelled(true);
+                return;
+            default:
+                break;
+        }
+        
+        if (item == null) {
             return;
         }
         CompoundTag tag = item.getNamedTag();
