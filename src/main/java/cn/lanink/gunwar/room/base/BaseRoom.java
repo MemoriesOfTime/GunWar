@@ -320,11 +320,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                     }
                 }
             }
-            Iterator<Map.Entry<Player, Integer>> it = this.getPlayers().entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<Player, Integer> entry = it.next();
-                it.remove();
-                this.quitRoom(entry.getKey());
+            for (Player player : new HashSet<>(this.getPlayers().keySet())) {
+                this.quitRoom(player);
             }
         }
         this.initData();
