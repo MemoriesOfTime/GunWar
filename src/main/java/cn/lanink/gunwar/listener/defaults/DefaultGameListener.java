@@ -52,7 +52,15 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
             BaseRoom room = this.getListenerRoom(player.getLevel());
-            if (room == null || !room.isPlaying(player)) return;
+            if (room == null || !room.isPlaying(player)) {
+                return;
+            }
+            
+            if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
+                event.setCancelled(true);
+                return;
+            }
+            
             if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&
                     event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
                 GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, player, player, event.getDamage());
