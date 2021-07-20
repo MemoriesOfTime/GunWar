@@ -48,6 +48,8 @@ public class Tools {
             bossBar.setColor(255, 0, 0);
             player.createBossBar(bossBar);
             bossBarMap.put(player, bossBar);
+        }else {
+            player.createBossBar(bossBarMap.get(player));
         }
     }
 
