@@ -4,14 +4,8 @@ version: "1.3.0-SNAPSHOT"
 api: ["1.0.11"]
 load: POSTWORLD
 author: "LT_Name"
-softdepend:
-  - "ScoreboardPlugin"
-  - "ScoreboardAPI"
-  - "Tips"
-loadbefore:
-  - "ScoreboardPlugin"
-  - "ScoreboardAPI"
-  - "Tips"
+depend:
+  - "MemoriesOfTime-GameCore"
 
 permissions:
   GunWar.command.user:
