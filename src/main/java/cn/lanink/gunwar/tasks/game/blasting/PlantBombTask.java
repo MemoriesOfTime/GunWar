@@ -55,7 +55,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
     }
 
     @Override
-    public void cancel() {
+    public void onCancel() {
         if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
             Tools.sendTitle(this.room, "", this.owner.getLanguage().translateString("game_blasting_plantBomb"));
             this.player.getInventory().remove(Tools.getItem(201));
@@ -78,7 +78,6 @@ public class PlantBombTask extends PluginTask<GunWar> {
         }
         this.player.sendTip(" ");
         PLANT_BOMB_PLAYERS.remove(this.player);
-        super.cancel();
     }
 
 }
