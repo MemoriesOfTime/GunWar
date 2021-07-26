@@ -354,12 +354,13 @@ public class Tools {
     public static void rePlayerState(Player player, boolean joinRoom) {
         player.setGamemode(0);
         player.removeAllEffects();
-        player.setHealth(player.getMaxHealth());
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         if (joinRoom) {
+            player.setHealth(player.getMaxHealth() - 1); //允许触发EntityRegainHealthEvent
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
         }else {
+            player.setHealth(player.getMaxHealth());
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
