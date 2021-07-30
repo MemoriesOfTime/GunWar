@@ -352,20 +352,21 @@ public class Tools {
      * @param joinRoom 是否为加入房间
      */
     public static void rePlayerState(Player player, boolean joinRoom) {
-        player.setGamemode(0);
         player.removeAllEffects();
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
+        player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false).update();
         if (joinRoom) {
             player.setHealth(player.getMaxHealth() - 1); //允许触发EntityRegainHealthEvent
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
+            player.setGamemode(Player.ADVENTURE);
         }else {
             player.setHealth(player.getMaxHealth());
             player.setNameTag(player.getName());
             player.setNameTagVisible(true);
             player.setNameTagAlwaysVisible(true);
+            player.setGamemode(Player.SURVIVAL);
         }
-        player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false).update();
     }
 
     /**

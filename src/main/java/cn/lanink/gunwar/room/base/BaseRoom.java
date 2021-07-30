@@ -691,7 +691,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         player.getUIInventory().clearAll();
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, true).update();
-        player.setGamemode(3);
+        player.setGamemode(Player.VIEW);
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 1) {
             this.getPlayers().put(player, 11);
