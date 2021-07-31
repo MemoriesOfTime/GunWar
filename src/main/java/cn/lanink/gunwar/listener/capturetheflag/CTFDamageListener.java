@@ -59,7 +59,7 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                                         room.getBlueSpawn().getZ()));
                                 room.redScore++;
                                 room.haveBlueFlag = null;
-                                Tools.addSound(room, Sound.RANDOM_LEVELUP);
+                                Tools.playSound(room, Sound.RANDOM_LEVELUP);
                             }
                             break;
                         case 2:
@@ -69,7 +69,7 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                                         room.getRedSpawn().getZ()));
                                 room.blueScore++;
                                 room.haveRedFlag = null;
-                                Tools.addSound(room, Sound.RANDOM_LEVELUP);
+                                Tools.playSound(room, Sound.RANDOM_LEVELUP);
                             }
                             break;
                     }

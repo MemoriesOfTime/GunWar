@@ -654,8 +654,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
             @Override
             public void onRun(int i) {
-                Tools.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
-                Tools.addSound(player, Sound.RANDOM_ORB);
+                Tools.playSound(player, Sound.MOB_ENDERMEN_PORTAL);
+                Tools.playSound(player, Sound.RANDOM_ORB);
             }
         }, 10);
     }
@@ -731,7 +731,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         entity.setGliding(true);
         entity.setRotation(player.getYaw(), 0);
         entity.spawnToAll();
-        entity.updateMovement();
     }
 
     /**

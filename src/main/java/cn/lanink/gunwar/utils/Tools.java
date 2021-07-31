@@ -374,8 +374,8 @@ public class Tools {
      * @param room 房间
      * @param sound 声音
      */
-    public static void addSound(BaseRoom room, Sound sound) {
-        room.getPlayers().keySet().forEach(player -> addSound(player, sound));
+    public static void playSound(BaseRoom room, Sound sound) {
+        room.getPlayers().keySet().forEach(player -> playSound(player, sound));
     }
 
     /**
@@ -383,7 +383,7 @@ public class Tools {
      * @param player 玩家
      * @param sound 声音
      */
-    public static void addSound(Player player, Sound sound) {
+    public static void playSound(Player player, Sound sound) {
         PlaySoundPacket packet = new PlaySoundPacket();
         packet.name = sound.getSound();
         packet.volume = 1.0F;

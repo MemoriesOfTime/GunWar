@@ -65,7 +65,7 @@ public class CTFModeRoom extends BaseRoom {
                         }
                     });
                 }else if (entry.getValue() <= 5) {
-                    Tools.addSound(entry.getKey(), Sound.RANDOM_CLICK);
+                    Tools.playSound(entry.getKey(), Sound.RANDOM_CLICK);
                 }
             }
         }
