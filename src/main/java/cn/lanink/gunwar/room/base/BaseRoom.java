@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.room.base;
 
+import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
@@ -716,7 +717,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             case 65536:
                 break;
             default:
-                skin = GunWar.getInstance().getCorpseSkin();
+                skin = GameCore.DEFAULT_SKIN;
         }
         skin.setTrusted(true);
         nbt.putCompound("Skin", new CompoundTag()

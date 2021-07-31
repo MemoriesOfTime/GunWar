@@ -49,7 +49,6 @@ public class GunWar extends PluginBase {
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
     private String cmdUser, cmdAdmin;
-    private final Skin corpseSkin = new Skin();
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
@@ -344,7 +343,6 @@ public class GunWar extends PluginBase {
             getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
             if (this.getResource("Language/" + s + ".yml") != null) {
-                //wtf nk, Why are files forced to be saved? Cannot use getResource()
                 this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
                 this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
                 if (GunWar.debug) {
@@ -356,17 +354,6 @@ public class GunWar extends PluginBase {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
             this.language = new Language(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml"));
         }
-        //加载默认尸体皮肤
-        BufferedImage skinData = null;
-        try {
-            skinData = ImageIO.read(this.getResource("skin.png"));
-        } catch (IOException ignored) { }
-        if (skinData == null) {
-            getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
-        }
-        this.corpseSkin.setTrusted(true);
-        this.corpseSkin.setSkinData(skinData);
-        this.corpseSkin.setSkinId("defaultSkin");
         //加载旗帜皮肤
         this.saveResource("Resources/Flag/Flag.json", false);
         this.saveResource("Resources/Flag/FlagStand.json", false);
@@ -433,10 +420,6 @@ public class GunWar extends PluginBase {
 
     public String getCmdAdmin() {
         return this.cmdAdmin;
-    }
-
-    public Skin getCorpseSkin() {
-        return this.corpseSkin;
     }
 
     public HashMap<Integer, Skin> getFlagSkin() {
