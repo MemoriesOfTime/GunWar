@@ -66,7 +66,7 @@ public class GuiCreate {
      */
     public static void sendAdminMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME, "");
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
 
         simple.addButton(
                 new ResponseElementButton(language.translateString("gui_admin_main_createRoom"),

@@ -12,8 +12,6 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityHuman;
-import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
@@ -28,7 +26,6 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
-import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
@@ -36,7 +33,6 @@ import cn.nukkit.utils.DyeColor;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -332,21 +328,6 @@ public class Tools {
     }
 
     /**
-     * 设置实体皮肤
-     * @param human 实体
-     * @param skin 皮肤
-     */
-    public static void setHumanSkin(EntityHuman human, Skin skin) {
-        PlayerSkinPacket packet = new PlayerSkinPacket();
-        packet.skin = skin;
-        packet.newSkinName = skin.getSkinId();
-        packet.oldSkinName = human.getSkin().getSkinId();
-        packet.uuid = human.getUniqueId();
-        human.setSkin(skin);
-        human.getLevel().getPlayers().values().forEach(player -> player.dataPacket(packet));
-    }
-
-    /**
      * 重置玩家状态
      * @param player 玩家
      * @param joinRoom 是否为加入房间
@@ -423,16 +404,15 @@ public class Tools {
         Level level = position.getLevel();
         ItemFirework item = new ItemFirework();
         CompoundTag tag = new CompoundTag();
-        Random random = new Random();
         CompoundTag ex = new CompoundTag();
         ex.putByteArray("FireworkColor",new byte[]{
-                (byte) DyeColor.values()[random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
+                (byte) DyeColor.values()[GunWar.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].getDyeData()
         });
         ex.putByteArray("FireworkFade",new byte[0]);
-        ex.putBoolean("FireworkFlicker",random.nextBoolean());
-        ex.putBoolean("FireworkTrail",random.nextBoolean());
+        ex.putBoolean("FireworkFlicker",GunWar.RANDOM.nextBoolean());
+        ex.putBoolean("FireworkTrail",GunWar.RANDOM.nextBoolean());
         ex.putByte("FireworkType",ItemFirework.FireworkExplosion.ExplosionType.values()
-                [random.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
+                [GunWar.RANDOM.nextInt(ItemFirework.FireworkExplosion.ExplosionType.values().length)].ordinal());
         tag.putCompound("Fireworks",(new CompoundTag("Fireworks")).putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);
         CompoundTag nbt = new CompoundTag();
