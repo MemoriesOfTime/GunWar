@@ -1,12 +1,11 @@
-showName: "a demo sword"
+showName: "剑"
 id: "272:0"
 lore: |-
-  damage: 1-2
-  这是一个配置演示
-  this is a configuration demo
+  伤害：1-2
+  攻击冷却：1.5秒
 damage: "1-2"
 effect: []
-attackCooldown: 20 #tick
+attackCooldown: 30 #tick
 knockBack: 0.3
 infiniteDurability: true
 enchantment:
