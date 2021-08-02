@@ -206,7 +206,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         this.roundIsEnd = false;
     }
 
-    @Override
     public void startGame() {
         this.setStatus(ROOM_STATUS_GAME);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent(this));
@@ -292,7 +291,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     /**
      * 结束房间
      */
-    @Override
     public void endGame(int victory) {
         int oldStatus = this.getStatus();
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
@@ -427,7 +425,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * 加入房间
      * @param player 玩家
      */
-    @Override
     public void joinRoom(Player player, boolean spectator) {
         if (this.status == 0) {
             this.initTask();
@@ -452,7 +449,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * 退出房间
      * @param player 玩家
      */
-    @Override
     public void quitRoom(Player player) {
         this.players.remove(player);
         if (GunWar.getInstance().isHasTips()) {
