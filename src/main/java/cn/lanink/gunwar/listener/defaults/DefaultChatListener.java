@@ -32,6 +32,12 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
                 event.getMessage().startsWith(this.gunWar.getCmdAdmin(), 1)) {
             return;
         }
+        for (String string : this.gunWar.getCmdWhitelist()) {
+            if (string.equalsIgnoreCase(event.getMessage())) {
+                return;
+            }
+        }
+        event.setMessage("");
         event.setCancelled(true);
         player.sendMessage(this.gunWar.getLanguage().translateString("useCmdInRoom"));
     }

@@ -26,6 +26,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import lombok.Getter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -48,7 +49,12 @@ public class GunWar extends PluginBase {
     private final HashMap<String, BaseGameListener> gameListeners = new HashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
-    private String cmdUser, cmdAdmin;
+
+    private String cmdUser;
+    private String cmdAdmin;
+    @Getter
+    private List<String> cmdWhitelist;
+
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
@@ -132,25 +138,36 @@ public class GunWar extends PluginBase {
 
             }
         }
+
         this.restoreWorld = this.config.getBoolean("restoreWorld");
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", Config.YAML);
+
         this.loadResources();
+
         this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
+
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");
+        this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
+
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
+
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
+
         this.loadAllListener();
+
         this.loadAllRoom();
+
         try {
             new MetricsLite(this, 7448);
         } catch (Exception ignored) {
 
         }
+
         this.getLogger().info("§e插件加载完成！欢迎使用！");
     }
 
