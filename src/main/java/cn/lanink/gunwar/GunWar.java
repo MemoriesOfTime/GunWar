@@ -291,17 +291,17 @@ public class GunWar extends PluginBase {
                 "".equals(config.getString("redSpawn", "").trim()) ||
                 "".equals(config.getString("blueSpawn", "").trim()) ||
                 "".equals(config.getString("gameMode", "").trim())) {
-            getLogger().warning("§c房间：" + world + " 配置不完整，加载失败！");
+            this.getLogger().warning("§c房间：" + world + " 配置不完整，加载失败！");
             return;
         }
         if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
-            getLogger().warning("§c房间：" + world + " 地图加载失败！");
+            this.getLogger().warning("§c房间：" + world + " 地图加载失败！");
             return;
         }
 
         String gameMode = config.getString("gameMode", "classic");
         if (!ROOM_CLASS.containsKey(gameMode)) {
-            getLogger().warning("§c房间：" + world + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
+            this.getLogger().warning("§c房间：" + world + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
             return;
         }
         try {
@@ -309,9 +309,9 @@ public class GunWar extends PluginBase {
             BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
             baseRoom.setGameMode(gameMode);
             this.rooms.put(world, baseRoom);
-            getLogger().info("§a房间：" + world + " 已加载！");
+            this.getLogger().info("§a房间：" + world + " 已加载！");
         } catch (Exception e) {
-            e.printStackTrace();
+            this.getLogger().error("§c加载房间：" + world + " 时出错，请检查配置文件", e);
         }
     }
 
