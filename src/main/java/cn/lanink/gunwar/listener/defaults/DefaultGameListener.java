@@ -22,6 +22,7 @@ import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
@@ -43,6 +44,22 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
     private final GunWar gunWar = GunWar.getInstance();
     private final Language language = GunWar.getInstance().getLanguage();
 
+    @EventHandler
+    public void onEntityRegainHealth(EntityRegainHealthEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            BaseRoom room = this.getListenerRoom(player.getLevel());
+            if (room == null || !room.isPlaying(player)) {
+                return;
+            }
+            if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME &&
+                    event.getRegainReason() != EntityRegainHealthEvent.CAUSE_EATING) {
+                room.addHealth(player, event.getAmount());
+            }
+            event.setCancelled(true);
+        }
+    }
+
     /**
      * 伤害事件
      * @param event 事件
@@ -59,6 +76,10 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
                 event.setCancelled(true);
                 return;
+            }
+
+            if (player.getHealth() - event.getFinalDamage() < 1) {
+                event.setCancelled(true); //阻止死亡
             }
             
             if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&

@@ -7,15 +7,12 @@ import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.utils.exception.item.weapon.ProjectileWeaponLoadException;
-import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerFormRespondedEvent;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
-import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
@@ -52,101 +49,10 @@ public class GuiListener implements Listener {
         if (event.getResponse() == null) {
             return;
         }
-        if (event.getWindow() instanceof FormWindowSimple) {
-            this.onClick(player, (FormWindowSimple) event.getWindow(), guiType);
-        }else if (event.getWindow() instanceof FormWindowCustom) {
+        if (event.getWindow() instanceof FormWindowCustom) {
             this.onClick(player, (FormWindowCustom) event.getWindow(), guiType);
         }else if (event.getWindow() instanceof FormWindowModal) {
             this.onClick(player, (FormWindowModal) event.getWindow(), guiType);
-        }
-    }
-
-    private void onClick(Player player, FormWindowSimple simple, GuiType guiType) {
-        switch (guiType) {
-            case USER_MENU:
-                switch (simple.getResponse().getClickedButtonId()) {
-                    case 0:
-                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdUser() + " join");
-                        break;
-                    case 1:
-                        GunWar.getInstance().getServer().dispatchCommand(player, this.gunWar.getCmdUser() + " quit");
-                        break;
-                    case 2:
-                        GuiCreate.sendRoomListMenu(player);
-                        break;
-                    case 3:
-                        GuiCreate.sendRecordList(player);
-                        break;
-                }
-                break;
-            case ROOM_LIST_MENU:
-                if (simple.getResponse().getClickedButton().getText().equals(language.translateString("buttonReturn"))) {
-                    GuiCreate.sendUserMenu(player);
-                }else {
-                    GuiCreate.sendRoomJoinOkMenu(player, simple.getResponse().getClickedButton().getText().split("\n")[0]);
-                }
-                break;
-            case RECORD_LIST:
-                switch (simple.getResponse().getClickedButtonId()) {
-                    case 0:
-                        GuiCreate.sendGameRecord(player);
-                        break;
-                    case 1:
-                        GuiCreate.sendRankingList(player, RecordType.KILLS);
-                        break;
-                    case 2:
-                        GuiCreate.sendRankingList(player, RecordType.DEATHS);
-                        break;
-                    case 3:
-                        GuiCreate.sendRankingList(player, RecordType.VICTORY);
-                        break;
-                    case 4:
-                        GuiCreate.sendRankingList(player, RecordType.DEFEAT);
-                        break;
-                    case 5:
-                        GuiCreate.sendUserMenu(player);
-                        break;
-                }
-                break;
-            case ADMIN_MENU:
-                switch (simple.getResponse().getClickedButtonId()) {
-                    case 0:
-                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " CreateRoom");
-                        break;
-                    case 1:
-                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " SetRoom");
-                        break;
-                    case 2:
-                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " reloadroom");
-                        break;
-                    case 3:
-                        Server.getInstance().dispatchCommand(player, this.gunWar.getCmdAdmin() + " unloadroom");
-                        break;
-                }
-                break;
-            case ADMIN_CREATE_ROOM_MENU:
-                Server.getInstance().dispatchCommand(player,
-                        this.gunWar.getCmdAdmin() + " CreateRoom " +
-                                simple.getResponse().getClickedButton().getText());
-                break;
-            case ADMIN_SET_ROOM_MENU:
-                Server.getInstance().dispatchCommand(player,
-                        this.gunWar.getCmdAdmin() + " SetRoom " +
-                                simple.getResponse().getClickedButton().getText());
-                break;
-            case  ADMIN_ITEM_ADD_WEAPON:
-                switch (simple.getResponse().getClickedButtonId()) {
-                    case 0:
-                        GuiCreate.sendAdminItemAddWeaponMeleeMenu(player);
-                        break;
-                    case 1:
-                        GuiCreate.sendAdminItemAddWeaponProjectileMenu(player);
-                        break;
-                    case 2:
-                        GuiCreate.sendAdminItemAddWeaponGunMenu(player);
-                        break;
-                }
-                break;
         }
     }
 

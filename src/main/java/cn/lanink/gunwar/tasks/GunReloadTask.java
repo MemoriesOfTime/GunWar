@@ -43,8 +43,7 @@ public class GunReloadTask extends PluginTask<GunWar> {
     }
 
     @Override
-    public void cancel() {
-        super.cancel();
+    public void onCancel() {
         //换弹中被打断
         if (!this.gunWeapon.isReloadInterrupted() && this.bulletsFloat < this.gunWeapon.getMaxMagazine()) {
             this.gunWeapon.getMagazineMap().put(this.player, this.initialQuantity);

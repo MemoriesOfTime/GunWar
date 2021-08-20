@@ -59,8 +59,7 @@ public class ShowHealthTask extends PluginTask<GunWar> {
     }
 
     @Override
-    public void cancel() {
-        super.cancel();
+    public void onCancel() {
         for (DummyBossBar bossBar : this.bossBarMap.values()) {
             bossBar.getPlayer().removeBossBar(bossBar.getBossBarId());
         }
