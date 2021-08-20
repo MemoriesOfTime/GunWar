@@ -280,7 +280,7 @@ public class GunWar extends PluginBase {
                 }
             }
         }
-        getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
+        this.getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
     }
 
     public void loadRoom(String world) {
@@ -332,7 +332,7 @@ public class GunWar extends PluginBase {
             room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
             room.endGame();
             this.rooms.remove(world);
-            getLogger().info("§c房间：" + world + " 已卸载！");
+            this.getLogger().info("§c房间：" + world + " 已卸载！");
         }
         this.roomConfigs.remove(world);
     }
