@@ -1,5 +1,7 @@
 package cn.lanink.gunwar.gui;
 
+import cn.lanink.gamecore.form.element.ResponseElementButton;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
@@ -7,11 +9,13 @@ import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.form.element.*;
+import cn.nukkit.form.element.ElementButtonImageData;
+import cn.nukkit.form.element.ElementDropdown;
+import cn.nukkit.form.element.ElementInput;
+import cn.nukkit.form.element.ElementToggle;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.form.window.FormWindowModal;
-import cn.nukkit.form.window.FormWindowSimple;
 import cn.nukkit.level.Level;
 
 import java.util.*;
@@ -30,12 +34,30 @@ public class GuiCreate {
      */
     public static void sendUserMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(language.translateString("userMenuButton1"), new ElementButtonImageData("path", "textures/ui/switch_start_button")));
-        simple.addButton(new ElementButton(language.translateString("userMenuButton2"), new ElementButtonImageData("path", "textures/ui/switch_select_button")));
-        simple.addButton(new ElementButton(language.translateString("userMenuButton3"), new ElementButtonImageData("path", "textures/ui/servers")));
-        simple.addButton(new ElementButton(language.translateString("userMenuButton4"), new ElementButtonImageData("path", "textures/ui/creative_icon")));
-        showFormWindow(player, simple, GuiType.USER_MENU);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
+
+        simple.addButton(
+                new ResponseElementButton(language.translateString("userMenuButton1"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/switch_start_button")
+                ).onClicked(cp -> GunWar.getInstance().getServer().dispatchCommand(cp, GunWar.getInstance().getCmdUser() + " join"))
+        );
+        simple.addButton(
+                new ResponseElementButton(language.translateString("userMenuButton2"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/switch_select_button")
+                ).onClicked(cp -> GunWar.getInstance().getServer().dispatchCommand(cp, GunWar.getInstance().getCmdUser() + " quit"))
+        );
+        simple.addButton(
+                new ResponseElementButton(language.translateString("userMenuButton3"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/servers")
+                ).onClicked(GuiCreate::sendRoomListMenu)
+        );
+        simple.addButton(
+                new ResponseElementButton(language.translateString("userMenuButton4"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/creative_icon")
+                ).onClicked(GuiCreate::sendRecordList)
+        );
+
+        player.showFormWindow(simple);
     }
 
     /**
@@ -44,16 +66,30 @@ public class GuiCreate {
      */
     public static void sendAdminMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_createRoom"),
-                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/World")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_setRoom"),
-                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/dev_glyph_color")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_reloadAllRoom"),
-                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/refresh_light")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_main_unloadAllRoom"),
-                new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/redX1")));
-        showFormWindow(player, simple, GuiType.ADMIN_MENU);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
+
+        simple.addButton(
+                new ResponseElementButton(language.translateString("gui_admin_main_createRoom"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/World")
+                ).onClicked(cp -> Server.getInstance().dispatchCommand(cp, GunWar.getInstance().getCmdAdmin() + " CreateRoom"))
+        );
+        simple.addButton(
+                new ResponseElementButton(language.translateString("gui_admin_main_setRoom"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/dev_glyph_color")
+                ).onClicked(cp -> Server.getInstance().dispatchCommand(cp, GunWar.getInstance().getCmdAdmin() + " SetRoom"))
+        );
+        simple.addButton(
+                new ResponseElementButton(language.translateString("gui_admin_main_reloadAllRoom"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/refresh_light")
+                ).onClicked(cp -> Server.getInstance().dispatchCommand(cp, GunWar.getInstance().getCmdAdmin() + " reloadroom"))
+        );
+        simple.addButton(
+                new ResponseElementButton(language.translateString("gui_admin_main_unloadAllRoom"),
+                        new ElementButtonImageData(ElementButtonImageData.IMAGE_DATA_TYPE_PATH, "textures/ui/redX1")
+                ).onClicked(cp -> Server.getInstance().dispatchCommand(cp, GunWar.getInstance().getCmdAdmin() + " unloadroom"))
+        );
+
+        player.showFormWindow(simple);
     }
 
     /**
@@ -61,12 +97,14 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendCreateRoomMenu(Player player) {
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME,
                 GunWar.getInstance().getLanguage().translateString("gui_admin_room_selectWorld"));
         for (Level level : Server.getInstance().getLevels().values()) {
-            simple.addButton(new ElementButton(level.getFolderName()));
+            simple.addButton(new ResponseElementButton(level.getFolderName())
+                    .onClicked(cp -> Server.getInstance().dispatchCommand(cp,
+                            GunWar.getInstance().getCmdAdmin() + " CreateRoom " + level.getFolderName())));
         }
-        showFormWindow(player, simple, GuiType.ADMIN_CREATE_ROOM_MENU);
+        player.showFormWindow(simple);
     }
 
     /**
@@ -74,12 +112,14 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendSetRoomMenu(Player player) {
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME,
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME,
                 GunWar.getInstance().getLanguage().translateString("gui_admin_room_selectRoom"));
         for (String roomName : GunWar.getInstance().getRoomConfigs().keySet()) {
-            simple.addButton(new ElementButton(roomName));
+            simple.addButton(new ResponseElementButton(roomName)
+                    .onClicked(cp -> Server.getInstance().dispatchCommand(cp,
+                            GunWar.getInstance().getCmdAdmin() + " SetRoom " + roomName)));
         }
-        showFormWindow(player, simple, GuiType.ADMIN_SET_ROOM_MENU);
+        player.showFormWindow(simple);
     }
 
     /**
@@ -122,11 +162,14 @@ public class GuiCreate {
 
     public static void sendAdminItemAddWeaponMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(language.translateString("gui_admin_item_add_weapon_melee")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_item_add_weapon_projectile")));
-        simple.addButton(new ElementButton(language.translateString("gui_admin_item_add_weapon_gun")));
-        showFormWindow(player, simple, GuiType.ADMIN_ITEM_ADD_WEAPON);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME, "");
+        simple.addButton(new ResponseElementButton(language.translateString("gui_admin_item_add_weapon_melee"))
+                .onClicked(GuiCreate::sendAdminItemAddWeaponMeleeMenu));
+        simple.addButton(new ResponseElementButton(language.translateString("gui_admin_item_add_weapon_projectile"))
+                .onClicked(GuiCreate::sendAdminItemAddWeaponProjectileMenu));
+        simple.addButton(new ResponseElementButton(language.translateString("gui_admin_item_add_weapon_gun"))
+                .onClicked(GuiCreate::sendAdminItemAddWeaponGunMenu));
+        player.showFormWindow(simple);
     }
 
     public static void sendAdminItemAddWeaponMeleeMenu(Player player) {
@@ -138,7 +181,7 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_lore"), "", "剑\n这是一个配置演示"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_minDamage"), "", "1"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxDamage"), "", "2"));
-        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCoown"), "", "20"));
+        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCooldown"), "", "20"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_knockBack"), "", "0.3"));
         custom.addElement(new ElementToggle(language.translateString("gui_admin_item_weapon_infiniteDurability")));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_killMessage"), "", "%damager% --[+＝＝》 %player%"));
@@ -155,7 +198,7 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_minDamage"), "", "1"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxDamage"), "", "2"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_particle"), "", "HugeExplodeSeedParticle@Vector3:pos"));
-        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCoown"), "", "20"));
+        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCooldown"), "", "20"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_range"), "", "5"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_killMessage"), "", "%damager% ☼ %player%"));
         showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_PROJECTILE);
@@ -170,7 +213,7 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_lore"), "", "枪\n这是一个配置演示"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_minDamage"), "", "1"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxDamage"), "", "2"));
-        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCoown"), "", "10"));
+        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCooldown"), "", "10"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxMagazine"), "", "30"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_reloadTime"), "", "5"));
         custom.addElement(new ElementToggle(language.translateString("gui_admin_item_weapon_reloadInterrupted")));
@@ -187,16 +230,19 @@ public class GuiCreate {
      */
     public static void sendRoomListMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME, "");
+
         for (Map.Entry<String, BaseRoom> entry : GunWar.getInstance().getRooms().entrySet()) {
-            simple.addButton(new ElementButton("§e" + entry.getKey() +
+            simple.addButton(new ResponseElementButton("§e" + entry.getKey() +
                     "\n§r§eMode: " + entry.getValue().getGameMode() +
                             " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
-                    new ElementButtonImageData("path", "textures/ui/switch_start_button")));
+                    new ElementButtonImageData("path", "textures/ui/switch_start_button"))
+                    .onClicked(cp -> sendRoomJoinOkMenu(cp, entry.getKey())));
         }
-        simple.addButton(new ElementButton(language.translateString("buttonReturn"),
-                new ElementButtonImageData("path", "textures/ui/cancel")));
-        showFormWindow(player, simple, GuiType.ROOM_LIST_MENU);
+        simple.addButton(new ResponseElementButton(language.translateString("buttonReturn"),
+                new ElementButtonImageData("path", "textures/ui/cancel")).onClicked(GuiCreate::sendUserMenu));
+
+        player.showFormWindow(simple);
     }
 
     /**
@@ -206,8 +252,8 @@ public class GuiCreate {
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         Language language = GunWar.getInstance().getLanguage();
         FormWindowModal modal;
-        if (GunWar.getInstance().getRooms().containsKey(roomName.replace("§e", "").trim())) {
-            BaseRoom room = GunWar.getInstance().getRooms().get(roomName.replace("§e", "").trim());
+        BaseRoom room = GunWar.getInstance().getRooms().get(roomName);
+        if (room != null) {
             if (room.getStatus() == 2 || room.getStatus() == 3) {
                 modal = new FormWindowModal(
                         PLUGIN_NAME, language.translateString("joinRoomIsPlaying"),
@@ -239,14 +285,22 @@ public class GuiCreate {
      */
     public static void sendRecordList(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowSimple simple = new FormWindowSimple(PLUGIN_NAME, "");
-        simple.addButton(new ElementButton(language.translateString("recordListButton1"), new ElementButtonImageData("path", "textures/ui/copy")));
-        simple.addButton(new ElementButton(language.translateString("recordListButton2"), new ElementButtonImageData("path", "textures/ui/creative_icon")));
-        simple.addButton(new ElementButton(language.translateString("recordListButton3"), new ElementButtonImageData("path", "textures/ui/creative_icon")));
-        simple.addButton(new ElementButton(language.translateString("recordListButton4"), new ElementButtonImageData("path", "textures/ui/creative_icon")));
-        simple.addButton(new ElementButton(language.translateString("recordListButton5"),  new ElementButtonImageData("path", "textures/ui/creative_icon")));
-        simple.addButton(new ElementButton(language.translateString("buttonReturn"), new ElementButtonImageData("path", "textures/ui/cancel")));
-        showFormWindow(player, simple, GuiType.RECORD_LIST);
+        AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME);
+
+        simple.addButton(new ResponseElementButton(language.translateString("recordListButton1"), new ElementButtonImageData("path", "textures/ui/copy"))
+                .onClicked(GuiCreate::sendGameRecord));
+        simple.addButton(new ResponseElementButton(language.translateString("recordListButton2"), new ElementButtonImageData("path", "textures/ui/creative_icon"))
+                .onClicked(cp -> GuiCreate.sendRankingList(cp, RecordType.KILLS)));
+        simple.addButton(new ResponseElementButton(language.translateString("recordListButton3"), new ElementButtonImageData("path", "textures/ui/creative_icon"))
+                .onClicked(cp -> GuiCreate.sendRankingList(cp, RecordType.DEATHS)));
+        simple.addButton(new ResponseElementButton(language.translateString("recordListButton4"), new ElementButtonImageData("path", "textures/ui/creative_icon"))
+                .onClicked(cp -> GuiCreate.sendRankingList(cp, RecordType.VICTORY)));
+        simple.addButton(new ResponseElementButton(language.translateString("recordListButton5"),  new ElementButtonImageData("path", "textures/ui/creative_icon"))
+                .onClicked(cp -> GuiCreate.sendRankingList(cp, RecordType.DEFEAT)));
+        simple.addButton(new ResponseElementButton(language.translateString("buttonReturn"), new ElementButtonImageData("path", "textures/ui/cancel"))
+                .onClicked(GuiCreate::sendUserMenu));
+
+        player.showFormWindow(simple);
     }
 
     /**

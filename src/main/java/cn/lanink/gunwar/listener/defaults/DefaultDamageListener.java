@@ -32,7 +32,6 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             Player player = (Player) event.getEntity();
             Player damagePlayer = (Player) event.getDamager();
-            if (damagePlayer == null) return;
             BaseRoom room = this.getListenerRoom(damagePlayer.getLevel());
             if (room == null || !room.isPlaying(damagePlayer)) {
                 return;
@@ -52,6 +51,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                                     for (Effect effect : weapon.getEffects()) {
                                         player.addEffect(effect);
                                     }
+                                    event.setDamage(ev.getDamage());
                                     room.lessHealth(player, damagePlayer, ev.getDamage(), weapon.getKillMessage()
                                             .replace("%damager%", damagePlayer.getName())
                                             .replace("%player%", player.getName()));
@@ -68,6 +68,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                                 for (Effect effect : gunWeapon.getEffects()) {
                                     player.addEffect(effect);
                                 }
+                                event.setDamage(ev.getDamage());
                                 room.lessHealth(player, damagePlayer, ev.getDamage(), gunWeapon.getKillMessage()
                                         .replace("%damager%", damagePlayer.getName())
                                         .replace("%player%", player.getName()));
@@ -90,6 +91,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                                 for (Effect effect : weapon.getEffects()) {
                                     player.addEffect(effect);
                                 }
+                                event.setDamage(ev.getDamage());
                                 room.lessHealth(player, damagePlayer, ev.getDamage(), weapon.getKillMessage()
                                         .replace("%damager%", damagePlayer.getName())
                                         .replace("%player%", player.getName()));

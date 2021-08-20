@@ -26,6 +26,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
+import lombok.Getter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -48,8 +49,12 @@ public class GunWar extends PluginBase {
     private final HashMap<String, BaseGameListener> gameListeners = new HashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
-    private String cmdUser, cmdAdmin;
-    private final Skin corpseSkin = new Skin();
+
+    private String cmdUser;
+    private String cmdAdmin;
+    @Getter
+    private List<String> cmdWhitelist;
+
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
@@ -133,25 +138,36 @@ public class GunWar extends PluginBase {
 
             }
         }
+
         this.restoreWorld = this.config.getBoolean("restoreWorld");
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", Config.YAML);
+
         this.loadResources();
+
         this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
+
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");
+        this.cmdWhitelist = this.config.getStringList("cmdWhitelist");
+
         this.getServer().getCommandMap().register("", new UserCommand(this.cmdUser));
         this.getServer().getCommandMap().register("", new AdminCommand(this.cmdAdmin));
+
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
+
         this.loadAllListener();
+
         this.loadAllRoom();
+
         try {
             new MetricsLite(this, 7448);
         } catch (Exception ignored) {
 
         }
+
         this.getLogger().info("§e插件加载完成！欢迎使用！");
     }
 
@@ -264,7 +280,7 @@ public class GunWar extends PluginBase {
                 }
             }
         }
-        getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
+        this.getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
     }
 
     public void loadRoom(String world) {
@@ -275,17 +291,17 @@ public class GunWar extends PluginBase {
                 "".equals(config.getString("redSpawn", "").trim()) ||
                 "".equals(config.getString("blueSpawn", "").trim()) ||
                 "".equals(config.getString("gameMode", "").trim())) {
-            getLogger().warning("§c房间：" + world + " 配置不完整，加载失败！");
+            this.getLogger().warning("§c房间：" + world + " 配置不完整，加载失败！");
             return;
         }
         if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
-            getLogger().warning("§c房间：" + world + " 地图加载失败！");
+            this.getLogger().warning("§c房间：" + world + " 地图加载失败！");
             return;
         }
 
         String gameMode = config.getString("gameMode", "classic");
         if (!ROOM_CLASS.containsKey(gameMode)) {
-            getLogger().warning("§c房间：" + world + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
+            this.getLogger().warning("§c房间：" + world + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
             return;
         }
         try {
@@ -293,9 +309,9 @@ public class GunWar extends PluginBase {
             BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
             baseRoom.setGameMode(gameMode);
             this.rooms.put(world, baseRoom);
-            getLogger().info("§a房间：" + world + " 已加载！");
+            this.getLogger().info("§a房间：" + world + " 已加载！");
         } catch (Exception e) {
-            e.printStackTrace();
+            this.getLogger().error("§c加载房间：" + world + " 时出错，请检查配置文件", e);
         }
     }
 
@@ -316,7 +332,7 @@ public class GunWar extends PluginBase {
             room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
             room.endGame();
             this.rooms.remove(world);
-            getLogger().info("§c房间：" + world + " 已卸载！");
+            this.getLogger().info("§c房间：" + world + " 已卸载！");
         }
         this.roomConfigs.remove(world);
     }
@@ -344,7 +360,6 @@ public class GunWar extends PluginBase {
             getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
             if (this.getResource("Language/" + s + ".yml") != null) {
-                //wtf nk, Why are files forced to be saved? Cannot use getResource()
                 this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
                 this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
                 if (GunWar.debug) {
@@ -356,18 +371,6 @@ public class GunWar extends PluginBase {
             getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
             this.language = new Language(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml"));
         }
-        //加载默认尸体皮肤
-        BufferedImage skinData = null;
-        try {
-            skinData = ImageIO.read(this.getResource("skin.png"));
-        } catch (IOException ignored) { }
-        if (skinData == null) {
-            getLogger().error("§c默认尸体皮肤加载失败！请检查插件完整性！");
-        }
-        this.corpseSkin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
-        this.corpseSkin.setTrusted(true);
-        this.corpseSkin.setSkinData(skinData);
-        this.corpseSkin.setSkinId("defaultSkin");
         //加载旗帜皮肤
         this.saveResource("Resources/Flag/Flag.json", false);
         this.saveResource("Resources/Flag/FlagStand.json", false);
@@ -435,10 +438,6 @@ public class GunWar extends PluginBase {
 
     public String getCmdAdmin() {
         return this.cmdAdmin;
-    }
-
-    public Skin getCorpseSkin() {
-        return this.corpseSkin;
     }
 
     public HashMap<Integer, Skin> getFlagSkin() {

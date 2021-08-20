@@ -22,7 +22,7 @@ abstract public class BaseCommand extends Command {
     protected Language language = gunWar.getLanguage();
 
     public BaseCommand(String name, String description) {
-        super(name,description);
+        super(name.toLowerCase(), description);
     }
 
     /**

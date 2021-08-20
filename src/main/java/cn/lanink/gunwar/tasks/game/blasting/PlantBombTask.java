@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.tasks.game.blasting;
 
+import cn.lanink.gamecore.GameCore;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
@@ -55,7 +56,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
     }
 
     @Override
-    public void cancel() {
+    public void onCancel() {
         if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
             Tools.sendTitle(this.room, "", this.owner.getLanguage().translateString("game_blasting_plantBomb"));
             this.player.getInventory().remove(Tools.getItem(201));
@@ -66,8 +67,8 @@ public class PlantBombTask extends PluginTask<GunWar> {
             entityBomb.spawnToAll();
             this.room.setEntityGunWarBomb(entityBomb);
             nbt.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", this.owner.getCorpseSkin().getSkinData().data)
-                    .putString("ModelId", this.owner.getCorpseSkin().getSkinId()));
+                    .putByteArray("Data", GameCore.DEFAULT_SKIN.getSkinData().data)
+                    .putString("ModelId", GameCore.DEFAULT_SKIN.getSkinId()));
             EntityGunWarBombBlock entityBombBlock =
                     new EntityGunWarBombBlock(this.player.getChunk(), nbt);
             entityBombBlock.setPosition(this.placePoint);
@@ -79,7 +80,6 @@ public class PlantBombTask extends PluginTask<GunWar> {
         }
         this.player.sendTip(" ");
         PLANT_BOMB_PLAYERS.remove(this.player);
-        super.cancel();
     }
 
 }

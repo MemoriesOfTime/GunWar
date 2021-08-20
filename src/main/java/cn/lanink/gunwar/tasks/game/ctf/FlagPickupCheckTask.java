@@ -4,7 +4,6 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.nukkit.level.Sound;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
@@ -29,38 +28,34 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        if (time > 0) {
-            entityFlag.setNameTag("§e" + time);
-            if (team == 11 && room.haveRedFlag != null) {
-                this.cancel();
-            }else if (team == 12 && room.haveBlueFlag != null) {
-                this.cancel();
-            }
-            time--;
-        }else {
-            switch (team) {
-                case 11:
-                    entityFlag.teleport(new Vector3(room.getRedSpawn().getX(),
-                            room.getRedSpawn().getY() + 0.3D,
-                            room.getRedSpawn().getZ()));
-                    break;
-                case 12:
-                    entityFlag.teleport(new Vector3(room.getBlueSpawn().getX(),
-                            room.getBlueSpawn().getY() + 0.3D,
-                            room.getBlueSpawn().getZ()));
-                    break;
-            }
+        if (time <= 0) {
+            this.cancel();
+            return;
+        }
+        this.entityFlag.setNameTag("§e" + this.time);
+        if (this.team == 11 && this.room.haveRedFlag != null) {
+            this.cancel();
+        }else if (this.team == 12 && this.room.haveBlueFlag != null) {
             this.cancel();
         }
+        this.time--;
     }
 
     @Override
-    public void cancel() {
-        entityFlag.setNameTag("");
-        entityFlag.setNameTagVisible(false);
-        entityFlag.setNameTagAlwaysVisible(false);
-        entityFlag.getLevel().addSound(entityFlag, Sound.MOB_ENDERMEN_PORTAL);
-        super.cancel();
+    public void onCancel() {
+        switch (this.team) {
+            case 11:
+                this.entityFlag.teleport(this.room.getRedSpawn().add(0, 0.3, 0));
+                break;
+            case 12:
+                this.entityFlag.teleport(this.room.getBlueSpawn().add(0, 0.3, 0));
+                break;
+        }
+
+        this.entityFlag.setNameTag("");
+        this.entityFlag.setNameTagVisible(false);
+        this.entityFlag.setNameTagAlwaysVisible(false);
+        this.entityFlag.getLevel().addSound(entityFlag, Sound.MOB_ENDERMEN_PORTAL);
     }
 
 }

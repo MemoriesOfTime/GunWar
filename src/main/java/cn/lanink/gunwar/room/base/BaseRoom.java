@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.room.base;
 
+import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
@@ -205,7 +206,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         this.roundIsEnd = false;
     }
 
-    @Override
     public void startGame() {
         this.setStatus(ROOM_STATUS_GAME);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent(this));
@@ -291,7 +291,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     /**
      * 结束房间
      */
-    @Override
     public void endGame(int victory) {
         int oldStatus = this.getStatus();
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
@@ -426,7 +425,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * 加入房间
      * @param player 玩家
      */
-    @Override
     public void joinRoom(Player player, boolean spectator) {
         if (this.status == 0) {
             this.initTask();
@@ -451,7 +449,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * 退出房间
      * @param player 玩家
      */
-    @Override
     public void quitRoom(Player player) {
         this.players.remove(player);
         if (GunWar.getInstance().isHasTips()) {
@@ -653,8 +650,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
             @Override
             public void onRun(int i) {
-                Tools.addSound(player, Sound.MOB_ENDERMEN_PORTAL);
-                Tools.addSound(player, Sound.RANDOM_ORB);
+                Tools.playSound(player, Sound.MOB_ENDERMEN_PORTAL);
+                Tools.playSound(player, Sound.RANDOM_ORB);
             }
         }, 10);
     }
@@ -691,7 +688,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         player.getUIInventory().clearAll();
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, true).update();
-        player.setGamemode(3);
+        player.setGamemode(Player.VIEW);
         Tools.hidePlayer(this, player);
         if (this.getPlayers(player) == 1) {
             this.getPlayers().put(player, 11);
@@ -716,7 +713,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             case 65536:
                 break;
             default:
-                skin = GunWar.getInstance().getCorpseSkin();
+                skin = GameCore.DEFAULT_SKIN;
         }
         skin.setTrusted(true);
         nbt.putCompound("Skin", new CompoundTag()
@@ -730,7 +727,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         entity.setGliding(true);
         entity.setRotation(player.getYaw(), 0);
         entity.spawnToAll();
-        entity.updateMovement();
     }
 
     /**

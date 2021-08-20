@@ -3,6 +3,11 @@ language: chs
 restoreWorld: true
 cmdUser: gunwar
 cmdAdmin: gunwaradmin
+#可以在游戏房间中使用的命令
+cmdWhitelist:
+  - ban
+  - kick
+  - report
 胜利执行命令:
   - me 我胜利了
   - tell "@p" 恭喜获得胜利！&con

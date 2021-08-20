@@ -1,8 +1,7 @@
-showName: "a demo Flashbang"
+showName: "闪光弹"
 id: "344:0"
 lore: |-
-  这是一个配置演示
-  this is a configuration demo
+  致盲敌人(失明药水效果)
 damage: "0" #根据距离浮动
 effect:
   - id: 15

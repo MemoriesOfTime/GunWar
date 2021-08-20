@@ -1,8 +1,7 @@
-showName: "a demo Grenade"
+showName: "手榴弹"
 id: "344:0"
 lore: |-
-  这是一个配置演示
-  this is a configuration demo
+  伤害：2-10（根据距离浮动）
 damage: "2-10" #根据距离浮动
 effect:
   - id: 9

@@ -32,6 +32,12 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
                 event.getMessage().startsWith(this.gunWar.getCmdAdmin(), 1)) {
             return;
         }
+        for (String string : this.gunWar.getCmdWhitelist()) {
+            if (string.equalsIgnoreCase(event.getMessage())) {
+                return;
+            }
+        }
+        event.setMessage("");
         event.setCancelled(true);
         player.sendMessage(this.gunWar.getLanguage().translateString("useCmdInRoom"));
     }
@@ -46,7 +52,12 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
         String message = event.getMessage();
         if (player == null || message == null) return;
         BaseRoom room = this.getListenerRoom(player.getLevel());
-        if (room == null || !room.isPlaying(player) || room.getStatus() != 2) {
+        if (room == null || !room.isPlaying(player)) {
+            for (BaseRoom r : this.gunWar.getRooms().values()) {
+                for (Player p : r.getPlayers().keySet()) {
+                    event.getRecipients().remove(p);
+                }
+            }
             return;
         }
         message = this.gunWar.getLanguage().translateString("playerTeamChat", player.getName(), message);

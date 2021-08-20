@@ -42,7 +42,7 @@ public class WaitTask extends PluginTask<GunWar> {
             if (this.room.waitTime > 0) {
                 this.room.waitTime--;
                 if (this.room.waitTime <= 5) {
-                    Tools.addSound(this.room, Sound.RANDOM_CLICK);
+                    Tools.playSound(this.room, Sound.RANDOM_CLICK);
                 }
                 for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
                     entry.getKey().sendActionBar(
