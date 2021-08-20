@@ -181,7 +181,7 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_lore"), "", "剑\n这是一个配置演示"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_minDamage"), "", "1"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxDamage"), "", "2"));
-        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCoown"), "", "20"));
+        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCooldown"), "", "20"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_knockBack"), "", "0.3"));
         custom.addElement(new ElementToggle(language.translateString("gui_admin_item_weapon_infiniteDurability")));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_killMessage"), "", "%damager% --[+＝＝》 %player%"));
@@ -198,7 +198,7 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_minDamage"), "", "1"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxDamage"), "", "2"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_particle"), "", "HugeExplodeSeedParticle@Vector3:pos"));
-        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCoown"), "", "20"));
+        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCooldown"), "", "20"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_range"), "", "5"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_killMessage"), "", "%damager% ☼ %player%"));
         showFormWindow(player, custom, GuiType.ADMIN_ITEM_ADD_WEAPON_PROJECTILE);
@@ -213,7 +213,7 @@ public class GuiCreate {
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_lore"), "", "枪\n这是一个配置演示"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_minDamage"), "", "1"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxDamage"), "", "2"));
-        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCoown"), "", "10"));
+        custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_attackCooldown"), "", "10"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_maxMagazine"), "", "30"));
         custom.addElement(new ElementInput(language.translateString("gui_admin_item_weapon_reloadTime"), "", "5"));
         custom.addElement(new ElementToggle(language.translateString("gui_admin_item_weapon_reloadInterrupted")));
