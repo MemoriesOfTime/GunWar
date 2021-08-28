@@ -1,10 +1,10 @@
 package cn.lanink.gunwar.tasks.game.ctf;
 
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
-import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -24,10 +24,11 @@ public class FlagTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        if (this.room.getStatus() != 2) {
+        if (this.room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
             this.cancel();
             return;
         }
+        //旗帜与底座生成
         //红方底座
         if (room.redFlagStand == null || room.redFlagStand.isClosed()) {
             Skin skin = owner.getFlagSkin(1);
@@ -88,17 +89,13 @@ public class FlagTask extends PluginTask<GunWar> {
             entityFlag.spawnToAll();
             room.blueFlag = entityFlag;
         }
+
         //旗帜移动
-        Player p;
         if (this.room.haveRedFlag != null) {
-            p = this.room.haveRedFlag;
-            this.room.redFlag.setPosition(new Vector3(p.getX(),
-                    p.getY() + p.getEyeHeight() + 0.5, p.getZ()));
+            this.room.redFlag.setPosition(this.room.haveRedFlag.add(0, this.room.haveRedFlag.getEyeHeight() + 0.5, 0));
         }
         if (this.room.haveBlueFlag != null) {
-            p = this.room.haveBlueFlag;
-            this.room.blueFlag.setPosition(new Vector3(p.getX(),
-                    p.getY() + p.getEyeHeight() + 0.5, p.getZ()));
+            this.room.blueFlag.setPosition(this.room.haveBlueFlag.add(0, this.room.haveBlueFlag.getEyeHeight() + 0.5, 0));
         }
     }
 
