@@ -50,6 +50,8 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
             case 12:
                 this.entityFlag.teleport(this.room.getBlueSpawn().add(0, 0.3, 0));
                 break;
+            default:
+                break;
         }
 
         this.entityFlag.setNameTag("");

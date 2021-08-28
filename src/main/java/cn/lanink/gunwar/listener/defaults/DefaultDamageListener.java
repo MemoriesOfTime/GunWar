@@ -127,11 +127,11 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                         }
                     }
                 }
-            }
 
-            if (GunWar.getInstance().isEnableOtherWeaponDamage()) {
-                room.lessHealth(player, damagePlayer, event.getFinalDamage());
-                return;
+                if (GunWar.getInstance().isEnableOtherWeaponDamage()) {
+                    room.lessHealth(player, damagePlayer, event.getFinalDamage());
+                    return;
+                }
             }
 
             event.setCancelled(true);

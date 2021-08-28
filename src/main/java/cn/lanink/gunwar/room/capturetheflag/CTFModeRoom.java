@@ -28,9 +28,12 @@ import java.util.Map;
 public class CTFModeRoom extends BaseRoom {
 
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
-    public Player haveRedFlag, haveBlueFlag;
-    public EntityFlagStand redFlagStand, blueFlagStand;
-    public EntityFlag redFlag, blueFlag;
+    public Player haveRedFlag;
+    public Player haveBlueFlag;
+    public EntityFlagStand redFlagStand;
+    public EntityFlagStand blueFlagStand;
+    public EntityFlag redFlag;
+    public EntityFlag blueFlag;
     private boolean overtime = false;
 
     public CTFModeRoom(Level level, Config config) throws RoomLoadException {
@@ -81,6 +84,8 @@ public class CTFModeRoom extends BaseRoom {
                 case 2:
                 case 12:
                     blue++;
+                    break;
+                default:
                     break;
             }
         }
