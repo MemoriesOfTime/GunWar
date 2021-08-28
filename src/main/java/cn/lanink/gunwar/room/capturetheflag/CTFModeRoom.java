@@ -17,6 +17,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,12 +51,14 @@ public class CTFModeRoom extends BaseRoom {
     @Override
     public void timeTask() {
         super.timeTask();
+
         if (this.haveRedFlag != null) {
-            this.haveRedFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
+            this.checkSlownessEffect(this.haveRedFlag);
         }
         if (this.haveBlueFlag != null) {
-            this.haveBlueFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
+            this.checkSlownessEffect(this.haveBlueFlag);
         }
+
         int red = 0, blue = 0;
         for (Map.Entry<Player, Integer> entry : this.getPlayerRespawnTime().entrySet()) {
             if (entry.getValue() > 0) {
@@ -72,9 +75,11 @@ public class CTFModeRoom extends BaseRoom {
                 }
             }
         }
+
         if (victoryJudgment()) {
             return;
         }
+
         for (int team : this.getPlayers().values()) {
             switch (team) {
                 case 1:
@@ -97,6 +102,12 @@ public class CTFModeRoom extends BaseRoom {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
+        }
+    }
+
+    private void checkSlownessEffect(@NotNull Player player) {
+        if (player.hasEffect(Effect.SLOWNESS) || player.getEffect(Effect.SLOWNESS).getDuration() < 30) {
+            player.addEffect(Effect.getEffect(Effect.SLOWNESS).setDuration(40).setVisible(false));
         }
     }
 
