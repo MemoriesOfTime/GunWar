@@ -1,5 +1,6 @@
 package cn.lanink.gunwar;
 
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
@@ -8,7 +9,6 @@ import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.gui.GuiListener;
 import cn.lanink.gunwar.item.ItemManage;
-import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
@@ -35,8 +35,12 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+/**
+ * @author LT_Name
+ */
 public class GunWar extends PluginBase {
 
+    public static boolean debug = false;
     public static final String VERSION = "?";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
@@ -59,8 +63,11 @@ public class GunWar extends PluginBase {
     private IScoreboard scoreboard;
     private ItemManage itemManage;
     private boolean hasTips = false;
-    public static boolean debug = false;
     private boolean restoreWorld = false;
+    @Getter
+    private boolean enableAloneHealth = true;
+    @Getter
+    private boolean enableOtherWeaponDamage = false;
 
     private String serverWorldPath;
     private String worldBackupPath;
@@ -140,6 +147,9 @@ public class GunWar extends PluginBase {
         }
 
         this.restoreWorld = this.config.getBoolean("restoreWorld");
+        this.enableAloneHealth = this.config.getBoolean("enableAloneHealth", true);
+        this.enableOtherWeaponDamage = this.config.getBoolean("enableOtherWeaponDamage", true);
+
         this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", Config.YAML);
 
         this.loadResources();
@@ -400,7 +410,7 @@ public class GunWar extends PluginBase {
                 Map<String, Object> skinJson = new Config(json, 1).getAll();
                 String name = null;
                 for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
-                    if (name == null || name.trim().equals("")) {
+                    if (name == null || "".equals(name.trim())) {
                         name = entry1.getKey();
                     }else {
                         break;

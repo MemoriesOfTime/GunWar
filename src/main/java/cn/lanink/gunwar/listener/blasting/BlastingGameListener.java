@@ -1,8 +1,8 @@
 package cn.lanink.gunwar.listener.blasting;
 
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
-import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.tasks.game.blasting.DemolitionBombTask;
 import cn.lanink.gunwar.tasks.game.blasting.PlantBombTask;
@@ -27,6 +27,7 @@ import cn.nukkit.math.Vector3;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
 
     @EventHandler
@@ -83,7 +84,9 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof EntityGunWarBombBlock &&
                 event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
             Player player = (Player) event.getDamager();
-            if (player == null) return;
+            if (player == null) {
+                return;
+            }
             BlastingModeRoom room = this.getListenerRoom(player.getLevel());
             if (room == null || !room.isPlaying(player)) {
                 return;

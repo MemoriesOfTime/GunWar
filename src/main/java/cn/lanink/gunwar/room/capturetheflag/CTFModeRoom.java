@@ -69,7 +69,9 @@ public class CTFModeRoom extends BaseRoom {
                 }
             }
         }
-        if (victoryJudgment()) return;
+        if (victoryJudgment()) {
+            return;
+        }
         for (int team : this.getPlayers().values()) {
             switch (team) {
                 case 1:
@@ -138,6 +140,7 @@ public class CTFModeRoom extends BaseRoom {
                 new FlagTask(this.gunWar, this), 5);
     }
 
+    @Override
     public void roundEnd(int victory) {
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
@@ -177,7 +180,9 @@ public class CTFModeRoom extends BaseRoom {
             Tools.sendRoundVictoryTitle(this, 2);
         }
         //房间胜利计算
-        if (victoryJudgment()) return;
+        if (victoryJudgment()) {
+            return;
+        }
         this.roundStart();
     }
 

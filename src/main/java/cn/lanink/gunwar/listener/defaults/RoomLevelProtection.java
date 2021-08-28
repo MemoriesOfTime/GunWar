@@ -1,6 +1,6 @@
 package cn.lanink.gunwar.listener.defaults;
 
-import cn.lanink.gunwar.listener.base.BaseGameListener;
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -20,6 +20,7 @@ import cn.nukkit.level.Level;
  * 游戏地图保护
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class RoomLevelProtection extends BaseGameListener<BaseRoom> {
 
     /**

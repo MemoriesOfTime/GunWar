@@ -176,7 +176,7 @@ public class Tools {
         }
         for (String s : cmds) {
             String[] cmd = s.split("&");
-            if ((cmd.length > 1) && (cmd[1].equals("con"))) {
+            if (cmd.length > 1 && "con".equals(cmd[1])) {
                 Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
             } else {
                 Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
@@ -241,6 +241,8 @@ public class Tools {
                             break;
                         case WEAPON_GUN:
                             baseItem = ItemManage.getGunWeaponMap().get(s1[0]);
+                            break;
+                        default:
                             break;
                     }
                     if (baseItem != null) {
@@ -337,7 +339,12 @@ public class Tools {
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false).update();
         if (joinRoom) {
-            player.setHealth(player.getMaxHealth() - 1); //允许触发EntityRegainHealthEvent
+            if (GunWar.getInstance().isEnableAloneHealth()) {
+                //允许触发EntityRegainHealthEvent
+                player.setHealth(player.getMaxHealth() - 1);
+            }else {
+                player.setHealth(player.getMaxHealth());
+            }
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
             player.setGamemode(Player.ADVENTURE);

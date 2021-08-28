@@ -112,7 +112,11 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         }
         this.initData();
         for (String name : this.getListeners()) {
-            this.gunWar.getGameListeners().get(name).addListenerRoom(this);
+            try {
+                this.gunWar.getGameListeners().get(name).addListenerRoom(this);
+            }catch (Exception e) {
+                throw new RoomLoadException("Listener enable error!");
+            }
         }
         this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
     }
@@ -131,10 +135,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * 设置房间状态
      * @param status 状态
      */
+    @Override
     public final void setStatus(int status) {
         this.status = status;
     }
 
+    @Override
     public final int getStatus() {
         return this.status;
     }
@@ -174,6 +180,13 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             this.endGame();
             return;
         }
+
+        if (this.gunWar.isEnableAloneHealth()) {
+            for (Player player : this.players.keySet()) {
+                player.setHealth(player.getMaxHealth() - 1);
+            }
+        }
+
         if(!this.roundIsEnd) {
             if (this.gameTime <= 0) {
                 Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
@@ -509,13 +522,19 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param health 血量
      */
     public synchronized float addHealth(Player player, float health) {
-        float nowHealth = this.playerHealth.get(player) + health;
-        if (nowHealth > 20) {
-            this.playerHealth.put(player, 20F);
+        if (this.gunWar.isEnableAloneHealth()) {
+            float newHealth = this.playerHealth.get(player) + health;
+            if (newHealth > 20) {
+                this.playerHealth.put(player, 20F);
+            } else {
+                this.playerHealth.put(player, newHealth);
+            }
+            return this.playerHealth.get(player);
         }else {
-            this.playerHealth.put(player, nowHealth);
+            float newHealth = Math.min(player.getHealth() + health, player.getMaxHealth());
+            player.setHealth(newHealth);
+            return newHealth;
         }
-        return this.playerHealth.get(player);
     }
 
     public synchronized float lessHealth(Player player, Entity damager, float health) {
@@ -528,14 +547,24 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param health 血量
      */
     public synchronized float lessHealth(Player player, Entity damager, float health, String killMessage) {
-        float nowHealth = this.playerHealth.get(player) - health;
-        if (nowHealth < 1) {
-            this.playerHealth.put(player, 0F);
-            this.playerDeath(player, damager, killMessage);
+        if (this.gunWar.isEnableAloneHealth()) {
+            float newHealth = this.playerHealth.get(player) - health;
+            if (newHealth < 1) {
+                this.playerHealth.put(player, 0F);
+                this.playerDeath(player, damager, killMessage);
+            } else {
+                this.playerHealth.put(player, newHealth);
+            }
+            return this.playerHealth.get(player);
         }else {
-            this.playerHealth.put(player, nowHealth);
+            float newHealth = player.getHealth() - health;
+            if (newHealth < 1) {
+                this.playerDeath(player, damager, killMessage);
+            }else {
+                player.setHealth(newHealth);
+            }
+            return newHealth;
         }
-        return this.playerHealth.get(player);
     }
 
     /**

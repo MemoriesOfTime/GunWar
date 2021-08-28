@@ -1,6 +1,11 @@
 # chs | kor | eng | rus | spa
 language: chs
 restoreWorld: true
+#在游戏内使用单独血量计算（Boss血条显示自身血量）
+#适合RPG或其他会修改玩家血量的服务器使用
+enableAloneHealth: true
+#允许非GunWar插件武器造成的伤害
+enableOtherWeaponDamage: false
 cmdUser: gunwar
 cmdAdmin: gunwaradmin
 #可以在游戏房间中使用的命令

@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.listener.defaults;
 
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
@@ -11,13 +12,11 @@ import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
-import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.projectile.EntityEgg;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -39,6 +38,10 @@ import cn.nukkit.potion.Effect;
 
 import java.util.Map;
 
+/**
+ * @author LT_Name
+ */
+@SuppressWarnings("unused")
 public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
@@ -84,7 +87,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             
             if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&
                     event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
-                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, player, player, event.getDamage());
+                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, player, player, event.getFinalDamage());
                 Server.getInstance().getPluginManager().callEvent(ev);
                 if (!ev.isCancelled()) {
                     room.lessHealth(player, ev.getDamagePlayer(), ev.getDamage());
@@ -132,7 +135,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             return;
         }
         CompoundTag tag = item.getNamedTag();
-        if (tag == null) return;
+        if (tag == null) {
+            return;
+        }
         if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             switch (tag.getInt("GunWarItemType")) {
                 case 10:
@@ -151,6 +156,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     player.sendTitle(this.language.translateString("teamNameBlue"),
                             this.language.translateString("playerTeamSelect"),
                             10, 40, 20);
+                    break;
+                default:
                     break;
             }
             event.setCancelled(true);
@@ -171,6 +178,8 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     case LEFT_CLICK_BLOCK:
                     case RIGHT_CLICK_BLOCK:
                         weapon.startReload(player);
+                        break;
+                    default:
                         break;
                 }
                 event.setCancelled(true);
@@ -234,8 +243,10 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         EntityProjectile entity = (EntityProjectile) event.getEntity();
-        if (entity == null || entity.namedTag == null) return;
-        if (entity instanceof EntityEgg && entity.shootingEntity instanceof Player) {
+        if (entity == null || entity.namedTag == null) {
+            return;
+        }
+        if (entity.shootingEntity instanceof Player) {
             Level level = entity.getLevel();
             BaseRoom room = this.getListenerRoom(level);
             if (room == null || room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
@@ -253,9 +264,11 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     level.addSound(position, Sound.RANDOM_EXPLODE);
                     level.addParticle(weapon.getParticle(position));
                     for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                        //跳过已死亡的玩家
                         if (entry.getValue() != 1 && entry.getValue() != 2) {
                             continue;
                         }
+
                         double distance = position.distance(entry.getKey());
                         if (GunWar.debug) {
                             gunWar.getLogger().info("[debug] distance:" + distance +
@@ -267,11 +280,15 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                             }
                             float damage = (float) weapon.getDamage(distance);
                             if (damage > 0) {
-                                entry.getKey().attack(0F);
-                                if (room.lessHealth(entry.getKey(), damager, damage) < 1) {
-                                    Tools.sendMessage(room, weapon.getKillMessage()
-                                            .replace("%damager%", damager.getName())
-                                            .replace("%player%", entry.getKey().getName()));
+                                GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, entry.getKey(), damager, damage);
+                                Server.getInstance().getPluginManager().callEvent(ev);
+                                if (!ev.isCancelled()) {
+                                    entry.getKey().attack(0F);
+                                    if (room.lessHealth(entry.getKey(), damager, ev.getDamage()) < 1) {
+                                        Tools.sendMessage(room, weapon.getKillMessage()
+                                                .replace("%damager%", damager.getName())
+                                                .replace("%player%", entry.getKey().getName()));
+                                    }
                                 }
                             }
                         }

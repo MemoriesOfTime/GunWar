@@ -1,10 +1,10 @@
 package cn.lanink.gunwar.listener.capturetheflag;
 
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -27,7 +27,9 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && !(event.getEntity() instanceof Player)) {
             Player damagePlayer = (Player) event.getDamager();
-            if (damagePlayer == null) return;
+            if (damagePlayer == null) {
+                return;
+            }
             CTFModeRoom room = this.getListenerRoom(damagePlayer.getLevel());
             if (room == null || !room.isPlaying(damagePlayer)) {
                 return;
@@ -71,6 +73,8 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                                 room.haveRedFlag = null;
                                 Tools.playSound(room, Sound.RANDOM_LEVELUP);
                             }
+                            break;
+                        default:
                             break;
                     }
                 }

@@ -15,6 +15,7 @@ import cn.nukkit.utils.Config;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class SetRoomListener implements Listener {
 
     private final GunWar gunWar;
@@ -64,6 +65,8 @@ public class SetRoomListener implements Listener {
                                 config.remove("maxPlayers");
                             }
                             break;
+                        default:
+                            break;
                     }
                     task.setRoomSchedule(task.getBackRoomSchedule());
                     break;
@@ -112,7 +115,11 @@ public class SetRoomListener implements Listener {
                             player.sendMessage("爆破点B已设置");
                             task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
+                        default:
+                            break;
                     }
+                    break;
+                default:
                     break;
             }
         }
