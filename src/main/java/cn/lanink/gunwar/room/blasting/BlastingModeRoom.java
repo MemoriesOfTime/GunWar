@@ -15,13 +15,13 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.DummyBossBar;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -111,7 +111,7 @@ public class BlastingModeRoom extends BaseRoom {
             }
 
             if (this.gameTime <= 0 && (this.entityGunWarBomb == null || this.entityGunWarBomb.isClosed())) {
-                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+                this.roundEnd(2);
                 this.gameTime = this.getSetGameTime();
                 return;
             }
@@ -126,36 +126,39 @@ public class BlastingModeRoom extends BaseRoom {
             }
             if (red == 0) {
                 if (this.entityGunWarBomb == null) {
-                    Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+                    this.roundEnd(2);
                     this.gameTime = this.getSetGameTime();
                 }
             } else if (blue == 0) {
-                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(1));
+                this.roundEnd(1);
                 this.gameTime = this.getSetGameTime();
             }
         }
         //显示爆破点
-        CompletableFuture.runAsync(() -> {
-            LinkedList<Vector3> list = Tools.getRoundEdgePoint(this.getBlastingPointA(), this.getBlastingPointRadius());
-            list.addAll(Tools.getRoundEdgePoint(this.getBlastingPointB(), this.getBlastingPointRadius()));
-            for (Vector3 vector3 : list) {
-                vector3.y += 0.1;
-                if (this.getLevel().getBlock(vector3).getId() == BlockID.AIR) {
-                    for (int y = vector3.getFloorY(); y > y-5; y--) {
-                        if (this.getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() != BlockID.AIR) {
-                            vector3.y = y + 1.1;
-                            break;
+        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
+            @Override
+            public void onRun() {
+                LinkedList<Vector3> list = Tools.getRoundEdgePoint(getBlastingPointA(), getBlastingPointRadius());
+                list.addAll(Tools.getRoundEdgePoint(getBlastingPointB(), getBlastingPointRadius()));
+                for (Vector3 vector3 : list) {
+                    vector3.y += 0.1;
+                    if (getLevel().getBlock(vector3).getId() == BlockID.AIR) {
+                        for (int y = vector3.getFloorY(); y > y-5; y--) {
+                            if (getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() != BlockID.AIR) {
+                                vector3.y = y + 1.1;
+                                break;
+                            }
+                        }
+                    }else {
+                        for (int y = vector3.getFloorY(); y < y+5; y++) {
+                            if (getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() == BlockID.AIR) {
+                                vector3.y = y + 0.1;
+                                break;
+                            }
                         }
                     }
-                }else {
-                    for (int y = vector3.getFloorY(); y < y+5; y++) {
-                        if (this.getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() == BlockID.AIR) {
-                            vector3.y = y + 0.1;
-                            break;
-                        }
-                    }
+                    getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST);
                 }
-                this.getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST);
             }
         });
     }
@@ -194,6 +197,9 @@ public class BlastingModeRoom extends BaseRoom {
                     case 2:
                     case 12:
                         oldBlueTeam.add(entry.getKey());
+                        break;
+                    default:
+                        this.quitRoom(entry.getKey());
                         break;
                 }
             }

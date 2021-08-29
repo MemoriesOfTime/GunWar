@@ -69,8 +69,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
             nbt.putCompound("Skin", new CompoundTag()
                     .putByteArray("Data", GameCore.DEFAULT_SKIN.getSkinData().data)
                     .putString("ModelId", GameCore.DEFAULT_SKIN.getSkinId()));
-            EntityGunWarBombBlock entityBombBlock =
-                    new EntityGunWarBombBlock(this.player.getChunk(), nbt);
+            EntityGunWarBombBlock entityBombBlock = new EntityGunWarBombBlock(this.player.getChunk(), nbt);
             entityBombBlock.setPosition(this.placePoint);
             entityBombBlock.spawnToAll();
             this.room.setEntityGunWarBombBlock(entityBombBlock);

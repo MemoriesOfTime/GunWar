@@ -3,7 +3,6 @@ package cn.lanink.gunwar.room.classic;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.ITimeTask;
-import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
 
@@ -33,10 +32,10 @@ public class ClassicModeRoom extends BaseRoom {
             }
         }
         if (red == 0) {
-            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+            this.roundEnd(2);
             this.gameTime = this.getSetGameTime();
         } else if (blue == 0) {
-            Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(1));
+            this.roundEnd(1);
             this.gameTime = this.getSetGameTime();
         }
     }

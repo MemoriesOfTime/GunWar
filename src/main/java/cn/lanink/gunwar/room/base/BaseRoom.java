@@ -31,12 +31,12 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -225,7 +225,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         this.assignTeam();
         this.roundStart();
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new TimeTask(this.gunWar, this.getTimeTask()), 20, true);
+                this.gunWar, new TimeTask(this.gunWar, this.getTimeTask()), 20);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar, new ScoreBoardTask(this.gunWar, this), 18, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -776,17 +776,20 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             this.gunWar.getLogger().error(this.language.translateString("roomLevelBackupNotExist", this.levelName));
             this.gunWar.unloadRoom(this.levelName);
         }
-        CompletableFuture.runAsync(() -> {
-            if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
-                Server.getInstance().loadLevel(this.levelName);
-                this.level = Server.getInstance().getLevelByName(this.levelName);
-                this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
-                if (GunWar.debug) {
-                    this.gunWar.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
+        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
+            @Override
+            public void onRun() {
+                if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+                    Server.getInstance().loadLevel(levelName);
+                    level = Server.getInstance().getLevelByName(levelName);
+                    setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+                    if (GunWar.debug) {
+                        gunWar.getLogger().info("§a房间：" + levelName + " 地图还原完成！");
+                    }
+                }else {
+                    gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", levelName));
+                    gunWar.unloadRoom(levelName);
                 }
-            }else {
-                this.gunWar.getLogger().error(this.language.translateString("roomLevelRestoreLevelFailure", this.levelName));
-                this.gunWar.unloadRoom(this.levelName);
             }
         });
     }

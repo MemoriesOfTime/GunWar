@@ -23,17 +23,8 @@ public class BulletSnowBall extends EntitySnowball implements IBullet {
     protected float gravity = 0.03F;
     protected ParticleEffect particleEffect;
 
-    public BulletSnowBall(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-    }
-
-    public BulletSnowBall(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
+    private BulletSnowBall(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
-    }
-
-    public BulletSnowBall(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, float gravity) {
-        super(chunk, nbt, shootingEntity);
-        this.gravity = gravity;
     }
 
     public static void launch(Player player,
@@ -76,10 +67,12 @@ public class BulletSnowBall extends EntitySnowball implements IBullet {
         this.gravity = gravity;
     }
 
+    @Override
     public float getGravity() {
         return this.gravity;
     }
 
+    @Override
     public void setParticleEffect(ParticleEffect particleEffect) {
         this.particleEffect = particleEffect;
     }
