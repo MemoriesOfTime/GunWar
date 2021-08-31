@@ -446,6 +446,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param player 玩家
      */
     public void joinRoom(Player player, boolean spectator) {
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomPlayerJoinEvent(this, player));
+
         if (this.status == 0) {
             this.initTask();
         }
@@ -470,6 +472,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param player 玩家
      */
     public void quitRoom(Player player) {
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomPlayerQuitEvent(this, player));
+
         this.players.remove(player);
         if (GunWar.getInstance().isHasTips()) {
             Tips.removeTipsConfig(this.levelName, player);
