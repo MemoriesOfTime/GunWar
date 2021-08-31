@@ -3,6 +3,7 @@ package cn.lanink.gunwar.tasks;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
@@ -26,11 +27,11 @@ public class VictoryTask extends PluginTask<GunWar> {
         this.room = room;
         this.victoryTime = 10;
         this.victory = victory;
-        for (Map.Entry<Player, Integer> entry: room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, Team> entry: room.getPlayers().entrySet()) {
             LinkedList<String> ms = new LinkedList<>();
             switch (this.victory) {
                 case 1:
-                    if (entry.getValue() == 1 || entry.getValue() == 11) {
+                    if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
@@ -41,7 +42,7 @@ public class VictoryTask extends PluginTask<GunWar> {
                     entry.getKey().sendTitle(this.language.translateString("victoryRed"), "", 10, 40, 20);
                     break;
                 case 2:
-                    if (entry.getValue() == 2 || entry.getValue() == 12) {
+                    if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
@@ -71,19 +72,19 @@ public class VictoryTask extends PluginTask<GunWar> {
             this.cancel();
         }else {
             this.victoryTime--;
-            if (room.getPlayers().size() > 0) {
-                for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-                    if (entry.getValue() != 0) {
+            if (!this.room.getPlayers().isEmpty()) {
+                for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
+                    if (entry.getValue() != Team.NULL) {
                         if (this.victory == 1) {
                             entry.getKey().sendTip(this.language.translateString("victoryMessage",
                                     this.language.translateString("teamNameRed")));
-                            if (entry.getValue() == 1) {
+                            if (entry.getValue() == Team.RED) {
                                 Tools.spawnFirework(entry.getKey());
                             }
                         }else if (this.victory == 2) {
                             entry.getKey().sendTip(this.language.translateString("victoryMessage",
                                     this.language.translateString("teamNameBlue")));
-                            if (entry.getValue() == 2) {
+                            if (entry.getValue() == Team.BLUE) {
                                 Tools.spawnFirework(entry.getKey());
                             }
                         }else {

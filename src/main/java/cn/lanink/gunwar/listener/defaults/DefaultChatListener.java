@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener.defaults;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -66,12 +67,20 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
             return;
         }
         message = this.gunWar.getLanguage().translateString("playerTeamChat", player.getName(), message);
-        int team = room.getPlayers(player);
+        Team team = room.getPlayers(player);
         for (Player p : room.getPlayers().keySet()) {
-            if (room.getPlayers(p) == team ||
-                    (room.getPlayers(p) - 10 == team) ||
-                    (room.getPlayers(p) == team - 10)) {
+            if (room.getPlayers(p) == team) {
                 p.sendMessage(message);
+            }
+            if (team == Team.RED || team == Team.RED_DEATH) {
+                if (room.getPlayers(p) == Team.RED || room.getPlayers(p) == Team.RED_DEATH) {
+                    p.sendMessage(message);
+                }
+            }
+            if (team == Team.BLUE || team == Team.BLUE_DEATH) {
+                if (room.getPlayers(p) == Team.BLUE || room.getPlayers(p) == Team.BLUE_DEATH) {
+                    p.sendMessage(message);
+                }
             }
         }
         event.setMessage("");

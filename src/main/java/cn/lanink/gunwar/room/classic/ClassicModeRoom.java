@@ -3,6 +3,7 @@ package cn.lanink.gunwar.room.classic;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.ITimeTask;
+import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
 
@@ -24,10 +25,10 @@ public class ClassicModeRoom extends BaseRoom {
     public void timeTask() {
         super.timeTask();
         int red = 0, blue = 0;
-        for (int team : this.getPlayers().values()) {
-            if (team == 1) {
+        for (Team team : this.getPlayers().values()) {
+            if (team == Team.RED) {
                 red++;
-            } else if (team == 2) {
+            } else if (team == Team.BLUE) {
                 blue++;
             }
         }

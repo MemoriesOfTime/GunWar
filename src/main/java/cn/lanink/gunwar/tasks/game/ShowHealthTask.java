@@ -4,6 +4,7 @@ import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -31,12 +32,12 @@ public class ShowHealthTask extends PluginTask<GunWar> {
             this.cancel();
             return;
         }
-        for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, Team> entry : this.room.getPlayers().entrySet()) {
             Tools.createBossBar(entry.getKey(), this.bossBarMap);
             DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
             switch (entry.getValue()) {
-                case 11:
-                case 12:
+                case RED_DEATH:
+                case BLUE_DEATH:
                     if (this.room instanceof CTFModeRoom) {
                         int respawnTime = ((CTFModeRoom) this.room).getPlayerRespawnTime(entry.getKey());
                         bossBar.setText(this.language.translateString("gameTimeRespawnBoosBar", respawnTime));

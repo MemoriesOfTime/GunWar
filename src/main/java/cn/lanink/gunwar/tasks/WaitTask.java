@@ -4,6 +4,7 @@ import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.level.Sound;
@@ -44,17 +45,17 @@ public class WaitTask extends PluginTask<GunWar> {
                 if (this.room.waitTime <= 5) {
                     Tools.playSound(this.room, Sound.RANDOM_CLICK);
                 }
-                for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
                     entry.getKey().sendActionBar(
                             this.language.translateString("waitTimeBottom", room.getPlayers().size(), this.room.waitTime));
                     String team;
                     switch (entry.getValue()) {
-                        case 1:
-                        case 11:
+                        case RED:
+                        case RED_DEATH:
                             team = language.translateString("teamNameRed");
                             break;
-                        case 2:
-                        case 12:
+                        case BLUE:
+                        case BLUE_DEATH:
                             team = language.translateString("teamNameBlue");
                             break;
                         default:
@@ -77,16 +78,16 @@ public class WaitTask extends PluginTask<GunWar> {
             if (this.room.waitTime != this.room.getSetWaitTime()) {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
-            for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+            for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
                 entry.getKey().sendActionBar(language.translateString("waitBottom", this.room.getPlayers().size()));
                 String team;
                 switch (entry.getValue()) {
-                    case 1:
-                    case 11:
+                    case RED:
+                    case RED_DEATH:
                         team = language.translateString("teamNameRed");
                         break;
-                    case 2:
-                    case 12:
+                    case BLUE:
+                    case BLUE_DEATH:
                         team = language.translateString("teamNameBlue");
                         break;
                     default:

@@ -5,6 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -40,12 +41,12 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                     EntityFlag entityFlag = (EntityFlag) event.getEntity();
                     int team = entityFlag.namedTag.getInt("GunWarTeam");
                     Language language = GunWar.getInstance().getLanguage();
-                    if (team == 11 && room.getPlayers(damagePlayer) == 2) {
+                    if (team == 11 && room.getPlayers(damagePlayer) == Team.BLUE) {
                         room.haveRedFlag = damagePlayer;
                         Tools.sendTitle(room, "",
                                 language.translateString("game_ctf_playerPickUpTheFlag",
                                         damagePlayer.getName(), language.translateString("teamNameRed")));
-                    } else if (team == 12 && room.getPlayers(damagePlayer) == 1) {
+                    } else if (team == 12 && room.getPlayers(damagePlayer) == Team.RED) {
                         room.haveBlueFlag = damagePlayer;
                         Tools.sendTitle(room, "",
                                 language.translateString("game_ctf_playerPickUpTheFlag",
@@ -54,7 +55,8 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                 } else if (event.getEntity() instanceof EntityFlagStand) {
                     EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
                     int team = entityFlagStand.namedTag.getInt("GunWarTeam");
-                    if (team == room.getPlayers(damagePlayer)) {
+                    if ((team == 1 && room.getPlayers(damagePlayer) == Team.RED) ||
+                            (team == 2 && room.getPlayers(damagePlayer) == Team.BLUE)) {
                         switch (team) {
                             case 1:
                                 if (room.haveBlueFlag == damagePlayer) {

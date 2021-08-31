@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.entity;
 
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -10,7 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class EntityPlayerCorpse extends cn.lanink.gamecore.entity.EntityPlayerCorpse {
 
-    public EntityPlayerCorpse(FullChunk chunk, CompoundTag nbt, int team) {
+    public EntityPlayerCorpse(FullChunk chunk, CompoundTag nbt, Team team) {
         super(chunk, nbt);
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);

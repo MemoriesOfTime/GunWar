@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener.blasting;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.tasks.game.blasting.DemolitionBombTask;
 import cn.lanink.gunwar.tasks.game.blasting.PlantBombTask;
@@ -91,7 +92,8 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             if (room == null || !room.isPlaying(player)) {
                 return;
             }
-            if (room.getPlayers(player) == 2 && room.demolitionBombPlayer == null) {
+            //开始拆除炸弹
+            if (room.getPlayers(player) == Team.BLUE && room.demolitionBombPlayer == null) {
                 room.demolitionBombPlayer = player;
                 Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
                         new DemolitionBombTask(room, player,
@@ -137,7 +139,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             return;
         }
         if (Tools.getItem(201).equals(entityItem.getItem())) {
-            Tools.sendTitle(room, 1, "",
+            Tools.sendTitle(room, Team.RED, "",
                     GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasFallen"));
         }
     }
@@ -160,11 +162,12 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         if (room == null) {
             return;
         }
+        //拾取炸弹
         if (Tools.getItem(201).equals(item)) {
             if (event.getInventory().getHolder() instanceof Player) {
                 Player player = (Player) event.getInventory().getHolder();
-                if (room.getPlayers(player) == 1) {
-                    Tools.sendTitle(room, 1, "",
+                if (room.getPlayers(player) == Team.RED) {
+                    Tools.sendTitle(room, Team.RED, "",
                             GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasBeenPickedUp"));
                     return;
                 }

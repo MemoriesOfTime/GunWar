@@ -80,7 +80,9 @@ public class PlayerJoinAndQuit implements Listener {
         Player player = event.getPlayer();
         String fromLevel = event.getFrom().getLevel() == null ? null : event.getFrom().getLevel().getName();
         String toLevel = event.getTo().getLevel()== null ? null : event.getTo().getLevel().getName();
-        if (player == null || fromLevel == null || toLevel == null) return;
+        if (player == null || fromLevel == null || toLevel == null) {
+            return;
+        }
         if (!fromLevel.equals(toLevel)) {
             LinkedHashMap<String, BaseRoom> room =  this.gunWar.getRooms();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {

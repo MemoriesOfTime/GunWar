@@ -13,6 +13,7 @@ import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -140,19 +141,22 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
         if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             switch (tag.getInt("GunWarItemType")) {
+                //退出房间
                 case 10:
                     room.quitRoom(player);
                     break;
+                //选择红队
                 case 11:
-                    room.getPlayers().put(player, 1);
-                    player.getInventory().setArmorContents(Tools.getArmors(1));
+                    room.getPlayers().put(player, Team.RED);
+                    player.getInventory().setArmorContents(Tools.getArmors(Team.RED));
                     player.sendTitle(this.language.translateString("teamNameRed"),
                             this.language.translateString("playerTeamSelect"),
                             10, 40, 20);
                     break;
+                //选择蓝队
                 case 12:
-                    room.getPlayers().put(player, 2);
-                    player.getInventory().setArmorContents(Tools.getArmors(2));
+                    room.getPlayers().put(player, Team.BLUE);
+                    player.getInventory().setArmorContents(Tools.getArmors(Team.BLUE));
                     player.sendTitle(this.language.translateString("teamNameBlue"),
                             this.language.translateString("playerTeamSelect"),
                             10, 40, 20);
@@ -263,9 +267,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 if (weapon.getRange() > 0) {
                     level.addSound(position, Sound.RANDOM_EXPLODE);
                     level.addParticle(weapon.getParticle(position));
-                    for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
+                    for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
                         //跳过已死亡的玩家
-                        if (entry.getValue() != 1 && entry.getValue() != 2) {
+                        if (entry.getValue() != Team.RED && entry.getValue() != Team.BLUE) {
                             continue;
                         }
 
@@ -308,12 +312,12 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         for (BaseRoom room : this.getListenerRooms().values()) {
             if (room.isPlaying(player)) {
                 switch (room.getPlayers(player)) {
-                    case 1:
-                    case 11:
+                    case RED:
+                    case RED_DEATH:
                         event.setRespawnPosition(room.getRedSpawn());
                         return;
-                    case 2:
-                    case 12:
+                    case BLUE:
+                    case BLUE_DEATH:
                         event.setRespawnPosition(room.getBlueSpawn());
                         return;
                     default:

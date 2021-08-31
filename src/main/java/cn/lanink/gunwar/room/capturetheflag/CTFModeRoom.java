@@ -5,6 +5,7 @@ import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagPickupCheckTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagTask;
@@ -80,14 +81,14 @@ public class CTFModeRoom extends BaseRoom {
             return;
         }
 
-        for (int team : this.getPlayers().values()) {
+        for (Team team : this.getPlayers().values()) {
             switch (team) {
-                case 1:
-                case 11:
+                case RED:
+                case RED_DEATH:
                     red++;
                     break;
-                case 2:
-                case 12:
+                case BLUE:
+                case BLUE_DEATH:
                     blue++;
                     break;
                 default:
