@@ -49,22 +49,34 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
     private String gameMode = null;
+
     protected int status;
+
     private Level level;
     private final String levelName;
+
     protected int minPlayers, maxPlayers;
     protected final String waitSpawn;
-    protected final String redSpawn, blueSpawn;
-    protected int setWaitTime, setGameTime;
-    public int waitTime, gameTime;
+    protected final String redSpawn;
+    protected final String blueSpawn;
+
+    protected int setWaitTime;
+    protected int setGameTime;
+    public int waitTime;
+    public int gameTime;
+
+    @Getter
     protected ArrayList<String> initialItems = new ArrayList<>();
     @Getter
     protected ArrayList<String> redTeamInitialItems = new ArrayList<>();
     @Getter
     protected ArrayList<String> blueTeamInitialItems = new ArrayList<>();
+
     protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
-    public int redScore, blueScore; //队伍得分
+
+    public int redScore; //队伍得分
+    public int blueScore;
     public final int victoryScore; //胜利需要分数
     protected boolean roundIsEnd = false; //防止重复执行回合结束方法
 
@@ -73,6 +85,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param level 游戏世界
      * @param config 配置文件
      */
+    @SuppressWarnings("unchecked")
     public BaseRoom(Level level, Config config) throws RoomLoadException {
         this.level = level;
         this.levelName = level.getFolderName();
@@ -112,11 +125,22 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                             "DemoFlashbang&1@weapon_projectile",
                             "DemoGun&1@weapon_gun"));
             config.set("initialItems", defaultItems);
-            config.save(true);
+            config.save();
             this.initialItems.addAll(defaultItems);
         }
+
         this.redTeamInitialItems.addAll(config.getStringList("redTeamInitialItems"));
+        if (this.redTeamInitialItems.isEmpty()) {
+            config.set("redTeamInitialItems", this.redTeamInitialItems);
+            config.save();
+        }
+
         this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
+        if (this.blueTeamInitialItems.isEmpty()) {
+            config.set("blueTeamInitialItems", this.blueTeamInitialItems);
+            config.save();
+        }
+
         this.initData();
         for (String name : this.getListeners()) {
             try {
@@ -363,6 +387,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             case IRoomStatus.ROOM_STATUS_VICTORY:
                 this.restoreWorld();
                 break;
+            default:
+                break;
         }
     }
 
@@ -576,13 +602,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             }
             return newHealth;
         }
-    }
-
-    /**
-     * @return 开局给予的装备
-     */
-    public ArrayList<String> getInitialItems() {
-        return this.initialItems;
     }
 
     /**

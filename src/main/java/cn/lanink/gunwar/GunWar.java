@@ -47,9 +47,11 @@ public class GunWar extends PluginBase {
     private Language language;
     private Config config, gameRecord;
 
+    @SuppressWarnings("rawtypes")
     private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
 
+    @SuppressWarnings("rawtypes")
     private final HashMap<String, BaseGameListener> gameListeners = new HashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
@@ -200,10 +202,12 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§c插件卸载完成！");
     }
 
+    @SuppressWarnings("rawtypes")
     public static void registerListener(String name, Class<? extends BaseGameListener> listenerClass) {
         LISTENER_CLASS.put(name, listenerClass);
     }
 
+    @SuppressWarnings("rawtypes")
     public static HashMap<String, Class<? extends BaseGameListener>> getListenerClass() {
         return LISTENER_CLASS;
     }
@@ -244,6 +248,7 @@ public class GunWar extends PluginBase {
         return this.itemManage;
     }
 
+    @SuppressWarnings("rawtypes")
     public HashMap<String, BaseGameListener> getGameListeners() {
         return this.gameListeners;
     }
@@ -256,6 +261,7 @@ public class GunWar extends PluginBase {
         return this.roomConfigs;
     }
 
+    @SuppressWarnings("rawtypes")
     public void loadAllListener() {
         for (Map.Entry<String, Class<? extends BaseGameListener>> entry : LISTENER_CLASS.entrySet()) {
             try {
@@ -269,6 +275,7 @@ public class GunWar extends PluginBase {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public void loadListener(BaseGameListener gameListener) {
         this.gameListeners.put(gameListener.getListenerName(), gameListener);
         this.getServer().getPluginManager().registerEvents(gameListener, this);
