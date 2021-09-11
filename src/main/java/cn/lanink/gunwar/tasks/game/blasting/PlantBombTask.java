@@ -7,6 +7,7 @@ import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
@@ -60,18 +61,23 @@ public class PlantBombTask extends PluginTask<GunWar> {
         if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
             Tools.sendTitle(this.room, "", this.owner.getLanguage().translateString("game_blasting_plantBomb"));
             this.player.getInventory().remove(Tools.getItem(201));
+
             CompoundTag nbt = Entity.getDefaultNBT(this.placePoint);
             EntityGunWarBomb entityBomb = new EntityGunWarBomb(
                     this.player.getChunk(), nbt,this.room, this.player);
             entityBomb.setPosition(this.placePoint);
             entityBomb.spawnToAll();
             this.room.setEntityGunWarBomb(entityBomb);
-            nbt.putCompound("Skin", new CompoundTag()
-                    .putByteArray("Data", GameCore.DEFAULT_SKIN.getSkinData().data)
-                    .putString("ModelId", GameCore.DEFAULT_SKIN.getSkinId()));
-            EntityGunWarBombBlock entityBombBlock = new EntityGunWarBombBlock(this.player.getChunk(), nbt);
+
+            EntityGunWarBombBlock entityBombBlock = new EntityGunWarBombBlock(
+                    this.player.getChunk(), nbt.putCompound("Skin", new CompoundTag()));
             entityBombBlock.setPosition(this.placePoint);
-            entityBombBlock.spawnToAll();
+            entityBombBlock.setSkin(GameCore.DEFAULT_SKIN);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.getOwner(), () -> {
+                if (!entityBombBlock.isClosed()) {
+                    entityBombBlock.spawnToAll();
+                }
+            }, 10);
             this.room.setEntityGunWarBombBlock(entityBombBlock);
         }else {
             this.player.sendTitle("", this.owner.getLanguage().translateString("game_blasting_cancelPlantBomb"));
