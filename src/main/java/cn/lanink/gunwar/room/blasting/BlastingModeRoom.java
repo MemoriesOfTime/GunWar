@@ -5,6 +5,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -15,13 +16,13 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.DummyBossBar;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -71,8 +72,8 @@ public class BlastingModeRoom extends BaseRoom {
                     this.entityGunWarBomb.getExplosionTime() > 0) {
                 double discoveryDistance = this.getBlastingPointRadius() * 0.8 + 5;
                 if (!this.bombWasFound) {
-                    for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                        if (entry.getValue() == 2) {
+                    for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
+                        if (entry.getValue() == Team.BLUE) {
                             if (entry.getKey().distance(this.getBlastingPointA()) <= discoveryDistance ||
                                     entry.getKey().distance(this.getBlastingPointB()) <= discoveryDistance) {
                                 this.bombWasFound = true;
@@ -82,7 +83,7 @@ public class BlastingModeRoom extends BaseRoom {
                                 }else {
                                     s = this.language.translateString("game_blasting_bombFound", "§9B");
                                 }
-                                Tools.sendTitle(this, 2, "", s);
+                                Tools.sendTitle(this, Team.BLUE, "", s);
                             }
                         }
                     }
@@ -97,7 +98,7 @@ public class BlastingModeRoom extends BaseRoom {
                 }
                 s += this.language.translateString("game_blasting_countdownToBombExplosion",
                         this.entityGunWarBomb.getExplosionTime());
-                for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+                for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
                     Tools.createBossBar(entry.getKey(), this.bossBarMap);
                     DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
                     bossBar.setText(s);
@@ -111,52 +112,54 @@ public class BlastingModeRoom extends BaseRoom {
             }
 
             if (this.gameTime <= 0 && (this.entityGunWarBomb == null || this.entityGunWarBomb.isClosed())) {
-                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+                this.roundEnd(2);
                 this.gameTime = this.getSetGameTime();
                 return;
             }
             this.gameTime--;
             int red = 0, blue = 0;
-            for (int team : this.getPlayers().values()) {
-                if (team == 1) {
+            for (Team team : this.getPlayers().values()) {
+                if (team == Team.RED) {
                     red++;
-                } else if (team == 2) {
+                } else if (team == Team.BLUE) {
                     blue++;
                 }
             }
             if (red == 0) {
                 if (this.entityGunWarBomb == null) {
-                    Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(2));
+                    this.roundEnd(2);
                     this.gameTime = this.getSetGameTime();
                 }
             } else if (blue == 0) {
-                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(1));
+                this.roundEnd(1);
                 this.gameTime = this.getSetGameTime();
             }
         }
         //显示爆破点
-        CompletableFuture.runAsync(() -> {
-            LinkedList<Vector3> list = Tools.getRoundEdgePoint(this.getBlastingPointA(), this.getBlastingPointRadius());
-            list.addAll(Tools.getRoundEdgePoint(this.getBlastingPointB(), this.getBlastingPointRadius()));
-            for (Vector3 vector3 : list) {
-                vector3.y += 0.1;
-                if (this.getLevel().getBlock(vector3).getId() == BlockID.AIR) {
-                    for (int y = vector3.getFloorY(); y > y-5; y--) {
-                        if (this.getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() != BlockID.AIR) {
-                            vector3.y = y + 1.1;
-                            break;
+        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
+            @Override
+            public void onRun() {
+                LinkedList<Vector3> list = Tools.getRoundEdgePoint(getBlastingPointA(), getBlastingPointRadius());
+                list.addAll(Tools.getRoundEdgePoint(getBlastingPointB(), getBlastingPointRadius()));
+                for (Vector3 vector3 : list) {
+                    vector3.y += 0.1;
+                    if (getLevel().getBlock(vector3).getId() == BlockID.AIR) {
+                        for (int y = vector3.getFloorY(); y > y-5; y--) {
+                            if (getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() != BlockID.AIR) {
+                                vector3.y = y + 1.1;
+                                break;
+                            }
+                        }
+                    }else {
+                        for (int y = vector3.getFloorY(); y < y+5; y++) {
+                            if (getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() == BlockID.AIR) {
+                                vector3.y = y + 0.1;
+                                break;
+                            }
                         }
                     }
-                }else {
-                    for (int y = vector3.getFloorY(); y < y+5; y++) {
-                        if (this.getLevel().getBlock(new Vector3(vector3.x, y, vector3.z)).getId() == BlockID.AIR) {
-                            vector3.y = y + 0.1;
-                            break;
-                        }
-                    }
+                    getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST);
                 }
-                this.getLevel().addParticleEffect(vector3, ParticleEffect.REDSTONE_TORCH_DUST, -1,
-                        this.getLevel().getDimension(), this.getPlayers().keySet().toArray(new Player[0]));
             }
         });
     }
@@ -180,30 +183,34 @@ public class BlastingModeRoom extends BaseRoom {
     @Override
     public void roundStart() {
         int delay = 0;
+        //交换队伍
         if (!this.changeTeam && (this.redScore + this.blueScore) >= this.victoryScore * 0.6) {
             delay = 60;
             Tools.sendTitle(this, this.language.translateString("game_blasting_changeTeam"));
             this.changeTeam = true;
             LinkedList<Player> oldRedTeam = new LinkedList<>();
             LinkedList<Player> oldBlueTeam = new LinkedList<>();
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
                 switch (entry.getValue()) {
-                    case 1:
-                    case 11:
+                    case RED:
+                    case RED_DEATH:
                         oldRedTeam.add(entry.getKey());
                         break;
-                    case 2:
-                    case 12:
+                    case BLUE:
+                    case BLUE_DEATH:
                         oldBlueTeam.add(entry.getKey());
+                        break;
+                    default:
+                        this.quitRoom(entry.getKey());
                         break;
                 }
             }
             for (Player player : oldRedTeam) {
-                this.players.put(player, 2);
+                this.players.put(player, Team.BLUE);
                 player.setNameTag("§9" + player.getName());
             }
             for (Player player : oldBlueTeam) {
-                this.players.put(player, 1);
+                this.players.put(player, Team.RED);
                 player.setNameTag("§c" + player.getName());
             }
             int cache = this.redScore;
@@ -212,9 +219,10 @@ public class BlastingModeRoom extends BaseRoom {
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
             super.roundStart();
+            //随机挑选一名红队成员给炸弹
             LinkedList<Player> list = new LinkedList<>();
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == 1) {
+            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == Team.RED) {
                     list.add(entry.getKey());
                 }
             }

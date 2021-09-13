@@ -29,6 +29,21 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
     @Override
     public void onRun(int i) {
         if (time <= 0) {
+            //在传送前位置播放声音
+            this.entityFlag.getLevel().addSound(this.entityFlag, Sound.MOB_ENDERMEN_PORTAL);
+            switch (this.team) {
+                case 11:
+                    this.entityFlag.teleport(this.room.getRedSpawn().add(0, 0.3, 0));
+                    break;
+                case 12:
+                    this.entityFlag.teleport(this.room.getBlueSpawn().add(0, 0.3, 0));
+                    break;
+                default:
+                    this.entityFlag.close();
+                    break;
+            }
+            //在传送后位置播放声音
+            this.entityFlag.getLevel().addSound(this.entityFlag, Sound.MOB_ENDERMEN_PORTAL);
             this.cancel();
             return;
         }
@@ -43,19 +58,9 @@ public class FlagPickupCheckTask extends PluginTask<GunWar> {
 
     @Override
     public void onCancel() {
-        switch (this.team) {
-            case 11:
-                this.entityFlag.teleport(this.room.getRedSpawn().add(0, 0.3, 0));
-                break;
-            case 12:
-                this.entityFlag.teleport(this.room.getBlueSpawn().add(0, 0.3, 0));
-                break;
-        }
-
         this.entityFlag.setNameTag("");
         this.entityFlag.setNameTagVisible(false);
         this.entityFlag.setNameTagAlwaysVisible(false);
-        this.entityFlag.getLevel().addSound(entityFlag, Sound.MOB_ENDERMEN_PORTAL);
     }
 
 }

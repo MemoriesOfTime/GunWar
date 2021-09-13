@@ -1,5 +1,6 @@
 package cn.lanink.gunwar;
 
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
@@ -8,7 +9,6 @@ import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.gui.GuiListener;
 import cn.lanink.gunwar.item.ItemManage;
-import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
@@ -35,17 +35,23 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.*;
 
+/**
+ * @author LT_Name
+ */
 public class GunWar extends PluginBase {
 
+    public static boolean debug = false;
     public static final String VERSION = "?";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
     private Config config, gameRecord;
 
+    @SuppressWarnings("rawtypes")
     private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
     private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
 
+    @SuppressWarnings("rawtypes")
     private final HashMap<String, BaseGameListener> gameListeners = new HashMap<>();
     private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
@@ -59,8 +65,11 @@ public class GunWar extends PluginBase {
     private IScoreboard scoreboard;
     private ItemManage itemManage;
     private boolean hasTips = false;
-    public static boolean debug = false;
     private boolean restoreWorld = false;
+    @Getter
+    private boolean enableAloneHealth = true;
+    @Getter
+    private boolean enableOtherWeaponDamage = false;
 
     private String serverWorldPath;
     private String worldBackupPath;
@@ -140,7 +149,10 @@ public class GunWar extends PluginBase {
         }
 
         this.restoreWorld = this.config.getBoolean("restoreWorld");
-        this.gameRecord = new Config(getDataFolder() + "/GameRecord.yml", Config.YAML);
+        this.enableAloneHealth = this.config.getBoolean("enableAloneHealth", true);
+        this.enableOtherWeaponDamage = this.config.getBoolean("enableOtherWeaponDamage", true);
+
+        this.gameRecord = new Config(this.getDataFolder() + "/GameRecord.yml", Config.YAML);
 
         this.loadResources();
 
@@ -187,13 +199,15 @@ public class GunWar extends PluginBase {
         }
         this.rooms.clear();
         this.roomConfigs.clear();
-        getLogger().info("§c插件卸载完成！");
+        this.getLogger().info("§c插件卸载完成！");
     }
 
+    @SuppressWarnings("rawtypes")
     public static void registerListener(String name, Class<? extends BaseGameListener> listenerClass) {
         LISTENER_CLASS.put(name, listenerClass);
     }
 
+    @SuppressWarnings("rawtypes")
     public static HashMap<String, Class<? extends BaseGameListener>> getListenerClass() {
         return LISTENER_CLASS;
     }
@@ -234,6 +248,7 @@ public class GunWar extends PluginBase {
         return this.itemManage;
     }
 
+    @SuppressWarnings("rawtypes")
     public HashMap<String, BaseGameListener> getGameListeners() {
         return this.gameListeners;
     }
@@ -246,6 +261,7 @@ public class GunWar extends PluginBase {
         return this.roomConfigs;
     }
 
+    @SuppressWarnings("rawtypes")
     public void loadAllListener() {
         for (Map.Entry<String, Class<? extends BaseGameListener>> entry : LISTENER_CLASS.entrySet()) {
             try {
@@ -259,6 +275,7 @@ public class GunWar extends PluginBase {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     public void loadListener(BaseGameListener gameListener) {
         this.gameListeners.put(gameListener.getListenerName(), gameListener);
         this.getServer().getPluginManager().registerEvents(gameListener, this);
@@ -357,7 +374,7 @@ public class GunWar extends PluginBase {
         String s = this.config.getString("language", "chs");
         File languageFile = new File(this.getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
-            getLogger().info("§aLanguage: " + s + " loaded !");
+            this.getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
             if (this.getResource("Language/" + s + ".yml") != null) {
                 this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
@@ -368,7 +385,7 @@ public class GunWar extends PluginBase {
             }
             this.language.update(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml", Config.YAML));
         }else {
-            getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
+            this.getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
             this.language = new Language(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml"));
         }
         //加载旗帜皮肤
@@ -376,14 +393,14 @@ public class GunWar extends PluginBase {
         this.saveResource("Resources/Flag/FlagStand.json", false);
         this.saveResource("Resources/Flag/RedFlag.png", false);
         this.saveResource("Resources/Flag/BlueFlag.png", false);
-        File fileJson = new File(getDataFolder() + "/Resources/Flag/FlagStand.json");
-        File fileImg = new File(getDataFolder() + "/Resources/Flag/RedFlag.png");
+        File fileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
+        File fileImg = new File(this.getDataFolder() + "/Resources/Flag/RedFlag.png");
         this.loadFlagSkin(fileImg, fileJson, 1);
-        fileJson = new File(getDataFolder() + "/Resources/Flag/Flag.json");
+        fileJson = new File(this.getDataFolder() + "/Resources/Flag/Flag.json");
         this.loadFlagSkin(fileImg, fileJson, 11);
-        fileImg = new File(getDataFolder() + "/Resources/Flag/BlueFlag.png");
+        fileImg = new File(this.getDataFolder() + "/Resources/Flag/BlueFlag.png");
         this.loadFlagSkin(fileImg, fileJson, 12);
-        fileJson = new File(getDataFolder() + "/Resources/Flag/FlagStand.json");
+        fileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
         this.loadFlagSkin(fileImg, fileJson, 2);
         getLogger().info("§e资源文件加载完成");
     }
@@ -401,7 +418,7 @@ public class GunWar extends PluginBase {
                 Map<String, Object> skinJson = new Config(json, 1).getAll();
                 String name = null;
                 for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
-                    if (name == null || name.trim().equals("")) {
+                    if (name == null || "".equals(name.trim())) {
                         name = entry1.getKey();
                     }else {
                         break;
@@ -410,12 +427,12 @@ public class GunWar extends PluginBase {
                 skin.setGeometryName(name);
                 skin.setGeometryData(Utils.readFile(json));
                 this.flagSkinMap.put(id, skin);
-                getLogger().info("§a " + img.getName() + ":" + json.getName() + " 皮肤加载完成！");
+                this.getLogger().info("§a " + img.getName() + ":" + json.getName() + " 皮肤加载完成！");
             }else {
-                getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
+                this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
             }
         } catch (IOException e) {
-            getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
+            this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
         }
     }
 
@@ -456,7 +473,7 @@ public class GunWar extends PluginBase {
         if (this.roomConfigs.containsKey(level)) {
             return this.roomConfigs.get(level);
         }
-        Config config = new Config(getDataFolder() + "/Rooms/" + level + ".yml", Config.YAML);
+        Config config = new Config(this.getDataFolder() + "/Rooms/" + level + ".yml", Config.YAML);
         this.roomConfigs.put(level, config);
         return config;
     }

@@ -5,6 +5,7 @@ import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagPickupCheckTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagTask;
@@ -17,6 +18,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,9 +30,12 @@ import java.util.Map;
 public class CTFModeRoom extends BaseRoom {
 
     private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
-    public Player haveRedFlag, haveBlueFlag;
-    public EntityFlagStand redFlagStand, blueFlagStand;
-    public EntityFlag redFlag, blueFlag;
+    public Player haveRedFlag;
+    public Player haveBlueFlag;
+    public EntityFlagStand redFlagStand;
+    public EntityFlagStand blueFlagStand;
+    public EntityFlag redFlag;
+    public EntityFlag blueFlag;
     private boolean overtime = false;
 
     public CTFModeRoom(Level level, Config config) throws RoomLoadException {
@@ -47,12 +52,14 @@ public class CTFModeRoom extends BaseRoom {
     @Override
     public void timeTask() {
         super.timeTask();
+
         if (this.haveRedFlag != null) {
-            this.haveRedFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
+            this.checkSlownessEffect(this.haveRedFlag);
         }
         if (this.haveBlueFlag != null) {
-            this.haveBlueFlag.addEffect(Effect.getEffect(2).setDuration(40).setVisible(false));
+            this.checkSlownessEffect(this.haveBlueFlag);
         }
+
         int red = 0, blue = 0;
         for (Map.Entry<Player, Integer> entry : this.getPlayerRespawnTime().entrySet()) {
             if (entry.getValue() > 0) {
@@ -69,16 +76,22 @@ public class CTFModeRoom extends BaseRoom {
                 }
             }
         }
-        if (victoryJudgment()) return;
-        for (int team : this.getPlayers().values()) {
+
+        if (victoryJudgment()) {
+            return;
+        }
+
+        for (Team team : this.getPlayers().values()) {
             switch (team) {
-                case 1:
-                case 11:
+                case RED:
+                case RED_DEATH:
                     red++;
                     break;
-                case 2:
-                case 12:
+                case BLUE:
+                case BLUE_DEATH:
                     blue++;
+                    break;
+                default:
                     break;
             }
         }
@@ -90,6 +103,12 @@ public class CTFModeRoom extends BaseRoom {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
+        }
+    }
+
+    private void checkSlownessEffect(@NotNull Player player) {
+        if (player.hasEffect(Effect.SLOWNESS) || player.getEffect(Effect.SLOWNESS).getDuration() < 30) {
+            player.addEffect(Effect.getEffect(Effect.SLOWNESS).setDuration(40).setVisible(false));
         }
     }
 
@@ -138,6 +157,7 @@ public class CTFModeRoom extends BaseRoom {
                 new FlagTask(this.gunWar, this), 5);
     }
 
+    @Override
     public void roundEnd(int victory) {
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
@@ -177,7 +197,9 @@ public class CTFModeRoom extends BaseRoom {
             Tools.sendRoundVictoryTitle(this, 2);
         }
         //房间胜利计算
-        if (victoryJudgment()) return;
+        if (victoryJudgment()) {
+            return;
+        }
         this.roundStart();
     }
 

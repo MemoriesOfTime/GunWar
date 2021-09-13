@@ -31,12 +31,13 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -48,18 +49,34 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
     private String gameMode = null;
+
     protected int status;
+
     private Level level;
     private final String levelName;
+
     protected int minPlayers, maxPlayers;
     protected final String waitSpawn;
-    protected final String redSpawn, blueSpawn;
-    protected int setWaitTime, setGameTime;
-    public int waitTime, gameTime;
+    protected final String redSpawn;
+    protected final String blueSpawn;
+
+    protected int setWaitTime;
+    protected int setGameTime;
+    public int waitTime;
+    public int gameTime;
+
+    @Getter
     protected ArrayList<String> initialItems = new ArrayList<>();
-    protected ConcurrentHashMap<Player, Integer> players = new ConcurrentHashMap<>(); //0未分配 1 11红队 2 12蓝队
+    @Getter
+    protected ArrayList<String> redTeamInitialItems = new ArrayList<>();
+    @Getter
+    protected ArrayList<String> blueTeamInitialItems = new ArrayList<>();
+
+    protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
-    public int redScore, blueScore; //队伍得分
+
+    public int redScore; //队伍得分
+    public int blueScore;
     public final int victoryScore; //胜利需要分数
     protected boolean roundIsEnd = false; //防止重复执行回合结束方法
 
@@ -68,6 +85,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param level 游戏世界
      * @param config 配置文件
      */
+    @SuppressWarnings("unchecked")
     public BaseRoom(Level level, Config config) throws RoomLoadException {
         this.level = level;
         this.levelName = level.getFolderName();
@@ -107,12 +125,29 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                             "DemoFlashbang&1@weapon_projectile",
                             "DemoGun&1@weapon_gun"));
             config.set("initialItems", defaultItems);
-            config.save(true);
+            config.save();
             this.initialItems.addAll(defaultItems);
         }
+
+        this.redTeamInitialItems.addAll(config.getStringList("redTeamInitialItems"));
+        if (this.redTeamInitialItems.isEmpty()) {
+            config.set("redTeamInitialItems", this.redTeamInitialItems);
+            config.save();
+        }
+
+        this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
+        if (this.blueTeamInitialItems.isEmpty()) {
+            config.set("blueTeamInitialItems", this.blueTeamInitialItems);
+            config.save();
+        }
+
         this.initData();
         for (String name : this.getListeners()) {
-            this.gunWar.getGameListeners().get(name).addListenerRoom(this);
+            try {
+                this.gunWar.getGameListeners().get(name).addListenerRoom(this);
+            }catch (Exception e) {
+                throw new RoomLoadException("Listener enable error!");
+            }
         }
         this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
     }
@@ -131,10 +166,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * 设置房间状态
      * @param status 状态
      */
+    @Override
     public final void setStatus(int status) {
         this.status = status;
     }
 
+    @Override
     public final int getStatus() {
         return this.status;
     }
@@ -174,6 +211,13 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             this.endGame();
             return;
         }
+
+        if (this.gunWar.isEnableAloneHealth()) {
+            for (Player player : this.players.keySet()) {
+                player.setHealth(player.getMaxHealth() - 1);
+            }
+        }
+
         if(!this.roundIsEnd) {
             if (this.gameTime <= 0) {
                 Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
@@ -212,7 +256,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         this.assignTeam();
         this.roundStart();
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new TimeTask(this.gunWar, this.getTimeTask()), 20, true);
+                this.gunWar, new TimeTask(this.gunWar, this.getTimeTask()), 20);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar, new ScoreBoardTask(this.gunWar, this), 18, true);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -228,12 +272,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         LinkedList<Player> redTeam = new LinkedList<>();
         LinkedList<Player> blueTeam = new LinkedList<>();
         LinkedList<Player> noTeam = new LinkedList<>();
-        for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
             switch (entry.getValue()) {
-                case 1:
+                case RED:
                     redTeam.add(entry.getKey());
                     break;
-                case 2:
+                case BLUE:
                     blueTeam.add(entry.getKey());
                     break;
                 default:
@@ -273,12 +317,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             }
         }
         for (Player player : redTeam) {
-            this.getPlayers().put(player, 1);
+            this.getPlayers().put(player, Team.RED);
             player.sendTitle(this.language.translateString("teamNameRed"), "", 10, 30, 10);
             player.setNameTag("§c" + player.getName());
         }
         for (Player player : blueTeam) {
-            this.getPlayers().put(player, 2);
+            this.getPlayers().put(player, Team.BLUE);
             player.sendTitle(this.language.translateString("teamNameBlue"), "", 10, 30, 10);
             player.setNameTag("§9" + player.getName());
         }
@@ -304,15 +348,15 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                     p2.showPlayer(p1);
                 }
             }
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
+            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
                 if (victory == 1) {
-                    if (entry.getValue() == 1 || entry.getValue() == 11) {
+                    if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
                         victoryPlayers.add(entry.getKey());
                     }else {
                         defeatPlayers.add(entry.getKey());
                     }
                 }else if (victory == 2) {
-                    if (entry.getValue() == 2 || entry.getValue() == 12) {
+                    if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
                         victoryPlayers.add(entry.getKey());
                     }else {
                         defeatPlayers.add(entry.getKey());
@@ -343,6 +387,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             case IRoomStatus.ROOM_STATUS_VICTORY:
                 this.restoreWorld();
                 break;
+            default:
+                break;
         }
     }
 
@@ -371,10 +417,10 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         //本回合胜利计算
         if (v == 0) {
             int red = 0, blue = 0;
-            for (Map.Entry<Player, Integer> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == 1) {
+            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
+                if (entry.getValue() == Team.RED) {
                     red++;
-                }else if (entry.getValue() == 2) {
+                }else if (entry.getValue() == Team.BLUE) {
                     blue++;
                 }
             }
@@ -426,10 +472,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param player 玩家
      */
     public void joinRoom(Player player, boolean spectator) {
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomPlayerJoinEvent(this, player));
+
         if (this.status == 0) {
             this.initTask();
         }
-        this.players.put(player, 0);
+        this.players.put(player, Team.NULL);
         this.playerHealth.put(player, 20F);
         SavePlayerInventory.save(GunWar.getInstance(), player);
         Tools.rePlayerState(player, true);
@@ -450,6 +498,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param player 玩家
      */
     public void quitRoom(Player player) {
+        Server.getInstance().getPluginManager().callEvent(new GunWarRoomPlayerQuitEvent(this, player));
+
         this.players.remove(player);
         if (GunWar.getInstance().isHasTips()) {
             Tips.removeTipsConfig(this.levelName, player);
@@ -478,7 +528,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * 获取玩家列表
      * @return 玩家列表
      */
-    public ConcurrentHashMap<Player, Integer> getPlayers() {
+    public ConcurrentHashMap<Player, Team> getPlayers() {
         return this.players;
     }
 
@@ -487,8 +537,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param player 玩家
      * @return 玩家身份
      */
-    public int getPlayers(Player player) {
-        return this.players.getOrDefault(player, 0);
+    public Team getPlayers(Player player) {
+        return this.players.getOrDefault(player, Team.NULL);
     }
 
     /**
@@ -509,13 +559,19 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param health 血量
      */
     public synchronized float addHealth(Player player, float health) {
-        float nowHealth = this.playerHealth.get(player) + health;
-        if (nowHealth > 20) {
-            this.playerHealth.put(player, 20F);
+        if (this.gunWar.isEnableAloneHealth()) {
+            float newHealth = this.playerHealth.get(player) + health;
+            if (newHealth > 20) {
+                this.playerHealth.put(player, 20F);
+            } else {
+                this.playerHealth.put(player, newHealth);
+            }
+            return this.playerHealth.get(player);
         }else {
-            this.playerHealth.put(player, nowHealth);
+            float newHealth = Math.min(player.getHealth() + health, player.getMaxHealth());
+            player.setHealth(newHealth);
+            return newHealth;
         }
-        return this.playerHealth.get(player);
     }
 
     public synchronized float lessHealth(Player player, Entity damager, float health) {
@@ -528,21 +584,24 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param health 血量
      */
     public synchronized float lessHealth(Player player, Entity damager, float health, String killMessage) {
-        float nowHealth = this.playerHealth.get(player) - health;
-        if (nowHealth < 1) {
-            this.playerHealth.put(player, 0F);
-            this.playerDeath(player, damager, killMessage);
+        if (this.gunWar.isEnableAloneHealth()) {
+            float newHealth = this.playerHealth.get(player) - health;
+            if (newHealth < 1) {
+                this.playerHealth.put(player, 0F);
+                this.playerDeath(player, damager, killMessage);
+            } else {
+                this.playerHealth.put(player, newHealth);
+            }
+            return this.playerHealth.get(player);
         }else {
-            this.playerHealth.put(player, nowHealth);
+            float newHealth = player.getHealth() - health;
+            if (newHealth < 1) {
+                this.playerDeath(player, damager, killMessage);
+            }else {
+                player.setHealth(newHealth);
+            }
+            return newHealth;
         }
-        return this.playerHealth.get(player);
-    }
-
-    /**
-     * @return 开局给予的装备
-     */
-    public ArrayList<String> getInitialItems() {
-        return this.initialItems;
     }
 
     /**
@@ -635,17 +694,17 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
         switch (this.getPlayers(player)) {
-            case 11:
-                this.getPlayers().put(player, 1);
-            case 1:
+            case RED_DEATH:
+                this.getPlayers().put(player, Team.RED);
+            case RED:
                 player.teleport(this.getRedSpawn());
-                Tools.giveItem(this, player, 1);
+                Tools.giveItem(this, player, Team.RED);
                 break;
-            case 12:
-                this.getPlayers().put(player, 2);
-            case 2:
+            case BLUE_DEATH:
+                this.getPlayers().put(player, Team.BLUE);
+            case BLUE:
                 player.teleport(this.getBlueSpawn());
-                Tools.giveItem(this, player, 2);
+                Tools.giveItem(this, player, Team.BLUE);
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
             @Override
@@ -690,10 +749,10 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, true).update();
         player.setGamemode(Player.VIEW);
         Tools.hidePlayer(this, player);
-        if (this.getPlayers(player) == 1) {
-            this.getPlayers().put(player, 11);
-        }else if (this.getPlayers(player) == 2) {
-            this.getPlayers().put(player, 12);
+        if (this.getPlayers(player) == Team.RED) {
+            this.getPlayers().put(player, Team.RED_DEATH);
+        }else if (this.getPlayers(player) == Team.BLUE) {
+            this.getPlayers().put(player, Team.BLUE_DEATH);
         }
         this.corpseSpawn(player);
     }
@@ -747,17 +806,20 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             this.gunWar.getLogger().error(this.language.translateString("roomLevelBackupNotExist", this.levelName));
             this.gunWar.unloadRoom(this.levelName);
         }
-        CompletableFuture.runAsync(() -> {
-            if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
-                Server.getInstance().loadLevel(this.levelName);
-                this.level = Server.getInstance().getLevelByName(this.levelName);
-                this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
-                if (GunWar.debug) {
-                    this.gunWar.getLogger().info("§a房间：" + this.levelName + " 地图还原完成！");
+        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
+            @Override
+            public void onRun() {
+                if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+                    Server.getInstance().loadLevel(levelName);
+                    level = Server.getInstance().getLevelByName(levelName);
+                    setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+                    if (GunWar.debug) {
+                        gunWar.getLogger().info("§a房间：" + levelName + " 地图还原完成！");
+                    }
+                }else {
+                    gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", levelName));
+                    gunWar.unloadRoom(levelName);
                 }
-            }else {
-                this.gunWar.getLogger().error(this.language.translateString("roomLevelRestoreLevelFailure", this.levelName));
-                this.gunWar.unloadRoom(this.levelName);
             }
         });
     }

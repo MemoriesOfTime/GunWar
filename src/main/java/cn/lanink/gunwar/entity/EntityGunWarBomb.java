@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.entity;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntEntityData;
@@ -55,9 +56,9 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
         if (this.fuse <= 0) {
             this.level.addSound(this, Sound.RANDOM_EXPLODE);
             this.level.addParticle(new HugeExplodeSeedParticle(this));
-            for (Map.Entry<Player, Integer> entry : this.room.getPlayers().entrySet()) {
+            for (Map.Entry<Player, Team> entry : this.room.getPlayers().entrySet()) {
                 double distance = entry.getKey().distance(this);
-                if ((entry.getValue() == 1 || entry.getValue() == 2) &&
+                if ((entry.getValue() == Team.RED || entry.getValue() == Team.BLUE) &&
                         distance < this.room.getBlastingPointRadius()) {
                     this.room.lessHealth(entry.getKey(), this,
                             (float) (20 * (this.room.getBlastingPointRadius() - distance) / this.room.getBlastingPointRadius()) + 5);

@@ -1,8 +1,9 @@
 package cn.lanink.gunwar.listener.defaults;
 
+import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.listener.base.BaseGameListener;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -12,6 +13,7 @@ import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
 /**
  * @author lt_name
  */
+@SuppressWarnings("unused")
 public class DefaultChatListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
@@ -23,7 +25,9 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
     @EventHandler
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getMessage() == null) return;
+        if (player == null || event.getMessage() == null) {
+            return;
+        }
         BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
             return;
@@ -50,7 +54,9 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
         String message = event.getMessage();
-        if (player == null || message == null) return;
+        if (player == null || message == null) {
+            return;
+        }
         BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
             for (BaseRoom r : this.gunWar.getRooms().values()) {
@@ -61,12 +67,20 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
             return;
         }
         message = this.gunWar.getLanguage().translateString("playerTeamChat", player.getName(), message);
-        int team = room.getPlayers(player);
+        Team team = room.getPlayers(player);
         for (Player p : room.getPlayers().keySet()) {
-            if (room.getPlayers(p) == team ||
-                    (room.getPlayers(p) - 10 == team) ||
-                    (room.getPlayers(p) == team - 10)) {
+            if (room.getPlayers(p) == team) {
                 p.sendMessage(message);
+            }
+            if (team == Team.RED || team == Team.RED_DEATH) {
+                if (room.getPlayers(p) == Team.RED || room.getPlayers(p) == Team.RED_DEATH) {
+                    p.sendMessage(message);
+                }
+            }
+            if (team == Team.BLUE || team == Team.BLUE_DEATH) {
+                if (room.getPlayers(p) == Team.BLUE || room.getPlayers(p) == Team.BLUE_DEATH) {
+                    p.sendMessage(message);
+                }
             }
         }
         event.setMessage("");

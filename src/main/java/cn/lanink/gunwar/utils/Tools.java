@@ -6,6 +6,7 @@ import cn.lanink.gunwar.entity.*;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -29,7 +30,9 @@ import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -125,18 +128,18 @@ public class Tools {
         }
     }
 
-    public static void sendTitle(BaseRoom room, int team, String title) {
+    public static void sendTitle(BaseRoom room, Team team, String title) {
         sendTitle(room, team, title, "");
     }
 
-    public static void sendTitle(BaseRoom room, int team, String title, String subtitle) {
-        for (Map.Entry<Player, Integer> entry : room.getPlayers().entrySet()) {
-            if (team == 1) {
-                if (entry.getValue() == 1 || entry.getValue() == 11) {
+    public static void sendTitle(BaseRoom room, Team team, String title, String subtitle) {
+        for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
+            if (team == Team.RED || team == Team.RED_DEATH) {
+                if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
                     entry.getKey().sendTitle(title, subtitle);
                 }
             }else {
-                if (entry.getValue() == 2 || entry.getValue() == 12) {
+                if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
                     entry.getKey().sendTitle(title, subtitle);
                 }
             }
@@ -176,7 +179,7 @@ public class Tools {
         }
         for (String s : cmds) {
             String[] cmd = s.split("&");
-            if ((cmd.length > 1) && (cmd[1].equals("con"))) {
+            if (cmd.length > 1 && "con".equals(cmd[1])) {
                 Server.getInstance().dispatchCommand(new ConsoleCommandSender(), cmd[0].replace("@p", player.getName()));
             } else {
                 Server.getInstance().dispatchCommand(player, cmd[0].replace("@p", player.getName()));
@@ -211,13 +214,24 @@ public class Tools {
 
     /**
      * 给装备
+     *
      * @param room 房间
      * @param player 玩家
      * @param team 所属队伍
      */
-    public static void giveItem(BaseRoom room, Player player, int team) {
+    public static void giveItem(@NotNull BaseRoom room, @NotNull Player player, @NotNull Team team) {
+        //如果玩家未加入队伍则不给物品
+        if (team == Team.NULL) {
+            return;
+        }
         player.getInventory().setArmorContents(getArmors(team));
-        for (String string : room.getInitialItems()) {
+        ArrayList<String> items = new ArrayList<>(room.getInitialItems());
+        if (team == Team.RED || team == Team.RED_DEATH) {
+            items.addAll(room.getRedTeamInitialItems());
+        }else {
+            items.addAll(room.getBlueTeamInitialItems());
+        }
+        for (String string : items) {
             try {
                 String[] s1 = string.split("&");
                 String[] s2 = s1[1].split("@");
@@ -242,6 +256,8 @@ public class Tools {
                         case WEAPON_GUN:
                             baseItem = ItemManage.getGunWeaponMap().get(s1[0]);
                             break;
+                        default:
+                            break;
                     }
                     if (baseItem != null) {
                         item = baseItem.getItem();
@@ -262,17 +278,22 @@ public class Tools {
     }
 
     /**
-     * 获取盔甲
+     * 根据队伍获取盔甲
+     *
      * @param team 队伍
      * @return 盔甲
      */
-    public static Item[] getArmors(int team) {
+    public static Item[] getArmors(Team team) {
+        //如果玩家未加入队伍则不给物品
+        if (team == Team.NULL) {
+            return new Item[4];
+        }
         ItemColorArmor helmet = (ItemColorArmor) Item.get(298, 0, 1);
         ItemColorArmor chestPlate = (ItemColorArmor) Item.get(299, 0, 1);
         ItemColorArmor leggings = (ItemColorArmor) Item.get(300, 0, 1);
         ItemColorArmor boots = (ItemColorArmor) Item.get(301, 0, 1);
         BlockColor color;
-        if (team == 1 || team == 11) {
+        if (team == Team.RED || team == Team.RED_DEATH) {
             color = new BlockColor(255, 0, 0);
         }else {
             color = new BlockColor(0, 0, 255);
@@ -293,7 +314,7 @@ public class Tools {
         Language language = GunWar.getInstance().getLanguage();
         Item item = Item.get(0);
         switch (type) {
-            case 10:
+            case 10: //退出房间物品
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
@@ -301,14 +322,14 @@ public class Tools {
                 item.setCustomName(language.translateString("itemQuitRoom"));
                 item.setLore(language.translateString("itemQuitRoomLore").split("\n"));
                 return item;
-            case 11:
+            case 11: //选择红队物品
                 item = Item.get(241, 14, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 11));
                 item.setCustomName(language.translateString("itemTeamSelectRed"));
                 return item;
-            case 12:
+            case 12: //选择蓝队物品
                 item = Item.get(241, 11, 1);
                 item.setNamedTag(new CompoundTag()
                         .putBoolean("isGunWarItem", true)
@@ -337,7 +358,12 @@ public class Tools {
         player.getFoodData().setLevel(player.getFoodData().getMaxLevel());
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, false).update();
         if (joinRoom) {
-            player.setHealth(player.getMaxHealth() - 1); //允许触发EntityRegainHealthEvent
+            if (GunWar.getInstance().isEnableAloneHealth()) {
+                //允许触发EntityRegainHealthEvent
+                player.setHealth(player.getMaxHealth() - 1);
+            }else {
+                player.setHealth(player.getMaxHealth());
+            }
             player.setNameTagVisible(false);
             player.setNameTagAlwaysVisible(false);
             player.setGamemode(Player.ADVENTURE);
