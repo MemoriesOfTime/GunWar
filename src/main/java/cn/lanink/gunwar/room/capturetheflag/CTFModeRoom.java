@@ -107,7 +107,8 @@ public class CTFModeRoom extends BaseRoom {
     }
 
     private void checkSlownessEffect(@NotNull Player player) {
-        if (player.hasEffect(Effect.SLOWNESS) || player.getEffect(Effect.SLOWNESS).getDuration() < 30) {
+        Effect effect = player.getEffect(Effect.SLOWNESS);
+        if (effect == null || effect.getDuration() < 30) {
             player.addEffect(Effect.getEffect(Effect.SLOWNESS).setDuration(40).setVisible(false));
         }
     }
