@@ -48,7 +48,12 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
     private final GunWar gunWar = GunWar.getInstance();
     private final Language language = GunWar.getInstance().getLanguage();
 
-    @EventHandler
+    /**
+     * 实体恢复血量事件
+     *
+     * @param event 事件
+     */
+    @EventHandler(priority = EventPriority.LOW)
     public void onEntityRegainHealth(EntityRegainHealthEvent event) {
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
