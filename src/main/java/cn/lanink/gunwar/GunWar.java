@@ -19,6 +19,7 @@ import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.RsNpcXVariable;
+import cn.lanink.gunwar.utils.RsNpcXVariableV2;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -132,7 +133,11 @@ public class GunWar extends PluginBase {
         }
         try {
             Class.forName("com.smallaswater.npc.variable.VariableManage");
-            com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcXVariable.class);
+            try {
+                com.smallaswater.npc.variable.VariableManage.addVariableV2("GunWarVariable", RsNpcXVariableV2.class);
+            } catch (Exception e) {
+                com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcXVariable.class);
+            }
         } catch (Exception ignored) {
 
         }
