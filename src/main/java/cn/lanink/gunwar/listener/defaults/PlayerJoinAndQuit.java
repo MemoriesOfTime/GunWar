@@ -14,10 +14,9 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerJoinEvent;
+import cn.nukkit.event.player.PlayerLocallyInitializedEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
-import cn.nukkit.scheduler.Task;
 
 import java.util.LinkedHashMap;
 
@@ -33,22 +32,15 @@ public class PlayerJoinAndQuit implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerLocallyInitialized(PlayerLocallyInitializedEvent event) {
         Player player = event.getPlayer();
-        if (player != null && this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
-                @Override
-                public void onRun(int i) {
-                    if (player.isOnline()) {
-                        Tools.rePlayerState(player ,false);
-                        if (gunWar.isHasTips()) {
-                            Tips.removeTipsConfig(player.getLevel().getName(), player);
-                        }
-                        SavePlayerInventory.restore(gunWar, player);
-                        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
-                    }
-                }
-            }, 10);
+        if (this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
+            Tools.rePlayerState(player, false);
+            if (gunWar.isHasTips()) {
+                Tips.removeTipsConfig(player.getLevel().getName(), player);
+            }
+            SavePlayerInventory.restore(gunWar, player);
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         }
     }
 
