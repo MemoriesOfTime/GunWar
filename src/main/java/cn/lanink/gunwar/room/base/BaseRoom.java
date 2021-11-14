@@ -26,6 +26,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
@@ -103,6 +104,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.victoryScore = config.getInt("victoryScore", 5);
+
         File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
         if (!backup.exists()) {
             this.gunWar.getLogger().info(this.language.translateString("roomLevelBackup", this.levelName));
@@ -114,6 +116,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                 throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
             }
         }
+        this.level.getGameRules().setGameRule(GameRule.NATURAL_REGENERATION, false); //防止游戏难度为0时自动回血
+
         this.initialItems.addAll(config.getStringList("initialItems"));
         if (this.initialItems.isEmpty()) {
             ArrayList<String> defaultItems = new ArrayList<>(
