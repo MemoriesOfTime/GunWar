@@ -141,7 +141,7 @@ public class GunWar extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        this.config = new Config(getDataFolder() + "/config.yml", Config.YAML);
+        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
         if (this.config.getBoolean("debug", false)) {
             debug = true;
             this.getLogger().warning("警告：您开启了debug模式！");
@@ -191,19 +191,8 @@ public class GunWar extends PluginBase {
     @Override
     public void onDisable() {
         this.gameRecord.save();
-        if (this.rooms.size() > 0) {
-            Iterator<Map.Entry<String, BaseRoom>> it = this.rooms.entrySet().iterator();
-            while(it.hasNext()){
-                Map.Entry<String, BaseRoom> entry = it.next();
-                if (entry.getValue().getPlayers().size() > 0) {
-                    entry.getValue().endGame();
-                }
-                getLogger().info("§c房间：" + entry.getKey() + " 已卸载！");
-                it.remove();
-            }
-        }
-        this.rooms.clear();
-        this.roomConfigs.clear();
+        this.unloadAllRoom();
+        this.getGameListeners().values().forEach(BaseGameListener::clearListenerRooms);
         this.getLogger().info("§c插件卸载完成！");
     }
 
@@ -354,6 +343,7 @@ public class GunWar extends PluginBase {
             room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
             room.endGame();
             this.rooms.remove(world);
+            this.getGameListeners().values().forEach(listener -> listener.removeListenerRoom(world));
             this.getLogger().info("§c房间：" + world + " 已卸载！");
         }
         this.roomConfigs.remove(world);
