@@ -5,7 +5,7 @@ import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
 import cn.lanink.gamecore.utils.Language;
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
@@ -483,7 +483,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         }
         this.players.put(player, Team.NULL);
         this.playerHealth.put(player, 20F);
-        SavePlayerInventory.save(GunWar.getInstance(), player);
+
+        File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+        PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player);
+        playerData.saveAll();
+        playerData.saveToFile(file);
+
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
         if (GunWar.getInstance().isHasTips()) {
@@ -511,7 +516,15 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         GunWar.getInstance().getScoreboard().closeScoreboard(player);
         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
-        SavePlayerInventory.restore(GunWar.getInstance(), player);
+
+        File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+        if (file.exists()) {
+            PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+            if (file.delete()) {
+                playerData.restoreAll();
+            }
+        }
+
         for (Player p : this.players.keySet()) {
             p.showPlayer(player);
             player.showPlayer(p);
