@@ -340,8 +340,8 @@ public class GunWar extends PluginBase {
     public void unloadRoom(String world) {
         if (this.rooms.containsKey(world)) {
             BaseRoom room = this.rooms.get(world);
-            room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
             room.endGame();
+            room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
             this.rooms.remove(world);
             this.getGameListeners().values().forEach(listener -> listener.removeListenerRoom(world));
             this.getLogger().info("§c房间：" + world + " 已卸载！");
@@ -409,7 +409,7 @@ public class GunWar extends PluginBase {
                 skin.setTrusted(true);
                 skin.setSkinData(skinData);
                 skin.setSkinId("flag" + id);
-                Map<String, Object> skinJson = new Config(json, 1).getAll();
+                Map<String, Object> skinJson = new Config(json, Config.JSON).getAll();
                 String name = null;
                 for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
                     if (name == null || "".equals(name.trim())) {

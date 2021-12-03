@@ -163,6 +163,13 @@
             <version>1.8.4</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>cn.lanink</groupId>
+            <artifactId>RankingAPI</artifactId>
+            <version>1.4.3</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

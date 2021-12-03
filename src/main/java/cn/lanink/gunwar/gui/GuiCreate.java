@@ -1,6 +1,8 @@
 package cn.lanink.gunwar.gui;
 
 import cn.lanink.gamecore.form.element.ResponseElementButton;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowCustom;
+import cn.lanink.gamecore.form.windows.AdvancedFormWindowModal;
 import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
@@ -15,8 +17,8 @@ import cn.nukkit.form.element.ElementInput;
 import cn.nukkit.form.element.ElementToggle;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
-import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.Config;
 
 import java.util.*;
 
@@ -128,11 +130,33 @@ public class GuiCreate {
      */
     public static void sendAdminTimeMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText1"), "", "60"));
         custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText2"), "", "300"));
         custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText3"), "", "5"));
-        showFormWindow(player, custom, GuiType.ADMIN_TIME_MENU);
+
+        custom.onResponded((formResponseCustom, cp) -> {
+            try {
+                int waitTime = Integer.parseInt(formResponseCustom.getInputResponse(0));
+                int gameTime = Integer.parseInt(formResponseCustom.getInputResponse(1));
+                int victoryScore = Integer.parseInt(formResponseCustom.getInputResponse(2));
+                if (waitTime < 1 || gameTime < 1 || victoryScore < 1) {
+                    throw new Exception("");
+                }
+                Config config = GunWar.getInstance().getRoomConfig(cp.getLevel());
+                config.set("waitTime", waitTime);
+                config.set("gameTime", gameTime);
+                config.set("victoryScore", victoryScore);
+                config.save();
+                cp.sendMessage(language.translateString("adminSetWaitTime", waitTime));
+                cp.sendMessage(language.translateString("adminSetGameTime", gameTime));
+                cp.sendMessage(language.translateString("adminSetVictoryScore", victoryScore));
+            } catch (Exception e) {
+                cp.sendMessage(language.translateString("adminNotNumber"));
+            }
+        });
+
+        player.showFormWindow(custom);
     }
 
     /**
@@ -141,10 +165,29 @@ public class GuiCreate {
      */
     public static void sendAdminPlayersMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText1"), "", "2"));
         custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText2"), "", "10"));
-        showFormWindow(player, custom, GuiType.ADMIN_PLAYERS_MENU);
+
+        custom.onResponded((formResponseCustom, cp) -> {
+            try {
+                int minPlayers = Integer.parseInt(formResponseCustom.getInputResponse(0));
+                int maxPlayers = Integer.parseInt(formResponseCustom.getInputResponse(1));
+                if (minPlayers < 1 || maxPlayers < 2) {
+                    throw new Exception("");
+                }
+                Config config = GunWar.getInstance().getRoomConfig(cp.getLevel());
+                config.set("minPlayers", minPlayers);
+                config.set("maxPlayers", maxPlayers);
+                config.save();
+                cp.sendMessage(language.translateString("adminSetMinPlayers", minPlayers));
+                cp.sendMessage(language.translateString("adminSetMaxPlayers", maxPlayers));
+            } catch (Exception e) {
+                cp.sendMessage(language.translateString("adminNotNumber"));
+            }
+        });
+
+        player.showFormWindow(custom);
     }
 
     /**
@@ -153,11 +196,24 @@ public class GuiCreate {
      */
     public static void sendAdminModeMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowCustom custom = new FormWindowCustom(PLUGIN_NAME);
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
         custom.addElement(new ElementDropdown("\n\n\n" +
                 language.translateString("adminMenuSetLevel", player.getLevel().getName()),
                 new LinkedList<>(Arrays.asList(GunWar.getRoomClass().keySet().toArray(new String[]{})))));
-        showFormWindow(player, custom, GuiType.ADMIN_MODE_MENU);
+
+        custom.onResponded((formResponseCustom, cp) -> {
+            String gameMode = formResponseCustom.getDropdownResponse(0).getElementContent();
+            if (GunWar.getRoomClass().containsKey(gameMode)) {
+                Config config = GunWar.getInstance().getRoomConfig(player.getLevel());
+                config.set("gameMode", gameMode);
+                config.save();
+                cp.sendMessage(language.translateString("adminSetGameMode", gameMode));
+            }else {
+                cp.sendMessage(language.translateString("gameMode_NotFound", gameMode));
+            }
+        });
+
+        player.showFormWindow(custom);
     }
 
     public static void sendAdminItemAddWeaponMenu(Player player) {
@@ -251,27 +307,27 @@ public class GuiCreate {
      */
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         Language language = GunWar.getInstance().getLanguage();
-        FormWindowModal modal;
+        AdvancedFormWindowModal modal;
         BaseRoom room = GunWar.getInstance().getRooms().get(roomName);
         if (room != null) {
             if (room.getStatus() == 2 || room.getStatus() == 3) {
-                modal = new FormWindowModal(
+                modal = new AdvancedFormWindowModal(
                         PLUGIN_NAME, language.translateString("joinRoomIsPlaying"),
                         language.translateString("buttonReturn"),
                         language.translateString("buttonReturn"));
             }else if (room.getPlayers().size() > 15){
-                modal = new FormWindowModal(
+                modal = new AdvancedFormWindowModal(
                         PLUGIN_NAME, language.translateString("joinRoomIsFull"),
                         language.translateString("buttonReturn"),
                         language.translateString("buttonReturn"));
             }else {
-                modal = new FormWindowModal(
+                modal = new AdvancedFormWindowModal(
                         PLUGIN_NAME, language.translateString("joinRoomOK", "\"" + roomName + "\""),
                         language.translateString("buttonOK"),
                         language.translateString("buttonReturn"));
             }
         }else {
-            modal = new FormWindowModal(
+            modal = new AdvancedFormWindowModal(
                     PLUGIN_NAME, language.translateString("joinRoomIsNotFound"),
                     language.translateString("buttonReturn"),
                     language.translateString("buttonReturn"));
@@ -313,9 +369,12 @@ public class GuiCreate {
                 .replace("%deaths%", GameRecord.getPlayerRecord(player, RecordType.DEATHS) + "")
                 .replace("%victory%", GameRecord.getPlayerRecord(player, RecordType.VICTORY) + "")
                 .replace("%defeat%", GameRecord.getPlayerRecord(player, RecordType.DEFEAT) + "");
-        FormWindowModal modal = new FormWindowModal(
+        AdvancedFormWindowModal modal = new AdvancedFormWindowModal(
                 PLUGIN_NAME, s, language.translateString("buttonOK"), language.translateString("buttonReturn"));
-        showFormWindow(player, modal, GuiType.GAME_RECORD);
+
+        modal.onClickedFalse(GuiCreate::sendRecordList);
+
+        player.showFormWindow(modal);
     }
 
     /**
@@ -350,11 +409,14 @@ public class GuiCreate {
                 break;
             }
         }
-        FormWindowModal modal = new FormWindowModal(
+        AdvancedFormWindowModal modal = new AdvancedFormWindowModal(
                 PLUGIN_NAME, s.toString(),
                 language.translateString("buttonOK"),
                 language.translateString("buttonReturn"));
-        showFormWindow(player, modal, GuiType.RANKING_LIST);
+
+        modal.onClickedFalse(GuiCreate::sendRecordList);
+
+        player.showFormWindow(modal);
     }
 
     public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
