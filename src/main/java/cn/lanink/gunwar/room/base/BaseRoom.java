@@ -563,6 +563,24 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     }
 
     /**
+     * 根据队伍获取玩家列表
+     * @return 玩家列表
+     */
+    public Set<Player> getPlayers(Team team) {
+        HashSet<Player> set = new HashSet<>();
+        for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
+            if (team == Team.NULL && entry.getValue() == Team.NULL) {
+                set.add(entry.getKey());
+            }else if ((team == Team.RED || team == Team.RED_DEATH) && (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH)) {
+                set.add(entry.getKey());
+            }else if ((team == Team.BLUE || team == Team.BLUE_DEATH) && (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH)) {
+                set.add(entry.getKey());
+            }
+        }
+        return set;
+    }
+
+    /**
      * 获取玩家血量Map
      * @return 玩家血量Map
      */
