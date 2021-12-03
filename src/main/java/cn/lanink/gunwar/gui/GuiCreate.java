@@ -141,7 +141,7 @@ public class GuiCreate {
                 int gameTime = Integer.parseInt(formResponseCustom.getInputResponse(1));
                 int victoryScore = Integer.parseInt(formResponseCustom.getInputResponse(2));
                 if (waitTime < 1 || gameTime < 1 || victoryScore < 1) {
-                    throw new Exception("");
+                    throw new Exception();
                 }
                 Config config = GunWar.getInstance().getRoomConfig(cp.getLevel());
                 config.set("waitTime", waitTime);

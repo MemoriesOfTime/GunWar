@@ -16,7 +16,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
@@ -65,12 +64,7 @@ public class CTFModeRoom extends BaseRoom {
             if (entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
                 if (entry.getValue() == 0) {
-                    Server.getInstance().getScheduler().scheduleTask(this.gunWar, new Task() {
-                        @Override
-                        public void onRun(int i) {
-                            playerRespawn(entry.getKey());
-                        }
-                    });
+                    this.playerRespawn(entry.getKey());
                 }else if (entry.getValue() <= 5) {
                     Tools.playSound(entry.getKey(), Sound.RANDOM_CLICK);
                 }

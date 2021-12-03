@@ -224,7 +224,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
 
         if(!this.roundIsEnd) {
             if (this.gameTime <= 0) {
-                Server.getInstance().getScheduler().scheduleTask(this.gunWar, () -> this.roundEnd(0));
+                this.roundEnd(0);
                 this.gameTime = this.getSetGameTime();
                 return;
             }
@@ -410,6 +410,9 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     }
 
     public void roundEnd(int victory) {
+        if (this.roundIsEnd) { //防止重复结束回合
+            return;
+        }
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -459,7 +462,8 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                     this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
             return;
         }
-        this.roundStart();
+        //延迟3秒开始下一回合
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, this::roundStart, 60);
     }
 
     public boolean canJoin() {
