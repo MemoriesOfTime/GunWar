@@ -24,20 +24,22 @@ public class ClassicModeRoom extends BaseRoom {
     @Override
     public void timeTask() {
         super.timeTask();
-        int red = 0, blue = 0;
-        for (Team team : this.getPlayers().values()) {
-            if (team == Team.RED) {
-                red++;
-            } else if (team == Team.BLUE) {
-                blue++;
+        if (!this.roundIsEnd) {
+            int red = 0, blue = 0;
+            for (Team team : this.getPlayers().values()) {
+                if (team == Team.RED) {
+                    red++;
+                } else if (team == Team.BLUE) {
+                    blue++;
+                }
             }
-        }
-        if (red == 0) {
-            this.roundEnd(2);
-            this.gameTime = this.getSetGameTime();
-        } else if (blue == 0) {
-            this.roundEnd(1);
-            this.gameTime = this.getSetGameTime();
+            if (red == 0) {
+                this.roundEnd(2);
+                this.gameTime = this.getSetGameTime();
+            } else if (blue == 0) {
+                this.roundEnd(1);
+                this.gameTime = this.getSetGameTime();
+            }
         }
     }
 

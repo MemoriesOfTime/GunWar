@@ -410,9 +410,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
     }
 
     public void roundEnd(int victory) {
-        if (this.roundIsEnd) { //防止重复结束回合
-            return;
-        }
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
