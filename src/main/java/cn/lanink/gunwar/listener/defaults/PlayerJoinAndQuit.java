@@ -1,6 +1,6 @@
 package cn.lanink.gunwar.listener.defaults;
 
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.gui.GuiCreate;
@@ -19,6 +19,7 @@ import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.scheduler.Task;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 /**
@@ -44,7 +45,15 @@ public class PlayerJoinAndQuit implements Listener {
                         if (gunWar.isHasTips()) {
                             Tips.removeTipsConfig(player.getLevel().getName(), player);
                         }
-                        SavePlayerInventory.restore(gunWar, player);
+
+                        File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+                        if (file.exists()) {
+                            PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+                            if (file.delete()) {
+                                playerData.restoreAll();
+                            }
+                        }
+
                         player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
                     }
                 }
