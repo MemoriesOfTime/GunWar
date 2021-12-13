@@ -36,6 +36,7 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -75,6 +76,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
 
     protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
+    protected final HashMap<Player, Integer> playerInvincibleTime = new HashMap<>(); //玩家无敌时间
 
     public int redScore; //队伍得分
     public int blueScore;
@@ -219,6 +221,13 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         if (this.gunWar.isEnableAloneHealth()) {
             for (Player player : this.players.keySet()) {
                 player.setHealth(player.getMaxHealth() - 1);
+            }
+        }
+
+        //玩家无敌时间计算
+        for (Map.Entry<Player, Integer> entry : this.playerInvincibleTime.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
             }
         }
 
@@ -585,8 +594,12 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         return this.playerHealth;
     }
 
-    public float getPlayerHealth(Player player) {
+    public float getPlayerHealth(@NotNull Player player) {
         return this.playerHealth.getOrDefault(player, 0F);
+    }
+
+    public int getPlayerInvincibleTime(@NotNull Player player) {
+        return this.playerInvincibleTime.getOrDefault(player, 0);
     }
 
     /**
@@ -712,10 +725,16 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         if (ev.isCancelled()) {
             return;
         }
+
+        this.playerInvincibleTime.put(player, 3); //重生三秒无敌
+
+        //重置枪械
         for (GunWeapon gunWeapon : ItemManage.getGunWeaponMap().values()) {
             gunWeapon.stopReload(player);
             gunWeapon.getMagazineMap().remove(player);
         }
+
+        //清理尸体
         for (Entity entity : this.getLevel().getEntities()) {
             if (entity instanceof EntityPlayerCorpse) {
                 if (entity.namedTag != null &&
@@ -724,6 +743,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
                 }
             }
         }
+
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         Tools.rePlayerState(player, true);
