@@ -82,7 +82,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 return;
             }
             
-            if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
+            if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME || room.getPlayerInvincibleTime(player) > 0) {
                 event.setCancelled(true);
                 return;
             }

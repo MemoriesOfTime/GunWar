@@ -28,6 +28,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.BossBarColor;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +45,11 @@ public class Tools {
     public static void createBossBar(Player player, ConcurrentHashMap<Player, DummyBossBar> bossBarMap) {
         if (!bossBarMap.containsKey(player)) {
             DummyBossBar bossBar = new DummyBossBar.Builder(player).build();
-            bossBar.setColor(255, 0, 0);
+            try { //兼容旧版nk
+                bossBar.setColor(BossBarColor.RED);
+            } catch (Exception ignored) {
+
+            }
             player.createBossBar(bossBar);
             bossBarMap.put(player, bossBar);
         }else {

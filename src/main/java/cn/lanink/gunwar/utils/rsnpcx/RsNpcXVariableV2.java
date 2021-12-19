@@ -1,20 +1,21 @@
-package cn.lanink.gunwar.utils;
+package cn.lanink.gunwar.utils.rsnpcx;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
-import com.smallaswater.npc.variable.BaseVariable;
+import com.smallaswater.npc.data.RsNpcConfig;
+import com.smallaswater.npc.variable.BaseVariableV2;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author lt_name
+ * @author LT_Name
  */
-public class RsNpcXVariable extends BaseVariable {
+public class RsNpcXVariableV2 extends BaseVariableV2 {
 
     @Override
-    public String stringReplace(Player player, String s) {
+    public void onUpdate(Player player, RsNpcConfig rsNpcConfig) {
         HashMap<String, Integer> map = new HashMap<>();
         int all = 0;
         for (BaseRoom room : GunWar.getInstance().getRooms().values()) {
@@ -23,9 +24,9 @@ public class RsNpcXVariable extends BaseVariable {
             all += room.getPlayers().size();
         }
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            s = s.replace("{GunWarRoomPlayerNumber" + entry.getKey() + "}", entry.getValue() + "");
+            this.addVariable("{GunWarRoomPlayerNumber" + entry.getKey() + "}", entry.getValue().toString());
         }
-        return s.replace("{GunWarRoomPlayerNumberAll}", all + "");
+        this.addVariable("{GunWarRoomPlayerNumberAll}", String.valueOf(all));
     }
 
 }

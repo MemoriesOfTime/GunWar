@@ -66,7 +66,7 @@ public class BlastingModeRoom extends BaseRoom {
             this.endGame();
             return;
         }
-        if (!roundIsEnd) {
+        if (!this.roundIsEnd) {
             //Boss血条显示炸弹爆炸倒计时
             if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
                     this.entityGunWarBomb.getExplosionTime() > 0) {

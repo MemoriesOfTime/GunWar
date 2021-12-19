@@ -58,54 +58,6 @@ public class GuiListener implements Listener {
 
     private void onClick(Player player, FormWindowCustom custom, GuiType guiType) {
         switch (guiType) {
-            case ADMIN_TIME_MENU:
-                try {
-                    int waitTime = Integer.parseInt(custom.getResponse().getInputResponse(0));
-                    int gameTime = Integer.parseInt(custom.getResponse().getInputResponse(1));
-                    int victoryScore = Integer.parseInt(custom.getResponse().getInputResponse(2));
-                    if (waitTime < 1 || gameTime < 1 || victoryScore < 1) {
-                        throw new Exception("");
-                    }
-                    Config config = this.gunWar.getRoomConfig(player.getLevel());
-                    config.set("waitTime", waitTime);
-                    config.set("gameTime", gameTime);
-                    config.set("victoryScore", victoryScore);
-                    config.save();
-                    player.sendMessage(this.language.translateString("adminSetWaitTime", waitTime));
-                    player.sendMessage(this.language.translateString("adminSetGameTime", gameTime));
-                    player.sendMessage(this.language.translateString("adminSetVictoryScore", victoryScore));
-                } catch (Exception e) {
-                    player.sendMessage(this.language.translateString("adminNotNumber"));
-                }
-                break;
-            case ADMIN_PLAYERS_MENU:
-                try {
-                    int minPlayers = Integer.parseInt(custom.getResponse().getInputResponse(0));
-                    int maxPlayers = Integer.parseInt(custom.getResponse().getInputResponse(1));
-                    if (minPlayers < 1 || maxPlayers < 2) {
-                        throw new Exception("");
-                    }
-                    Config config = this.gunWar.getRoomConfig(player.getLevel());
-                    config.set("minPlayers", minPlayers);
-                    config.set("maxPlayers", maxPlayers);
-                    config.save();
-                    player.sendMessage(this.language.translateString("adminSetMinPlayers", minPlayers));
-                    player.sendMessage(this.language.translateString("adminSetMaxPlayers", maxPlayers));
-                } catch (Exception e) {
-                    player.sendMessage(this.language.translateString("adminNotNumber"));
-                }
-                break;
-            case ADMIN_MODE_MENU:
-                String gameMode = custom.getResponse().getDropdownResponse(0).getElementContent();
-                if (GunWar.getRoomClass().containsKey(gameMode)) {
-                    Config config = this.gunWar.getRoomConfig(player.getLevel());
-                    config.set("gameMode", gameMode);
-                    config.save();
-                    player.sendMessage(this.language.translateString("adminSetGameMode", gameMode));
-                }else {
-                    player.sendMessage(this.language.translateString("gameMode_NotFound", gameMode));
-                }
-                break;
             case ADMIN_ITEM_ADD_WEAPON_MELEE:
                 this.adminItemAddWeaponMelee(player, custom);
                 break;
@@ -127,12 +79,6 @@ public class GuiListener implements Listener {
                             player, this.gunWar.getCmdUser() + " join " + s[1].replace("§e", "").trim());
                 }else {
                     GuiCreate.sendRoomListMenu(player);
-                }
-                break;
-            case GAME_RECORD:
-            case RANKING_LIST:
-                if (modal.getResponse().getClickedButtonId() == 1) {
-                    GuiCreate.sendRecordList(player);
                 }
                 break;
         }

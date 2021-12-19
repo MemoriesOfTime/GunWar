@@ -1,6 +1,6 @@
 package cn.lanink.gunwar.listener.defaults;
 
-import cn.lanink.gamecore.utils.SavePlayerInventory;
+import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.gui.GuiCreate;
@@ -14,10 +14,12 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
-import cn.nukkit.event.player.PlayerLocallyInitializedEvent;
+import cn.nukkit.event.player.PlayerJoinEvent;
 import cn.nukkit.event.player.PlayerQuitEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.scheduler.Task;
 
+import java.io.File;
 import java.util.LinkedHashMap;
 
 /**
@@ -32,15 +34,30 @@ public class PlayerJoinAndQuit implements Listener {
     }
 
     @EventHandler
-    public void onPlayerLocallyInitialized(PlayerLocallyInitializedEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
-            Tools.rePlayerState(player, false);
-            if (gunWar.isHasTips()) {
-                Tips.removeTipsConfig(player.getLevel().getName(), player);
-            }
-            SavePlayerInventory.restore(gunWar, player);
-            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        if (player != null && this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
+                @Override
+                public void onRun(int i) {
+                    if (player.isOnline()) {
+                        Tools.rePlayerState(player ,false);
+                        if (gunWar.isHasTips()) {
+                            Tips.removeTipsConfig(player.getLevel().getName(), player);
+                        }
+
+                        File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
+                        if (file.exists()) {
+                            PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player, file);
+                            if (file.delete()) {
+                                playerData.restoreAll();
+                            }
+                        }
+
+                        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+                    }
+                }
+            }, 10);
         }
     }
 
