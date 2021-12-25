@@ -411,6 +411,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         if (ev.isCancelled()) {
             return;
         }
+        Tools.cleanEntity(this.getLevel(), true);
         this.roundIsEnd = false;
         this.gameTime = this.getSetGameTime();
         for (Player player : this.getPlayers().keySet()) {
