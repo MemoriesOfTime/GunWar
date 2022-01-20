@@ -31,6 +31,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.BossBarColor;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
+import com.sun.tools.javac.code.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class Tools {
         if (!bossBarMap.containsKey(player)) {
             DummyBossBar bossBar = new DummyBossBar.Builder(player).build();
             try { //兼容旧版nk
+                Class.forName("cn.nukkit.utils.BossBarColor");
                 bossBar.setColor(BossBarColor.RED);
             } catch (Exception ignored) {
 
