@@ -36,7 +36,10 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
             Player player = (Player) event.getEntity();
             Player damagePlayer = (Player) event.getDamager();
             BaseRoom room = this.getListenerRoom(damagePlayer.getLevel());
-            if (room == null || !room.isPlaying(damagePlayer)) {
+            if (room == null) {
+                return;
+            }else if (!room.isPlaying(player) || !room.isPlaying(damagePlayer)) {
+                event.setCancelled(true);
                 return;
             }
             if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME &&

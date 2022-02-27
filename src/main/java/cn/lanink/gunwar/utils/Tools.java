@@ -31,7 +31,6 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.BossBarColor;
 import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
-import com.sun.tools.javac.code.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

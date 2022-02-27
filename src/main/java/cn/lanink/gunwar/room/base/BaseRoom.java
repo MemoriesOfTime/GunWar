@@ -525,7 +525,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             Tips.removeTipsConfig(this.levelName, player);
         }
         GunWar.getInstance().getScoreboard().closeScoreboard(player);
-        player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+        //player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
 
         File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");

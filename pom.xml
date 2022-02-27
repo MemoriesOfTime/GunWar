@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>GunWar</artifactId>
-    <version>1.4.4.0-PM1E-SNAPSHOT</version>
+    <version>1.4.4.0-PM1E</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -153,14 +153,14 @@
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.4.1-PM1E</version>
+            <version>1.5.3</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.smallaswater.npc</groupId>
             <artifactId>RsNPCX</artifactId>
-            <version>1.8.4</version>
+            <version>1.8.7</version>
             <scope>provided</scope>
         </dependency>
 
