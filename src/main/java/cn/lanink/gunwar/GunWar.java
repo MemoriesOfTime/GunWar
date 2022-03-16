@@ -42,7 +42,7 @@ import java.util.*;
 public class GunWar extends PluginBase {
 
     public static boolean debug = false;
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.4.5-SNAPSHOT git-031b7bb";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
@@ -360,7 +360,6 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         this.getLogger().info("§e开始加载资源文件");
         //语言文件
-        this.saveResource("Language/chs.yml", "/Language/cache/new_chs.yml", true);
         this.saveResource("Language/chs.yml", false);
         this.saveResource("Language/kor.yml", false);
         this.saveResource("Language/eng.yml", false);
@@ -371,17 +370,16 @@ public class GunWar extends PluginBase {
         if (languageFile.exists()) {
             this.getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
-            if (this.getResource("Language/" + s + ".yml") != null) {
-                this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
-                this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+            Config newConfig = new Config(Config.YAML);
+            if (newConfig.load(this.getResource("Language/" + s + ".yml"))) {
+                this.language.update(newConfig);
                 if (GunWar.debug) {
                     this.getLogger().info("[debug] 语言文件：" + s + " 更新完成");
                 }
             }
-            this.language.update(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml", Config.YAML));
         }else {
             this.getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
-            this.language = new Language(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml"));
+            this.language = new Language(new Config(this.getDataFolder() + "/Language/chs.yml"));
         }
         //加载旗帜皮肤
         this.saveResource("Resources/Flag/Flag.json", false);
