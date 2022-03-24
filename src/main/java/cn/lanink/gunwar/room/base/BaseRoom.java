@@ -89,7 +89,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      * @param config 配置文件
      */
     @SuppressWarnings("unchecked")
-    public BaseRoom(Level level, Config config) throws RoomLoadException {
+    public BaseRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         this.level = level;
         this.levelName = level.getFolderName();
         this.minPlayers = config.getInt("minPlayers", 2);
