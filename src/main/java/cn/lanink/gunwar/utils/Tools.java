@@ -102,6 +102,14 @@ public class Tools {
         }
     }
 
+    public static String getShowGameMode(String original) {
+        String showGameMode = GunWar.getInstance().getLanguage().translateString(original);
+        if (showGameMode.contains("Unknown key")) {
+            return original;
+        }
+        return showGameMode;
+    }
+
     public static String getShowStringMagazine(int now, int max) {
         return "§e" + now + "/" + max + "  " + getShowStringProgress(now, max);
     }

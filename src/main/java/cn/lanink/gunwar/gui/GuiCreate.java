@@ -7,6 +7,7 @@ import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
@@ -197,19 +198,25 @@ public class GuiCreate {
     public static void sendAdminModeMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
+        LinkedList<String> list = new LinkedList<>(Arrays.asList(GunWar.getRoomClass().keySet().toArray(new String[]{})));
+        LinkedList<String> showList = new LinkedList<>();
+        for (String gameMode : list) {
+            showList.add(Tools.getShowGameMode(gameMode));
+        }
         custom.addElement(new ElementDropdown("\n\n\n" +
                 language.translateString("adminMenuSetLevel", player.getLevel().getName()),
-                new LinkedList<>(Arrays.asList(GunWar.getRoomClass().keySet().toArray(new String[]{})))));
+                showList
+        ));
 
         custom.onResponded((formResponseCustom, cp) -> {
-            String gameMode = formResponseCustom.getDropdownResponse(0).getElementContent();
+            String gameMode = list.get(formResponseCustom.getDropdownResponse(0).getElementID());
             if (GunWar.getRoomClass().containsKey(gameMode)) {
                 Config config = GunWar.getInstance().getRoomConfig(player.getLevel());
                 config.set("gameMode", gameMode);
                 config.save();
-                cp.sendMessage(language.translateString("adminSetGameMode", gameMode));
+                cp.sendMessage(language.translateString("adminSetGameMode", Tools.getShowGameMode(gameMode)));
             }else {
-                cp.sendMessage(language.translateString("gameMode_NotFound", gameMode));
+                cp.sendMessage(language.translateString("gameMode_NotFound", Tools.getShowGameMode(gameMode) + " (" + gameMode + ")"));
             }
         });
 
@@ -290,7 +297,7 @@ public class GuiCreate {
 
         for (Map.Entry<String, BaseRoom> entry : GunWar.getInstance().getRooms().entrySet()) {
             simple.addButton(new ResponseElementButton("§e" + entry.getKey() +
-                    "\n§r§eMode: " + entry.getValue().getGameMode() +
+                    "\n§r§eMode: " + Tools.getShowGameMode(entry.getValue().getGameMode()) +
                             " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button"))
                     .onClicked(cp -> sendRoomJoinOkMenu(cp, entry.getKey())));

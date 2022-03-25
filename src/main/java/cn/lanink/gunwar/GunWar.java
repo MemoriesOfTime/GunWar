@@ -88,7 +88,20 @@ public class GunWar extends PluginBase {
         this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
         this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
         this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+
         this.saveDefaultConfig();
+        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
+        if (this.config.getBoolean("debug", false)) {
+            debug = true;
+            this.getLogger().warning("警告：您开启了debug模式！");
+            this.getLogger().warning("Warning: You have turned on debug mode!");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         File file3 = new File(this.getDataFolder() + "/Language");
@@ -124,6 +137,7 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§l§e 插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         this.getLogger().info("§l§e https://github.com/lt-name/GunWar_Nukkit");
         this.getLogger().info("§l§e Version: " + VERSION);
+
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
@@ -144,17 +158,6 @@ public class GunWar extends PluginBase {
             }
         } catch (Exception ignored) {
 
-        }
-        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
-        if (this.config.getBoolean("debug", false)) {
-            debug = true;
-            this.getLogger().warning("警告：您开启了debug模式！");
-            this.getLogger().warning("Warning: You have turned on debug mode!");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ignored) {
-
-            }
         }
 
         this.restoreWorld = this.config.getBoolean("restoreWorld");
