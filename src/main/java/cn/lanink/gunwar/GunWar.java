@@ -127,9 +127,7 @@ public class GunWar extends PluginBase {
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("ctf", CTFModeRoom.class);
         registerRoom("blasting", BlastingModeRoom.class);
-        if (debug) {
-            registerRoom("team", TeamModeRoom.class);
-        }
+        registerRoom("team", TeamModeRoom.class);
     }
 
     @Override

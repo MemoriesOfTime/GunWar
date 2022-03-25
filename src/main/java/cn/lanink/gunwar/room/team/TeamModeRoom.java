@@ -21,6 +21,7 @@ public class TeamModeRoom extends BaseRespawnModeRoom {
      */
     public TeamModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
+        this.respawnTime = 3;
     }
 
     @Override
