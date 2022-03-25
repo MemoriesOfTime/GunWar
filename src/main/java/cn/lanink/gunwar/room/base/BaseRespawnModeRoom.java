@@ -13,9 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 单回合可重生房间类型
+ *
  * @author LT_Name
  */
-public abstract class RespawnModeRoom extends BaseRoom {
+public abstract class BaseRespawnModeRoom extends BaseRoom {
 
     /**
      * 玩家重生时间
@@ -29,7 +31,7 @@ public abstract class RespawnModeRoom extends BaseRoom {
      * @param level  游戏世界
      * @param config 配置文件
      */
-    public RespawnModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
+    public BaseRespawnModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
     }
 

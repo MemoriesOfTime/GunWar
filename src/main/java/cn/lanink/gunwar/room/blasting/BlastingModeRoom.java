@@ -4,7 +4,7 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
-import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.BaseRoundModeRoom;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author lt_name
  */
-public class BlastingModeRoom extends BaseRoom {
+public class BlastingModeRoom extends BaseRoundModeRoom {
 
     protected final String blastingPointA, blastingPointB;
     protected EntityGunWarBomb entityGunWarBomb;

@@ -16,6 +16,7 @@ import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
+import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
@@ -42,7 +43,7 @@ import java.util.*;
 public class GunWar extends PluginBase {
 
     public static boolean debug = false;
-    public static final String VERSION = "1.4.5-SNAPSHOT git-031b7bb";
+    public static final String VERSION = "?";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
@@ -113,6 +114,9 @@ public class GunWar extends PluginBase {
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("ctf", CTFModeRoom.class);
         registerRoom("blasting", BlastingModeRoom.class);
+        if (debug) {
+            registerRoom("team", TeamModeRoom.class);
+        }
     }
 
     @Override
