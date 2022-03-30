@@ -46,33 +46,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基础/通用 房间类
  * @author lt_name
  */
-public abstract class BaseRoom implements IRoom, ITimeTask {
+public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
 
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
-    private String gameMode = null;
 
     protected int status;
 
-    private Level level;
-    private final String levelName;
-
-    protected int minPlayers, maxPlayers;
-    protected final String waitSpawn;
-    protected final String redSpawn;
-    protected final String blueSpawn;
-
-    protected int setWaitTime;
-    protected int setGameTime;
     public int waitTime;
     public int gameTime;
-
-    @Getter
-    protected ArrayList<String> initialItems = new ArrayList<>();
-    @Getter
-    protected ArrayList<String> redTeamInitialItems = new ArrayList<>();
-    @Getter
-    protected ArrayList<String> blueTeamInitialItems = new ArrayList<>();
 
     protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
@@ -80,7 +62,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
 
     public int redScore; //队伍得分
     public int blueScore;
-    public final int victoryScore; //胜利需要分数
+
     protected boolean roundIsEnd = false; //防止重复执行回合结束方法
 
     /**
@@ -90,62 +72,20 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
      */
     @SuppressWarnings("unchecked")
     public BaseRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
-        this.level = level;
-        this.levelName = level.getFolderName();
-        this.minPlayers = config.getInt("minPlayers", 2);
-        if (this.minPlayers < 2) {
-            this.minPlayers = 2;
-        }
-        this.maxPlayers = config.getInt("maxPlayers", 10);
-        if (this.maxPlayers < this.minPlayers) {
-            this.maxPlayers = this.minPlayers;
-        }
-        this.waitSpawn = config.getString("waitSpawn");
-        this.redSpawn = config.getString("redSpawn");
-        this.blueSpawn = config.getString("blueSpawn");
-        this.setWaitTime = config.getInt("waitTime");
-        this.setGameTime = config.getInt("gameTime");
-        this.victoryScore = config.getInt("victoryScore", 5);
+        super(level, config);
 
-        File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
+        File backup = new File(this.gunWar.getWorldBackupPath() + this.getLevelName());
         if (!backup.exists()) {
-            this.gunWar.getLogger().info(this.language.translateString("roomLevelBackup", this.levelName));
-            Server.getInstance().unloadLevel(this.level, true);
-            if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.levelName, backup)) {
-                Server.getInstance().loadLevel(this.levelName);
-                this.level = Server.getInstance().getLevelByName(this.levelName);
+            this.gunWar.getLogger().info(this.language.translateString("roomLevelBackup", this.getLevelName()));
+            Server.getInstance().unloadLevel(this.getLevel(), true);
+            if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.getLevelName(), backup)) {
+                Server.getInstance().loadLevel(this.getLevelName());
+                this.level = Server.getInstance().getLevelByName(this.getLevelName());
             }else {
                 throw new RoomLoadException("房间地图备份失败！ / The room world backup failed!");
             }
         }
         this.level.getGameRules().setGameRule(GameRule.NATURAL_REGENERATION, false); //防止游戏难度为0时自动回血
-
-        this.initialItems.addAll(config.getStringList("initialItems"));
-        if (this.initialItems.isEmpty()) {
-            ArrayList<String> defaultItems = new ArrayList<>(
-                    Arrays.asList(
-                            "373:28&1@item",
-                            "322&1@item",
-                            "DemoMelee&1@weapon_melee",
-                            "DemoGrenade&1@weapon_projectile",
-                            "DemoFlashbang&1@weapon_projectile",
-                            "DemoGun&1@weapon_gun"));
-            config.set("initialItems", defaultItems);
-            config.save();
-            this.initialItems.addAll(defaultItems);
-        }
-
-        this.redTeamInitialItems.addAll(config.getStringList("redTeamInitialItems"));
-        if (this.redTeamInitialItems.isEmpty()) {
-            config.set("redTeamInitialItems", this.redTeamInitialItems);
-            config.save();
-        }
-
-        this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
-        if (this.blueTeamInitialItems.isEmpty()) {
-            config.set("blueTeamInitialItems", this.blueTeamInitialItems);
-            config.save();
-        }
 
         this.initData();
         for (String name : this.getListeners()) {
@@ -156,16 +96,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             }
         }
         this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
-    }
-
-    public final void setGameMode(String gameMode) {
-        if (this.gameMode == null) {
-            this.gameMode = gameMode;
-        }
-    }
-
-    public final String getGameMode() {
-        return gameMode;
     }
 
     /**
@@ -522,7 +452,7 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
 
         this.players.remove(player);
         if (GunWar.getInstance().isHasTips()) {
-            Tips.removeTipsConfig(this.levelName, player);
+            Tips.removeTipsConfig(this.getLevelName(), player);
         }
         GunWar.getInstance().getScoreboard().closeScoreboard(player);
         //player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
@@ -652,36 +582,6 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
             }
             return newHealth;
         }
-    }
-
-    /**
-     * 获取设置的等待时间
-     * @return 等待时间
-     */
-    public int getSetWaitTime() {
-        return this.setWaitTime;
-    }
-
-    /**
-     * 获取设置的游戏时间
-     * @return 游戏时间
-     */
-    public int getSetGameTime() {
-        return this.setGameTime;
-    }
-
-    /**
-     * 获取世界
-     * @return 世界
-     */
-    @Override
-    public Level getLevel() {
-        return this.level;
-    }
-
-    @Override
-    public String getLevelName() {
-        return this.levelName;
     }
 
     /**
@@ -854,28 +754,28 @@ public abstract class BaseRoom implements IRoom, ITimeTask {
         }
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         if (GunWar.debug) {
-            this.gunWar.getLogger().info("§a房间：" + this.levelName + " 正在还原地图...");
+            this.gunWar.getLogger().info("§a房间：" + this.getLevelName() + " 正在还原地图...");
         }
         Server.getInstance().unloadLevel(this.level, true);
-        File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.levelName);
-        File backup = new File(this.gunWar.getWorldBackupPath() + this.levelName);
+        File levelFile = new File(Server.getInstance().getFilePath() + "/worlds/" + this.getLevelName());
+        File backup = new File(this.gunWar.getWorldBackupPath() + this.getLevelName());
         if (!backup.exists()) {
-            this.gunWar.getLogger().error(this.language.translateString("roomLevelBackupNotExist", this.levelName));
-            this.gunWar.unloadRoom(this.levelName);
+            this.gunWar.getLogger().error(this.language.translateString("roomLevelBackupNotExist", this.getLevelName()));
+            this.gunWar.unloadRoom(this.getLevelName());
         }
         Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override
             public void onRun() {
                 if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
-                    Server.getInstance().loadLevel(levelName);
-                    level = Server.getInstance().getLevelByName(levelName);
+                    Server.getInstance().loadLevel(getLevelName());
+                    level = Server.getInstance().getLevelByName(getLevelName());
                     setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
                     if (GunWar.debug) {
-                        gunWar.getLogger().info("§a房间：" + levelName + " 地图还原完成！");
+                        gunWar.getLogger().info("§a房间：" + getLevelName() + " 地图还原完成！");
                     }
                 }else {
-                    gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", levelName));
-                    gunWar.unloadRoom(levelName);
+                    gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", getLevelName()));
+                    gunWar.unloadRoom(getLevelName());
                 }
             }
         });
