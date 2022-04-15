@@ -32,6 +32,7 @@ public class WaitTask extends PluginTask<GunWar> {
             return;
         }
         for (Player player : this.room.getPlayers().keySet()) {
+            player.getInventory().setItem(0, Tools.getItem(13));
             player.getInventory().setItem(3, Tools.getItem(11));
             player.getInventory().setItem(5, Tools.getItem(12));
             player.getInventory().setItem(8, Tools.getItem(10));

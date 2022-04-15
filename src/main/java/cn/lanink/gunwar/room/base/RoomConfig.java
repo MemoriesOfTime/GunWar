@@ -1,5 +1,7 @@
 package cn.lanink.gunwar.room.base;
 
+import cn.lanink.gunwar.supplier.SupplyConfig;
+import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
@@ -47,6 +49,9 @@ public class RoomConfig {
     @Getter
     private final int defaultIntegral; //玩家初始积分
 
+    @Getter
+    private final SupplyConfig supplyConfig;
+
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
         this.level = level;
         this.levelName = level.getFolderName();
@@ -90,6 +95,7 @@ public class RoomConfig {
         this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
 
         this.defaultIntegral = config.getInt("defaultIntegral", 1000);
+        this.supplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("supply", "DefaultSupply"));
     }
 
     public final void setGameMode(String gameMode) {

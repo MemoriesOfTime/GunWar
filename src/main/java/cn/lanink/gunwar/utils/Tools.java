@@ -355,6 +355,13 @@ public class Tools {
                         .putInt("GunWarItemType", 12));
                 item.setCustomName(language.translateString("itemTeamSelectBlue"));
                 return item;
+            case 13: //打开商店物品
+                item = Item.get(347, 0, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 13));
+                item.setCustomName(language.translateString("item_OpenShop"));
+                return item;
             case 201: //爆破模式 炸弹
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()

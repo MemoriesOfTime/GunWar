@@ -170,10 +170,7 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
 
-        if (debug) { //TODO 移除debug判断
-            this.getLogger().info("[debug] 实验性玩法：商店配置开始加载");
-            SupplyConfigManager.loadAllSupplyConfig();
-        }
+        SupplyConfigManager.loadAllSupplyConfig();
 
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");

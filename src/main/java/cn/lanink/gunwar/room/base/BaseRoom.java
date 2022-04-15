@@ -33,7 +33,6 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -554,6 +553,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         return this.playerInvincibleTime.getOrDefault(player, 0);
     }
 
+    public int getPlayerIntegral(@NotNull Player player) {
+        return this.playerIntegralMap.getOrDefault(player, 0);
+    }
+
     /**
      * 增加玩家血量
      * @param player 玩家
@@ -671,6 +674,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         Tools.rePlayerState(player, true);
         Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
+        player.getInventory().addItem(Tools.getItem(13)); //打开商店物品
         switch (this.getPlayers(player)) {
             case RED_DEATH:
                 this.getPlayers().put(player, Team.RED);
@@ -684,12 +688,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 player.teleport(this.getBlueSpawn());
                 Tools.giveItem(this, player, Team.BLUE);
         }
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
-            @Override
-            public void onRun(int i) {
-                Tools.playSound(player, Sound.MOB_ENDERMEN_PORTAL);
-                Tools.playSound(player, Sound.RANDOM_ORB);
-            }
+        //复活音效
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
+            Tools.playSound(player, Sound.MOB_ENDERMEN_PORTAL);
+            Tools.playSound(player, Sound.RANDOM_ORB);
         }, 10);
     }
 

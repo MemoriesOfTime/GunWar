@@ -115,9 +115,13 @@ public class SupplyPageConfig {
                 finalAdvancedInventory.putItem(slotPos, new AdvancedPageLinkItem(linkItem.getItem().setCustomName(supplyPageConfig.getTitle()), supplyPageConfig));
             });
         }
-        this.items.forEach((slotPos, item) -> finalAdvancedInventory.putItem(slotPos, new AdvancedBuyItem(item.getItem().setCustomName(item.getTitle() + "§r\n" + item.getSubTitle()), item)));
+        this.items.forEach((slotPos, item) -> finalAdvancedInventory.putItem(slotPos, new AdvancedBuyItem(item.getItem().setCustomName(item.getTitle() + "§r\n" + item.getSubTitle()), item), true));
 
         return finalAdvancedInventory;
+    }
+
+    public AdvancedFormWindowSimple generateForm() {
+        return this.generateForm(null);
     }
 
     public AdvancedFormWindowSimple generateForm(AdvancedFormWindowSimple parent) {
@@ -137,7 +141,7 @@ public class SupplyPageConfig {
                         return;
                     }
 
-                    int nowIntegral = room.getPlayerIntegralMap().getOrDefault(player, 0);
+                    int nowIntegral = room.getPlayerIntegral(player);
                     if (nowIntegral < itemConfig.getNeedIntegral()) {
                         player.sendTip("您没有足够的积分来购买！");
                     } else {
