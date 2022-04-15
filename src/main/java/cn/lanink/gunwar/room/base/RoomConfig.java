@@ -44,6 +44,9 @@ public class RoomConfig {
     @Getter
     protected ArrayList<String> blueTeamInitialItems = new ArrayList<>();
 
+    @Getter
+    private final int defaultIntegral; //玩家初始积分
+
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
         this.level = level;
         this.levelName = level.getFolderName();
@@ -85,6 +88,8 @@ public class RoomConfig {
             config.save();
         }
         this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
+
+        this.defaultIntegral = config.getInt("defaultIntegral", 1000);
     }
 
     public final void setGameMode(String gameMode) {

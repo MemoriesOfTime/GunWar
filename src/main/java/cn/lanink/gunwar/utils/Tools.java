@@ -33,6 +33,7 @@ import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Tools {
+
+    public static int toInt(Object object) {
+        return new BigDecimal(object.toString()).intValue();
+    }
 
     public static void createBossBar(Player player, ConcurrentHashMap<Player, DummyBossBar> bossBarMap) {
         if (!bossBarMap.containsKey(player)) {

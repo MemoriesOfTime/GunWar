@@ -59,6 +59,8 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     protected final HashMap<Player, Integer> playerInvincibleTime = new HashMap<>(); //玩家无敌时间
+    @Getter
+    protected final HashMap<Player, Integer> playerIntegralMap = new HashMap<>(); //玩家积分
 
     public int redScore; //队伍得分
     public int blueScore;
@@ -196,14 +198,32 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     public void startGame() {
         this.setStatus(ROOM_STATUS_GAME);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent(this));
+
         this.assignTeam();
+
+        for (Player player : this.players.keySet()) {
+            this.playerIntegralMap.put(player, this.getDefaultIntegral());
+        }
+
         this.roundStart();
+
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new TimeTask(this.gunWar, this.getTimeTask()), 20);
+                this.gunWar,
+                new TimeTask(this.gunWar, this.getTimeTask()),
+                20
+        );
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new ScoreBoardTask(this.gunWar, this), 18, true);
+                this.gunWar,
+                new ScoreBoardTask(this.gunWar, this),
+                18,
+                true
+        );
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new ShowHealthTask(this.gunWar, this), 5, true);
+                this.gunWar,
+                new ShowHealthTask(this.gunWar, this),
+                5,
+                true
+        );
     }
 
     public void assignTeam() {
@@ -424,6 +444,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }
         this.players.put(player, Team.NULL);
         this.playerHealth.put(player, 20F);
+        this.playerIntegralMap.put(player, this.getDefaultIntegral());
 
         File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
         PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player);

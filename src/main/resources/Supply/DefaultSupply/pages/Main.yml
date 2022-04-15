@@ -1,0 +1,7 @@
+# 快速购买 默认页面
+---
+title: 商店
+default: true
+linkItems: {}
+items:
+  - AKM

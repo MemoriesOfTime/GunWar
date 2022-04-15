@@ -17,6 +17,7 @@ import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
+import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
@@ -168,6 +169,11 @@ public class GunWar extends PluginBase {
 
         this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
+
+        if (debug) { //TODO 移除debug判断
+            this.getLogger().info("[debug] 实验性玩法：商店配置开始加载");
+            SupplyConfigManager.loadAllSupplyConfig();
+        }
 
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");
