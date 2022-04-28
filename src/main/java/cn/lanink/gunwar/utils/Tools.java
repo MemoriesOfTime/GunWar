@@ -251,47 +251,11 @@ public class Tools {
             items.addAll(room.getBlueTeamInitialItems());
         }
         for (String string : items) {
-            try {
-                String[] s1 = string.split("&");
-                String[] s2 = s1[1].split("@");
-                int count = Integer.parseInt(s2[0]);
-                Item item = null;
-                if ("item".equalsIgnoreCase(s2[1])) {
-                    String[] s3 = s1[0].split(":");
-                    if (s3.length > 1) {
-                        item = Item.get(Integer.parseInt(s3[0]), Integer.parseInt(s3[1]));
-                    }else {
-                        item = Item.get(Integer.parseInt(s3[0]), 0);
-                    }
-                }else {
-                    BaseItem baseItem = null;
-                    switch (ItemManage.getItemType(s2[1])) {
-                        case WEAPON_MELEE:
-                            baseItem = ItemManage.getMeleeWeaponMap().get(s1[0]);
-                            break;
-                        case WEAPON_PROJECTILE:
-                            baseItem = ItemManage.getProjectileWeaponMap().get(s1[0]);
-                            break;
-                        case WEAPON_GUN:
-                            baseItem = ItemManage.getGunWeaponMap().get(s1[0]);
-                            break;
-                        default:
-                            break;
-                    }
-                    if (baseItem != null) {
-                        item = baseItem.getItem();
-                    }
-                }
-                if (item != null) {
-                    item.setCount(count);
-                    player.getInventory().addItem(item);
-                    if (GunWar.debug) {
-                        GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
-                                "物品：" + item.getCustomName() + "数量：" + count);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            Item item = ItemManage.of(string);
+            player.getInventory().addItem(item);
+            if (GunWar.debug) {
+                GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
+                        "物品：" + item.getCustomName() + "数量：" + item.getCount());
             }
         }
     }

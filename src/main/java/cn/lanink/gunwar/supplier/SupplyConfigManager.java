@@ -26,7 +26,7 @@ public class SupplyConfigManager {
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        GUN_WAR.saveResource("Supply/DefaultSupply/items/AKM.yml", GunWar.debug);
+        GUN_WAR.saveResource("Supply/DefaultSupply/items/DemoGun.yml", GunWar.debug);
         GUN_WAR.saveResource("Supply/DefaultSupply/pages/Main.yml", GunWar.debug);
         File[] files = dir.listFiles();
         if (files == null) {

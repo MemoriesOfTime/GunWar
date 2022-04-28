@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.supplier.items;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
@@ -44,13 +45,7 @@ public class SupplyItemConfig {
             GunWar.getInstance().getLogger().warning("商店物品：" + this.fileName + " 需要积分为0！玩家可无限购买！");
         }
 
-        this.items = this.config.getStringList("items").stream()
-                .filter(rawStr -> rawStr.matches("\\d{1,5}:\\d{1,4}x\\d{1,3}"))
-                .map(rawStr -> {
-                    Item item = Item.fromString(rawStr.split("x")[0]);
-                    item.setCount(Tools.toInt(rawStr.split("x")[1]));
-                    return item;
-                }).toArray(Item[]::new);
+        this.items = this.config.getStringList("items").stream().map(ItemManage::of).toArray(Item[]::new);
         if (this.items.length == 0) {
             throw new RuntimeException("商店物品：" + this.fileName + " 无法正确加载物品！请检查配置！");
         }
