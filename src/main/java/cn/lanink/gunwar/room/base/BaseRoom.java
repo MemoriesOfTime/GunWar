@@ -378,6 +378,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         int v = ev.getVictory();
         Tools.cleanEntity(this.getLevel(), true);
         //本回合胜利计算
+        //TODO 回合结算积分
         if (v == 0) {
             int red = 0, blue = 0;
             for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
@@ -711,7 +712,9 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                     p.sendMessage(language.translateString("suicideMessage", player.getName())));
         }else {
             if (damager instanceof Player) {
-                GameRecord.addPlayerRecord((Player) damager, RecordType.KILLS);
+                Player damagerPlayer = (Player) damager;
+                GameRecord.addPlayerRecord(damagerPlayer, RecordType.KILLS);
+                this.getPlayerIntegralMap().put(damagerPlayer, this.getPlayerIntegral(damagerPlayer) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
             }
             player.sendTitle(language.translateString("titleDeathTitle"),
                     language.translateString("titleDeathSubtitle", damager.getName()),

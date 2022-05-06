@@ -283,10 +283,6 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
         return this.entityGunWarBombBlock;
     }
 
-    public void setRoundIsEnd(boolean roundIsEnd) {
-        this.roundIsEnd = roundIsEnd;
-    }
-
     /**
      * 炸弹爆炸
      */

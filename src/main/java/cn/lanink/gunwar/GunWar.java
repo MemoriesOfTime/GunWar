@@ -13,6 +13,7 @@ import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
@@ -162,6 +163,8 @@ public class GunWar extends PluginBase {
         this.restoreWorld = this.config.getBoolean("restoreWorld");
         this.enableAloneHealth = this.config.getBoolean("enableAloneHealth", true);
         this.enableOtherWeaponDamage = this.config.getBoolean("enableOtherWeaponDamage", true);
+
+        IntegralConfig.init(this.config);
 
         this.gameRecord = new Config(this.getDataFolder() + "/GameRecord.yml", Config.YAML);
 
