@@ -133,8 +133,17 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             case Item.SHULKER_BOX:
             case Item.UNDYED_SHULKER_BOX:
             case Item.FURNACE:
+            case Item.BURNING_FURNACE:
+            case Item.DISPENSER:
+            case Item.DROPPER:
+            case Item.HOPPER:
+            case Item.BREWING_STAND:
+            case Item.CAULDRON:
+            case Item.BEACON:
+            case Item.FLOWER_POT:
+            case Item.JUKEBOX:
                 event.setCancelled(true);
-                return;
+                break;
             default:
                 break;
         }
