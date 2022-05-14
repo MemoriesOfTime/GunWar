@@ -3,9 +3,9 @@ package cn.lanink.gunwar.tasks.game;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.room.base.BaseRespawnModeRoom;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.Team;
-import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -38,8 +38,8 @@ public class ShowHealthTask extends PluginTask<GunWar> {
             switch (entry.getValue()) {
                 case RED_DEATH:
                 case BLUE_DEATH:
-                    if (this.room instanceof CTFModeRoom) {
-                        int respawnTime = ((CTFModeRoom) this.room).getPlayerRespawnTime(entry.getKey());
+                    if (this.room instanceof BaseRespawnModeRoom) {
+                        int respawnTime = ((BaseRespawnModeRoom) this.room).getPlayerRespawnTime(entry.getKey());
                         bossBar.setText(this.language.translateString("gameTimeRespawnBoosBar", respawnTime));
                         bossBar.setLength(100 - (respawnTime / 20F * 100));
                         break;

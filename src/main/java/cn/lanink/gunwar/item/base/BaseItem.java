@@ -20,12 +20,7 @@ public abstract class BaseItem {
 
     public BaseItem(String name, Config config) {
         this.name = name;
-        String[] stringID = config.getString("id").split(":");
-        if (stringID.length > 1) {
-            this.item = Item.get(Integer.parseInt(stringID[0]), Integer.parseInt(stringID[1]));
-        }else {
-            this.item = Item.get(Integer.parseInt(stringID[0]));
-        }
+        this.item = Item.fromString(config.getString("id"));
         this.item.setCustomName(config.getString("showName", this.item.getName()));
         String lore = config.getString("lore");
         if (!"".equals(lore.trim())) {

@@ -16,6 +16,7 @@ import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
+import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
@@ -87,7 +88,20 @@ public class GunWar extends PluginBase {
         this.serverWorldPath = this.getServer().getFilePath() + "/worlds/";
         this.worldBackupPath = this.getDataFolder() + "/RoomLevelBackup/";
         this.roomConfigPath = this.getDataFolder() + "/Rooms/";
+
         this.saveDefaultConfig();
+        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
+        if (this.config.getBoolean("debug", false)) {
+            debug = true;
+            this.getLogger().warning("警告：您开启了debug模式！");
+            this.getLogger().warning("Warning: You have turned on debug mode!");
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException ignored) {
+
+            }
+        }
+
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
         File file3 = new File(this.getDataFolder() + "/Language");
@@ -113,6 +127,7 @@ public class GunWar extends PluginBase {
         registerRoom("classic", ClassicModeRoom.class);
         registerRoom("ctf", CTFModeRoom.class);
         registerRoom("blasting", BlastingModeRoom.class);
+        registerRoom("team", TeamModeRoom.class);
     }
 
     @Override
@@ -120,6 +135,7 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§l§e 插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         this.getLogger().info("§l§e https://github.com/lt-name/GunWar_Nukkit");
         this.getLogger().info("§l§e Version: " + VERSION);
+
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
         try {
@@ -140,17 +156,6 @@ public class GunWar extends PluginBase {
             }
         } catch (Exception ignored) {
 
-        }
-        this.config = new Config(this.getDataFolder() + "/config.yml", Config.YAML);
-        if (this.config.getBoolean("debug", false)) {
-            debug = true;
-            this.getLogger().warning("警告：您开启了debug模式！");
-            this.getLogger().warning("Warning: You have turned on debug mode!");
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ignored) {
-
-            }
         }
 
         this.restoreWorld = this.config.getBoolean("restoreWorld");
@@ -360,7 +365,6 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         this.getLogger().info("§e开始加载资源文件");
         //语言文件
-        this.saveResource("Language/chs.yml", "/Language/cache/new_chs.yml", true);
         this.saveResource("Language/chs.yml", false);
         this.saveResource("Language/kor.yml", false);
         this.saveResource("Language/eng.yml", false);
@@ -371,17 +375,16 @@ public class GunWar extends PluginBase {
         if (languageFile.exists()) {
             this.getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
-            if (this.getResource("Language/" + s + ".yml") != null) {
-                this.saveResource("Language/" + s + ".yml", "/Language/cache/new.yml", true);
-                this.language.update(new Config(this.getDataFolder() + "/Language/cache/new.yml", Config.YAML));
+            Config newConfig = new Config(Config.YAML);
+            if (newConfig.load(this.getResource("Language/" + s + ".yml"))) {
+                this.language.update(newConfig);
                 if (GunWar.debug) {
                     this.getLogger().info("[debug] 语言文件：" + s + " 更新完成");
                 }
             }
-            this.language.update(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml", Config.YAML));
         }else {
             this.getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
-            this.language = new Language(new Config(this.getDataFolder() + "/Language/cache/new_chs.yml"));
+            this.language = new Language(new Config(this.getDataFolder() + "/Language/chs.yml"));
         }
         //加载旗帜皮肤
         this.saveResource("Resources/Flag/Flag.json", false);

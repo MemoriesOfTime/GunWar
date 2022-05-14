@@ -1,8 +1,8 @@
 package cn.lanink.gunwar.room.classic;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
-import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.ITimeTask;
+import cn.lanink.gunwar.room.base.BaseRoundModeRoom;
 import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
@@ -10,7 +10,7 @@ import cn.nukkit.utils.Config;
 /**
  * 房间
  */
-public class ClassicModeRoom extends BaseRoom {
+public class ClassicModeRoom extends BaseRoundModeRoom {
 
     public ClassicModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);

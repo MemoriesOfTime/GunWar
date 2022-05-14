@@ -4,7 +4,7 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
-import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.BaseRespawnModeRoom;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagPickupCheckTask;
@@ -14,21 +14,17 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author lt_name
  */
-public class CTFModeRoom extends BaseRoom {
+public class CTFModeRoom extends BaseRespawnModeRoom {
 
-    private final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
     public Player haveRedFlag;
     public Player haveBlueFlag;
     public EntityFlagStand redFlagStand;
@@ -59,22 +55,11 @@ public class CTFModeRoom extends BaseRoom {
             this.checkSlownessEffect(this.haveBlueFlag);
         }
 
-        int red = 0, blue = 0;
-        for (Map.Entry<Player, Integer> entry : this.getPlayerRespawnTime().entrySet()) {
-            if (entry.getValue() > 0) {
-                entry.setValue(entry.getValue() - 1);
-                if (entry.getValue() == 0) {
-                    this.playerRespawn(entry.getKey());
-                }else if (entry.getValue() <= 5) {
-                    Tools.playSound(entry.getKey(), Sound.RANDOM_CLICK);
-                }
-            }
-        }
-
-        if (victoryJudgment()) {
+        if (this.victoryJudgment()) {
             return;
         }
 
+        int red = 0, blue = 0;
         for (Team team : this.getPlayers().values()) {
             switch (team) {
                 case RED:
@@ -139,9 +124,6 @@ public class CTFModeRoom extends BaseRoom {
         this.blueFlagStand = null;
         this.redFlag = null;
         this.blueFlag = null;
-        if (this.playerRespawnTime != null) {
-            this.playerRespawnTime.clear();
-        }
         this.overtime = false;
     }
 
@@ -198,25 +180,9 @@ public class CTFModeRoom extends BaseRoom {
         this.roundStart();
     }
 
-    /**
-     * 获取玩家重生时间
-     * @return 玩家重生时间Map
-     */
-    public HashMap<Player, Integer> getPlayerRespawnTime() {
-        return this.playerRespawnTime;
-    }
-
-    public int getPlayerRespawnTime(Player player) {
-        if (this.playerRespawnTime.containsKey(player)) {
-            return this.playerRespawnTime.get(player);
-        }
-        return 0;
-    }
-
     @Override
     public void playerDeath(Player player, Entity damager, String killMessage) {
         super.playerDeath(player, damager, killMessage);
-        this.getPlayerRespawnTime().put(player, 20);
         if (this.haveRedFlag == player) {
             this.haveRedFlag = null;
             this.redFlag.y -= 1.5;
