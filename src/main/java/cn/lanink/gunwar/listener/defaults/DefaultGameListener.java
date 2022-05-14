@@ -62,6 +62,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 return;
             }
             if (room.getStatus() == BaseRoom.ROOM_STATUS_GAME &&
+                    event.getRegainReason() != EntityRegainHealthEvent.CAUSE_REGEN &&
                     event.getRegainReason() != EntityRegainHealthEvent.CAUSE_EATING) {
                 room.addHealth(player, event.getAmount());
             }
