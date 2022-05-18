@@ -2,6 +2,7 @@ package cn.lanink.gunwar.tasks.game.blasting;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.IntegralConfig;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -60,8 +61,7 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
             if (this.room.getEntityGunWarBombBlock() != null) {
                 this.room.getEntityGunWarBombBlock().close();
             }
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.owner,
-                    () -> this.room.roundEnd(2), 60);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.owner, () -> this.room.roundEnd(Team.BLUE), 60);
 
             this.room.getPlayerIntegralMap().put(this.player, this.room.getPlayerIntegral(this.player) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.DESTROY_SCORE));
         }else {

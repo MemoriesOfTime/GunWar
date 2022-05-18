@@ -135,16 +135,16 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
     }
 
     @Override
-    public void roundEnd(int victory) {
+    public void roundEnd(Team victory) {
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
         }
-        int v = ev.getVictory();
+        Team v = ev.getVictoryTeam();
         Tools.cleanEntity(this.getLevel(), true);
         //本回合胜利计算
-        if (v == 0) {
+        if (v == Team.NULL) {
             if ((this.redScore - this.blueScore) > 0) {
                 this.setStatus(3);
                 Server.getInstance().getScheduler().scheduleRepeatingTask(
@@ -166,7 +166,7 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
                         this.gunWar, new VictoryTask(this.gunWar, this, 0), 20);
                 return;
             }
-        }else if (v == 1) {
+        }else if (v == Team.RED) {
             this.redScore++;
             Tools.sendRoundVictoryTitle(this, 1);
         }else {

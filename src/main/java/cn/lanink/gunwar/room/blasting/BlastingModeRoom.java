@@ -112,7 +112,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
             }
 
             if (this.gameTime <= 0 && (this.entityGunWarBomb == null || this.entityGunWarBomb.isClosed())) {
-                this.roundEnd(2);
+                this.roundEnd(Team.BLUE);
                 this.gameTime = this.getSetGameTime();
                 return;
             }
@@ -127,11 +127,11 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
             }
             if (red == 0) {
                 if (this.entityGunWarBomb == null) {
-                    this.roundEnd(2);
+                    this.roundEnd(Team.BLUE);
                     this.gameTime = this.getSetGameTime();
                 }
             } else if (blue == 0) {
-                this.roundEnd(1);
+                this.roundEnd(Team.RED);
                 this.gameTime = this.getSetGameTime();
             }
         }
@@ -235,7 +235,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
     }
 
     @Override
-    public void roundEnd(int victory) {
+    public void roundEnd(Team victory) {
         if (this.entityGunWarBomb != null) {
             this.entityGunWarBomb.close();
         }
@@ -292,7 +292,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
         for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
             entry.getKey().removeBossBar(entry.getValue().getBossBarId());
         }
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> this.roundEnd(1), 60);
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> this.roundEnd(Team.RED), 60);
     }
 
     /**

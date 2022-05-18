@@ -34,10 +34,10 @@ public class ClassicModeRoom extends BaseRoundModeRoom {
                 }
             }
             if (red == 0) {
-                this.roundEnd(2);
+                this.roundEnd(Team.BLUE);
                 this.gameTime = this.getSetGameTime();
             } else if (blue == 0) {
-                this.roundEnd(1);
+                this.roundEnd(Team.RED);
                 this.gameTime = this.getSetGameTime();
             }
         }

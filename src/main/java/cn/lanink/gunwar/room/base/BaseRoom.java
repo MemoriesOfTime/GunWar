@@ -165,7 +165,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
 
         if(!this.roundEnd) {
             if (this.gameTime <= 0) {
-                this.roundEnd(0);
+                this.roundEnd(Team.NULL);
                 this.gameTime = this.getSetGameTime();
                 return;
             }
@@ -369,18 +369,24 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }
     }
 
-    public void roundEnd(int victory) {
+    public void roundEnd(Team victory) {
+        if (victory == Team.RED_DEATH) {
+            victory = Team.RED;
+        }else if (victory == Team.BLUE_DEATH) {
+            victory = Team.BLUE;
+        }
+
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
         }
         this.roundEnd = true;
-        int v = ev.getVictory();
+        Team v = ev.getVictoryTeam();
         Tools.cleanEntity(this.getLevel(), true);
         //本回合胜利计算
         //TODO 回合结算积分
-        if (v == 0) {
+        if (v == Team.NULL) { //平局
             int red = 0, blue = 0;
             for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
                 if (entry.getValue() == Team.RED) {
@@ -400,26 +406,27 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 this.blueScore++;
                 Tools.sendRoundVictoryTitle(this, 2);
             }
-        }else if (v == 1) {
+        }else if (v == Team.RED) { //红队胜利
             this.redScore++;
             Tools.sendRoundVictoryTitle(this, 1);
-        }else {
+        }else { //蓝队胜利
             this.blueScore++;
             Tools.sendRoundVictoryTitle(this, 2);
         }
+
         //房间胜利计算
         if (this.redScore >= this.victoryScore) {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
             return;
-        }
-        if (this.blueScore >= this.victoryScore) {
+        }else if (this.blueScore >= this.victoryScore) {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
             return;
         }
+
         //延迟3秒开始下一回合
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, this::roundStart, 60);
     }

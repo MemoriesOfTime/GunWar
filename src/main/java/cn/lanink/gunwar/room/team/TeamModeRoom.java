@@ -29,9 +29,9 @@ public class TeamModeRoom extends BaseRespawnModeRoom {
         super.timeTask();
         if (!this.isRoundEnd()) {
             if (this.blueScore >= this.victoryScore) {
-                this.roundEnd(2);
+                this.roundEnd(Team.BLUE);
             } else if (this.redScore >= this.victoryScore) {
-                this.roundEnd(1);
+                this.roundEnd(Team.RED);
             }
         }
     }
