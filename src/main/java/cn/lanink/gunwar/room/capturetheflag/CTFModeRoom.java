@@ -136,6 +136,12 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
 
     @Override
     public void roundEnd(Team victory) {
+        if (victory == Team.RED_DEATH) {
+            victory = Team.RED;
+        }else if (victory == Team.BLUE_DEATH) {
+            victory = Team.BLUE;
+        }
+
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
@@ -174,7 +180,7 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
             Tools.sendRoundVictoryTitle(this, 2);
         }
         //房间胜利计算
-        if (victoryJudgment()) {
+        if (this.victoryJudgment()) {
             return;
         }
         this.roundStart();
