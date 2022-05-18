@@ -64,7 +64,8 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     public int redScore; //队伍得分
     public int blueScore;
 
-    protected boolean roundIsEnd = false; //防止重复执行回合结束方法
+    @Getter
+    protected boolean roundEnd = false; //防止重复执行回合结束方法
 
     /**
      * 初始化
@@ -162,7 +163,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             }
         }
 
-        if(!this.roundIsEnd) {
+        if(!this.roundEnd) {
             if (this.gameTime <= 0) {
                 this.roundEnd(0);
                 this.gameTime = this.getSetGameTime();
@@ -191,7 +192,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         this.blueScore = 0;
         this.players.clear();
         this.playerHealth.clear();
-        this.roundIsEnd = false;
+        this.roundEnd = false;
     }
 
     public void startGame() {
@@ -361,7 +362,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             return;
         }
         Tools.cleanEntity(this.getLevel(), true);
-        this.roundIsEnd = false;
+        this.roundEnd = false;
         this.gameTime = this.getSetGameTime();
         for (Player player : this.getPlayers().keySet()) {
             this.playerRespawn(player);
@@ -374,7 +375,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         if (ev.isCancelled()) {
             return;
         }
-        this.roundIsEnd = true;
+        this.roundEnd = true;
         int v = ev.getVictory();
         Tools.cleanEntity(this.getLevel(), true);
         //本回合胜利计算

@@ -21,13 +21,13 @@ public class TeamModeRoom extends BaseRespawnModeRoom {
      */
     public TeamModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
-        this.respawnTime = 3; //团队模式缩短复活时间
+        this.respawnNeedTime = 3; //团队模式缩短复活时间
     }
 
     @Override
     public void timeTask() {
         super.timeTask();
-        if (!this.roundIsEnd) {
+        if (!this.isRoundEnd()) {
             if (this.blueScore >= this.victoryScore) {
                 this.roundEnd(2);
             } else if (this.redScore >= this.victoryScore) {

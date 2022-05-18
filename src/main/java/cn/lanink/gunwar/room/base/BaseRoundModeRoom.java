@@ -23,7 +23,7 @@ public abstract class BaseRoundModeRoom extends BaseRoom {
     }
 
     public void setRoundIsEnd(boolean roundIsEnd) {
-        this.roundIsEnd = roundIsEnd;
+        this.roundEnd = roundIsEnd;
     }
 
     //TODO 将一些多回合相关操作移到这个类！

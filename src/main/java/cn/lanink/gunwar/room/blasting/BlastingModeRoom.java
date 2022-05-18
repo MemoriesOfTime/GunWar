@@ -66,7 +66,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
             this.endGame();
             return;
         }
-        if (!this.roundIsEnd) {
+        if (!this.isRoundEnd()) {
             //Boss血条显示炸弹爆炸倒计时
             if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
                     this.entityGunWarBomb.getExplosionTime() > 0) {
@@ -287,7 +287,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
      * 炸弹爆炸
      */
     public void bombExplosion() {
-        this.roundIsEnd = true;
+        this.roundEnd = true;
         Tools.sendTitle(this, this.language.translateString("game_blasting_bombHasExploded"));
         for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
             entry.getKey().removeBossBar(entry.getValue().getBossBarId());
