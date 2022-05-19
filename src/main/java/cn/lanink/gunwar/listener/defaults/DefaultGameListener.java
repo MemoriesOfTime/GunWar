@@ -14,6 +14,7 @@ import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.Team;
+import cn.lanink.gunwar.supplier.pages.SupplyPageConfig;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -132,8 +133,17 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             case Item.SHULKER_BOX:
             case Item.UNDYED_SHULKER_BOX:
             case Item.FURNACE:
+            case Item.BURNING_FURNACE:
+            case Item.DISPENSER:
+            case Item.DROPPER:
+            case Item.HOPPER:
+            case Item.BREWING_STAND:
+            case Item.CAULDRON:
+            case Item.BEACON:
+            case Item.FLOWER_POT:
+            case Item.JUKEBOX:
                 event.setCancelled(true);
-                return;
+                break;
             default:
                 break;
         }
@@ -145,6 +155,19 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (tag == null) {
             return;
         }
+
+        //商店
+        if (tag.getBoolean("isGunWarItem") && tag.getInt("GunWarItemType") == 13) {
+            SupplyPageConfig defaultPageConfig = room.getSupplyConfig().getDefaultPageConfig();
+            if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
+                player.addWindow(defaultPageConfig.generateWindow());
+            }else {
+                player.showFormWindow(defaultPageConfig.generateForm());
+            }
+            event.setCancelled(true);
+            return;
+        }
+
         if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             switch (tag.getInt("GunWarItemType")) {
                 //退出房间

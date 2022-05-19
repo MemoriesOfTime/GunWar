@@ -4,6 +4,7 @@ import cn.lanink.gamecore.GameCore;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
+import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -79,6 +80,8 @@ public class PlantBombTask extends PluginTask<GunWar> {
                 }
             }, 10);
             this.room.setEntityGunWarBombBlock(entityBombBlock);
+
+            this.room.getPlayerIntegralMap().put(this.player, this.room.getPlayerIntegral(this.player) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.BOMB_SCORE));
         }else {
             this.player.sendTitle("", this.owner.getLanguage().translateString("game_blasting_cancelPlantBomb"));
         }

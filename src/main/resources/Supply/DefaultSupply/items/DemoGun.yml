@@ -1,0 +1,7 @@
+title: DemoGun
+subTitle: "购买需要200积分"
+items:
+  - "35:0&1@item"
+  - "DemoGun&1@weapon_gun"
+needIntegral: 200
+pos: 0

@@ -19,3 +19,16 @@ cmdWhitelist:
 失败执行命令:
   - me 我失败了
   - tell "@p" 很遗憾你失败了！&con
+
+#游戏内积分 （商店用）
+integral:
+  #击杀敌人获得积分
+  KILL_SCORE: 10
+  #安放炸弹获得积分 （仅爆破模式）
+  BOMB_SCORE: 20
+  #拆除炸弹获得积分 （仅爆破模式）
+  DESTROY_SCORE: 20
+  #回合胜利获得积分
+  ROUND_WIN_SCORE: 100
+  #回合失败获得积分
+  ROUND_LOSE_SCORE: 50

@@ -33,7 +33,6 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -59,11 +58,14 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     protected final HashMap<Player, Integer> playerInvincibleTime = new HashMap<>(); //玩家无敌时间
+    @Getter
+    protected final HashMap<Player, Integer> playerIntegralMap = new HashMap<>(); //玩家积分
 
     public int redScore; //队伍得分
     public int blueScore;
 
-    protected boolean roundIsEnd = false; //防止重复执行回合结束方法
+    @Getter
+    private boolean roundEnd = false; //防止重复执行回合结束方法
 
     /**
      * 初始化
@@ -161,9 +163,9 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             }
         }
 
-        if(!this.roundIsEnd) {
+        if(!this.roundEnd) {
             if (this.gameTime <= 0) {
-                this.roundEnd(0);
+                this.roundEnd(Team.NULL);
                 this.gameTime = this.getSetGameTime();
                 return;
             }
@@ -190,20 +192,38 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         this.blueScore = 0;
         this.players.clear();
         this.playerHealth.clear();
-        this.roundIsEnd = false;
+        this.roundEnd = false;
     }
 
     public void startGame() {
         this.setStatus(ROOM_STATUS_GAME);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomStartEvent(this));
+
         this.assignTeam();
+
+        for (Player player : this.players.keySet()) {
+            this.playerIntegralMap.put(player, this.getDefaultIntegral());
+        }
+
         this.roundStart();
+
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new TimeTask(this.gunWar, this.getTimeTask()), 20);
+                this.gunWar,
+                new TimeTask(this.gunWar, this.getTimeTask()),
+                20
+        );
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new ScoreBoardTask(this.gunWar, this), 18, true);
+                this.gunWar,
+                new ScoreBoardTask(this.gunWar, this),
+                18,
+                true
+        );
         Server.getInstance().getScheduler().scheduleRepeatingTask(
-                this.gunWar, new ShowHealthTask(this.gunWar, this), 5, true);
+                this.gunWar,
+                new ShowHealthTask(this.gunWar, this),
+                5,
+                true
+        );
     }
 
     public void assignTeam() {
@@ -282,15 +302,17 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         int oldStatus = this.getStatus();
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomEndEvent(this, victory));
-        LinkedList<Player> victoryPlayers = new LinkedList<>();
-        LinkedList<Player> defeatPlayers = new LinkedList<>();
-        if (this.getPlayers().size() > 0) {
+
+        if (!this.getPlayers().isEmpty()) {
             for (Player p1 : this.players.keySet()) {
                 for (Player p2 : this.players.keySet()) {
                     p1.showPlayer(p2);
                     p2.showPlayer(p1);
                 }
             }
+
+            LinkedList<Player> victoryPlayers = new LinkedList<>();
+            LinkedList<Player> defeatPlayers = new LinkedList<>();
             for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
                 if (victory == 1) {
                     if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
@@ -306,24 +328,28 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                     }
                 }
             }
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
+                List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
+                List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
+                if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
+                    for (Player player : victoryPlayers) {
+                        Tools.cmd(player, vCmds);
+                    }
+                }
+                if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
+                    for (Player player : defeatPlayers) {
+                        Tools.cmd(player, dCmds);
+                    }
+                }
+            }, 10);
+
             for (Player player : new HashSet<>(this.getPlayers().keySet())) {
                 this.quitRoom(player);
             }
         }
+
         this.initData();
         Tools.cleanEntity(getLevel(), true);
-        List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
-        List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
-        if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
-            for (Player player : victoryPlayers) {
-                Tools.cmd(player, vCmds);
-            }
-        }
-        if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
-            for (Player player : defeatPlayers) {
-                Tools.cmd(player, dCmds);
-            }
-        }
         this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
         switch (oldStatus) {
             case IRoomStatus.ROOM_STATUS_GAME:
@@ -335,6 +361,14 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }
     }
 
+    protected final void setRoundEnd(boolean roundEnd) throws IllegalArgumentException {
+        //正常情况下只有BaseRoundModeRoom类型的房间才需要设置此参数
+        if (!(this instanceof BaseRoundModeRoom)) {
+            throw new IllegalArgumentException();
+        }
+        this.roundEnd = roundEnd;
+    }
+
     public void roundStart() {
         GunWarRoomRoundStartEvent ev = new GunWarRoomRoundStartEvent(this);
         Server.getInstance().getPluginManager().callEvent(ev);
@@ -342,24 +376,31 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             return;
         }
         Tools.cleanEntity(this.getLevel(), true);
-        this.roundIsEnd = false;
+        this.roundEnd = false;
         this.gameTime = this.getSetGameTime();
         for (Player player : this.getPlayers().keySet()) {
             this.playerRespawn(player);
         }
     }
 
-    public void roundEnd(int victory) {
+    public void roundEnd(Team victory) {
+        if (victory == Team.RED_DEATH) {
+            victory = Team.RED;
+        }else if (victory == Team.BLUE_DEATH) {
+            victory = Team.BLUE;
+        }
+
         GunWarRoomRoundEndEvent ev = new GunWarRoomRoundEndEvent(this, victory);
         Server.getInstance().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
         }
-        this.roundIsEnd = true;
-        int v = ev.getVictory();
+        this.roundEnd = true;
+        Team v = ev.getVictoryTeam();
         Tools.cleanEntity(this.getLevel(), true);
+
         //本回合胜利计算
-        if (v == 0) {
+        if (v == Team.NULL) { //平局
             int red = 0, blue = 0;
             for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
                 if (entry.getValue() == Team.RED) {
@@ -371,34 +412,41 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             if (red == blue) {
                 this.redScore++;
                 this.blueScore++;
-                Tools.sendRoundVictoryTitle(this, 0);
+                Tools.sendRoundVictoryTitle(this, Team.NULL);
+                Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
+                Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
             }else if (red > blue) {
                 this.redScore++;
-                Tools.sendRoundVictoryTitle(this, 1);
+                Tools.sendRoundVictoryTitle(this, Team.RED);
+                Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
             }else {
                 this.blueScore++;
-                Tools.sendRoundVictoryTitle(this, 2);
+                Tools.sendRoundVictoryTitle(this, Team.BLUE);
+                Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
             }
-        }else if (v == 1) {
+        }else if (v == Team.RED) { //红队胜利
             this.redScore++;
-            Tools.sendRoundVictoryTitle(this, 1);
-        }else {
+            Tools.sendRoundVictoryTitle(this, Team.RED);
+            Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
+        }else { //蓝队胜利
             this.blueScore++;
-            Tools.sendRoundVictoryTitle(this, 2);
+            Tools.sendRoundVictoryTitle(this, Team.BLUE);
+            Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
         }
+
         //房间胜利计算
         if (this.redScore >= this.victoryScore) {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
             return;
-        }
-        if (this.blueScore >= this.victoryScore) {
+        }else if (this.blueScore >= this.victoryScore) {
             this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
             return;
         }
+
         //延迟3秒开始下一回合
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, this::roundStart, 60);
     }
@@ -424,6 +472,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }
         this.players.put(player, Team.NULL);
         this.playerHealth.put(player, 20F);
+        this.playerIntegralMap.put(player, this.getDefaultIntegral());
 
         File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
         PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player);
@@ -517,6 +566,19 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         return set;
     }
 
+    public Set<Player> getPlayersAccurate(Team team) {
+        HashSet<Player> set = new HashSet<>();
+        this.getPlayers().entrySet().stream()
+                .filter(
+                        entry -> (team == Team.NULL && entry.getValue() == Team.NULL) ||
+                                (team == Team.RED && entry.getValue() == Team.RED) ||
+                                (team == Team.RED_DEATH && entry.getValue() == Team.RED_DEATH) ||
+                                (team == Team.BLUE && entry.getValue() == Team.BLUE) ||
+                                (team == Team.BLUE_DEATH && entry.getValue() == Team.BLUE_DEATH)
+                ).forEach(entry -> set.add(entry.getKey()));
+        return set;
+    }
+
     /**
      * 获取玩家血量Map
      * @return 玩家血量Map
@@ -531,6 +593,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
 
     public int getPlayerInvincibleTime(@NotNull Player player) {
         return this.playerInvincibleTime.getOrDefault(player, 0);
+    }
+
+    public int getPlayerIntegral(@NotNull Player player) {
+        return this.playerIntegralMap.getOrDefault(player, 0);
     }
 
     /**
@@ -650,6 +716,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         Tools.rePlayerState(player, true);
         Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
+        player.getInventory().addItem(Tools.getItem(13)); //打开商店物品
         switch (this.getPlayers(player)) {
             case RED_DEATH:
                 this.getPlayers().put(player, Team.RED);
@@ -663,12 +730,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 player.teleport(this.getBlueSpawn());
                 Tools.giveItem(this, player, Team.BLUE);
         }
-        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
-            @Override
-            public void onRun(int i) {
-                Tools.playSound(player, Sound.MOB_ENDERMEN_PORTAL);
-                Tools.playSound(player, Sound.RANDOM_ORB);
-            }
+        //复活音效
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
+            Tools.playSound(player, Sound.MOB_ENDERMEN_PORTAL);
+            Tools.playSound(player, Sound.RANDOM_ORB);
         }, 10);
     }
 
@@ -688,7 +753,9 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                     p.sendMessage(language.translateString("suicideMessage", player.getName())));
         }else {
             if (damager instanceof Player) {
-                GameRecord.addPlayerRecord((Player) damager, RecordType.KILLS);
+                Player damagerPlayer = (Player) damager;
+                GameRecord.addPlayerRecord(damagerPlayer, RecordType.KILLS);
+                this.getPlayerIntegralMap().put(damagerPlayer, this.getPlayerIntegral(damagerPlayer) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
             }
             player.sendTitle(language.translateString("titleDeathTitle"),
                     language.translateString("titleDeathSubtitle", damager.getName()),
