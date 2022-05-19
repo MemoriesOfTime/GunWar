@@ -42,18 +42,8 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             }
             for (Player player : this.room.getPlayers().keySet()) {
                 LinkedList<String> ms = new LinkedList<>();
-                String team;
-                switch (this.room.getPlayers(player)) {
-                    case RED:
-                    case RED_DEATH:
-                        team = this.language.translateString("teamNameRed");
-                        break;
-                    default:
-                        team = this.language.translateString("teamNameBlue");
-                        break;
-                }
                 for (String string : this.language.translateString("gameTimeScoreBoard").split("\n")) {
-                    ms.add(string.replace("%team%", team)
+                    ms.add(string.replace("%team%", this.room.getPlayerTeam(player).getShowName())
                             .replace("%health%", String.format("%.1f", room.getPlayerHealth().getOrDefault(player, 0F)))
                             .replace("%time%", room.gameTime + "")
                             .replace("%red%", red + "")

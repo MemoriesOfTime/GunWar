@@ -544,7 +544,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
      * @param player 玩家
      * @return 玩家身份
      */
-    public Team getPlayers(Player player) {
+    public Team getPlayerTeam(Player player) {
         return this.players.getOrDefault(player, Team.NULL);
     }
 
@@ -717,7 +717,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
         player.getInventory().addItem(Tools.getItem(13)); //打开商店物品
-        switch (this.getPlayers(player)) {
+        switch (this.getPlayerTeam(player)) {
             case RED_DEATH:
                 this.getPlayers().put(player, Team.RED);
             case RED:
@@ -773,9 +773,9 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, true).update();
         player.setGamemode(Player.VIEW);
         Tools.hidePlayer(this, player);
-        if (this.getPlayers(player) == Team.RED) {
+        if (this.getPlayerTeam(player) == Team.RED) {
             this.getPlayers().put(player, Team.RED_DEATH);
-        }else if (this.getPlayers(player) == Team.BLUE) {
+        }else if (this.getPlayerTeam(player) == Team.BLUE) {
             this.getPlayers().put(player, Team.BLUE_DEATH);
         }
         this.corpseSpawn(player);
@@ -804,7 +804,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 .putString("ModelId", skin.getSkinId()));
         nbt.putFloat("Scale", -1.0F);
         nbt.putString("playerName", player.getName());
-        EntityPlayerCorpse entity = new EntityPlayerCorpse(player.getChunk(), nbt, this.getPlayers(player));
+        EntityPlayerCorpse entity = new EntityPlayerCorpse(player.getChunk(), nbt, this.getPlayerTeam(player));
         entity.setSkin(skin);
         entity.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
         entity.setGliding(true);
