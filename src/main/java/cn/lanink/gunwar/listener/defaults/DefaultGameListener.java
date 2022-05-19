@@ -340,7 +340,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         Player player = event.getPlayer();
         for (BaseRoom room : this.getListenerRooms().values()) {
             if (room.isPlaying(player)) {
-                switch (room.getPlayers(player)) {
+                switch (room.getPlayerTeam(player)) {
                     case RED:
                     case RED_DEATH:
                         event.setRespawnPosition(room.getRedSpawn());

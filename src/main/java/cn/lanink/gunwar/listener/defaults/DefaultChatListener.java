@@ -68,10 +68,10 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
             return;
         }
         message = this.gunWar.getLanguage().translateString("playerTeamChat", player.getName(), message);
-        Team team = room.getPlayers(player);
+        Team team = room.getPlayerTeam(player);
         for (Player target : room.getPlayers().keySet()) {
             if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
-                Team targetTeam = room.getPlayers(target);
+                Team targetTeam = room.getPlayerTeam(target);
                 if (team == targetTeam) {
                     target.sendMessage(message);
                 } else if (team == Team.RED || team == Team.RED_DEATH) {

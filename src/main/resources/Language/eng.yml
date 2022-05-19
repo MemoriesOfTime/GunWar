@@ -117,8 +117,6 @@ waitScoreBoard: |-
   Players: §a %playerNumber%/10
   Two players required
   Waiting for players
-waitTimeBottom: "§aThe game still has: %1% seconds!"
-waitBottom: "§cWaiting for players to join, currently there are: %playerNumber% players"
 gameTimeScoreBoard: |-
   §l§aTeam: %team%
   §l§aHealth:§e %health%

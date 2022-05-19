@@ -47,25 +47,9 @@ public class WaitTask extends PluginTask<GunWar> {
                     Tools.playSound(this.room, Sound.RANDOM_CLICK);
                 }
                 for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
-                    entry.getKey().sendActionBar(
-                            this.language.translateString("waitTimeBottom", room.getPlayers().size(), this.room.waitTime));
-                    String team;
-                    switch (entry.getValue()) {
-                        case RED:
-                        case RED_DEATH:
-                            team = language.translateString("teamNameRed");
-                            break;
-                        case BLUE:
-                        case BLUE_DEATH:
-                            team = language.translateString("teamNameBlue");
-                            break;
-                        default:
-                            team = language.translateString("noTeamSelect");
-                            break;
-                    }
                     LinkedList<String> ms = new LinkedList<>();
                     for (String string : this.language.translateString("waitTimeScoreBoard").split("\n")) {
-                        ms.add(string.replace("%team%", team)
+                        ms.add(string.replace("%team%", entry.getValue().getShowName())
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
@@ -80,24 +64,9 @@ public class WaitTask extends PluginTask<GunWar> {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
             for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
-                entry.getKey().sendActionBar(language.translateString("waitBottom", this.room.getPlayers().size()));
-                String team;
-                switch (entry.getValue()) {
-                    case RED:
-                    case RED_DEATH:
-                        team = language.translateString("teamNameRed");
-                        break;
-                    case BLUE:
-                    case BLUE_DEATH:
-                        team = language.translateString("teamNameBlue");
-                        break;
-                    default:
-                        team = language.translateString("noTeamSelect");
-                        break;
-                }
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : language.translateString("waitScoreBoard").split("\n")) {
-                    ms.add(string.replace("%team%", team)
+                    ms.add(string.replace("%team%", entry.getValue().getShowName())
                             .replace("%playerNumber%", room.getPlayers().size() + ""));
                 }
                 owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);

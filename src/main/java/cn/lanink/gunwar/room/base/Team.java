@@ -1,5 +1,7 @@
 package cn.lanink.gunwar.room.base;
 
+import cn.lanink.gunwar.utils.Tools;
+
 /**
  * @author LT_Name
  */
@@ -28,6 +30,10 @@ public enum Team {
     /**
      * 蓝队(已死亡)
      */
-    BLUE_DEATH,
+    BLUE_DEATH;
+
+    public String getShowName() {
+        return Tools.getShowTeamName(this);
+    }
 
 }

@@ -117,8 +117,6 @@ waitScoreBoard: |-
   Jugadores: §a %playerNumber%/10
   2 jugadores requeridos
   Esperando jugadores
-waitTimeBottom: "§aAún quedan: %1% segundos!"
-waitBottom: "§cEsperando jugadores para iniciar, actualmente hay: %playerNumber% jugadores"
 gameTimeScoreBoard: |-
   §l§aEquipo: %team%
   §l§aSalud:§e %health%
