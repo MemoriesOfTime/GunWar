@@ -24,7 +24,7 @@ public class ClassicModeRoom extends BaseRoundModeRoom {
     @Override
     public void timeTask() {
         super.timeTask();
-        if (!this.roundIsEnd) {
+        if (!this.isRoundEnd()) {
             int red = 0, blue = 0;
             for (Team team : this.getPlayers().values()) {
                 if (team == Team.RED) {
@@ -34,10 +34,10 @@ public class ClassicModeRoom extends BaseRoundModeRoom {
                 }
             }
             if (red == 0) {
-                this.roundEnd(2);
+                this.roundEnd(Team.BLUE);
                 this.gameTime = this.getSetGameTime();
             } else if (blue == 0) {
-                this.roundEnd(1);
+                this.roundEnd(Team.RED);
                 this.gameTime = this.getSetGameTime();
             }
         }

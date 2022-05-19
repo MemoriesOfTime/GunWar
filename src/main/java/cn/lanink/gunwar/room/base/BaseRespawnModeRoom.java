@@ -7,6 +7,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.Config;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -19,11 +20,14 @@ import java.util.Map;
  */
 public abstract class BaseRespawnModeRoom extends BaseRoom {
 
+    //玩家复活所需时间
+    @Getter
+    protected int respawnNeedTime = 20;
+
     /**
      * 玩家重生时间
      */
     protected final HashMap<Player, Integer> playerRespawnTime = new HashMap<>();
-    protected int respawnTime = 20;
 
     /**
      * 初始化
@@ -48,6 +52,7 @@ public abstract class BaseRespawnModeRoom extends BaseRoom {
     public void timeTask() {
         super.timeTask();
 
+        //玩家复活计算
         for (Map.Entry<Player, Integer> entry : this.getPlayerRespawnTime().entrySet()) {
             if (entry.getValue() > 0) {
                 entry.setValue(entry.getValue() - 1);
@@ -75,15 +80,12 @@ public abstract class BaseRespawnModeRoom extends BaseRoom {
      * @return 重生剩余时间
      */
     public int getPlayerRespawnTime(@NotNull Player player) {
-        if (this.playerRespawnTime.containsKey(player)) {
-            return this.playerRespawnTime.get(player);
-        }
-        return 0;
+        return this.playerRespawnTime.getOrDefault(player, 0);
     }
 
     @Override
     public void playerDeath(Player player, Entity damager, String killMessage) {
         super.playerDeath(player, damager, killMessage);
-        this.getPlayerRespawnTime().put(player, this.respawnTime);
+        this.getPlayerRespawnTime().put(player, this.respawnNeedTime);
     }
 }

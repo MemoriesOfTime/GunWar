@@ -33,6 +33,7 @@ import cn.nukkit.utils.DummyBossBar;
 import cn.nukkit.utils.DyeColor;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Tools {
+
+    public static int toInt(Object object) {
+        return new BigDecimal(object.toString()).intValue();
+    }
 
     public static void createBossBar(Player player, ConcurrentHashMap<Player, DummyBossBar> bossBarMap) {
         if (!bossBarMap.containsKey(player)) {
@@ -160,21 +165,30 @@ public class Tools {
         }
     }
 
-    public static void sendRoundVictoryTitle(BaseRoom room, int v) {
+    public static void sendRoundVictoryTitle(BaseRoom room, Team v) {
         for (Player player : room.getPlayers().keySet()) {
             String title;
             switch (v) {
-                case 1:
+                case RED:
+                case RED_DEATH:
                     title = GunWar.getInstance().getLanguage().translateString("roundVictoryRed");
                     break;
-                case 2:
+                case BLUE:
+                case BLUE_DEATH:
                     title = GunWar.getInstance().getLanguage().translateString("roundVictoryBlue");
                     break;
+                case NULL:
                 default:
                     title = GunWar.getInstance().getLanguage().translateString("roundVictoryDraw");
                     break;
             }
             player.sendTitle(title, "", 10, 20, 10);
+        }
+    }
+
+    public static void giveTeamIntegral(BaseRoom room, Team team, int integral) {
+        for (Player player : room.getPlayers(team)) {
+            room.getPlayerIntegralMap().put(player, room.getPlayerIntegral(player) + integral);
         }
     }
 
@@ -246,47 +260,11 @@ public class Tools {
             items.addAll(room.getBlueTeamInitialItems());
         }
         for (String string : items) {
-            try {
-                String[] s1 = string.split("&");
-                String[] s2 = s1[1].split("@");
-                int count = Integer.parseInt(s2[0]);
-                Item item = null;
-                if ("item".equalsIgnoreCase(s2[1])) {
-                    String[] s3 = s1[0].split(":");
-                    if (s3.length > 1) {
-                        item = Item.get(Integer.parseInt(s3[0]), Integer.parseInt(s3[1]));
-                    }else {
-                        item = Item.get(Integer.parseInt(s3[0]), 0);
-                    }
-                }else {
-                    BaseItem baseItem = null;
-                    switch (ItemManage.getItemType(s2[1])) {
-                        case WEAPON_MELEE:
-                            baseItem = ItemManage.getMeleeWeaponMap().get(s1[0]);
-                            break;
-                        case WEAPON_PROJECTILE:
-                            baseItem = ItemManage.getProjectileWeaponMap().get(s1[0]);
-                            break;
-                        case WEAPON_GUN:
-                            baseItem = ItemManage.getGunWeaponMap().get(s1[0]);
-                            break;
-                        default:
-                            break;
-                    }
-                    if (baseItem != null) {
-                        item = baseItem.getItem();
-                    }
-                }
-                if (item != null) {
-                    item.setCount(count);
-                    player.getInventory().addItem(item);
-                    if (GunWar.debug) {
-                        GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
-                                "物品：" + item.getCustomName() + "数量：" + count);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            Item item = ItemManage.of(string);
+            player.getInventory().addItem(item);
+            if (GunWar.debug) {
+                GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
+                        "物品：" + item.getCustomName() + "数量：" + item.getCount());
             }
         }
     }
@@ -349,6 +327,13 @@ public class Tools {
                         .putBoolean("isGunWarItem", true)
                         .putInt("GunWarItemType", 12));
                 item.setCustomName(language.translateString("itemTeamSelectBlue"));
+                return item;
+            case 13: //打开商店物品
+                item = Item.get(347, 0, 1);
+                item.setNamedTag(new CompoundTag()
+                        .putBoolean("isGunWarItem", true)
+                        .putInt("GunWarItemType", 13));
+                item.setCustomName(language.translateString("item_OpenShop"));
                 return item;
             case 201: //爆破模式 炸弹
                 item = Item.get(46);

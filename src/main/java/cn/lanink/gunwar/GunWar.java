@@ -13,10 +13,12 @@ import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
+import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
@@ -43,7 +45,7 @@ import java.util.*;
 public class GunWar extends PluginBase {
 
     public static boolean debug = false;
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.5.0-SNAPSHOT git-a06805a";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
     private Language language;
@@ -162,12 +164,16 @@ public class GunWar extends PluginBase {
         this.enableAloneHealth = this.config.getBoolean("enableAloneHealth", true);
         this.enableOtherWeaponDamage = this.config.getBoolean("enableOtherWeaponDamage", true);
 
+        IntegralConfig.init(this.config);
+
         this.gameRecord = new Config(this.getDataFolder() + "/GameRecord.yml", Config.YAML);
 
         this.loadResources();
 
         this.getLogger().info("§e开始加载物品");
         this.itemManage = new ItemManage(this);
+
+        SupplyConfigManager.loadAllSupplyConfig();
 
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");
