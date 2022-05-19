@@ -117,8 +117,6 @@ waitScoreBoard: |-
   플레이어: §a %playerNumber%/10
   최소 게임 인원 2명
   다른 플레이어를 기다리는 중..
-waitTimeBottom: "§a아직 %1%초 남았습니다!"
-waitBottom: "§c플레이어가 참가하기를 기다리는 중이고, 현재 %playerNumber%명의 플레이어가 있습니다"
 gameTimeScoreBoard: |-
   §l§a내 팀: %team%
   §l§a체력: %health%

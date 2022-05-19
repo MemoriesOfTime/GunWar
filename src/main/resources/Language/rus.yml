@@ -117,8 +117,6 @@ waitScoreBoard: |-
   Игроки: §a %playerNumber%/10
   Минимум 2 игрока
   Ожидание игроков...
-waitTimeBottom: "§aДо начала игры: %1% секунд!"
-waitBottom: "§cОжидание игроков для начала, на данный момент : %1% игроков"
 gameTimeScoreBoard: |-
   §l§aКоманда: %team%
   §l§aЗдоровье:§e %health%

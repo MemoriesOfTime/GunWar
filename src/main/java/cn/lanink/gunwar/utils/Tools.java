@@ -4,7 +4,6 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.*;
 import cn.lanink.gunwar.item.ItemManage;
-import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.AdventureSettings;
@@ -113,6 +112,19 @@ public class Tools {
             return original;
         }
         return showGameMode;
+    }
+
+    public static String getShowTeamName(Team team) {
+        switch (team) {
+            case RED:
+            case RED_DEATH:
+                return GunWar.getInstance().getLanguage().translateString("teamNameRed");
+            case BLUE:
+            case BLUE_DEATH:
+                return GunWar.getInstance().getLanguage().translateString("teamNameBlue");
+            default:
+                return GunWar.getInstance().getLanguage().translateString("noTeamSelect");
+        }
     }
 
     public static String getShowStringMagazine(int now, int max) {
