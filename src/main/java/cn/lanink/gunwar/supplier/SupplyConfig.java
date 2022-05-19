@@ -3,16 +3,16 @@ package cn.lanink.gunwar.supplier;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.supplier.items.SupplyItemConfig;
 import cn.lanink.gunwar.supplier.pages.SupplyPageConfig;
+import cn.lanink.gunwar.utils.exception.supply.SupplyConfigLoadException;
 import cn.nukkit.utils.Config;
 import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 public class SupplyConfig {
@@ -24,25 +24,25 @@ public class SupplyConfig {
     private final ImmutableMap<String, SupplyItemConfig> itemConfigMap;
     private SupplyPageConfig defaultPageConfig;
 
-    public SupplyConfig(@NotNull String dirName, @NotNull File path) {
+    public SupplyConfig(@NotNull String dirName, @NotNull File path) throws SupplyConfigLoadException {
         this.dirName = dirName;
         File[] childDir = path.listFiles();
         if (childDir == null) {
-            throw new RuntimeException("加载" + dirName + "失败!");
+            throw new SupplyConfigLoadException("加载" + dirName + "失败!");
         }
 
         childDir = Arrays.stream(childDir).filter(File::isDirectory).toArray(File[]::new);
 
         if (childDir.length != 2 || !Arrays.asList("items", "pages").contains(childDir[0].getName()) ||
                 !Arrays.asList("items", "pages").contains(childDir[1].getName())) {
-            throw new RuntimeException("加载" + dirName + "失败!");
+            throw new SupplyConfigLoadException("加载" + dirName + "失败!");
         }
         File itemsPath = new File(path, "items");
         File[] itemsFiles = itemsPath.listFiles();
         File pagesPath = new File(path, "pages");
         File[] pagesFiles = pagesPath.listFiles();
         if (itemsFiles == null || pagesFiles == null) {
-            throw new RuntimeException("加载" + dirName + "失败!");
+            throw new SupplyConfigLoadException("加载" + dirName + "失败!");
         }
 
         ImmutableMap.Builder<String, SupplyItemConfig> itemConfigMapBuilder = ImmutableMap.builder();
@@ -50,8 +50,12 @@ public class SupplyConfig {
                 .filter(this::checkItemFileCorrect)
                 .forEach(itemFile -> {
             String fileName = itemFile.getName().split("\\.")[0];
-            itemConfigMapBuilder.put(fileName, new SupplyItemConfig(fileName, itemFile));
-        });
+                    try {
+                        itemConfigMapBuilder.put(fileName, new SupplyItemConfig(fileName, itemFile));
+                    } catch (SupplyConfigLoadException e) {
+                        GunWar.getInstance().getLogger().error("SupplyItemConfig 加载错误！", e);
+                    }
+                });
         this.itemConfigMap = itemConfigMapBuilder.build();
 
         ImmutableMap.Builder<String, SupplyPageConfig> supplyPageConfigBuilder = ImmutableMap.builder();

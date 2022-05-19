@@ -30,7 +30,6 @@ import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
-import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;

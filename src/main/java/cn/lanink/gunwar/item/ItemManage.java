@@ -7,7 +7,6 @@ import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.nukkit.Player;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.nbt.tag.CompoundTag;

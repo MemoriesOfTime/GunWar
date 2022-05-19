@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.supplier;
 
 import cn.lanink.gunwar.GunWar;
+import cn.lanink.gunwar.utils.exception.supply.SupplyConfigLoadException;
 import lombok.Getter;
 
 import java.io.File;
@@ -17,8 +18,8 @@ public class SupplyConfigManager {
     @Getter
     private static final Map<String, SupplyConfig> SUPPLY_CONFIG_MAP = new HashMap<>();
 
-    private SupplyConfigManager() {
-        throw new RuntimeException("哎呀！你不能实例化这个类！");
+    private SupplyConfigManager() throws IllegalArgumentException {
+        throw new IllegalArgumentException("哎呀！你不能实例化这个类！");
     }
 
     public static void loadAllSupplyConfig() {
@@ -36,9 +37,13 @@ public class SupplyConfigManager {
         Arrays.stream(Objects.requireNonNull(files))
                 .filter(File::isDirectory)
                 .forEach(supplyDir -> {
-                    SupplyConfig supplyConfig = new SupplyConfig(supplyDir.getName(), supplyDir);
-                    SUPPLY_CONFIG_MAP.put(supplyDir.getName(), supplyConfig);
-                    count.incrementAndGet();
+                    try {
+                        SupplyConfig supplyConfig = new SupplyConfig(supplyDir.getName(), supplyDir);
+                        SUPPLY_CONFIG_MAP.put(supplyDir.getName(), supplyConfig);
+                        count.incrementAndGet();
+                    } catch (SupplyConfigLoadException e) {
+                        GUN_WAR.getLogger().error("SupplyConfig 加载错误！", e);
+                    }
         });
         GUN_WAR.getLogger().info("已成功加载" + count + "个商店配置");
         if (GunWar.debug) {

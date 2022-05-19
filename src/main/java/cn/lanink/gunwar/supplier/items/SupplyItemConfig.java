@@ -2,16 +2,14 @@ package cn.lanink.gunwar.supplier.items;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.item.ItemManage;
-import cn.lanink.gunwar.utils.Tools;
+import cn.lanink.gunwar.utils.exception.supply.SupplyConfigLoadException;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
-
-import java.io.File;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
+
+import java.io.File;
 
 @ToString
 public class SupplyItemConfig {
@@ -31,7 +29,7 @@ public class SupplyItemConfig {
     @Getter
     private final int needIntegral;
 
-    public SupplyItemConfig(@NotNull String fileName, @NotNull File fileConfig) {
+    public SupplyItemConfig(@NotNull String fileName, @NotNull File fileConfig) throws SupplyConfigLoadException {
         this.fileName = fileName;
         this.config = new Config(fileConfig, Config.YAML);
 
@@ -47,7 +45,7 @@ public class SupplyItemConfig {
 
         this.items = this.config.getStringList("items").stream().map(ItemManage::of).toArray(Item[]::new);
         if (this.items.length == 0) {
-            throw new RuntimeException("商店物品：" + this.fileName + " 无法正确加载物品！请检查配置！");
+            throw new SupplyConfigLoadException("商店物品：" + this.fileName + " 无法正确加载物品！请检查配置！");
         }
     }
 
