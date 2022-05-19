@@ -361,10 +361,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }
     }
 
-    protected final void setRoundEnd(boolean roundEnd) {
+    protected final void setRoundEnd(boolean roundEnd) throws IllegalArgumentException {
         //正常情况下只有BaseRoundModeRoom类型的房间才需要设置此参数
         if (!(this instanceof BaseRoundModeRoom)) {
-            throw new RuntimeException();
+            throw new IllegalArgumentException();
         }
         this.roundEnd = roundEnd;
     }

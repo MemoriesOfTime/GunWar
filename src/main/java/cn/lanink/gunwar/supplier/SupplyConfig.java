@@ -72,7 +72,7 @@ public class SupplyConfig {
                 });
         this.pageConfigMap = supplyPageConfigBuilder.build();
         if (this.defaultPageConfig == null) {
-            throw new RuntimeException("商店供给:" + dirName + " 无默认界面!");
+            throw new SupplyConfigLoadException("商店供给:" + dirName + " 无默认界面!");
         }
     }
 
