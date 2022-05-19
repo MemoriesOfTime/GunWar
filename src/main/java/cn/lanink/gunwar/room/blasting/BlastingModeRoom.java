@@ -287,7 +287,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
      * 炸弹爆炸
      */
     public void bombExplosion() {
-        this.roundEnd = true;
+        this.setRoundIsEnd(true);
         Tools.sendTitle(this, this.language.translateString("game_blasting_bombHasExploded"));
         for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
             entry.getKey().removeBossBar(entry.getValue().getBossBarId());

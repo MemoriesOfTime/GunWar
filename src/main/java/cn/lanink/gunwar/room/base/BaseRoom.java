@@ -65,7 +65,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     public int blueScore;
 
     @Getter
-    protected boolean roundEnd = false; //防止重复执行回合结束方法
+    private boolean roundEnd = false; //防止重复执行回合结束方法
 
     /**
      * 初始化
@@ -302,15 +302,17 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         int oldStatus = this.getStatus();
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomEndEvent(this, victory));
-        LinkedList<Player> victoryPlayers = new LinkedList<>();
-        LinkedList<Player> defeatPlayers = new LinkedList<>();
-        if (this.getPlayers().size() > 0) {
+
+        if (!this.getPlayers().isEmpty()) {
             for (Player p1 : this.players.keySet()) {
                 for (Player p2 : this.players.keySet()) {
                     p1.showPlayer(p2);
                     p2.showPlayer(p1);
                 }
             }
+
+            LinkedList<Player> victoryPlayers = new LinkedList<>();
+            LinkedList<Player> defeatPlayers = new LinkedList<>();
             for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
                 if (victory == 1) {
                     if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
@@ -326,24 +328,28 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                     }
                 }
             }
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
+                List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
+                List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
+                if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
+                    for (Player player : victoryPlayers) {
+                        Tools.cmd(player, vCmds);
+                    }
+                }
+                if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
+                    for (Player player : defeatPlayers) {
+                        Tools.cmd(player, dCmds);
+                    }
+                }
+            }, 10);
+
             for (Player player : new HashSet<>(this.getPlayers().keySet())) {
                 this.quitRoom(player);
             }
         }
+
         this.initData();
         Tools.cleanEntity(getLevel(), true);
-        List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
-        List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
-        if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
-            for (Player player : victoryPlayers) {
-                Tools.cmd(player, vCmds);
-            }
-        }
-        if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
-            for (Player player : defeatPlayers) {
-                Tools.cmd(player, dCmds);
-            }
-        }
         this.setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
         switch (oldStatus) {
             case IRoomStatus.ROOM_STATUS_GAME:
@@ -353,6 +359,14 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             default:
                 break;
         }
+    }
+
+    protected final void setRoundEnd(boolean roundEnd) {
+        //正常情况下只有BaseRoundModeRoom类型的房间才需要设置此参数
+        if (!(this instanceof BaseRoundModeRoom)) {
+            throw new RuntimeException();
+        }
+        this.roundEnd = roundEnd;
     }
 
     public void roundStart() {
@@ -384,8 +398,8 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         this.roundEnd = true;
         Team v = ev.getVictoryTeam();
         Tools.cleanEntity(this.getLevel(), true);
+
         //本回合胜利计算
-        //TODO 回合结算积分
         if (v == Team.NULL) { //平局
             int red = 0, blue = 0;
             for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
@@ -398,20 +412,26 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             if (red == blue) {
                 this.redScore++;
                 this.blueScore++;
-                Tools.sendRoundVictoryTitle(this, 0);
+                Tools.sendRoundVictoryTitle(this, Team.NULL);
+                Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
+                Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
             }else if (red > blue) {
                 this.redScore++;
-                Tools.sendRoundVictoryTitle(this, 1);
+                Tools.sendRoundVictoryTitle(this, Team.RED);
+                Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
             }else {
                 this.blueScore++;
-                Tools.sendRoundVictoryTitle(this, 2);
+                Tools.sendRoundVictoryTitle(this, Team.BLUE);
+                Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
             }
         }else if (v == Team.RED) { //红队胜利
             this.redScore++;
-            Tools.sendRoundVictoryTitle(this, 1);
+            Tools.sendRoundVictoryTitle(this, Team.RED);
+            Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
         }else { //蓝队胜利
             this.blueScore++;
-            Tools.sendRoundVictoryTitle(this, 2);
+            Tools.sendRoundVictoryTitle(this, Team.BLUE);
+            Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
         }
 
         //房间胜利计算
@@ -543,6 +563,19 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 set.add(entry.getKey());
             }
         }
+        return set;
+    }
+
+    public Set<Player> getPlayersAccurate(Team team) {
+        HashSet<Player> set = new HashSet<>();
+        this.getPlayers().entrySet().stream()
+                .filter(
+                        entry -> (team == Team.NULL && entry.getValue() == Team.NULL) ||
+                                (team == Team.RED && entry.getValue() == Team.RED) ||
+                                (team == Team.RED_DEATH && entry.getValue() == Team.RED_DEATH) ||
+                                (team == Team.BLUE && entry.getValue() == Team.BLUE) ||
+                                (team == Team.BLUE_DEATH && entry.getValue() == Team.BLUE_DEATH)
+                ).forEach(entry -> set.add(entry.getKey()));
         return set;
     }
 

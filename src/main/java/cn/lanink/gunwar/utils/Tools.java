@@ -165,21 +165,30 @@ public class Tools {
         }
     }
 
-    public static void sendRoundVictoryTitle(BaseRoom room, int v) {
+    public static void sendRoundVictoryTitle(BaseRoom room, Team v) {
         for (Player player : room.getPlayers().keySet()) {
             String title;
             switch (v) {
-                case 1:
+                case RED:
+                case RED_DEATH:
                     title = GunWar.getInstance().getLanguage().translateString("roundVictoryRed");
                     break;
-                case 2:
+                case BLUE:
+                case BLUE_DEATH:
                     title = GunWar.getInstance().getLanguage().translateString("roundVictoryBlue");
                     break;
+                case NULL:
                 default:
                     title = GunWar.getInstance().getLanguage().translateString("roundVictoryDraw");
                     break;
             }
             player.sendTitle(title, "", 10, 20, 10);
+        }
+    }
+
+    public static void giveTeamIntegral(BaseRoom room, Team team, int integral) {
+        for (Player player : room.getPlayers(team)) {
+            room.getPlayerIntegralMap().put(player, room.getPlayerIntegral(player) + integral);
         }
     }
 

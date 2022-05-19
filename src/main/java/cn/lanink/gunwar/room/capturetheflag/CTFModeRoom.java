@@ -174,10 +174,10 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
             }
         }else if (v == Team.RED) {
             this.redScore++;
-            Tools.sendRoundVictoryTitle(this, 1);
+            Tools.sendRoundVictoryTitle(this, Team.RED);
         }else {
             this.blueScore++;
-            Tools.sendRoundVictoryTitle(this, 2);
+            Tools.sendRoundVictoryTitle(this, Team.BLUE);
         }
         //房间胜利计算
         if (this.victoryJudgment()) {

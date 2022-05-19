@@ -22,8 +22,8 @@ public abstract class BaseRoundModeRoom extends BaseRoom {
         super(level, config);
     }
 
-    public void setRoundIsEnd(boolean roundIsEnd) {
-        this.roundEnd = roundIsEnd;
+    public void setRoundIsEnd(boolean roundEnd) {
+        this.setRoundEnd(roundEnd);
     }
 
     //TODO 将一些多回合相关操作移到这个类！
