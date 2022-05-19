@@ -227,18 +227,15 @@ public class ItemManage {
 
     public static Item of(String string) {
         try {
+            if (GunWar.debug) {
+                GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )");
+            }
             String[] s1 = string.split("&");
             String[] s2 = s1[1].split("@");
             int count = Integer.parseInt(s2[0]);
             Item item = null;
             if ("item".equalsIgnoreCase(s2[1])) {
-                //TODO 支持高版本字符串物品
-                String[] s3 = s1[0].split(":");
-                if (s3.length > 1) {
-                    item = Item.get(Integer.parseInt(s3[0]), Integer.parseInt(s3[1]));
-                }else {
-                    item = Item.get(Integer.parseInt(s3[0]), 0);
-                }
+                item = Item.fromString(s1[0]);
             }else {
                 BaseItem baseItem = null;
                 switch (ItemManage.getItemType(s2[1])) {
@@ -260,10 +257,16 @@ public class ItemManage {
             }
             if (item != null) {
                 item.setCount(count);
+                if (GunWar.debug) {
+                    GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )  out: " + item);
+                }
                 return item;
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (GunWar.debug) {
+            GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )  error out: air");
         }
         return Item.get(Item.AIR);
     }
