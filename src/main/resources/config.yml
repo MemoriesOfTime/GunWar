@@ -24,6 +24,8 @@ cmdWhitelist:
 integral:
   #击杀敌人获得积分
   KILL_SCORE: 10
+  #击杀队友获得积分
+  KILL_TEAM_SCORE: -10
   #安放炸弹获得积分 （仅爆破模式）
   BOMB_SCORE: 20
   #拆除炸弹获得积分 （仅爆破模式）

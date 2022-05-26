@@ -93,7 +93,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
                 return;
             }
             //开始拆除炸弹
-            if (room.getPlayerTeam(player) == Team.BLUE && room.demolitionBombPlayer == null) {
+            if (room.getPlayerTeamAccurate(player) == Team.BLUE && room.demolitionBombPlayer == null) {
                 room.demolitionBombPlayer = player;
                 Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
                         new DemolitionBombTask(room, player,
@@ -166,7 +166,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         if (Tools.getItem(201).equals(item)) {
             if (event.getInventory().getHolder() instanceof Player) {
                 Player player = (Player) event.getInventory().getHolder();
-                if (room.getPlayerTeam(player) == Team.RED) {
+                if (room.getPlayerTeamAccurate(player) == Team.RED) {
                     Tools.sendTitle(room, Team.RED, "",
                             GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasBeenPickedUp"));
                     return;
