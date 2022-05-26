@@ -39,7 +39,7 @@ public class TeamModeRoom extends BaseRespawnModeRoom {
     @Override
     public void playerDeath(Player player, Entity damager, String killMessage) {
         if (damager instanceof Player) {
-            if (this.getPlayerTeam(player) == Team.RED) {
+            if (this.getPlayerTeamAccurate(player) == Team.RED) {
                 this.blueScore++;
             }else {
                 this.redScore++;

@@ -43,7 +43,7 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             for (Player player : this.room.getPlayers().keySet()) {
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : this.language.translateString("gameTimeScoreBoard").split("\n")) {
-                    ms.add(string.replace("%team%", this.room.getPlayerTeam(player).getShowName())
+                    ms.add(string.replace("%team%", this.room.getPlayerTeamAccurate(player).getShowName())
                             .replace("%health%", String.format("%.1f", room.getPlayerHealth().getOrDefault(player, 0F)))
                             .replace("%time%", room.gameTime + "")
                             .replace("%red%", red + "")

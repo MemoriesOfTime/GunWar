@@ -41,12 +41,12 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                     EntityFlag entityFlag = (EntityFlag) event.getEntity();
                     int team = entityFlag.namedTag.getInt("GunWarTeam");
                     Language language = GunWar.getInstance().getLanguage();
-                    if (team == 11 && room.getPlayerTeam(damagePlayer) == Team.BLUE) {
+                    if (team == 11 && room.getPlayerTeamAccurate(damagePlayer) == Team.BLUE) {
                         room.haveRedFlag = damagePlayer;
                         Tools.sendTitle(room, "",
                                 language.translateString("game_ctf_playerPickUpTheFlag",
                                         damagePlayer.getName(), language.translateString("teamNameRed")));
-                    } else if (team == 12 && room.getPlayerTeam(damagePlayer) == Team.RED) {
+                    } else if (team == 12 && room.getPlayerTeamAccurate(damagePlayer) == Team.RED) {
                         room.haveBlueFlag = damagePlayer;
                         Tools.sendTitle(room, "",
                                 language.translateString("game_ctf_playerPickUpTheFlag",
@@ -55,8 +55,8 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                 } else if (event.getEntity() instanceof EntityFlagStand) {
                     EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
                     int team = entityFlagStand.namedTag.getInt("GunWarTeam");
-                    if ((team == 1 && room.getPlayerTeam(damagePlayer) == Team.RED) ||
-                            (team == 2 && room.getPlayerTeam(damagePlayer) == Team.BLUE)) {
+                    if ((team == 1 && room.getPlayerTeamAccurate(damagePlayer) == Team.RED) ||
+                            (team == 2 && room.getPlayerTeamAccurate(damagePlayer) == Team.BLUE)) {
                         switch (team) {
                             case 1:
                                 if (room.haveBlueFlag == damagePlayer) {

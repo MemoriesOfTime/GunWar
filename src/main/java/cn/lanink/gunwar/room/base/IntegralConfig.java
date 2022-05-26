@@ -45,6 +45,11 @@ public class IntegralConfig {
         KILL_SCORE,
 
         /**
+         * 击杀队友
+         */
+        KILL_TEAM_SCORE,
+
+        /**
          * 安放炸弹 （仅爆破模式）
          */
         BOMB_SCORE,

@@ -540,11 +540,26 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     }
 
     /**
-     * 获取玩家身份
+     * 获取玩家队伍
      * @param player 玩家
-     * @return 玩家身份
+     * @return 玩家队伍
      */
     public Team getPlayerTeam(Player player) {
+        Team team = this.players.getOrDefault(player, Team.NULL);
+        if (team == Team.RED_DEATH) {
+            team = Team.RED;
+        }else if (team == Team.BLUE_DEATH) {
+            team = Team.BLUE;
+        }
+        return team;
+    }
+
+    /**
+     * 获取玩家准确队伍
+     * @param player 玩家
+     * @return 玩家准确队伍
+     */
+    public Team getPlayerTeamAccurate(Player player) {
         return this.players.getOrDefault(player, Team.NULL);
     }
 
@@ -717,7 +732,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
         player.getInventory().addItem(Tools.getItem(13)); //打开商店物品
-        switch (this.getPlayerTeam(player)) {
+        switch (this.getPlayerTeamAccurate(player)) {
             case RED_DEATH:
                 this.getPlayers().put(player, Team.RED);
             case RED:
@@ -754,8 +769,12 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }else {
             if (damager instanceof Player) {
                 Player damagerPlayer = (Player) damager;
-                GameRecord.addPlayerRecord(damagerPlayer, RecordType.KILLS);
-                this.getPlayerIntegralMap().put(damagerPlayer, this.getPlayerIntegral(damagerPlayer) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
+                if (this.getPlayerTeam(damagerPlayer) != this.getPlayerTeam(player)) {
+                    GameRecord.addPlayerRecord(damagerPlayer, RecordType.KILLS);
+                    this.getPlayerIntegralMap().put(damagerPlayer, this.getPlayerIntegral(damagerPlayer) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
+                }else {
+                    this.getPlayerIntegralMap().put(damagerPlayer, this.getPlayerIntegral(damagerPlayer) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_TEAM_SCORE));
+                }
             }
             player.sendTitle(language.translateString("titleDeathTitle"),
                     language.translateString("titleDeathSubtitle", damager.getName()),
@@ -773,9 +792,9 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, true).update();
         player.setGamemode(Player.VIEW);
         Tools.hidePlayer(this, player);
-        if (this.getPlayerTeam(player) == Team.RED) {
+        if (this.getPlayerTeamAccurate(player) == Team.RED) {
             this.getPlayers().put(player, Team.RED_DEATH);
-        }else if (this.getPlayerTeam(player) == Team.BLUE) {
+        }else if (this.getPlayerTeamAccurate(player) == Team.BLUE) {
             this.getPlayers().put(player, Team.BLUE_DEATH);
         }
         this.corpseSpawn(player);
@@ -804,7 +823,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 .putString("ModelId", skin.getSkinId()));
         nbt.putFloat("Scale", -1.0F);
         nbt.putString("playerName", player.getName());
-        EntityPlayerCorpse entity = new EntityPlayerCorpse(player.getChunk(), nbt, this.getPlayerTeam(player));
+        EntityPlayerCorpse entity = new EntityPlayerCorpse(player.getChunk(), nbt, this.getPlayerTeamAccurate(player));
         entity.setSkin(skin);
         entity.setPosition(new Vector3(player.getFloorX(), Tools.getFloorY(player), player.getFloorZ()));
         entity.setGliding(true);
