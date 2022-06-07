@@ -58,7 +58,6 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     protected final HashMap<Player, Integer> playerInvincibleTime = new HashMap<>(); //玩家无敌时间
-    @Getter
     protected final HashMap<Player, Integer> playerIntegralMap = new HashMap<>(); //玩家积分
 
     public int redScore; //队伍得分
@@ -202,7 +201,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         this.assignTeam();
 
         for (Player player : this.players.keySet()) {
-            this.playerIntegralMap.put(player, this.getDefaultIntegral());
+            this.setPlayerIntegral(player, this.getDefaultIntegral());
         }
 
         this.roundStart();
@@ -472,7 +471,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }
         this.players.put(player, Team.NULL);
         this.playerHealth.put(player, 20F);
-        this.playerIntegralMap.put(player, this.getDefaultIntegral());
+        this.setPlayerIntegral(player, Integer.MAX_VALUE);
 
         File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
         PlayerDataUtils.PlayerData playerData = PlayerDataUtils.create(player);
@@ -612,6 +611,22 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
 
     public int getPlayerIntegral(@NotNull Player player) {
         return this.playerIntegralMap.getOrDefault(player, 0);
+    }
+
+    public void addPlayerIntegral(@NotNull Player player, int integral) {
+        if (this.getStatus() == ROOM_STATUS_WAIT) { //等待状态不增加积分
+            return;
+        }
+        this.playerIntegralMap.put(player, this.playerIntegralMap.getOrDefault(player, 0) + integral);
+    }
+
+    public void setPlayerIntegral(@NotNull Player player, int integral) {
+        if (this.getStatus() == ROOM_STATUS_WAIT) { //等待状态不扣除积分
+            if (integral < this.getPlayerIntegral(player)) {
+                return;
+            }
+        }
+        this.playerIntegralMap.put(player, integral);
     }
 
     /**
@@ -771,9 +786,9 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 Player damagerPlayer = (Player) damager;
                 if (this.getPlayerTeam(damagerPlayer) != this.getPlayerTeam(player)) {
                     GameRecord.addPlayerRecord(damagerPlayer, RecordType.KILLS);
-                    this.getPlayerIntegralMap().put(damagerPlayer, this.getPlayerIntegral(damagerPlayer) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
+                    this.addPlayerIntegral(damagerPlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
                 }else {
-                    this.getPlayerIntegralMap().put(damagerPlayer, this.getPlayerIntegral(damagerPlayer) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_TEAM_SCORE));
+                    this.addPlayerIntegral(damagerPlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_TEAM_SCORE));
                 }
             }
             player.sendTitle(language.translateString("titleDeathTitle"),

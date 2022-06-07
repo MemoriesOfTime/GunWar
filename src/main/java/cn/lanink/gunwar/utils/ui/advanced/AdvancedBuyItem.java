@@ -27,7 +27,7 @@ public class AdvancedBuyItem extends ResponseItem {
                     player.sendTip("您没有足够的积分来购买！");
                     return;
                 }
-                room.getPlayerIntegralMap().put(player, nowIntegral - this.itemConfig.getNeedIntegral());
+                room.setPlayerIntegral(player, nowIntegral - this.itemConfig.getNeedIntegral());
                 player.getInventory().addItem(this.itemConfig.getItems());
                 player.sendTip("购买成功！");
             }

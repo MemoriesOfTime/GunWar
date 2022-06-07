@@ -11,14 +11,16 @@ import cn.lanink.gunwar.utils.ui.advanced.AdvancedPageLinkItem;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 import com.google.common.collect.ImmutableMap;
-
-import java.io.File;
-import java.util.*;
-
 import lombok.Getter;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @ToString
@@ -145,7 +147,7 @@ public class SupplyPageConfig {
                     if (nowIntegral < itemConfig.getNeedIntegral()) {
                         player.sendTip("您没有足够的积分来购买！");
                     } else {
-                        room.getPlayerIntegralMap().put(player, nowIntegral - itemConfig.getNeedIntegral());
+                        room.setPlayerIntegral(player, nowIntegral - itemConfig.getNeedIntegral());
                         player.getInventory().addItem(itemConfig.getItems());
                         player.sendTip("购买成功！");
                     }

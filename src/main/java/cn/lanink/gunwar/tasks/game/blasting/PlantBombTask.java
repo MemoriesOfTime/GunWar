@@ -81,7 +81,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
             }, 10);
             this.room.setEntityGunWarBombBlock(entityBombBlock);
 
-            this.room.getPlayerIntegralMap().put(this.player, this.room.getPlayerIntegral(this.player) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.BOMB_SCORE));
+            this.room.addPlayerIntegral(this.player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.BOMB_SCORE));
         }else {
             this.player.sendTitle("", this.owner.getLanguage().translateString("game_blasting_cancelPlantBomb"));
         }
