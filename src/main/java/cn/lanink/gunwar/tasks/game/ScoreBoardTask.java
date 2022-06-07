@@ -49,7 +49,8 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                             .replace("%red%", red + "")
                             .replace("%blue%", blue + "")
                             .replace("%redRound%", room.redScore + "")
-                            .replace("%blueRound%", room.blueScore + ""));
+                            .replace("%blueRound%", room.blueScore + "")
+                            .replace("%integral%", room.getPlayerIntegral(player) + ""));
                 }
                 owner.getScoreboard().showScoreboard(player, this.language.translateString("scoreBoardTitle"), ms);
             }
