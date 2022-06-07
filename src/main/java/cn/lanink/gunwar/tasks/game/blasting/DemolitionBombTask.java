@@ -63,7 +63,7 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
             }
             Server.getInstance().getScheduler().scheduleDelayedTask(this.owner, () -> this.room.roundEnd(Team.BLUE), 60);
 
-            this.room.getPlayerIntegralMap().put(this.player, this.room.getPlayerIntegral(this.player) + IntegralConfig.getIntegral(IntegralConfig.IntegralType.DESTROY_SCORE));
+            this.room.addPlayerIntegral(this.player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.DESTROY_SCORE));
         }else {
             this.player.sendTitle("",
                     this.owner.getLanguage().translateString("game_blasting_cancelDemolition"));

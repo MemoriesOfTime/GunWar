@@ -200,7 +200,7 @@ public class Tools {
 
     public static void giveTeamIntegral(BaseRoom room, Team team, int integral) {
         for (Player player : room.getPlayers(team)) {
-            room.getPlayerIntegralMap().put(player, room.getPlayerIntegral(player) + integral);
+            room.addPlayerIntegral(player, integral);
         }
     }
 
