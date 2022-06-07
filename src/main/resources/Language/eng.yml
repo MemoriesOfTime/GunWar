@@ -121,6 +121,7 @@ gameTimeScoreBoard: |-
   §l§aTeam: %team%
   §l§aHealth:§e %health%
   §l§aTime:§e %time% (s)
+  §l§aIntegral: %integral%
   §l§aTeam Survival:
   §l§cRed: %red%
   §l§9Blue: %blue%

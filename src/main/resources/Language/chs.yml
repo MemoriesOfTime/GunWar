@@ -118,6 +118,7 @@ gameTimeScoreBoard: |-
   §l§a所属队伍: %team%
   §l§a当前血量:§e %health%
   §l§a剩余时间:§e %time% 秒
+  §l§a积分: %integral%
   §l§a队伍存活人数:
   §l§c红: %red% 人 §9蓝: %blue% 人
   §l§a队伍得分：

@@ -121,6 +121,7 @@ gameTimeScoreBoard: |-
   §l§a내 팀: %team%
   §l§a체력: %health%
   §l§a남은 시간: §e %time% 초
+  §l§aIntegral: %integral%
   §l§a생존자:
   §l§c빨간 팀: %red%
   §l§9파란 팀: %blue%

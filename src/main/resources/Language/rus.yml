@@ -121,6 +121,7 @@ gameTimeScoreBoard: |-
   §l§aКоманда: %team%
   §l§aЗдоровье:§e %health%
   §l§aВремя:§e %time% (сек)
+  §l§aIntegral: %integral%
   §l§aВыживших в команде:
   §l§cКрасная: %red%
   §l§9Синяя: %blue%
