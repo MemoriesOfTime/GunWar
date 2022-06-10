@@ -478,6 +478,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         playerData.saveAll();
         playerData.saveToFile(file);
 
+        player.getInventory().clearAll();
+        player.getOffhandInventory().clearAll();
+        player.getEnderChestInventory().clearAll();
+
         Tools.rePlayerState(player, true);
         player.teleport(this.getWaitSpawn());
         if (GunWar.getInstance().isHasTips()) {
