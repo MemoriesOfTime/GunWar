@@ -148,7 +148,7 @@
             <artifactId>Nukkit</artifactId>
             <version>PM1E</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/Nukkit-PM1E_1.18.30.2113.jar</systemPath>
+            <systemPath>${project.basedir}/lib/Nukkit-PM1E_1.19.0.2177.jar</systemPath>
         </dependency>
 
         <dependency>
