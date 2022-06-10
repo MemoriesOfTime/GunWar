@@ -1,6 +1,6 @@
 name: GunWar
 main: cn.lanink.gunwar.GunWar
-version: "1.5.1-PM1E-SNAPSHOT"
+version: "1.5.1-PM1E"
 api: ["Nukkit-PM1E"]
 load: POSTWORLD
 author: "LT_Name"

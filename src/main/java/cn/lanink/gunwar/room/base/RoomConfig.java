@@ -47,9 +47,6 @@ public class RoomConfig {
     protected ArrayList<String> blueTeamInitialItems = new ArrayList<>();
 
     @Getter
-    private final int defaultIntegral; //玩家初始积分
-
-    @Getter
     private final SupplyConfig supplyConfig;
 
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
@@ -94,7 +91,6 @@ public class RoomConfig {
         }
         this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
 
-        this.defaultIntegral = config.getInt("defaultIntegral", 1000);
         this.supplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("supply", "DefaultSupply"));
     }
 

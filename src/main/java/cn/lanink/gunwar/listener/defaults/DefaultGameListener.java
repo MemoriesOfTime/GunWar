@@ -193,7 +193,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 default:
                     break;
             }
-            event.setCancelled(true);
+            if (item.getId() < 1000) { //不阻止自定义物品
+                event.setCancelled(true);
+            }
         }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
             if (ItemManage.getItemType(tag) == ItemManage.ItemType.WEAPON_GUN) {
                 GunWeapon weapon = ItemManage.getGunWeapon(tag);
