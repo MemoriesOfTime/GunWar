@@ -22,15 +22,17 @@ cmdWhitelist:
 
 #游戏内积分 （商店用）
 integral:
+  #游戏开始时玩家基础积分
+  Start_Base_Integral: 1000
   #击杀敌人获得积分
-  KILL_SCORE: 10
+  Kill_Score: 10
   #击杀队友获得积分
-  KILL_TEAM_SCORE: -10
+  Kill_Team_Score: -10
   #安放炸弹获得积分 （仅爆破模式）
-  BOMB_SCORE: 20
+  Bomb_Score: 20
   #拆除炸弹获得积分 （仅爆破模式）
-  DESTROY_SCORE: 20
+  Destroy_Score: 20
   #回合胜利获得积分
-  ROUND_WIN_SCORE: 100
+  Round_Win_Score: 100
   #回合失败获得积分
-  ROUND_LOSE_SCORE: 50
+  Round_Lose_Score: 50

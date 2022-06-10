@@ -201,7 +201,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         this.assignTeam();
 
         for (Player player : this.players.keySet()) {
-            this.setPlayerIntegral(player, this.getDefaultIntegral());
+            this.setPlayerIntegral(player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.START_BASE_INTEGRAL));
         }
 
         this.roundStart();

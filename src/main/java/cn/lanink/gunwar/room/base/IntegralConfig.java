@@ -1,10 +1,12 @@
 package cn.lanink.gunwar.room.base;
 
+import cn.lanink.gunwar.GunWar;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -22,9 +24,18 @@ public class IntegralConfig {
     }
 
     public static void init(Config config) {
-        Map<String, Object> integralMap = (Map<String, Object>) config.get("integral");
-        for (Map.Entry<IntegralType, Integer> entry : INTEGER_ENUM_MAP.entrySet()) {
-            entry.setValue((Integer) integralMap.getOrDefault(entry.getKey().name().toUpperCase(), 0));
+        Map<String, Object> integralMap = new HashMap<>();
+        for (Map.Entry<String, Object> entry : (config.get("integral", new HashMap<String, Object>())).entrySet()) {
+            integralMap.put(entry.getKey().toUpperCase(), entry.getValue()); //key全部转换为大写
+        }
+        for (IntegralType integralType : IntegralType.values()) {
+            if (integralType == IntegralType.CUSTOM) {
+                continue;
+            }
+            INTEGER_ENUM_MAP.put(integralType, (Integer) integralMap.getOrDefault(integralType.name(), 0));
+        }
+        if (GunWar.debug) {
+            GunWar.getInstance().getLogger().info("积分配置：" + INTEGER_ENUM_MAP);
         }
     }
 
@@ -38,6 +49,11 @@ public class IntegralConfig {
          * 自定义 (通用)
          */
         CUSTOM,
+
+        /**
+         * 游戏开始时玩家基础积分
+         */
+        START_BASE_INTEGRAL,
 
         /**
          * 击杀敌人
