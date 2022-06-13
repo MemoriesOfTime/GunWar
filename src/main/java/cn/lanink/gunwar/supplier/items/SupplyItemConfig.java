@@ -10,6 +10,7 @@ import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.List;
 
 @ToString
 public class SupplyItemConfig {
@@ -23,7 +24,7 @@ public class SupplyItemConfig {
     private final String title;
     @Getter
     private final String subTitle;
-    private final Item[] items;
+    private final List<String> items;
     @Getter
     private final int slotPos;
     @Getter
@@ -43,18 +44,19 @@ public class SupplyItemConfig {
             GunWar.getInstance().getLogger().warning("商店物品：" + this.fileName + " 需要积分为0！玩家可无限购买！");
         }
 
-        this.items = this.config.getStringList("items").stream().map(ItemManage::of).toArray(Item[]::new);
-        if (this.items.length == 0) {
+        this.items = this.config.getStringList("items");
+        Item[] itemArray = this.items.stream().map(ItemManage::of).toArray(Item[]::new); //全部读取一次，检查格式是否正确
+        if (itemArray.length == 0) {
             throw new SupplyConfigLoadException("商店物品：" + this.fileName + " 无法正确加载物品！请检查配置！");
         }
     }
 
     public Item getItem() {
-        return this.items[0].clone();
+        return ItemManage.of(this.items.get(0));
     }
 
     public Item[] getItems() {
-        return this.items.clone();
+        return this.items.stream().map(ItemManage::of).toArray(Item[]::new);
     }
 
 }
