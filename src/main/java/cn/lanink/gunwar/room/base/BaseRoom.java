@@ -418,19 +418,23 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 this.redScore++;
                 Tools.sendRoundVictoryTitle(this, Team.RED);
                 Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
+                Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
             }else {
                 this.blueScore++;
                 Tools.sendRoundVictoryTitle(this, Team.BLUE);
                 Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
+                Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
             }
         }else if (v == Team.RED) { //红队胜利
             this.redScore++;
             Tools.sendRoundVictoryTitle(this, Team.RED);
             Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
+            Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
         }else { //蓝队胜利
             this.blueScore++;
             Tools.sendRoundVictoryTitle(this, Team.BLUE);
             Tools.giveTeamIntegral(this, Team.BLUE, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_WIN_SCORE));
+            Tools.giveTeamIntegral(this, Team.RED, IntegralConfig.getIntegral(IntegralConfig.IntegralType.ROUND_LOSE_SCORE));
         }
 
         //房间胜利计算
