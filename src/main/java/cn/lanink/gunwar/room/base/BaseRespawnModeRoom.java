@@ -65,6 +65,12 @@ public abstract class BaseRespawnModeRoom extends BaseRoom {
         }
     }
 
+    @Override
+    public void quitRoom(Player player) {
+        super.quitRoom(player);
+        this.playerRespawnTime.remove(player);
+    }
+
     /**
      * 获取玩家重生剩余时间
      * @return 玩家重生剩余时间Map
