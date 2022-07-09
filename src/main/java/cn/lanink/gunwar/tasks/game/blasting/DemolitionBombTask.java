@@ -51,26 +51,28 @@ public class DemolitionBombTask extends PluginTask<GunWar> {
 
     @Override
     public void onCancel() {
-        if (this.demolitionProgress >= MAX_DEMOLITION_PROGRESS) {
-            Tools.sendTitle(this.room, "",
-                    this.owner.getLanguage().translateString("game_blasting_bombHasBeenDismantled"));
-            this.room.setRoundIsEnd(true);
-            if (this.room.getEntityGunWarBomb() != null) {
-                this.room.getEntityGunWarBomb().close();
-            }
-            if (this.room.getEntityGunWarBombBlock() != null) {
-                this.room.getEntityGunWarBombBlock().close();
-            }
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.owner, () -> this.room.roundEnd(Team.BLUE), 60);
+        Server.getInstance().getScheduler().scheduleTask(this.owner, () -> {
+            if (this.demolitionProgress >= MAX_DEMOLITION_PROGRESS) {
+                Tools.sendTitle(this.room, "",
+                        this.owner.getLanguage().translateString("game_blasting_bombHasBeenDismantled"));
+                this.room.setRoundIsEnd(true);
+                if (this.room.getEntityGunWarBomb() != null) {
+                    this.room.getEntityGunWarBomb().close();
+                }
+                if (this.room.getEntityGunWarBombBlock() != null) {
+                    this.room.getEntityGunWarBombBlock().close();
+                }
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.owner, () -> this.room.roundEnd(Team.BLUE), 60);
 
-            this.room.addPlayerIntegral(this.player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.DESTROY_SCORE));
-        }else {
-            this.player.sendTitle("",
-                    this.owner.getLanguage().translateString("game_blasting_cancelDemolition"));
-            this.room.demolitionBombPlayer = null;
-        }
-        this.player.sendTip(" ");
-        DEMOLITION_BOMB_PLAYERS.remove(this.player);
+                this.room.addPlayerIntegral(this.player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.DESTROY_SCORE));
+            }else {
+                this.player.sendTitle("",
+                        this.owner.getLanguage().translateString("game_blasting_cancelDemolition"));
+                this.room.demolitionBombPlayer = null;
+            }
+            this.player.sendTip(" ");
+            DEMOLITION_BOMB_PLAYERS.remove(this.player);
+        });
     }
 
 }

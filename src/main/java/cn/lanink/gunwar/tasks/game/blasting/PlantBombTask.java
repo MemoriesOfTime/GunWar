@@ -59,34 +59,36 @@ public class PlantBombTask extends PluginTask<GunWar> {
 
     @Override
     public void onCancel() {
-        if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
-            Tools.sendTitle(this.room, "", this.owner.getLanguage().translateString("game_blasting_plantBomb"));
-            this.player.getInventory().remove(Tools.getItem(201));
+        Server.getInstance().getScheduler().scheduleTask(this.owner, () -> {
+            if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
+                Tools.sendTitle(this.room, "", this.owner.getLanguage().translateString("game_blasting_plantBomb"));
+                this.player.getInventory().remove(Tools.getItem(201));
 
-            CompoundTag nbt = Entity.getDefaultNBT(this.placePoint);
-            EntityGunWarBomb entityBomb = new EntityGunWarBomb(
-                    this.player.getChunk(), nbt,this.room, this.player);
-            entityBomb.setPosition(this.placePoint);
-            entityBomb.spawnToAll();
-            this.room.setEntityGunWarBomb(entityBomb);
+                CompoundTag nbt = Entity.getDefaultNBT(this.placePoint);
+                EntityGunWarBomb entityBomb = new EntityGunWarBomb(
+                        this.player.getChunk(), nbt,this.room, this.player);
+                entityBomb.setPosition(this.placePoint);
+                entityBomb.spawnToAll();
+                this.room.setEntityGunWarBomb(entityBomb);
 
-            EntityGunWarBombBlock entityBombBlock = new EntityGunWarBombBlock(
-                    this.player.getChunk(), nbt.putCompound("Skin", new CompoundTag()));
-            entityBombBlock.setPosition(this.placePoint);
-            entityBombBlock.setSkin(GameCore.DEFAULT_SKIN);
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.getOwner(), () -> {
-                if (!entityBombBlock.isClosed()) {
-                    entityBombBlock.spawnToAll();
-                }
-            }, 10);
-            this.room.setEntityGunWarBombBlock(entityBombBlock);
+                EntityGunWarBombBlock entityBombBlock = new EntityGunWarBombBlock(
+                        this.player.getChunk(), nbt.putCompound("Skin", new CompoundTag()));
+                entityBombBlock.setPosition(this.placePoint);
+                entityBombBlock.setSkin(GameCore.DEFAULT_SKIN);
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.getOwner(), () -> {
+                    if (!entityBombBlock.isClosed()) {
+                        entityBombBlock.spawnToAll();
+                    }
+                }, 10);
+                this.room.setEntityGunWarBombBlock(entityBombBlock);
 
-            this.room.addPlayerIntegral(this.player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.BOMB_SCORE));
-        }else {
-            this.player.sendTitle("", this.owner.getLanguage().translateString("game_blasting_cancelPlantBomb"));
-        }
-        this.player.sendTip(" ");
-        PLANT_BOMB_PLAYERS.remove(this.player);
+                this.room.addPlayerIntegral(this.player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.BOMB_SCORE));
+            }else {
+                this.player.sendTitle("", this.owner.getLanguage().translateString("game_blasting_cancelPlantBomb"));
+            }
+            this.player.sendTip(" ");
+            PLANT_BOMB_PLAYERS.remove(this.player);
+        });
     }
 
 }
