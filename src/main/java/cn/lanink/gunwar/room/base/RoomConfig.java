@@ -40,6 +40,9 @@ public class RoomConfig {
     public final int victoryScore; //胜利需要分数
 
     @Getter
+    protected boolean roundEndCleanItem;
+
+    @Getter
     protected ArrayList<String> initialItems = new ArrayList<>();
     @Getter
     protected ArrayList<String> redTeamInitialItems = new ArrayList<>();
@@ -66,6 +69,8 @@ public class RoomConfig {
         this.setWaitTime = config.getInt("waitTime");
         this.setGameTime = config.getInt("gameTime");
         this.victoryScore = config.getInt("victoryScore", 5);
+
+        this.roundEndCleanItem = config.getBoolean("roundEndCleanItem", true);
 
         if (!config.exists("initialItems")) {
             ArrayList<String> defaultItems = new ArrayList<>(

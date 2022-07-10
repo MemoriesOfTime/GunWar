@@ -26,6 +26,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -749,8 +750,21 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             }
         }
 
-        player.getInventory().clearAll();
-        player.getUIInventory().clearAll();
+        if (this.isRoundEndCleanItem() ||
+                this.getPlayerTeamAccurate(player) == Team.RED_DEATH ||
+                this.getPlayerTeamAccurate(player) == Team.BLUE_DEATH) {
+            player.getInventory().clearAll();
+            player.getUIInventory().clearAll();
+        }else {
+            //清除一些必须清除的特殊物品
+            PlayerInventory inventory = player.getInventory();
+            inventory.remove(Tools.getItem(10));
+            inventory.remove(Tools.getItem(11));
+            inventory.remove(Tools.getItem(12));
+            inventory.remove(Tools.getItem(13));
+            inventory.remove(Tools.getItem(201));
+        }
+
         Tools.rePlayerState(player, true);
         Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
