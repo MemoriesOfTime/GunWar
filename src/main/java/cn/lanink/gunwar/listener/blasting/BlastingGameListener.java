@@ -24,6 +24,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
  * @author lt_name
@@ -45,6 +46,17 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         Item item = player.getInventory().getItemInHand();
         if (item.hasCompoundTag() && item.getNamedTag().getInt("GunWarItemType") == 201) {
             event.setCancelled(true);
+
+            //修复win10玩家连续触发两次导致无法操作的问题
+            CompoundTag tag = item.getNamedTag();
+            int nowTick = Server.getInstance().getTick();
+            int lastTick = item.getNamedTag().getInt("lastTick");
+            if (nowTick - lastTick <= 10) {
+                return;
+            }
+            tag.putInt("lastTick", nowTick);
+            item.setNamedTag(tag);
+
             Vector3 placePoint = block.clone();
             placePoint.y += 1;
             if (player.getLevel().getBlock(placePoint).getId() != BlockID.AIR) {
