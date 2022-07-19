@@ -14,12 +14,7 @@ public class EntityGunWarBombBlock extends EntityHuman {
         this.setNameTag("");
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
-        this.setDataFlag(0, 5, true);
-    }
-
-    @Override
-    public int getNetworkId() {
-        return 64;
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_INVISIBLE, true);
     }
 
     @Override
