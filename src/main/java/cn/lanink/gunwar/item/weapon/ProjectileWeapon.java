@@ -6,6 +6,7 @@ import cn.nukkit.item.ProjectileItem;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 
 import java.lang.reflect.Constructor;
@@ -28,7 +29,10 @@ public class ProjectileWeapon extends BaseWeapon {
         }
         this.particle = config.getString("particle");
         this.range = Math.abs((float) config.getDouble("range"));
-        this.getCompoundTag().putFloat("range", this.range);
+
+        CompoundTag tag = this.getCompoundTag();
+        tag.putFloat("range", this.range);
+        this.setCompoundTag(tag);
     }
 
     @Override

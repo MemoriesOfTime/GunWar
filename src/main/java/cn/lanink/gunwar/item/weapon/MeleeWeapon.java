@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.item.weapon;
 
 import cn.lanink.gunwar.item.ItemManage;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Config;
 
 /**
@@ -13,7 +14,10 @@ public class MeleeWeapon extends BaseWeapon {
     public MeleeWeapon(String name, Config config) {
         super(name, config);
         this.knockBack = Math.abs((float) config.getDouble("knockBack", 0.3D));
-        this.getCompoundTag().putFloat("knockBack", this.knockBack);
+
+        CompoundTag tag = this.getCompoundTag();
+        tag.putFloat("knockBack", this.knockBack);
+        this.setCompoundTag(tag);
     }
 
     @Override

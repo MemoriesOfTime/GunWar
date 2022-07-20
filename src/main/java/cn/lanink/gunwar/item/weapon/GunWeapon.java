@@ -8,6 +8,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
@@ -41,11 +42,14 @@ public class GunWeapon extends BaseWeapon {
         if (!"".equals(stringParticleEffect)) {
             this.particleEffect = ParticleEffect.valueOf(stringParticleEffect);
         }
-        this.getCompoundTag().putInt("maxMagazine", this.maxMagazine)
+
+        CompoundTag tag = this.getCompoundTag();
+        tag.putInt("maxMagazine", this.maxMagazine)
                 .putFloat("gravity", this.gravity)
                 .putFloat("motionMultiply", this.motionMultiply)
                 .putFloat("reloadTime", this.reloadTime)
                 .putBoolean("reloadInterrupted", this.reloadInterrupted);
+        this.setCompoundTag(tag);
     }
 
     @Override
