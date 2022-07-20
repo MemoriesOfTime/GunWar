@@ -106,7 +106,9 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
                 return;
             }
             //开始拆除炸弹
-            if (room.getPlayerTeamAccurate(player) == Team.BLUE && room.demolitionBombPlayer == null) {
+            if (room.getPlayerTeamAccurate(player) == Team.BLUE &&
+                    room.demolitionBombPlayer == null &&
+                    player.distance(room.getEntityGunWarBombBlock()) <= 5) {
                 room.demolitionBombPlayer = player;
                 Server.getInstance().getScheduler().scheduleRepeatingTask(GunWar.getInstance(),
                         new DemolitionBombTask(room, player,
