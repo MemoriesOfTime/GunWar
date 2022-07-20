@@ -347,6 +347,14 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 this.quitRoom(player);
             }
         }
+        for (Player player : this.getLevel().getPlayers().values()) {
+            //如果被拦截，就尝试不触发事件传送走玩家
+            player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn(), null);
+        }
+        //因为某些原因无法正常传送走玩家，就全部踹出服务器！
+        for (Player player : this.getLevel().getPlayers().values()) {
+            player.kick("Teleport error!");
+        }
 
         this.initData();
         Tools.cleanEntity(getLevel(), true);

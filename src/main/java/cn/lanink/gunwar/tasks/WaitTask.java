@@ -51,6 +51,7 @@ public class WaitTask extends PluginTask<GunWar> {
                     for (String string : this.language.translateString("waitTimeScoreBoard").split("\n")) {
                         ms.add(string.replace("%team%", entry.getValue().getShowName())
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
+                                .replace("%maxPlayerNumber%", room.getMaxPlayers() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
                     owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
@@ -67,7 +68,8 @@ public class WaitTask extends PluginTask<GunWar> {
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : language.translateString("waitScoreBoard").split("\n")) {
                     ms.add(string.replace("%team%", entry.getValue().getShowName())
-                            .replace("%playerNumber%", room.getPlayers().size() + ""));
+                            .replace("%playerNumber%", room.getPlayers().size() + "")
+                            .replace("%maxPlayerNumber%", room.getMaxPlayers() + ""));
                 }
                 owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
             }

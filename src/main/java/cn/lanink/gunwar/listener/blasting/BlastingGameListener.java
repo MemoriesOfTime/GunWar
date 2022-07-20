@@ -56,6 +56,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             }
             tag.putInt("lastTick", nowTick);
             item.setNamedTag(tag);
+            player.getInventory().setItemInHand(item);
 
             Vector3 placePoint = block.clone();
             placePoint.y += 1;

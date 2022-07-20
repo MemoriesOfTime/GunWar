@@ -92,7 +92,7 @@ suicideMessage: "§e >> §c%1% se suicidó"
 tpJoinRoomLevel: "§e >> §cPara entrar al juego, por favor selecciona una partida primero!"
 tpQuitRoomLevel: "§e >> §cUsa el comando para salir de la partida!"
 gameArmor: "§e >> §cLa armadura no se puede quitar en el juego.!"
-playerTeamChat: "§a[Equipo]§f %player% §b >>> %message%"
+playerTeamChat: "§a[Equipo]§f %1% §b >>> %2%"
 game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %team%"
 game_ctf_overtime: "§eOvertime!"
 game_ctf_draw: "draw"
@@ -110,11 +110,11 @@ game_blasting_bombHasBeenPickedUp: "§aThe bomb has been picked up!"
 scoreBoardTitle: "§eGuerra de armas"
 waitTimeScoreBoard: |-
   Equipo: %team%
-  Jugadores: §a %playerNumber%/10
+  Jugadores: §a %playerNumber%/%maxPlayerNumber%
   §aTiempo: §e%time%
 waitScoreBoard: |-
   Equipo: %team%
-  Jugadores: §a %playerNumber%/10
+  Jugadores: §a %playerNumber%/%maxPlayerNumber%
   2 jugadores requeridos
   Esperando jugadores
 gameTimeScoreBoard: |-

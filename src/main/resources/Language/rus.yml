@@ -110,11 +110,11 @@ game_blasting_bombHasBeenPickedUp: "§aThe bomb has been picked up!"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   Команда: %team%
-  Игроки: §a %playerNumber%/10
+  Игроки: §a %playerNumber%/%maxPlayerNumber%
   §aОсталось: §e%time%
 waitScoreBoard: |-
   Команда: %team%
-  Игроки: §a %playerNumber%/10
+  Игроки: §a %playerNumber%/%maxPlayerNumber%
   Минимум 2 игрока
   Ожидание игроков...
 gameTimeScoreBoard: |-

@@ -3,6 +3,7 @@ package cn.lanink.gunwar.item.weapon;
 import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
 
@@ -59,11 +60,13 @@ public abstract class BaseWeapon extends BaseItem {
             }
         }
         this.killMessage = config.getString("killMessage");
-        this.getCompoundTag()
-                .putDouble("minDamage", this.minDamage)
+
+        CompoundTag tag = this.getCompoundTag();
+        tag.putDouble("minDamage", this.minDamage)
                 .putDouble("maxDamage", this.maxDamage)
                 .putInt("attackCooldown", this.attackCooldown)
                 .putString("killMessage", this.killMessage);
+        this.setCompoundTag(tag);
     }
 
     public double getMinDamage() {

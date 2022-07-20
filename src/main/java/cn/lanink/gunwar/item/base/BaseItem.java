@@ -73,4 +73,10 @@ public abstract class BaseItem {
         return this.item.getNamedTag().getCompound(GUN_WAR_ITEM_TAG);
     }
 
+    public void setCompoundTag(CompoundTag compoundTag) {
+        CompoundTag tag = this.item.getNamedTag();
+        tag.putCompound(GUN_WAR_ITEM_TAG, compoundTag);
+        this.item.setCompoundTag(tag);
+    }
+
 }

@@ -110,11 +110,11 @@ game_blasting_bombHasBeenPickedUp: "§aThe bomb has been picked up!"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   소속 팀: %team%
-  플레이어: §a %playerNumber%/10
+  플레이어: §a %playerNumber%/%maxPlayerNumber%
   §a게임 시작까지: §e%time%초 남음
 waitScoreBoard: |-
   소속 팀: %team%
-  플레이어: §a %playerNumber%/10
+  플레이어: §a %playerNumber%/%maxPlayerNumber%
   최소 게임 인원 2명
   다른 플레이어를 기다리는 중..
 gameTimeScoreBoard: |-
