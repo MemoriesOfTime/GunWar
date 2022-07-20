@@ -107,11 +107,11 @@ game_blasting_bombHasBeenPickedUp: "§a炸弹已被拾取！"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   所属队伍: %team%
-  玩家: §a %playerNumber%/10
+  玩家: §a %playerNumber%/%maxPlayerNumber%
   §a开始倒计时: §e%time%
 waitScoreBoard: |-
   所属队伍: %team%
-  玩家: §a %playerNumber%/10
+  玩家: §a %playerNumber%/%maxPlayerNumber%
   最低游戏人数为 2 人
   等待玩家加入中
 gameTimeScoreBoard: |-
