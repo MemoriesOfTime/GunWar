@@ -3,6 +3,8 @@ package cn.lanink.gunwar.utils.rsnpcx;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.level.Level;
 import com.smallaswater.npc.data.RsNpcConfig;
 import com.smallaswater.npc.variable.BaseVariableV2;
 
@@ -26,7 +28,19 @@ public class RsNpcXVariableV2 extends BaseVariableV2 {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             this.addVariable("{GunWarRoomPlayerNumber" + entry.getKey() + "}", entry.getValue().toString());
         }
+
+        HashMap<String, Integer> map1 = new HashMap<>();
+        for(Level level: Server.getInstance().getLevels().values()) {
+            for (BaseRoom room : GunWar.getInstance().getRooms().values()) {
+                if (room.getLevelName().equals(level.getName())) {
+                    map1.put(room.getLevelName(), map1.getOrDefault(room.getLevelName(), 0) + room.getPlayers().size());
+                }
+            }
+        }
+        for (Map.Entry<String, Integer> entry : map1.entrySet()) {
+            this.addVariable("{GunWarLevelPlayerNumber" + entry.getKey() + "}", entry.getValue().toString());
+        }
+
         this.addVariable("{GunWarRoomPlayerNumberAll}", String.valueOf(all));
     }
-
 }
