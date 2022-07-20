@@ -24,13 +24,16 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
+
+import java.util.HashSet;
 
 /**
  * @author lt_name
  */
 @SuppressWarnings("unused")
 public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
+
+    private final HashSet<Player> bombClickCache = new HashSet<>();
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -48,14 +51,11 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             event.setCancelled(true);
 
             //修复win10玩家连续触发两次导致无法操作的问题
-            CompoundTag tag = item.getNamedTag();
-            int nowTick = Server.getInstance().getTick();
-            int lastTick = item.getNamedTag().getInt("lastTick");
-            if (nowTick - lastTick <= 10) {
+            if (this.bombClickCache.contains(player)) {
                 return;
             }
-            tag.putInt("lastTick", nowTick);
-            item.setNamedTag(tag);
+            this.bombClickCache.add(player);
+            Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> this.bombClickCache.remove(player), 10);
 
             Vector3 placePoint = block.clone();
             placePoint.y += 1;
