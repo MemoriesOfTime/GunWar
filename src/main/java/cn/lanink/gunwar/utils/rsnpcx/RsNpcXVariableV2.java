@@ -3,8 +3,6 @@ package cn.lanink.gunwar.utils.rsnpcx;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.level.Level;
 import com.smallaswater.npc.data.RsNpcConfig;
 import com.smallaswater.npc.variable.BaseVariableV2;
 
@@ -39,4 +37,5 @@ public class RsNpcXVariableV2 extends BaseVariableV2 {
 
         this.addVariable("{GunWarRoomPlayerNumberAll}", String.valueOf(all));
     }
+
 }
