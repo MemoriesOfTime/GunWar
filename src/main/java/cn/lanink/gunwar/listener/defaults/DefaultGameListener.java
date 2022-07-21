@@ -328,11 +328,13 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                                 Server.getInstance().getPluginManager().callEvent(ev);
                                 if (!ev.isCancelled()) {
                                     entry.getKey().attack(0F);
-                                    if (room.lessHealth(entry.getKey(), damager, ev.getDamage()) < 1) {
-                                        Tools.sendMessage(room, weapon.getKillMessage()
-                                                .replace("%damager%", damager.getName())
-                                                .replace("%player%", entry.getKey().getName()));
-                                    }
+                                    room.lessHealth(entry.getKey(),
+                                            damager,
+                                            ev.getDamage(),
+                                            weapon.getKillMessage()
+                                                    .replace("%damager%", damager.getName())
+                                                    .replace("%player%", entry.getKey().getName())
+                                    );
                                 }
                             }
                         }

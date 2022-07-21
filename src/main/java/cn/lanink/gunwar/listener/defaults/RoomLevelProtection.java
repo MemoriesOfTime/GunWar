@@ -163,7 +163,9 @@ public class RoomLevelProtection extends BaseGameListener<BaseRoom> {
     public void onEntityDamage(EntityDamageEvent event) {
         Level level = event.getEntity() == null ? null : event.getEntity().getLevel();
         if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
-            event.setDamage(0);
+            for (EntityDamageEvent.DamageModifier modifier : EntityDamageEvent.DamageModifier.values()) {
+                event.setDamage(0, modifier);
+            }
         }
     }
 
