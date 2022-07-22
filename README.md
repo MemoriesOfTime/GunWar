@@ -24,9 +24,9 @@ Gunwar is a simple team war with four different modes. You need to battle enemy 
 
 ## In-game Screenshots & Videos
 [![bilibili(Video)](https://img.shields.io/badge/Link-bilibili-ff69b4)](https://www.bilibili.com/video/BV12A411t7Gr/)
-![](C:\Users\DELL\Desktop\screenshot_01.jpg)
-![](C:\Users\DELL\Desktop\screenshot_02.jpg)
-![](C:\Users\DELL\Desktop\screenshot_03.jpg)
+![](screenshot_01.jpg)
+![](screenshot_02.jpg)
+![](screenshot_03.jpg)
 
 ## Bugs & Reports
 
