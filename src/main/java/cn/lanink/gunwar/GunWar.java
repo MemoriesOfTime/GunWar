@@ -371,26 +371,19 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         this.getLogger().info("§e开始加载资源文件");
         //语言文件
-        this.saveResource("Language/chs.yml", false);
-        this.saveResource("Language/kor.yml", false);
-        this.saveResource("Language/eng.yml", false);
-        this.saveResource("Language/rus.yml", false);
-        this.saveResource("Language/spa.yml", false);
+        this.saveResource("Language/chs.yml", true);
+        this.saveResource("Language/kor.yml", true);
+        this.saveResource("Language/eng.yml", true);
+        this.saveResource("Language/rus.yml", true);
+        this.saveResource("Language/spa.yml", true);
         String s = this.config.getString("language", "chs");
         File languageFile = new File(this.getDataFolder() + "/Language/" + s + ".yml");
         if (languageFile.exists()) {
-            this.getLogger().info("§aLanguage: " + s + " loaded !");
             this.language = new Language(new Config(languageFile, Config.YAML));
-            Config newConfig = new Config(Config.YAML);
-            if (newConfig.load(this.getResource("Language/" + s + ".yml"))) {
-                this.language.update(newConfig);
-                if (GunWar.debug) {
-                    this.getLogger().info("[debug] 语言文件：" + s + " 更新完成");
-                }
-            }
+            this.getLogger().info("§aLanguage: " + s + " loaded !");
         }else {
-            this.getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
             this.language = new Language(new Config(this.getDataFolder() + "/Language/chs.yml"));
+            this.getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
         }
         //加载旗帜皮肤
         this.saveResource("Resources/Flag/Flag.json", false);
@@ -406,7 +399,7 @@ public class GunWar extends PluginBase {
         this.loadFlagSkin(fileImg, fileJson, 12);
         fileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
         this.loadFlagSkin(fileImg, fileJson, 2);
-        getLogger().info("§e资源文件加载完成");
+        this.getLogger().info("§e资源文件加载完成");
     }
 
     private void loadFlagSkin(File img, File json, Integer id) {
