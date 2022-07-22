@@ -8,7 +8,7 @@
 [![Github](https://img.shields.io/badge/English-100%25-brightgreen)](https://www.mcbbs.net/thread-1041425-1-1.html)
 
 ## Intro
-Gunwar is a simple team war with four different modes. You need to battle enemy team with different equipments and the ultimate target is to win the game. It is easy to manage, fun to play and extremely intensive game that you and your players will enjoy a lot!
+Gunwar is a simple team war with four different modes. You need to battle enemy team with different equipments and the ultimate target is to win the game. It is easy to manage, fun to play and extremely fast-paced and exciting game that you and your players will enjoy a lot!
 
 ## Features
 
