@@ -1,11 +1,13 @@
 # GunWar  
 [![License](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 ![Java CI](https://github.com/lt-name/GunWar_Nukkit/workflows/Java%20CI/badge.svg)
-[![MCBBS](https://img.shields.io/badge/Link-MCBBS-brightgreen)](https://www.mcbbs.net/thread-1041425-1-1.html)
-[![bilibili](https://img.shields.io/badge/Link-bilibili-ff69b4)](https://www.bilibili.com/video/BV12A411t7Gr/)  
+[![bilibili](https://img.shields.io/badge/Link-bilibili-ff69b4)](https://www.bilibili.com/video/BV12A411t7Gr/)
+
+## Switch between Languages?
+[![MCBBS](https://img.shields.io/badge/简体中文-100%25-brightgreen)](https://www.mcbbs.net/thread-1041425-1-1.html)
+[![Github](https://img.shields.io/badge/English-100%25-brightgreen)](https://www.mcbbs.net/thread-1041425-1-1.html)
 
 ## Intro
-[![简体中文](https://img.shields.io/badge/Link-MCBBS-brightgreen)](https://www.mcbbs.net/thread-1041425-1-1.html)  
 Gunwar is a simple team war with four different modes. You need to battle enemy team with different equipments and the ultimate target is to win the game. It is easy to manage, fun to play and extremely intensive game that you and your players will enjoy a lot!
 
 ## Features
@@ -22,8 +24,7 @@ Gunwar is a simple team war with four different modes. You need to battle enemy 
 
 **Multi-languages support!** You can choose a existed language you like. And you can make your own language file.
 
-## In-game Screenshots & Videos
-[![bilibili(Video)](https://img.shields.io/badge/Link-bilibili-ff69b4)](https://www.bilibili.com/video/BV12A411t7Gr/)
+## In-game Screenshots
 ![](screenshot_01.jpg)
 ![](screenshot_02.jpg)
 ![](screenshot_03.jpg)
