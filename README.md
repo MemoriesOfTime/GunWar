@@ -31,4 +31,4 @@ Gunwar is a simple team war with four different modes. You need to battle enemy 
 
 ## Bugs & Reports
 
-If you come across any bug or problem while using it, you can report it on [Discord](https://discord.gg/pJjQDQC), or send a issue here to us.
+If you come across any bug or problem while using it, you can report it on [Discord](https://discord.gg/pJjQDQC), or send a issue here.
