@@ -29,11 +29,11 @@ Gunwar is a simple team war with four different modes. You need to battle enemy 
 
 ## In-game Screenshots
 
-![](pic\en-US\screenshot_01.jpg)
+![](pic/en-US/screenshot_01.jpg)
 
-![](pic\en-US\screenshot_02.jpg)
+![](pic/en-US/screenshot_02.jpg)
 
-![](pic\en-US\screenshot_03.jpg)
+![](pic/en-US/screenshot_03.jpg)
 
 ## Bugs & Reports
 
