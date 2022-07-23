@@ -6,7 +6,7 @@
 
 ## Switch between Languages?
 
-[![Github](https://img.shields.io/badge/简体中文-100%25-brightgreen)](https://github.com/MemoriesOfTime/GunWar/readme(zh-CN).md)
+[![Github](https://img.shields.io/badge/简体中文-100%25-brightgreen)](https://github.com/MemoriesOfTime/GunWar/blob/master/readme(zh-CN).md)
 ![Github](https://img.shields.io/badge/English[Selected]-100%25-brightgreen)
 
 ## Intro
