@@ -6,7 +6,7 @@
 
 ## Switch between Languages?
 
-![Github](https://img.shields.io/badge/简体中文 [已选择]-100%25-brightgreen)
+![Github](https://img.shields.io/badge/简体中文[已选择]-100%25-brightgreen)
 [![Github](https://img.shields.io/badge/English-100%25-brightgreen)](https://github.com/MemoriesOfTime/GunWar/readme.md)
 
 
@@ -30,11 +30,11 @@
 
 ## In-game Screenshots
 
-![](pic\zh-CN\screenshot_01.png)
+![](pic/zh-CN/screenshot_01.png)
 
-![](pic\zh-CN\screenshot_02.png)
+![](pic/zh-CN/screenshot_02.png)
 
-![](pic\zh-CN\screenshot_03.png)
+![](pic/zh-CN/screenshot_03.png)
 
 ## Bugs & Reports
 
