@@ -7,7 +7,7 @@
 ## Switch between Languages?
 
 ![Github](https://img.shields.io/badge/简体中文[已选择]-100%25-brightgreen)
-[![Github](https://img.shields.io/badge/English-100%25-brightgreen)](https://github.com/MemoriesOfTime/GunWar/readme.md)
+[![Github](https://img.shields.io/badge/English-100%25-brightgreen)](https://github.com/MemoriesOfTime/GunWar/blob/master/readme.md)
 
 
 ## 介绍
