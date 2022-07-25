@@ -43,4 +43,4 @@
 
 ## Bugs & Reports
 
-If you come across any bug or problem while using it, you can report it on [Discord](https://discord.gg/pJjQDQC), or send a issue here to us.
+如果您遇到问题，可以在原贴（mcbbs/minebbs）下面向我们反馈。同时，前往 [Discord](https://discord.gg/pJjQDQC)或者在此处发Issue也是个不错之选！.
