@@ -35,11 +35,11 @@
 
 ## In-game Screenshots
 
-![](pic\zh-CN\screenshot_01.png)
+![](pic/zh-CN/screenshot_01.png)
 
-![](pic\zh-CN\screenshot_02.png)
+![](pic/zh-CN/screenshot_02.png)
 
-![](pic\zh-CN\screenshot_03.png)
+![](pic/zh-CN/screenshot_03.png)
 
 ## Bugs & Reports
 
