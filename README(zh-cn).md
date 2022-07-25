@@ -4,7 +4,7 @@
 ![Java CI](https://github.com/MemoriesOfTime/GunWar/workflows/Java%20CI/badge.svg)
 [![bilibili](https://img.shields.io/badge/Link-bilibili-ff69b4)](https://www.bilibili.com/video/BV12A411t7Gr/)
 
-## Switch between Languages?
+## 切换语言
 
 ![Github](https://img.shields.io/badge/简体中文[已选择]-100%25-brightgreen)
 [![Github](https://img.shields.io/badge/English-100%25-brightgreen)](https://github.com/MemoriesOfTime/GunWar/readme.md)
@@ -33,7 +33,7 @@
 
 **多语言支持!** 你可以选择你想使用的语言，也可以创建属于自己的语言文件!
 
-## In-game Screenshots
+## 游戏内截图
 
 ![](pic/zh-CN/screenshot_01.png)
 
@@ -41,6 +41,6 @@
 
 ![](pic/zh-CN/screenshot_03.png)
 
-## Bugs & Reports
+## Bug及意见反馈
 
 如果您遇到问题，可以在原贴（mcbbs/minebbs）下面向我们反馈。同时，前往 [Discord](https://discord.gg/pJjQDQC)或者在此处发Issue也是个不错之选！.
