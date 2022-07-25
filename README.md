@@ -21,7 +21,7 @@ Gunwar is a simple team war with four different modes. You need to battle enemy 
 
 **Customizable configurations!** You can set players' initial items, including vanilla items and customized items(Melee, Projectile, Weapon_gun)
 
-**ScoreBoard & Dummy HealthBar Support** Scoreboard will display all useful information for you while Dummy Bossbar will display your health status.
+**ScoreBoard & Dummy HealthBar Support!** Scoreboard will display all useful information for you while Dummy Bossbar will display your health status.
 
 **Simple GUI management!** You can easily set or modify every room. All simplified for easy configuration!
 
