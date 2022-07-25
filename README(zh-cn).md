@@ -33,8 +33,6 @@
 
 **多语言支持!** 你可以选择你想使用的语言，也可以创建属于自己的语言文件!
 
-多前置插件支持! 
-
 ## In-game Screenshots
 
 ![](pic\zh-CN\screenshot_01.png)
