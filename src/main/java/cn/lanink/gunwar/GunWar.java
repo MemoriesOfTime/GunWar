@@ -20,6 +20,7 @@ import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
+import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariableV2;
@@ -174,6 +175,7 @@ public class GunWar extends PluginBase {
         this.itemManage = new ItemManage(this);
 
         SupplyConfigManager.loadAllSupplyConfig();
+        ItemKillMessageUtils.load();
 
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");
