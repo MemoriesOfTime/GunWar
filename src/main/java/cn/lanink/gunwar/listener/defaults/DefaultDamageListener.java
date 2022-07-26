@@ -9,6 +9,7 @@ import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.MeleeWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
@@ -132,7 +133,13 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                 }
 
                 if (GunWar.getInstance().isEnableOtherWeaponDamage()) {
-                    room.lessHealth(player, damagePlayer, event.getFinalDamage());
+                    String killMessage = ItemKillMessageUtils.getKillMessage(damagePlayer.getInventory().getItemInHand());
+                    if (killMessage != null) {
+                        killMessage = killMessage
+                                .replace("%damager%", damagePlayer.getName())
+                                .replace("%player%", player.getName());
+                    }
+                    room.lessHealth(player, damagePlayer, event.getFinalDamage(), killMessage);
                     return;
                 }
             }

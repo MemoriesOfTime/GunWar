@@ -20,6 +20,7 @@ import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
+import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariableV2;
@@ -135,7 +136,7 @@ public class GunWar extends PluginBase {
     @Override
     public void onEnable() {
         this.getLogger().info("§l§e 插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        this.getLogger().info("§l§e https://github.com/lt-name/GunWar_Nukkit");
+        this.getLogger().info("§l§e https://github.com/MemoriesOfTime/GunWar");
         this.getLogger().info("§l§e Version: " + VERSION);
 
         this.scoreboard = ScoreboardUtil.getScoreboard();
@@ -174,6 +175,7 @@ public class GunWar extends PluginBase {
         this.itemManage = new ItemManage(this);
 
         SupplyConfigManager.loadAllSupplyConfig();
+        ItemKillMessageUtils.load();
 
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");

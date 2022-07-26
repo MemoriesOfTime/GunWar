@@ -1,0 +1,6 @@
+#原版/自定义物品的击杀提示信息
+#格式：  "物品ID（数字ID或字符串ID）": "击杀信息"
+"280:0": "%damager% 用棍子敲死了 %player%"
+"gun:m249": "%player% 被 %damager% 用机枪扫死了！"
+"gun:m3": "%damager% 一枪把 %player% 给打成了筛子！"
+"gun:barrett": "%damager% 成功狙掉了 %player%"

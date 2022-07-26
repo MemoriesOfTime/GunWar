@@ -1,9 +1,10 @@
 name: GunWar
 main: cn.lanink.gunwar.GunWar
-version: "1.5.3-PM1E"
+version: "1.5.4-PM1E-SNAPSHOT"
 api: ["Nukkit-PM1E"]
 load: POSTWORLD
 author: "LT_Name"
+website: "https://www.lanink.cn"
 depend:
   - "MemoriesOfTime-GameCore"
 
