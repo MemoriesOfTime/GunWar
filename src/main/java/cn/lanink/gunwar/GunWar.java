@@ -136,7 +136,7 @@ public class GunWar extends PluginBase {
     @Override
     public void onEnable() {
         this.getLogger().info("§l§e 插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
-        this.getLogger().info("§l§e https://github.com/lt-name/GunWar_Nukkit");
+        this.getLogger().info("§l§e https://github.com/MemoriesOfTime/GunWar");
         this.getLogger().info("§l§e Version: " + VERSION);
 
         this.scoreboard = ScoreboardUtil.getScoreboard();
