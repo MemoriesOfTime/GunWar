@@ -22,9 +22,16 @@ public class ItemKillMessageUtils {
     public static void load() {
         GunWar.getInstance().saveResource("ItemKillMessage.yml", false);
         new Config(GunWar.getInstance().getDataFolder() + "/ItemKillMessage.yml", Config.YAML).getAll().forEach((key, value) -> {
-            Item item = Item.fromString(key);
-            if (item.getId() != Item.AIR) {
-                ITEM_KILL_MESSAGE.put(ItemData.of(item), value.toString());
+            try {
+                Item item = Item.fromString(key);
+                if (item.getId() != Item.AIR) {
+                    ITEM_KILL_MESSAGE.put(ItemData.of(item), value.toString());
+                }
+            }catch (Exception e) {
+                //nkx不支持字符串物品，大部分报错可以忽略
+                if (GunWar.debug) {
+                    GunWar.getInstance().getLogger().error("读取ItemKillMessage.yml错误：", e);
+                }
             }
         });
     }
