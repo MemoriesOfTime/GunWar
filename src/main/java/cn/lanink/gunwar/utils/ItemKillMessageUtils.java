@@ -28,6 +28,7 @@ public class ItemKillMessageUtils {
                     ITEM_KILL_MESSAGE.put(ItemData.of(item), value.toString());
                 }
             }catch (Exception e) {
+                GunWar.getInstance().getLogger().warning("无法加载物品：" + key + " 的击杀信息！此物品可能不存在，请检查物品id！");
                 //nkx不支持字符串物品，大部分报错可以忽略
                 if (GunWar.debug) {
                     GunWar.getInstance().getLogger().error("读取ItemKillMessage.yml错误：", e);
