@@ -62,7 +62,14 @@ public class PlantBombTask extends PluginTask<GunWar> {
         Server.getInstance().getScheduler().scheduleTask(this.owner, () -> {
             if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
                 Tools.sendTitle(this.room, "", this.owner.getLanguage().translateString("game_blasting_plantBomb"));
-                this.player.getInventory().remove(Tools.getItem(201));
+                //移除炸弹物品
+                for (Item item : this.player.getInventory().getContents().values()) {
+                    if (item.hasCompoundTag()) {
+                        if (item.getNamedTag().getInt("GunWarItemType") == 201) {
+                            this.player.getInventory().removeItem(item);
+                        }
+                    }
+                }
 
                 CompoundTag nbt = Entity.getDefaultNBT(this.placePoint);
                 EntityGunWarBomb entityBomb = new EntityGunWarBomb(

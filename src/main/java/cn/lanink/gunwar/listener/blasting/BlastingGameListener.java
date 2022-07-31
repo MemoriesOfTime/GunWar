@@ -44,7 +44,8 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             return;
         }
         Item item = player.getInventory().getItemInHand();
-        if (item.hasCompoundTag() && item.getNamedTag().getInt("GunWarItemType") == 201) {
+        if (item.hasCompoundTag() && item.getNamedTag().getInt("GunWarItemType") == 201 &&
+                room.getEntityGunWarBomb() == null) {
             event.setCancelled(true);
 
             //修复win10玩家连续触发两次导致无法操作的问题
