@@ -66,6 +66,30 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
             this.endGame();
             return;
         }
+
+        if (this.gunWar.isEnableAloneHealth()) {
+            for (Player player : this.players.keySet()) {
+                player.setHealth(player.getMaxHealth() - 1);
+            }
+        }
+
+        //玩家无敌时间计算
+        for (Map.Entry<Player, Integer> entry : this.playerInvincibleTime.entrySet()) {
+            if (entry.getValue() > 0) {
+                entry.setValue(entry.getValue() - 1);
+            }
+        }
+
+        //回收商店物品
+        if (this.getSupplyType() == SupplyType.ONLY_ROUND_START) {
+            int startTime = this.getSetGameTime() - this.gameTime;
+            if (startTime == this.getSupplyEnableTime() + 1) {
+                for (Player player : this.getPlayers().keySet()) {
+                    Tools.removeGunWarItem(player.getInventory(), Tools.getItem(13));  //商店物品
+                }
+            }
+        }
+
         if (!this.isRoundEnd()) {
             //Boss血条显示炸弹爆炸倒计时
             if (this.entityGunWarBomb != null && !this.entityGunWarBomb.isClosed() &&
@@ -135,6 +159,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                 this.gameTime = this.getSetGameTime();
             }
         }
+
         //显示爆破点
         Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override

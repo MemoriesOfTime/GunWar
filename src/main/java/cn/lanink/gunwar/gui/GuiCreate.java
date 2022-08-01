@@ -7,6 +7,8 @@ import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.RoomConfig;
+import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
@@ -132,9 +134,10 @@ public class GuiCreate {
     public static void sendAdminTimeMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText1"), "", "60"));
-        custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText2"), "", "300"));
-        custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText3"), "", "5"));
+        Config nowConfig = GunWar.getInstance().getRoomConfig(player.getLevel());
+        custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText1"), "", nowConfig.getInt("waitTime", 60) + ""));
+        custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText2"), "", nowConfig.getInt("gameTime", 300) + ""));
+        custom.addElement(new ElementInput(language.translateString("adminTimeMenuInputText3"), "", nowConfig.getInt("victoryScore", 5) + ""));
 
         custom.onResponded((formResponseCustom, cp) -> {
             try {
@@ -161,14 +164,91 @@ public class GuiCreate {
     }
 
     /**
+     * 设置商店菜单
+     *
+     * @param player 玩家
+     */
+    public static void sendAdminShopMenu(Player player) {
+        //TODO 多语言支持
+        Language language = GunWar.getInstance().getLanguage();
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
+        Config nowConfig = GunWar.getInstance().getRoomConfig(player.getLevel());
+
+        ArrayList<String> sTypeList = new ArrayList<>();
+        int nowChoose = 0;
+        int i = 0;
+        for (RoomConfig.SupplyType supplyType : RoomConfig.SupplyType.values()) {
+            sTypeList.add(Tools.getShowSupplyType(supplyType));
+            if (nowConfig.exists("supplyType") && supplyType.name().equalsIgnoreCase(nowConfig.getString("supplyType"))) {
+                nowChoose = i;
+            }
+            i++;
+        }
+        custom.addElement(new ElementDropdown(language.translateString("gui_admin_AdminShopMenu_SupplyType"), sTypeList, nowChoose)); //0
+        nowChoose = 0;
+        i = 0;
+        if (nowConfig.exists("supply")) {
+            for (String string : SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()) {
+                if (string.equalsIgnoreCase(nowConfig.getString("supply"))) {
+                    nowChoose = i;
+                    break;
+                }
+                i++;
+            }
+        }
+        custom.addElement(new ElementDropdown(language.translateString("gui_admin_AdminShopMenu_Supply"), new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()), nowChoose)); //1
+        custom.addElement(new ElementInput(
+                language.translateString("gui_admin_AdminShopMenu_SupplyEnableTime",
+                        Tools.getShowSupplyType(RoomConfig.SupplyType.ONLY_ROUND_START)),
+                "",
+                nowConfig.getInt("supplyEnableTime", 10) + ""
+        )); //2
+
+        custom.onResponded((formResponseCustom, cp) -> {
+            try {
+                Config config = GunWar.getInstance().getRoomConfig(cp.getLevel());
+                List<RoomConfig.SupplyType> list = Arrays.asList(RoomConfig.SupplyType.values());
+                RoomConfig.SupplyType supplyType = list.get(formResponseCustom.getDropdownResponse(0).getElementID());
+                config.set("supplyType", supplyType.name());
+                cp.sendMessage(language.translateString("admin_Set_SupplyType", Tools.getShowSupplyType(supplyType)));
+
+                if (supplyType != RoomConfig.SupplyType.CLOSE) {
+                    String sConfig = formResponseCustom.getDropdownResponse(1).getElementContent();
+                    config.set("supply", sConfig);
+                    cp.sendMessage(language.translateString("admin_Set_Supply", sConfig));
+
+                    if (supplyType == RoomConfig.SupplyType.ONLY_ROUND_START) {
+                        int time = Tools.toInt(formResponseCustom.getInputResponse(2));
+                        if (time < 1) {
+                            cp.sendMessage("时间不能小于1");
+                            throw new Exception();
+                        }
+                        config.set("supplyEnableTime", time);
+                        cp.sendMessage(language.translateString("admin_Set_SupplyEnableTime", time));
+                    }
+                }
+                config.save();
+            } catch (Exception e) {
+                //TODO
+                if (GunWar.debug) {
+                    GunWar.getInstance().getLogger().error("设置商店错误：", e);
+                }
+            }
+        });
+
+        player.showFormWindow(custom);
+    }
+
+    /**
      * 设置房间游戏人数菜单
      * @param player 玩家
      */
     public static void sendAdminPlayersMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
-        custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText1"), "", "2"));
-        custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText2"), "", "10"));
+        Config nowConfig = GunWar.getInstance().getRoomConfig(player.getLevel());
+        custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText1"), "", nowConfig.getInt("minPlayers", 2) + ""));
+        custom.addElement(new ElementInput(language.translateString("adminPlayersMenuInputText2"), "", nowConfig.getInt("maxPlayers", 10) + ""));
 
         custom.onResponded((formResponseCustom, cp) -> {
             try {
@@ -198,15 +278,23 @@ public class GuiCreate {
     public static void sendAdminModeMenu(Player player) {
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
-        LinkedList<String> list = new LinkedList<>(Arrays.asList(GunWar.getRoomClass().keySet().toArray(new String[]{})));
+        Config nowConfig = GunWar.getInstance().getRoomConfig(player.getLevel());
+        LinkedList<String> list = new LinkedList<>(GunWar.getRoomClass().keySet());
         LinkedList<String> showList = new LinkedList<>();
+        int nowChoose = 0;
+        int i = 0;
         for (String gameMode : list) {
             showList.add(Tools.getShowGameMode(gameMode));
+            if (nowConfig.exists("gameMode") && gameMode.equalsIgnoreCase(nowConfig.getString("gameMode"))) {
+                nowChoose = i;
+            }
+            i++;
         }
         custom.addElement(new ElementDropdown("\n\n\n" +
                 language.translateString("adminMenuSetLevel", player.getLevel().getName()),
-                showList
-        ));
+                showList,
+                nowChoose
+        )); //0
 
         custom.onResponded((formResponseCustom, cp) -> {
             String gameMode = list.get(formResponseCustom.getDropdownResponse(0).getElementID());

@@ -4,6 +4,7 @@ import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.RoomConfig;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -32,10 +33,12 @@ public class WaitTask extends PluginTask<GunWar> {
             return;
         }
         for (Player player : this.room.getPlayers().keySet()) {
-            player.getInventory().setItem(0, Tools.getItem(13));
-            player.getInventory().setItem(3, Tools.getItem(11));
-            player.getInventory().setItem(5, Tools.getItem(12));
-            player.getInventory().setItem(8, Tools.getItem(10));
+            if (this.room.getSupplyType() != RoomConfig.SupplyType.CLOSE) {
+                player.getInventory().setItem(0, Tools.getItem(13)); //商店
+            }
+            player.getInventory().setItem(3, Tools.getItem(11)); //队伍选择
+            player.getInventory().setItem(5, Tools.getItem(12)); //队伍选择
+            player.getInventory().setItem(8, Tools.getItem(10)); //退出房间
         }
         if (this.room.getPlayers().size() >= this.room.getMinPlayers()) {
             if (this.room.getPlayers().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {

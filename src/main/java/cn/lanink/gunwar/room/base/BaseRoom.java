@@ -163,6 +163,17 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             }
         }
 
+        //回收商店物品
+        if (this.getSupplyType() == SupplyType.ONLY_ROUND_START) {
+            int startTime = this.getSetGameTime() - this.gameTime;
+            if (startTime == this.getSupplyEnableTime() + 1) {
+                for (Player player : this.getPlayers().keySet()) {
+                    Tools.removeGunWarItem(player.getInventory(), Tools.getItem(13));  //商店物品
+                }
+            }
+        }
+
+        //TODO 拆分胜利判断 让BlastingModeRoom可以调用此方法
         if(!this.roundEnd) {
             if (this.gameTime <= 0) {
                 this.roundEnd(Team.NULL);
@@ -766,17 +777,21 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }else {
             //清除一些必须清除的特殊物品
             PlayerInventory inventory = player.getInventory();
-            inventory.remove(Tools.getItem(10));
-            inventory.remove(Tools.getItem(11));
-            inventory.remove(Tools.getItem(12));
-            inventory.remove(Tools.getItem(13));
-            inventory.remove(Tools.getItem(201));
+            Tools.removeGunWarItem(inventory, Tools.getItem(10));
+            Tools.removeGunWarItem(inventory, Tools.getItem(11));
+            Tools.removeGunWarItem(inventory, Tools.getItem(12));
+            Tools.removeGunWarItem(inventory, Tools.getItem(13));
+            Tools.removeGunWarItem(inventory, Tools.getItem(201));
         }
 
         Tools.rePlayerState(player, true);
         Tools.showPlayer(this, player);
         this.getPlayerHealth().put(player, 20F);
-        player.getInventory().addItem(Tools.getItem(13)); //打开商店物品
+
+        if (this.getSupplyType() != SupplyType.CLOSE) {
+            player.getInventory().addItem(Tools.getItem(13)); //打开商店物品
+        }
+
         switch (this.getPlayerTeamAccurate(player)) {
             case RED_DEATH:
                 this.getPlayers().put(player, Team.RED);

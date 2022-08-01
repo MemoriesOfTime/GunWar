@@ -2,8 +2,10 @@ package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.gui.GuiCreate;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
@@ -12,6 +14,8 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 
+import java.util.HashSet;
+
 /**
  * @author lt_name
  */
@@ -19,6 +23,7 @@ import cn.nukkit.utils.Config;
 public class SetRoomListener implements Listener {
 
     private final GunWar gunWar;
+    private final HashSet<Player> playerClickCooldown = new HashSet<>();
 
     public SetRoomListener(GunWar gunWar) {
         this.gunWar = gunWar;
@@ -45,9 +50,17 @@ public class SetRoomListener implements Listener {
                 return;
             }
             event.setCancelled(true);
+
+            //防止win10玩家重复触发
+            if (this.playerClickCooldown.contains(player)) {
+                return;
+            }
+            this.playerClickCooldown.add(player);
+            Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> this.playerClickCooldown.remove(player), 20);
+
             Config config = this.gunWar.getRoomConfig(player.getLevel());
             SetRoomTask task = this.gunWar.setRoomTask.get(player);
-            switch (item.getNamedTag().getInt("GunWarItemType")) {
+            switch (item.getNamedTag().getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG)) {
                 case 110: //上一步
                     switch (task.getSetRoomSchedule()) {
                         case 10:
@@ -98,6 +111,9 @@ public class SetRoomListener implements Listener {
                             break;
                         case 40:
                             GuiCreate.sendAdminTimeMenu(player);
+                            break;
+                        case 45:
+                            GuiCreate.sendAdminShopMenu(player);
                             break;
                         case 50:
                             GuiCreate.sendAdminPlayersMenu(player);
