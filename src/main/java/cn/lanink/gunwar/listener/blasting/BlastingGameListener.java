@@ -3,6 +3,7 @@ package cn.lanink.gunwar.listener.blasting;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.tasks.game.blasting.DemolitionBombTask;
@@ -44,7 +45,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             return;
         }
         Item item = player.getInventory().getItemInHand();
-        if (item.hasCompoundTag() && item.getNamedTag().getInt("GunWarItemType") == 201 &&
+        if (item.hasCompoundTag() && item.getNamedTag().getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 201 &&
                 room.getEntityGunWarBomb() == null) {
             event.setCancelled(true);
 

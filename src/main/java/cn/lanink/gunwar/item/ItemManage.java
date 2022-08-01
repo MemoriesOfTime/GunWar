@@ -21,6 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ItemManage {
 
+    public static final String IS_GUN_WAR_ITEM_TAG = "isGunWarItem";
+    public static final String GUN_WAR_ITEM_TYPE_TAG = "GunWarItemType";
+
     private final GunWar gunWar;
     private final String itemsFolder;
     private final String weaponFolder;

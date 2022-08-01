@@ -5,6 +5,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.*;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.RoomConfig;
 import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -13,6 +14,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
+import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.item.ItemFirework;
@@ -124,6 +126,18 @@ public class Tools {
                 return GunWar.getInstance().getLanguage().translateString("teamNameBlue");
             default:
                 return GunWar.getInstance().getLanguage().translateString("noTeamSelect");
+        }
+    }
+
+    public static String getShowSupplyType(RoomConfig.SupplyType supplyType) {
+        switch (supplyType) {
+            case ALL_ROUND:
+                return GunWar.getInstance().getLanguage().translateString("supplyType_All_Round");
+            case ONLY_ROUND_START:
+                return GunWar.getInstance().getLanguage().translateString("supplyType_Only_Round_Start");
+            case CLOSE:
+            default:
+                return GunWar.getInstance().getLanguage().translateString("supplyType_Close");
         }
     }
 
@@ -282,6 +296,24 @@ public class Tools {
     }
 
     /**
+     * 移除GunWar物品
+     *
+     * @param inventory 库存
+     * @param removeItem 物品
+     */
+    public static void removeGunWarItem(Inventory inventory, Item removeItem) {
+        if (!removeItem.hasCompoundTag() || !removeItem.getNamedTag().getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG)) {
+            return;
+        }
+        for (Item item : inventory.getContents().values()) {
+            if (item.hasCompoundTag() && item.getNamedTag().getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG) &&
+                    item.getNamedTag().getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == removeItem.getNamedTag().getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG)) {
+                inventory.removeItem(item);
+            }
+        }
+    }
+
+    /**
      * 根据队伍获取盔甲
      *
      * @param team 队伍
@@ -321,37 +353,37 @@ public class Tools {
             case 10: //退出房间物品
                 item = Item.get(324, 0, 1);
                 item.setNamedTag(new CompoundTag()
-                        .putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 10));
+                        .putBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG, true)
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 10));
                 item.setCustomName(language.translateString("itemQuitRoom"));
                 item.setLore(language.translateString("itemQuitRoomLore").split("\n"));
                 return item;
             case 11: //选择红队物品
                 item = Item.get(241, 14, 1);
                 item.setNamedTag(new CompoundTag()
-                        .putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 11));
+                        .putBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG, true)
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 11));
                 item.setCustomName(language.translateString("itemTeamSelectRed"));
                 return item;
             case 12: //选择蓝队物品
                 item = Item.get(241, 11, 1);
                 item.setNamedTag(new CompoundTag()
-                        .putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 12));
+                        .putBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG, true)
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 12));
                 item.setCustomName(language.translateString("itemTeamSelectBlue"));
                 return item;
             case 13: //打开商店物品
                 item = Item.get(347, 0, 1);
                 item.setNamedTag(new CompoundTag()
-                        .putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 13));
+                        .putBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG, true)
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 13));
                 item.setCustomName(language.translateString("item_OpenShop"));
                 return item;
             case 201: //爆破模式 炸弹
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()
-                        .putBoolean("isGunWarItem", true)
-                        .putInt("GunWarItemType", 201));
+                        .putBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG, true)
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 201));
                 item.setCustomName(language.translateString("item_Bomb_Name"));
                 return item;
             default:
@@ -434,7 +466,7 @@ public class Tools {
 
     /**
      * 放烟花
-     * GitHub：https://github.com/PetteriM1/FireworkShow
+     * GitHub：<a href="https://github.com/PetteriM1/FireworkShow">https://github.com/PetteriM1/FireworkShow</a>
      * @param position 位置
      */
     public static void spawnFirework(Position position) {

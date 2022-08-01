@@ -1,8 +1,10 @@
 package cn.lanink.gunwar.tasks.adminroom;
 
+import cn.lanink.gamecore.utils.Tips;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityText;
 import cn.lanink.gunwar.gui.GuiCreate;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
@@ -31,6 +33,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
     private final Level level;
     private final Map<Integer, Item> playerInventory;
     private final Item offHandItem;
+    private final int beforeGameMode;
 
     private Entity waitSpawnText;
     private Entity redSpawnText;
@@ -44,8 +47,16 @@ public class SetRoomTask extends PluginTask<GunWar> {
         this.level = level;
         this.playerInventory = player.getInventory().getContents();
         this.offHandItem = player.getOffhandInventory().getItem(0);
+        this.beforeGameMode = player.getGamemode();
+
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
+
+        player.setGamemode(Player.CREATIVE);
+
+        if (owner.isHasTips()) {
+            Tips.closeTipsShow(player.getLevel().getFolderName(), player);
+        }
     }
 
     @Override
@@ -60,7 +71,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
         if (this.setRoomSchedule > 10) {
             item = Item.get(340);
             item.setNamedTag(new CompoundTag()
-                    .putInt("GunWarItemType", 110));
+                    .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 110));
             item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_back"));
             this.player.getInventory().setItem(0, item);
         }else {
@@ -74,7 +85,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setWaitSpawn"));
                 item = Item.get(138);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setWaitSpawn"));
                 this.player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("waitSpawn").trim())) {
@@ -88,7 +99,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                         this.owner.getLanguage().translateString("teamNameRed")));
                 item = Item.get(241, 14);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setTeamSpawn",
                         this.owner.getLanguage().translateString("teamNameRed")));
                 this.player.getInventory().setItem(4, item);
@@ -103,7 +114,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                         this.owner.getLanguage().translateString("teamNameBlue")));
                 item = Item.get(241, 11);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setTeamSpawn",
                         this.owner.getLanguage().translateString("teamNameBlue")));
                 this.player.getInventory().setItem(4, item);
@@ -113,16 +124,38 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 break;
             case 40: //设置更多参数
                 this.backRoomSchedule = 30;
-                this.nextRoomSchedule = 50;
+                this.nextRoomSchedule = 45;
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setMoreParameters"));
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setMoreParameters"));
                 this.player.getInventory().setItem(4, item);
                 if (config.getInt("waitTime") > 0 &&
                         config.getInt("gameTime") > 0 &&
                         config.getInt("victoryScore") > 0) {
+                    if (autoNext) {
+                        this.setRoomSchedule(this.nextRoomSchedule);
+                        GuiCreate.sendAdminShopMenu(player);
+                    }else {
+                        canNext = true;
+                    }
+                }
+                break;
+            case 45: //设置商店
+                this.backRoomSchedule = 40;
+                this.nextRoomSchedule = 50;
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setShop"));
+                item = Item.get(347, 11);
+                item.setNamedTag(new CompoundTag()
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setShop"));
+                this.player.getInventory().setItem(4, item);
+
+                String supplyType = config.getString("supplyType");
+                if ("CLOSE".equalsIgnoreCase(supplyType)  ||
+                        "ALL_ROUND".equalsIgnoreCase(supplyType) ||
+                        config.getInt("supplyEnableTime") > 0) {
                     if (autoNext) {
                         this.setRoomSchedule(this.nextRoomSchedule);
                         GuiCreate.sendAdminPlayersMenu(player);
@@ -132,12 +165,12 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 }
                 break;
             case 50: //设置房间人数
-                this.backRoomSchedule = 40;
+                this.backRoomSchedule = 45;
                 this.nextRoomSchedule = 60;
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setRoomPlayers"));
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setRoomPlayers"));
                 this.player.getInventory().setItem(4, item);
                 if (config.getInt("minPlayers") > 0 &&
@@ -156,7 +189,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
                 this.player.getInventory().setItem(4, item);
                 String setMode = config.getString("gameMode", "").trim();
@@ -185,7 +218,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.sendTip("设置爆破点A");
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName("设置爆破点A");
                 this.player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("blastingPointA").trim())) {
@@ -199,7 +232,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.sendTip("设置爆破点B");
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 113));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName("设置爆破点B");
                 this.player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("blastingPointB").trim())) {
@@ -212,11 +245,11 @@ public class SetRoomTask extends PluginTask<GunWar> {
             item = Item.get(340);
             if (this.nextRoomSchedule == 70) {
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 112));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 112));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_save"));
             }else {
                 item.setNamedTag(new CompoundTag()
-                        .putInt("GunWarItemType", 111));
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 111));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_next"));
             }
             this.player.getInventory().setItem(8, item);
@@ -338,19 +371,24 @@ public class SetRoomTask extends PluginTask<GunWar> {
     }
 
     @Override
-    public void cancel() {
+    public void onCancel() {
         this.closeEntity();
         if (this.setRoomSchedule != 70) {
             this.player.sendMessage(this.owner.getLanguage().translateString("admin_setRoom_cancel"));
         }
-        if (this.player != null && this.player.getInventory() != null) {
-            this.player.getInventory().clearAll();
-            this.player.getUIInventory().clearAll();
-            this.player.getInventory().setContents(this.playerInventory);
-            this.player.getOffhandInventory().setItem(0, this.offHandItem);
+        if (this.player != null) {
+            if (this.owner.isHasTips()) {
+                Tips.removeTipsConfig(player.getLevel().getFolderName(), player);
+            }
+            this.player.setGamemode(this.beforeGameMode);
+            if (this.player.getInventory() != null) {
+                this.player.getInventory().clearAll();
+                this.player.getUIInventory().clearAll();
+                this.player.getInventory().setContents(this.playerInventory);
+                this.player.getOffhandInventory().setItem(0, this.offHandItem);
+            }
         }
         this.owner.setRoomTask.remove(this.player);
-        super.cancel();
     }
 
 }

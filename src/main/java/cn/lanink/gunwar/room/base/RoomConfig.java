@@ -50,7 +50,11 @@ public class RoomConfig {
     protected ArrayList<String> blueTeamInitialItems = new ArrayList<>();
 
     @Getter
+    private final SupplyType supplyType;
+    @Getter
     private final SupplyConfig supplyConfig;
+    @Getter
+    private final int supplyEnableTime;
 
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
         this.level = level;
@@ -96,7 +100,9 @@ public class RoomConfig {
         }
         this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
 
+        this.supplyType = SupplyType.valueOf(config.getString("supplyType", "ALL_ROUND").toUpperCase());
         this.supplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("supply", "DefaultSupply"));
+        this.supplyEnableTime = config.getInt("supplyEnableTime", 10);  //商店启用时间 单位：秒 仅ONLY_ROUND_START
     }
 
     public final void setGameMode(String gameMode) {
@@ -107,6 +113,28 @@ public class RoomConfig {
 
     public final String getGameMode() {
         return gameMode;
+    }
+
+    /**
+     * 商店启用模式
+     */
+    public enum SupplyType {
+
+        /**
+         * 不启用商店
+         */
+        CLOSE,
+
+        /**
+         * 启用 全局有效
+         */
+        ALL_ROUND,
+
+        /**
+         * 启用 仅回合开始有效
+         */
+        ONLY_ROUND_START;
+
     }
 
 }

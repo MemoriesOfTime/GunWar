@@ -4,6 +4,7 @@ import cn.lanink.gamecore.GameCore;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
+import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.utils.Tools;
@@ -49,7 +50,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
         }
         Item item = player.getInventory().getItemInHand();
         if (!item.hasCompoundTag() ||
-                item.getNamedTag().getInt("GunWarItemType") != 201 ||
+                item.getNamedTag().getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) != 201 ||
                 this.playerPosition.distance(this.player) > 0.5 ||
                 this.placementProgress >= MAX_PLACEMENT_PROGRESS ||
                 !PLANT_BOMB_PLAYERS.contains(this.player)) {
@@ -63,13 +64,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
             if (this.placementProgress >= MAX_PLACEMENT_PROGRESS) {
                 Tools.sendTitle(this.room, "", this.owner.getLanguage().translateString("game_blasting_plantBomb"));
                 //移除炸弹物品
-                for (Item item : this.player.getInventory().getContents().values()) {
-                    if (item.hasCompoundTag()) {
-                        if (item.getNamedTag().getInt("GunWarItemType") == 201) {
-                            this.player.getInventory().removeItem(item);
-                        }
-                    }
-                }
+                Tools.removeGunWarItem(this.player.getInventory(), Tools.getItem(201));
 
                 CompoundTag nbt = Entity.getDefaultNBT(this.placePoint);
                 EntityGunWarBomb entityBomb = new EntityGunWarBomb(

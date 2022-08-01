@@ -157,7 +157,21 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
 
         //商店
-        if (tag.getBoolean("isGunWarItem") && tag.getInt("GunWarItemType") == 13) {
+        int startTime = room.getSetGameTime() - room.gameTime;
+        if (tag.getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG) && tag.getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 13 &&
+                startTime <= room.getSupplyEnableTime()) {
+
+            //防止win10重复打开商店
+            int nowTick = Server.getInstance().getTick();
+            int lastTick = tag.getInt("lastTick");
+            if (lastTick != 0 && nowTick - lastTick < 20) {
+                event.setCancelled(true);
+                return;
+            }
+            tag.putInt("lastTick", nowTick);
+            item.setNamedTag(tag);
+            player.getInventory().setItemInHand(item);
+
             SupplyPageConfig defaultPageConfig = room.getSupplyConfig().getDefaultPageConfig();
             if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
                 player.addWindow(defaultPageConfig.generateWindow());
@@ -169,7 +183,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
 
         if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
-            switch (tag.getInt("GunWarItemType")) {
+            switch (tag.getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG)) {
                 //退出房间
                 case 10:
                     room.quitRoom(player);
