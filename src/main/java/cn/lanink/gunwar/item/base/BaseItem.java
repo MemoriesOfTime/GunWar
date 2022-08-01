@@ -12,7 +12,7 @@ public abstract class BaseItem {
 
     public static final String GUN_WAR_ITEM_TAG = "GunWarItemTag";
     public static final String GUN_WAR_ITEM_NAME = "GunWarItemName";
-    public static final String GUN_WAR_ITEM_TYPE = ItemManage.GUN_WAR_ITEM_TYPE_TAG;
+    public static final String GUN_WAR_ITEM_TYPE = "GunWarItemType";
 
     private final String name;
     public final Item item;
