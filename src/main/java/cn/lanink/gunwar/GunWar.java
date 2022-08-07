@@ -386,11 +386,11 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         this.getLogger().info("§e开始加载资源文件");
         //语言文件
-        this.saveResource("Language/chs.yml", "Language/chs_customize.yml", true);
-        this.saveResource("Language/kor.yml", "Language/kor_customize.yml", true);
-        this.saveResource("Language/eng.yml", "Language/eng_customize.yml", true);
-        this.saveResource("Language/rus.yml", "Language/rus_customize.yml", true);
-        this.saveResource("Language/spa.yml", "Language/spa_customize.yml", true);
+        this.saveResource("Language/chs.yml", "Language/chs_customize.yml", false);
+        this.saveResource("Language/kor.yml", "Language/kor_customize.yml", false);
+        this.saveResource("Language/eng.yml", "Language/eng_customize.yml", false);
+        this.saveResource("Language/rus.yml", "Language/rus_customize.yml", false);
+        this.saveResource("Language/spa.yml", "Language/spa_customize.yml", false);
         String setLang = this.config.getString("language", "chs");
         File languageFile = new File(this.getDataFolder() + "/Language/" + setLang + ".yml");
         if (!languageFile.exists() || supportList.contains(setLang.toLowerCase().trim())) {
