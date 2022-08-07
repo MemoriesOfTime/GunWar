@@ -54,6 +54,16 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
     }
 
     @Override
+    public void saveConfig() {
+        super.saveConfig();
+
+        this.config.set("blastingPointA", this.blastingPointA);
+        this.config.set("blastingPointB", this.blastingPointB);
+
+        this.config.save();
+    }
+
+    @Override
     public List<String> getListeners() {
         List<String> list = super.getListeners();
         list.add("BlastingGameListener");

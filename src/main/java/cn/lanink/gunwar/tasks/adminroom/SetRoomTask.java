@@ -214,12 +214,11 @@ public class SetRoomTask extends PluginTask<GunWar> {
             case 200: //设置爆破点A
                 this.backRoomSchedule = 60;
                 this.nextRoomSchedule = 210;
-                //TODO
-                this.player.sendTip("设置爆破点A");
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setBlastingPoint", "§cA"));
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()
                         .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
-                item.setCustomName("设置爆破点A");
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setBlastingPoint", "§cA"));
                 this.player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("blastingPointA").trim())) {
                     canNext = true;
@@ -228,12 +227,11 @@ public class SetRoomTask extends PluginTask<GunWar> {
             case 210: //设置爆破点B
                 this.backRoomSchedule = 200;
                 this.nextRoomSchedule = 70;
-                //TODO
-                this.player.sendTip("设置爆破点B");
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setBlastingPoint", "§9B"));
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()
                         .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
-                item.setCustomName("设置爆破点B");
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setBlastingPoint", "§9B"));
                 this.player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("blastingPointB").trim())) {
                     canNext = true;

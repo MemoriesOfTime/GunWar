@@ -22,7 +22,7 @@ public abstract class BaseRespawnModeRoom extends BaseRoom {
 
     //玩家复活所需时间
     @Getter
-    protected int respawnNeedTime = 20;
+    protected int respawnNeedTime;
 
     /**
      * 玩家重生时间
@@ -37,6 +37,16 @@ public abstract class BaseRespawnModeRoom extends BaseRoom {
      */
     public BaseRespawnModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
+
+        this.respawnNeedTime = config.getInt("respawn-need-time", 20);
+    }
+
+    @Override
+    public void saveConfig() {
+        super.saveConfig();
+
+        this.config.set("respawn-need-time", this.respawnNeedTime);
+        this.config.save();
     }
 
     @Override

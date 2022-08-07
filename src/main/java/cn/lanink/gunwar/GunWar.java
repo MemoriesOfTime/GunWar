@@ -24,6 +24,7 @@ import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariableV2;
+import cn.lanink.gunwar.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
@@ -49,7 +50,13 @@ public class GunWar extends PluginBase {
     public static final String VERSION = "?";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
+
+    /**
+     * 内置语言支持列表
+     */
+    private final List<String> supportList = Arrays.asList("chs", "kor", "eng", "rus", "spa");
     private Language language;
+
     private Config config, gameRecord;
 
     @SuppressWarnings("rawtypes")
@@ -104,6 +111,8 @@ public class GunWar extends PluginBase {
 
             }
         }
+
+        ConfigUpdateUtils.updateConfig(this);
 
         File file1 = new File(this.getDataFolder() + "/Rooms");
         File file2 = new File(this.getDataFolder() + "/PlayerInventory");
@@ -243,6 +252,10 @@ public class GunWar extends PluginBase {
         return this.restoreWorld;
     }
 
+    public List<String> getSupportList() {
+        return new ArrayList<>(supportList);
+    }
+
     public Language getLanguage() {
         return this.language;
     }
@@ -373,20 +386,25 @@ public class GunWar extends PluginBase {
     private void loadResources() {
         this.getLogger().info("§e开始加载资源文件");
         //语言文件
-        this.saveResource("Language/chs.yml", true);
-        this.saveResource("Language/kor.yml", true);
-        this.saveResource("Language/eng.yml", true);
-        this.saveResource("Language/rus.yml", true);
-        this.saveResource("Language/spa.yml", true);
-        String s = this.config.getString("language", "chs");
-        File languageFile = new File(this.getDataFolder() + "/Language/" + s + ".yml");
-        if (languageFile.exists()) {
-            this.language = new Language(new Config(languageFile, Config.YAML));
-            this.getLogger().info("§aLanguage: " + s + " loaded !");
+        this.saveResource("Language/chs.yml", "Language/chs_customize.yml", false);
+        this.saveResource("Language/kor.yml", "Language/kor_customize.yml", false);
+        this.saveResource("Language/eng.yml", "Language/eng_customize.yml", false);
+        this.saveResource("Language/rus.yml", "Language/rus_customize.yml", false);
+        this.saveResource("Language/spa.yml", "Language/spa_customize.yml", false);
+        String setLang = this.config.getString("language", "chs");
+        File languageFile = new File(this.getDataFolder() + "/Language/" + setLang + ".yml");
+        if (!languageFile.exists() || supportList.contains(setLang.toLowerCase().trim())) {
+            Config config = new Config();
+            config.load(this.getResource("Language/" + setLang + ".yml"));
+            this.language = new Language(config);
         }else {
-            this.language = new Language(new Config(this.getDataFolder() + "/Language/chs.yml"));
-            this.getLogger().warning("§cLanguage: " + s + " Not found, Load the default language !");
+            this.language = new Language(new Config(languageFile, Config.YAML));
+            Config config = new Config();
+            config.load(this.getResource("Language/chs.yml"));
+            this.language.update(config);
         }
+        this.getLogger().info("§aLanguage: " + setLang + " loaded !");
+
         //加载旗帜皮肤
         this.saveResource("Resources/Flag/Flag.json", false);
         this.saveResource("Resources/Flag/FlagStand.json", false);
@@ -401,6 +419,7 @@ public class GunWar extends PluginBase {
         this.loadFlagSkin(fileImg, fileJson, 12);
         fileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
         this.loadFlagSkin(fileImg, fileJson, 2);
+
         this.getLogger().info("§e资源文件加载完成");
     }
 

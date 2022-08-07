@@ -21,7 +21,9 @@ public class TeamModeRoom extends BaseRespawnModeRoom {
      */
     public TeamModeRoom(Level level, Config config) throws RoomLoadException {
         super(level, config);
-        this.respawnNeedTime = 3; //团队模式缩短复活时间
+
+        //针对未配置的情况，团队模式需要缩短默认的时间
+        this.respawnNeedTime = config.getInt("respawn-need-time", 3);
     }
 
     @Override

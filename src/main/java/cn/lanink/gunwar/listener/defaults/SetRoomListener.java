@@ -62,6 +62,7 @@ public class SetRoomListener implements Listener {
             SetRoomTask task = this.gunWar.setRoomTask.get(player);
             switch (item.getNamedTag().getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG)) {
                 case 110: //上一步
+                    //部分配置需要在返回上一步后移除，否则返回上一步后会再次跳过
                     switch (task.getSetRoomSchedule()) {
                         case 10:
                             return;
@@ -123,12 +124,12 @@ public class SetRoomListener implements Listener {
                             break;
                         case 200:
                             config.set("blastingPointA", pos);
-                            player.sendMessage("爆破点A已设置");
+                            player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setBlastingPointSuccessful", "§cA"));
                             task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
                         case 210:
                             config.set("blastingPointB", pos);
-                            player.sendMessage("爆破点B已设置");
+                            player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setBlastingPointSuccessful", "§9B"));
                             task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
                         default:
