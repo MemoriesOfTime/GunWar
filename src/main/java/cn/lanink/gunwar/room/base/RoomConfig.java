@@ -21,6 +21,7 @@ public class RoomConfig {
     private final String levelName;
     @Getter
     protected Level level;
+    protected final Config config;
 
     @Getter
     protected int minPlayers;
@@ -59,6 +60,8 @@ public class RoomConfig {
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
         this.level = level;
         this.levelName = level.getFolderName();
+        this.config = config;
+
         this.minPlayers = config.getInt("minPlayers", 2);
         if (this.minPlayers < 2) {
             this.minPlayers = 2;
@@ -103,6 +106,36 @@ public class RoomConfig {
         this.supplyType = SupplyType.valueOf(config.getString("supplyType", "ALL_ROUND").toUpperCase());
         this.supplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("supply", "DefaultSupply"));
         this.supplyEnableTime = config.getInt("supplyEnableTime", 10);  //商店启用时间 单位：秒 仅ONLY_ROUND_START
+    }
+
+    /**
+     * 保存房间配置
+     */
+    public void saveConfig() {
+        for (String key : this.config.getKeys()) {
+            this.config.remove(key);
+        }
+
+        this.config.set("minPlayers", this.minPlayers);
+        this.config.set("maxPlayers", this.maxPlayers);
+        this.config.set("waitSpawn", this.waitSpawn);
+        this.config.set("redSpawn", this.redSpawn);
+        this.config.set("blueSpawn", this.blueSpawn);
+        this.config.set("waitTime", this.setWaitTime);
+        this.config.set("gameTime", this.setGameTime);
+        this.config.set("victoryScore", this.victoryScore);
+
+        this.config.set("roundEndCleanItem", this.roundEndCleanItem);
+
+        this.config.set("initialItems", this.initialItems);
+        this.config.set("redTeamInitialItems", this.redTeamInitialItems);
+        this.config.set("blueTeamInitialItems", this.blueTeamInitialItems);
+
+        this.config.set("supplyType", this.supplyType.name());
+        this.config.set("supply", this.supplyConfig.getName());
+        this.config.set("supplyEnableTime", this.supplyEnableTime);
+
+        this.config.save();
     }
 
     public final void setGameMode(String gameMode) {

@@ -76,6 +76,13 @@ public class SupplyConfig {
         }
     }
 
+    /**
+     * @return 返回识别名称（文件夹名称）
+     */
+    public String getName() {
+        return dirName;
+    }
+
     private boolean checkItemFileCorrect(File file) {
         if (!file.getName().endsWith(".yml")) {
             return false;
