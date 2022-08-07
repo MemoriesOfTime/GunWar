@@ -1,4 +1,6 @@
-# chs | kor | eng | rus | spa
+# Supported languages: chs | kor | eng | rus | spa
+# 如果你想自定义语言文件请设置为xxx_customize, 例如chs_customize 并修改chs_customize.yml文件
+# If you want to customize the language file, please set it to xxx_customize, such as eng_customize and modify the eng_customize.yml file
 language: chs
 restoreWorld: true
 #在游戏内使用单独血量计算（Boss血条显示自身血量）
