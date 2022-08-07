@@ -132,8 +132,10 @@ public class RoomConfig {
         this.config.set("blueTeamInitialItems", this.blueTeamInitialItems);
 
         this.config.set("supplyType", this.supplyType.name());
-        this.config.set("supply", this.supplyConfig.getName());
-        this.config.set("supplyEnableTime", this.supplyEnableTime);
+        if (this.supplyConfig != null) {
+            this.config.set("supply", this.supplyConfig.getName());
+            this.config.set("supplyEnableTime", this.supplyEnableTime);
+        }
 
         this.config.save();
     }
