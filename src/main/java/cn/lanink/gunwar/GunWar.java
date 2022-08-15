@@ -19,6 +19,7 @@ import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
+import cn.lanink.gunwar.tasks.FStageTask;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
@@ -159,6 +160,7 @@ public class GunWar extends PluginBase {
         } catch (Exception ignored) {
 
         }
+        //注册RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.VariableManage");
             try {
@@ -166,6 +168,13 @@ public class GunWar extends PluginBase {
             } catch (Exception e) {
                 com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcXVariable.class);
             }
+        } catch (Exception ignored) {
+
+        }
+        //检查FAP群组服插件
+        try {
+            Class.forName("net.fap.stage.FStage");
+            Server.getInstance().getScheduler().scheduleRepeatingTask(this, new FStageTask(this), 20, true);
         } catch (Exception ignored) {
 
         }

@@ -171,6 +171,14 @@
             <version>1.4.3</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>FakeFStage</groupId>
+            <artifactId>FakeFStage</artifactId>
+            <version>1.0.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/FakeFStage.jar</systemPath>
+        </dependency>
     </dependencies>
 
 </project>
