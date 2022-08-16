@@ -76,7 +76,11 @@ public class GunWar extends PluginBase {
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
+
     private boolean hasTips = false;
+    @Getter
+    private boolean hasTeamSystem = false;
+
     private boolean restoreWorld = false;
     @Getter
     private boolean enableAloneHealth = true;
@@ -159,6 +163,7 @@ public class GunWar extends PluginBase {
         } catch (Exception ignored) {
 
         }
+        //对接RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.VariableManage");
             try {
@@ -166,6 +171,13 @@ public class GunWar extends PluginBase {
             } catch (Exception e) {
                 com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcXVariable.class);
             }
+        } catch (Exception ignored) {
+
+        }
+        //检查TeamSystem
+        try {
+            Class.forName("cn.lanink.teamsystem.TeamSystem");
+            this.hasTeamSystem = true;
         } catch (Exception ignored) {
 
         }

@@ -3,6 +3,8 @@ package cn.lanink.gunwar.command.usersub;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.command.base.BaseSubCommand;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.teamsystem.TeamSystem;
+import cn.lanink.teamsystem.team.Team;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -40,10 +42,27 @@ public class JoinCommand extends BaseSubCommand {
                     return true;
                 }
             }
+
+            if (this.gunWar.isHasTeamSystem()) {
+                Team team = TeamSystem.Companion.getTeamByPlayer(player);
+                if (team != null) {
+                    if (!team.isTeamLeader(player)) {
+                        sender.sendMessage("[GunWar-TeamSystem] 你不是队长，无法主动加入游戏！");
+                        sender.sendMessage("[GunWar-TeamSystem] 请让队长加入游戏或先退出队伍！！");
+                        return true;
+                    }
+                    if (!team.isAllMemberOnline()) {
+                        //TODO 当TeamSystem支持后，尝试传送玩家到当前服务器
+                        sender.sendMessage("[GunWar-TeamSystem] 队伍中有玩家不在线，无法加入游戏！");
+                        return true;
+                    }
+                }
+            }
+
             if (args.length < 2) {
                 LinkedList<BaseRoom> rooms = new LinkedList<>();
                 for (BaseRoom room : this.gunWar.getRooms().values()) {
-                    if (room.canJoin()) {
+                    if (room.canJoin(player)) {
                         if (room.getPlayers().size() > 0) {
                             room.joinRoom(player);
                             sender.sendMessage(this.language.translateString("joinRandomRoom"));
@@ -64,7 +83,7 @@ public class JoinCommand extends BaseSubCommand {
                     String modeName = s[1].toLowerCase().trim();
                     LinkedList<BaseRoom> rooms = new LinkedList<>();
                     for (BaseRoom room : this.gunWar.getRooms().values()) {
-                        if (room.canJoin() && room.getGameMode().equals(modeName)) {
+                        if (room.canJoin(player) && room.getGameMode().equals(modeName)) {
                             if (room.getPlayers().size() > 0) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.language.translateString("joinRandomRoom"));
