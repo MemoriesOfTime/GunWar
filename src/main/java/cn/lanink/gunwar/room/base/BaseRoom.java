@@ -21,6 +21,7 @@ import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
+import cn.lanink.teamsystem.TeamSystem;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -475,6 +476,17 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     }
 
     public boolean canJoin() {
+        return this.canJoin(null);
+    }
+
+    public boolean canJoin(Player player) {
+        if (player != null && this.gunWar.isHasTeamSystem()) {
+            cn.lanink.teamsystem.team.Team team = TeamSystem.Companion.getTeamByPlayer(player);
+            if (team != null && team.getPlayers().size() + this.getPlayers().size() > this.getMaxPlayers()) {
+                return false;
+            }
+        }
+
         return (this.getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED || this.getStatus() == ROOM_STATUS_WAIT) &&
                 this.getPlayers().size() < this.getMaxPlayers();
     }
@@ -503,7 +515,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         playerData.saveToFile(file);
 
         player.getInventory().clearAll();
-        player.getOffhandInventory().clearAll();
+        player.getUIInventory().clearAll();
         player.getEnderChestInventory().clearAll();
 
         Tools.rePlayerState(player, true);
@@ -511,7 +523,22 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         if (GunWar.getInstance().isHasTips()) {
             Tips.closeTipsShow(this.getLevelName(), player);
         }
+
+        //防止死循环，队长加入成功后再添加成员
+        if (this.gunWar.isHasTeamSystem()) {
+            cn.lanink.teamsystem.team.Team team = TeamSystem.Companion.getTeamByPlayer(player);
+            if (team != null && team.isTeamLeader(player)) {
+                team.getPlayers().forEach(playerName -> {
+                    Player p = Server.getInstance().getPlayer(playerName);
+                    if (p != null && !this.getPlayers().containsKey(p)) {
+                        this.joinRoom(p);
+                    }
+                });
+            }
+        }
+
         player.sendMessage(this.language.translateString("joinRoom", this.getLevelName()));
+
         Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
             if (player.getLevel() != getLevel()) {
                 quitRoom(player);
@@ -531,8 +558,11 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             Tips.removeTipsConfig(this.getLevelName(), player);
         }
         GunWar.getInstance().getScoreboard().closeScoreboard(player);
-        //player.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
         Tools.rePlayerState(player, false);
+
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
+        player.getEnderChestInventory().clearAll();
 
         File file = new File(GunWar.getInstance().getDataFolder() + "/PlayerInventory/" + player.getName() + ".json");
         if (file.exists()) {
@@ -546,6 +576,19 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             p.showPlayer(player);
             player.showPlayer(p);
         }
+
+        if (this.gunWar.isHasTeamSystem()) {
+            cn.lanink.teamsystem.team.Team team = TeamSystem.Companion.getTeamByPlayer(player);
+            if (team != null && team.isTeamLeader(player)) {
+                team.getPlayers().forEach(playerName -> {
+                    Player p = Server.getInstance().getPlayer(playerName);
+                    if (p != null && this.getPlayers().containsKey(p)) {
+                        this.quitRoom(p);
+                    }
+                });
+            }
+        }
+
         player.sendMessage(this.language.translateString("quitRoom"));
     }
 

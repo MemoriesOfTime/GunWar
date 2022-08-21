@@ -11,17 +11,16 @@ import cn.lanink.gunwar.room.base.RoomConfig;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
+import cn.lanink.gunwar.utils.gamerecord.RankingManager;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.form.element.ElementButtonImageData;
-import cn.nukkit.form.element.ElementDropdown;
-import cn.nukkit.form.element.ElementInput;
-import cn.nukkit.form.element.ElementToggle;
+import cn.nukkit.form.element.*;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -514,7 +513,37 @@ public class GuiCreate {
         player.showFormWindow(modal);
     }
 
-    public static void showFormWindow(Player player, FormWindow window, GuiType guiType) {
+    public static void sendCreateRankMenu(@NotNull Player player) {
+        //TODO 多语言
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("创建排行榜");
+
+        custom.addElement(new ElementLabel("在当前位置创建排行榜")); //0
+        custom.addElement(new ElementInput("排行榜名称", "请输入排行榜名称", "排行榜名称")); //1
+        ArrayList<String> list = new ArrayList<>();
+        for (RecordType type : RecordType.values()) {
+            list.add(type.getName());
+        }
+        custom.addElement(new ElementDropdown("排行榜类型", list)); //2
+
+        custom.onResponded((response, cp) -> {
+            String name = response.getInputResponse(1);
+            for (RankingManager.RankingData rankingData : RankingManager.getRANKING_DATA_LIST()) {
+                if (rankingData.getName().equalsIgnoreCase(name)) {
+                    cp.sendMessage("已存在名为" + name + "的排行榜！请更好其他名称！");
+                    return;
+                }
+            }
+            String stringType = response.getDropdownResponse(2).getElementContent();
+            RankingManager.addRanking(new RankingManager.RankingData(name, RecordType.of(stringType), cp.getPosition()));
+            RankingManager.save();
+            RankingManager.load();
+            cp.sendMessage("排行榜：" + name + " 创建成功！");
+        });
+
+        custom.showToPlayer(player);
+    }
+
+    public static void showFormWindow(@NotNull Player player, @NotNull FormWindow window, @NotNull GuiType guiType) {
         UI_CACHE.computeIfAbsent(player, i -> new HashMap<>()).put(player.showFormWindow(window), guiType);
     }
 

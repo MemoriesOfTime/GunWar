@@ -35,17 +35,51 @@ import cn.nukkit.utils.DyeColor;
 import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class Tools {
 
+    private Tools() {
+        throw new RuntimeException("Tools can not be instantiated");
+    }
+
     public static int toInt(Object object) {
         return new BigDecimal(object.toString()).intValue();
+    }
+
+    public static double toDouble(Object object) {
+        return new BigDecimal(object.toString()).doubleValue();
+    }
+
+    /**
+     * Vector3 转为 Map
+     *
+     * @param vector3 Vector3
+     * @return Map
+     */
+    public static LinkedHashMap<String, Double> vector3ToMap(Vector3 vector3) {
+        LinkedHashMap<String, Double> map = new LinkedHashMap<>();
+        map.put("x", vector3.getX());
+        map.put("y", vector3.getY());
+        map.put("z", vector3.getZ());
+        return map;
+    }
+
+    /**
+     * Map 转为 Vector3
+     *
+     * @param map Map
+     * @return Vector3
+     */
+    @SuppressWarnings("rawtypes")
+    public static Vector3 mapToVector3(Map map) {
+        return new Vector3(
+                toDouble(map.get("x")),
+                toDouble(map.get("y")),
+                toDouble(map.get("z"))
+        );
     }
 
     public static void createBossBar(Player player, ConcurrentHashMap<Player, DummyBossBar> bossBarMap) {

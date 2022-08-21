@@ -2,6 +2,8 @@ package cn.lanink.gunwar.command.usersub;
 
 import cn.lanink.gunwar.command.base.BaseSubCommand;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.teamsystem.TeamSystem;
+import cn.lanink.teamsystem.team.Team;
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
@@ -25,6 +27,18 @@ public class QuitCommand extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
+
+        if (this.gunWar.isHasTeamSystem()) {
+            Team team = TeamSystem.Companion.getTeamByPlayer(player);
+            if (team != null) {
+                if (!team.isTeamLeader(player)) {
+                    sender.sendMessage("[GunWar-TeamSystem] 你不是队长，无法主动退出游戏！");
+                    sender.sendMessage("[GunWar-TeamSystem] 请让队长退出游戏或先退出队伍！！");
+                    return true;
+                }
+            }
+        }
+
         for (BaseRoom room : this.gunWar.getRooms().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);

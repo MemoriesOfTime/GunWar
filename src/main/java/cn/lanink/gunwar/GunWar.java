@@ -23,6 +23,7 @@ import cn.lanink.gunwar.tasks.FStageTask;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
+import cn.lanink.gunwar.utils.gamerecord.RankingManager;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariableV2;
 import cn.lanink.gunwar.utils.update.ConfigUpdateUtils;
@@ -77,7 +78,11 @@ public class GunWar extends PluginBase {
     private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
+
     private boolean hasTips = false;
+    @Getter
+    private boolean hasTeamSystem = false;
+
     private boolean restoreWorld = false;
     @Getter
     private boolean enableAloneHealth = true;
@@ -112,6 +117,8 @@ public class GunWar extends PluginBase {
 
             }
         }
+
+        this.saveResource("RankingConfig.yml");
 
         ConfigUpdateUtils.updateConfig(this);
 
@@ -160,7 +167,7 @@ public class GunWar extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        //注册RsNPC变量
+        //对接RsNPC变量
         try {
             Class.forName("com.smallaswater.npc.variable.VariableManage");
             try {
@@ -168,6 +175,13 @@ public class GunWar extends PluginBase {
             } catch (Exception e) {
                 com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcXVariable.class);
             }
+        } catch (Exception ignored) {
+
+        }
+        //检查TeamSystem
+        try {
+            Class.forName("cn.lanink.teamsystem.TeamSystem");
+            this.hasTeamSystem = true;
         } catch (Exception ignored) {
 
         }
@@ -194,6 +208,7 @@ public class GunWar extends PluginBase {
 
         SupplyConfigManager.loadAllSupplyConfig();
         ItemKillMessageUtils.load();
+        RankingManager.load();
 
         this.cmdUser = this.config.getString("cmdUser", "gunwar");
         this.cmdAdmin = this.config.getString("cmdAdmin", "gunwaradmin");

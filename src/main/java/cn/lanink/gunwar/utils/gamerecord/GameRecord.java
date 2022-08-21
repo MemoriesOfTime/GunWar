@@ -11,12 +11,12 @@ import java.util.*;
  */
 public class GameRecord {
 
-    public static LinkedHashMap<String,Integer> getRankingList(RecordType recordType) {
+    public static LinkedHashMap<String, Integer> getRankingList(RecordType recordType) {
         Config config = GunWar.getInstance().getGameRecord();
         Map<String, Object> map = config.getAll();
         HashMap<String, Integer> list = new HashMap<>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            list.put(entry.getKey(),  getPlayerRecord(entry.getKey()).getOrDefault(recordType.getName(), 0));
+            list.put(entry.getKey(), getPlayerRecord(entry.getKey()).getOrDefault(recordType.getName(), 0));
         }
         return getRankingList(list);
     }
@@ -51,14 +51,15 @@ public class GameRecord {
 
     /**
      * 排行榜
+     *
      * @param map 数据
      * @return 排行后的数据
      */
-    public static LinkedHashMap<String,Integer> getRankingList(Map<String, Integer> map) {
-        LinkedHashMap<String,Integer> map1 = new LinkedHashMap<>();
+    public static LinkedHashMap<String, Integer> getRankingList(Map<String, Integer> map) {
+        LinkedHashMap<String, Integer> map1 = new LinkedHashMap<>();
         List<Map.Entry<String, Integer>> list = new LinkedList<>(map.entrySet());
         list.sort((o1, o2) -> o2.getValue() - o1.getValue());
-        for(Map.Entry<String,Integer> entry : list){
+        for (Map.Entry<String, Integer> entry : list) {
             map1.put(entry.getKey(), entry.getValue());
         }
 /*        map1 = map.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))

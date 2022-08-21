@@ -1,0 +1,14 @@
+#排行榜格式
+RankingFormat:
+  Top: "§b<<§a[§e%name%§a]§b>>"
+  Line: "§bTop[%ranking%] §cName: §a%player% §cVictory: §b%score%"
+  LineSelf: "§bTop[%ranking%] §cName: §e%player%(me) §cVictory: §b%score%"
+  Bottom: "§b<<§a[§e%name%§a]§b>>"
+#pos:
+#  - name: "测试排行榜"
+#    type: kills
+#    x: 0.0
+#    y: 0.0
+#    z: 0.0
+#    level: "world"
+pos: []
