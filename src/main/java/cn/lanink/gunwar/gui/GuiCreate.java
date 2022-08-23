@@ -515,21 +515,22 @@ public class GuiCreate {
 
     public static void sendCreateRankMenu(@NotNull Player player) {
         //TODO 多语言
-        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom("创建排行榜");
+        Language language = GunWar.getInstance().getLanguage();
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(language.translateString("gui_admin_ranking_list_title"));
 
-        custom.addElement(new ElementLabel("在当前位置创建排行榜")); //0
-        custom.addElement(new ElementInput("排行榜名称", "请输入排行榜名称", "排行榜名称")); //1
+        custom.addElement(new ElementLabel(language.translateString("gui_admin_ranking_list_label"))); //0
+        custom.addElement(new ElementInput(language.translateString("gui_admin_ranking_list_input_text"), language.translateString("gui_admin_ranking_list_input_placeholder"), language.translateString("gui_admin_ranking_list_input_default"))); //1
         ArrayList<String> list = new ArrayList<>();
         for (RecordType type : RecordType.values()) {
             list.add(type.getName());
         }
-        custom.addElement(new ElementDropdown("排行榜类型", list)); //2
+        custom.addElement(new ElementDropdown(language.translateString("gui_admin_ranking_list_dropdown"), list)); //2
 
         custom.onResponded((response, cp) -> {
             String name = response.getInputResponse(1);
             for (RankingManager.RankingData rankingData : RankingManager.getRANKING_DATA_LIST()) {
                 if (rankingData.getName().equalsIgnoreCase(name)) {
-                    cp.sendMessage("已存在名为" + name + "的排行榜！请更好其他名称！");
+                    cp.sendMessage(language.translateString("gui_admin_ranking_list_nameInvalid", name));
                     return;
                 }
             }
@@ -537,7 +538,7 @@ public class GuiCreate {
             RankingManager.addRanking(new RankingManager.RankingData(name, RecordType.of(stringType), cp.getPosition()));
             RankingManager.save();
             RankingManager.load();
-            cp.sendMessage("排行榜：" + name + " 创建成功！");
+            cp.sendMessage(language.translateString("gui_admin_ranking_list_add_success", name));
         });
 
         custom.showToPlayer(player);
