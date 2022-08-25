@@ -514,7 +514,6 @@ public class GuiCreate {
     }
 
     public static void sendCreateRankMenu(@NotNull Player player) {
-        //TODO 多语言
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(language.translateString("gui_admin_ranking_list_title"));
 
