@@ -27,6 +27,7 @@ import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.player.PlayerChangeSkinEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
@@ -48,6 +49,16 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
     private final Language language = GunWar.getInstance().getLanguage();
+
+    @EventHandler
+    public void onPlayerChangeSkin(PlayerChangeSkinEvent event) { //此事件仅玩家主动修改皮肤时触发，不需要针对插件修改特判
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        event.setCancelled(true);
+    }
 
     /**
      * 实体恢复血量事件
