@@ -8,6 +8,7 @@ import cn.lanink.gunwar.room.base.RoomConfig;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -44,10 +45,20 @@ public class WaitTask extends PluginTask<GunWar> {
             if (this.room.getPlayers().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }
+            this.room.waitTime--;
             if (this.room.waitTime > 0) {
-                this.room.waitTime--;
-                if (this.room.waitTime <= 5) {
-                    Tools.playSound(this.room, Sound.RANDOM_CLICK);
+                String title = "§e";
+                if (this.room.waitTime <= 10) {
+                    if (this.room.waitTime <= 3) {
+                        title = "§c";
+                        Tools.playSound(this.room, Sound.NOTE_HARP);
+                    } else {
+                        Tools.playSound(this.room, Sound.NOTE_BASSATTACK);
+                    }
+                    title += this.room.waitTime;
+                    for (Player player : this.room.getPlayers().keySet()) {
+                        player.sendTitle(title, "", 0, 15, 5);
+                    }
                 }
                 for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
                     LinkedList<String> ms = new LinkedList<>();
@@ -61,6 +72,8 @@ public class WaitTask extends PluginTask<GunWar> {
                 }
             }else {
                 this.room.startGame();
+                Server.getInstance().getScheduler().scheduleDelayedTask(this.owner,
+                        () -> Tools.playSound(this.room, Sound.NOTE_FLUTE), 2, true);
                 this.cancel();
             }
         }else if (this.room.getPlayers().size() > 0) {
