@@ -423,6 +423,9 @@ public class GunWar extends PluginBase {
 
         //加载旗帜皮肤
         this.saveResource("Resources/Flag/Flag.json", debug);
+        this.saveResource("Resources/Flag/FlagHead.json", debug);
+        this.saveResource("Resources/Flag/LongFlag.json", debug);
+        this.saveResource("Resources/Flag/LongFlagNoHead.json", debug);
         this.saveResource("Resources/Flag/FlagStand.json", debug);
         this.saveResource("Resources/Flag/RedFlag.png", debug);
         this.saveResource("Resources/Flag/BlueFlag.png", debug);
