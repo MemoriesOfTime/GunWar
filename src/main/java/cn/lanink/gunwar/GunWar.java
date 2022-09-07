@@ -422,10 +422,10 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§aLanguage: " + setLang + " loaded !");
 
         //加载旗帜皮肤
-        this.saveResource("Resources/Flag/Flag.json", false);
-        this.saveResource("Resources/Flag/FlagStand.json", false);
-        this.saveResource("Resources/Flag/RedFlag.png", false);
-        this.saveResource("Resources/Flag/BlueFlag.png", false);
+        this.saveResource("Resources/Flag/Flag.json", debug);
+        this.saveResource("Resources/Flag/FlagStand.json", debug);
+        this.saveResource("Resources/Flag/RedFlag.png", debug);
+        this.saveResource("Resources/Flag/BlueFlag.png", debug);
         File fileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
         File fileImg = new File(this.getDataFolder() + "/Resources/Flag/RedFlag.png");
         this.loadFlagSkin(fileImg, fileJson, 1);
@@ -447,18 +447,40 @@ public class GunWar extends PluginBase {
                 Skin skin = new Skin();
                 skin.setTrusted(true);
                 skin.setSkinData(skinData);
-                skin.setSkinId("flag" + id);
+                String skinId = "flag" + id;
+                skin.setSkinId(skinId);
+
                 Map<String, Object> skinJson = new Config(json, Config.JSON).getAll();
-                String name = null;
-                for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
-                    if (name == null || "".equals(name.trim())) {
-                        name = entry1.getKey();
-                    }else {
+                String geometryName = null;
+                String formatVersion = (String) skinJson.getOrDefault("format_version", "1.10.0");
+                skin.setGeometryDataEngineVersion(formatVersion);
+                switch (formatVersion) {
+                    case "1.16.0":
+                    case "1.12.0":
+                        geometryName = getGeometryName(json);
+                        skin.generateSkinId(skinId);
+                        skin.setSkinResourcePatch("{\"geometry\":{\"default\":\"" + geometryName + "\"}}");
+                        skin.setGeometryName(geometryName);
+                        skin.setGeometryData(Utils.readFile(json));
                         break;
-                    }
+                    case "1.10.0":
+                    case "1.8.0":
+                    default:
+                        for (Map.Entry<String, Object> entry : skinJson.entrySet()) {
+                            if (geometryName == null) {
+                                if (entry.getKey().startsWith("geometry")) {
+                                    geometryName = entry.getKey();
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                        skin.generateSkinId(skinId);
+                        skin.setSkinResourcePatch("{\"geometry\":{\"default\":\"" + geometryName + "\"}}");
+                        skin.setGeometryName(geometryName);
+                        skin.setGeometryData(Utils.readFile(json));
+                        break;
                 }
-                skin.setGeometryName(name);
-                skin.setGeometryData(Utils.readFile(json));
                 this.flagSkinMap.put(id, skin);
                 this.getLogger().info("§a " + img.getName() + ":" + json.getName() + " 皮肤加载完成！");
             }else {
@@ -467,6 +489,17 @@ public class GunWar extends PluginBase {
         } catch (IOException e) {
             this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
         }
+    }
+
+    public String getGeometryName(File file) {
+        Config originGeometry = new Config(file, Config.JSON);
+        if (!originGeometry.getString("format_version").equals("1.12.0") && !originGeometry.getString("format_version").equals("1.16.0")) {
+            return "nullvalue";
+        }
+        List<Map<String, Object>> geometryList = (List<Map<String, Object>>) originGeometry.get("minecraft:geometry");
+        Map<String, Object> geometryMain = geometryList.get(0);
+        Map<String, Object> descriptions = (Map<String, Object>) geometryMain.get("description");
+        return (String) descriptions.getOrDefault("identifier", "geometry.unknown");
     }
 
     @Override
