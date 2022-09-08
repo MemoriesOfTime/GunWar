@@ -6,14 +6,24 @@ package cn.lanink.gunwar.utils;
 public enum FlagSkinType {
 
     /**
-     * 小旗帜
+     * 红色小旗帜
      */
-    FLAG,
+    FLAG_RED,
 
     /**
-     * 旗帜底座
+     * 蓝色小旗帜
      */
-    FLAG_STAND,
+    FLAG_BLUE,
+
+    /**
+     * 红色旗帜底座
+     */
+    FLAG_STAND_RED,
+
+    /**
+     * 蓝色旗帜底座
+     */
+    FLAG_STAND_BLUE,
 
     /**
      * 长旗杆
@@ -21,9 +31,14 @@ public enum FlagSkinType {
     LONG_FLAGPOLE,
 
     /**
-     * 旗帜头
+     * 红色旗帜头
      */
-    FLAG_HEAD
+    FLAG_HEAD_RED,
+
+    /**
+     * 蓝色旗帜头
+     */
+    FLAG_HEAD_BLUE
 
 
 }
