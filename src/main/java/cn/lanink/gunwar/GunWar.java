@@ -20,6 +20,7 @@ import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
+import cn.lanink.gunwar.utils.FlagSkinType;
 import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.gamerecord.RankingManager;
@@ -74,7 +75,7 @@ public class GunWar extends PluginBase {
     @Getter
     private List<String> cmdWhitelist;
 
-    private final HashMap<Integer, Skin> flagSkinMap = new HashMap<>();
+    private final HashMap<FlagSkinType, Skin> flagSkinMap = new HashMap<>();
     private IScoreboard scoreboard;
     private ItemManage itemManage;
 
@@ -422,24 +423,37 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§aLanguage: " + setLang + " loaded !");
 
         //加载旗帜皮肤
-        this.saveResource("Resources/Flag/Flag.json", false);
-        this.saveResource("Resources/Flag/FlagStand.json", false);
-        this.saveResource("Resources/Flag/RedFlag.png", false);
-        this.saveResource("Resources/Flag/BlueFlag.png", false);
-        File fileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
-        File fileImg = new File(this.getDataFolder() + "/Resources/Flag/RedFlag.png");
-        this.loadFlagSkin(fileImg, fileJson, 1);
-        fileJson = new File(this.getDataFolder() + "/Resources/Flag/Flag.json");
-        this.loadFlagSkin(fileImg, fileJson, 11);
-        fileImg = new File(this.getDataFolder() + "/Resources/Flag/BlueFlag.png");
-        this.loadFlagSkin(fileImg, fileJson, 12);
-        fileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
-        this.loadFlagSkin(fileImg, fileJson, 2);
+        this.saveResource("Resources/Flag/Flag.json", true);
+        this.saveResource("Resources/Flag/FlagHead.json", true);
+        this.saveResource("Resources/Flag/LongFlag.json", true);
+        this.saveResource("Resources/Flag/LongFlagNoHead.json", true);
+        this.saveResource("Resources/Flag/FlagStand.json", true);
+        this.saveResource("Resources/Flag/RedFlag.png", true);
+        this.saveResource("Resources/Flag/BlueFlag.png", true);
+
+        File redFileImg = new File(this.getDataFolder() + "/Resources/Flag/RedFlag.png");
+        File blueFileImg = new File(this.getDataFolder() + "/Resources/Flag/BlueFlag.png");
+        File flagStandFileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
+        File flagFileJson = new File(this.getDataFolder() + "/Resources/Flag/Flag.json");
+        File flagHeadJson = new File(this.getDataFolder() + "/Resources/Flag/FlagHead.json");
+
+        this.loadFlagSkin(redFileImg, flagStandFileJson, FlagSkinType.FLAG_STAND_RED);
+        this.loadFlagSkin(redFileImg, flagFileJson, FlagSkinType.FLAG_RED);
+        this.loadFlagSkin(blueFileImg, flagStandFileJson, FlagSkinType.FLAG_STAND_BLUE);
+        this.loadFlagSkin(blueFileImg, flagFileJson, FlagSkinType.FLAG_BLUE);
+        //长旗杆
+        this.loadFlagSkin(
+                redFileImg,
+                new File(this.getDataFolder() + "/Resources/Flag/LongFlagNoHead.json"),
+                FlagSkinType.LONG_FLAGPOLE
+        );
+        this.loadFlagSkin(redFileImg, flagHeadJson, FlagSkinType.FLAG_HEAD_RED);
+        this.loadFlagSkin(blueFileImg, flagHeadJson, FlagSkinType.FLAG_HEAD_BLUE);
 
         this.getLogger().info("§e资源文件加载完成");
     }
 
-    private void loadFlagSkin(File img, File json, Integer id) {
+    private void loadFlagSkin(File img, File json, FlagSkinType flagSkinType) {
         BufferedImage skinData;
         try {
             skinData = ImageIO.read(img);
@@ -447,19 +461,41 @@ public class GunWar extends PluginBase {
                 Skin skin = new Skin();
                 skin.setTrusted(true);
                 skin.setSkinData(skinData);
-                skin.setSkinId("flag" + id);
+                String skinId = "flag" + flagSkinType.ordinal();
+                skin.setSkinId(skinId);
+
                 Map<String, Object> skinJson = new Config(json, Config.JSON).getAll();
-                String name = null;
-                for (Map.Entry<String, Object> entry1 : skinJson.entrySet()) {
-                    if (name == null || "".equals(name.trim())) {
-                        name = entry1.getKey();
-                    }else {
+                String geometryName = null;
+                String formatVersion = (String) skinJson.getOrDefault("format_version", "1.10.0");
+                skin.setGeometryDataEngineVersion(formatVersion);
+                switch (formatVersion) {
+                    case "1.16.0":
+                    case "1.12.0":
+                        geometryName = getGeometryName(json);
+                        skin.generateSkinId(skinId);
+                        skin.setSkinResourcePatch("{\"geometry\":{\"default\":\"" + geometryName + "\"}}");
+                        skin.setGeometryName(geometryName);
+                        skin.setGeometryData(Utils.readFile(json));
                         break;
-                    }
+                    case "1.10.0":
+                    case "1.8.0":
+                    default:
+                        for (Map.Entry<String, Object> entry : skinJson.entrySet()) {
+                            if (geometryName == null) {
+                                if (entry.getKey().startsWith("geometry")) {
+                                    geometryName = entry.getKey();
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                        skin.generateSkinId(skinId);
+                        skin.setSkinResourcePatch("{\"geometry\":{\"default\":\"" + geometryName + "\"}}");
+                        skin.setGeometryName(geometryName);
+                        skin.setGeometryData(Utils.readFile(json));
+                        break;
                 }
-                skin.setGeometryName(name);
-                skin.setGeometryData(Utils.readFile(json));
-                this.flagSkinMap.put(id, skin);
+                this.flagSkinMap.put(flagSkinType, skin);
                 this.getLogger().info("§a " + img.getName() + ":" + json.getName() + " 皮肤加载完成！");
             }else {
                 this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
@@ -467,6 +503,17 @@ public class GunWar extends PluginBase {
         } catch (IOException e) {
             this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
         }
+    }
+
+    public String getGeometryName(File file) {
+        Config originGeometry = new Config(file, Config.JSON);
+        if (!originGeometry.getString("format_version").equals("1.12.0") && !originGeometry.getString("format_version").equals("1.16.0")) {
+            return "nullvalue";
+        }
+        List<Map<String, Object>> geometryList = (List<Map<String, Object>>) originGeometry.get("minecraft:geometry");
+        Map<String, Object> geometryMain = geometryList.get(0);
+        Map<String, Object> descriptions = (Map<String, Object>) geometryMain.get("description");
+        return (String) descriptions.getOrDefault("identifier", "geometry.unknown");
     }
 
     @Override
@@ -490,12 +537,12 @@ public class GunWar extends PluginBase {
         return this.cmdAdmin;
     }
 
-    public HashMap<Integer, Skin> getFlagSkin() {
+    public HashMap<FlagSkinType, Skin> getFlagSkin() {
         return this.flagSkinMap;
     }
 
-    public Skin getFlagSkin(Integer id) {
-        return this.flagSkinMap.get(id);
+    public Skin getFlagSkin(FlagSkinType flagSkinType) {
+        return this.flagSkinMap.get(flagSkinType);
     }
 
     public Config getRoomConfig(Level level) {

@@ -1,6 +1,5 @@
 package cn.lanink.gunwar.entity;
 
-import cn.lanink.gunwar.GunWar;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -14,7 +13,6 @@ public class EntityFlagStand extends EntityHuman {
         super(chunk, nbt);
         this.setNameTagVisible(false);
         this.setNameTagAlwaysVisible(false);
-        this.setSkin(GunWar.getInstance().getFlagSkin(0));
     }
 
     @Override
