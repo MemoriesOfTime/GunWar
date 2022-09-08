@@ -33,6 +33,7 @@ public class WaitTask extends PluginTask<GunWar> {
             this.cancel();
             return;
         }
+
         for (Player player : this.room.getPlayers().keySet()) {
             if (this.room.getSupplyType() != RoomConfig.SupplyType.CLOSE) {
                 player.getInventory().setItem(0, Tools.getItem(13)); //商店
@@ -41,6 +42,7 @@ public class WaitTask extends PluginTask<GunWar> {
             player.getInventory().setItem(5, Tools.getItem(12)); //队伍选择
             player.getInventory().setItem(8, Tools.getItem(10)); //退出房间
         }
+
         if (this.room.getPlayers().size() >= this.room.getMinPlayers()) {
             if (this.room.getPlayers().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;

@@ -213,6 +213,9 @@ public class GunWar extends PluginBase {
         this.getServer().getPluginManager().registerEvents(new PlayerJoinAndQuit(this), this);
         this.getServer().getPluginManager().registerEvents(new GuiListener(this), this);
         this.getServer().getPluginManager().registerEvents(new SetRoomListener(this), this);
+        if (GunWar.debug) {
+            this.getServer().getPluginManager().registerEvents(new DebugMessageListener(this), this);
+        }
 
         this.loadAllListener();
 
