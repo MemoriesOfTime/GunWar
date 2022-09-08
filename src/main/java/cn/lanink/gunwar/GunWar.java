@@ -423,13 +423,13 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§aLanguage: " + setLang + " loaded !");
 
         //加载旗帜皮肤
-        this.saveResource("Resources/Flag/Flag.json", debug);
-        this.saveResource("Resources/Flag/FlagHead.json", debug);
-        this.saveResource("Resources/Flag/LongFlag.json", debug);
-        this.saveResource("Resources/Flag/LongFlagNoHead.json", debug);
-        this.saveResource("Resources/Flag/FlagStand.json", debug);
-        this.saveResource("Resources/Flag/RedFlag.png", debug);
-        this.saveResource("Resources/Flag/BlueFlag.png", debug);
+        this.saveResource("Resources/Flag/Flag.json", true);
+        this.saveResource("Resources/Flag/FlagHead.json", true);
+        this.saveResource("Resources/Flag/LongFlag.json", true);
+        this.saveResource("Resources/Flag/LongFlagNoHead.json", true);
+        this.saveResource("Resources/Flag/FlagStand.json", true);
+        this.saveResource("Resources/Flag/RedFlag.png", true);
+        this.saveResource("Resources/Flag/BlueFlag.png", true);
 
         File redFileImg = new File(this.getDataFolder() + "/Resources/Flag/RedFlag.png");
         File blueFileImg = new File(this.getDataFolder() + "/Resources/Flag/BlueFlag.png");
