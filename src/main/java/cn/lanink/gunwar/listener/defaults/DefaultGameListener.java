@@ -6,6 +6,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.entity.EntityLongFlag;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.item.ItemManage;
@@ -114,7 +115,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
         }else if (event.getEntity() instanceof EntityPlayerCorpse ||
                 event.getEntity() instanceof EntityFlagStand ||
-                event.getEntity() instanceof EntityFlag) {
+                event.getEntity() instanceof EntityFlag ||
+                event.getEntity() instanceof EntityLongFlag ||
+                event.getEntity() instanceof EntityLongFlag.EntityFlagHead) {
             event.setCancelled(true);
         }
     }

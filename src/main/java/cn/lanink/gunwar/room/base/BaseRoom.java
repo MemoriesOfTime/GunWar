@@ -182,6 +182,38 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 return;
             }
             this.gameTime--;
+            this.checkTeamPlayerCount();
+        }
+    }
+
+    /**
+     * 检查队伍人数
+     */
+    protected void checkTeamPlayerCount() {
+        int red = 0;
+        int blue = 0;
+        for (Team team : this.getPlayers().values()) {
+            switch (team) {
+                case RED:
+                case RED_DEATH:
+                    red++;
+                    break;
+                case BLUE:
+                case BLUE_DEATH:
+                    blue++;
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (red == 0) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
+        } else if (blue == 0) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
         }
     }
 

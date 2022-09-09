@@ -53,6 +53,14 @@ public class Tools {
         return new BigDecimal(object.toString()).doubleValue();
     }
 
+    public static Vector3 stringToVector3(String string) {
+        String[] s = string.split(":");
+        return new Vector3(Integer.parseInt(s[0]),
+                Integer.parseInt(s[1]),
+                Integer.parseInt(s[2])
+        );
+    }
+
     /**
      * Vector3 转为 Map
      *
