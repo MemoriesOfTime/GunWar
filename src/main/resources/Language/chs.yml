@@ -79,6 +79,7 @@ classic: "经典"
 ctf: "夺旗"
 blasting: "爆破"
 team: "团队"
+conquest: "征服"
 
 supplyType_Close: "关闭"
 supplyType_All_Round: "全局可用"
@@ -116,15 +117,18 @@ game_blasting_bombHasFallen: "§c炸弹已掉落！"
 game_blasting_bombHasBeenPickedUp: "§a炸弹已被拾取！"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
+  游戏模式: %gameMode%
   所属队伍: %team%
-  玩家: §a %playerNumber%/%maxPlayerNumber%
+  玩家数量: §a %playerNumber%/%maxPlayerNumber%
   §a开始倒计时: §e%time%
 waitScoreBoard: |-
+  游戏模式: %gameMode%
   所属队伍: %team%
-  玩家: §a %playerNumber%/%maxPlayerNumber%
-  最低游戏人数为 2 人
+  玩家数量: §a %playerNumber%/%maxPlayerNumber%
+  最低游戏人数为 %minPlayerNumber% 人
   等待玩家加入中
 gameTimeScoreBoard: |-
+  §l§a游戏模式: %gameMode%
   §l§a所属队伍: %team%
   §l§a当前血量:§e %health%
   §l§a剩余时间:§e %time% 秒

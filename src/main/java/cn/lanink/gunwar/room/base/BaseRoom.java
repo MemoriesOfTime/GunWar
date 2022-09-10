@@ -174,14 +174,52 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             }
         }
 
-        //TODO 拆分胜利判断 让BlastingModeRoom可以调用此方法
         if(!this.roundEnd) {
-            if (this.gameTime <= 0) {
-                this.roundEnd(Team.NULL);
-                this.gameTime = this.getSetGameTime();
-                return;
+            this.checkGameTime();
+            this.checkTeamPlayerCount();
+        }
+    }
+
+    /**
+     * 检查游戏时间
+     */
+    protected void checkGameTime() {
+        if (this.gameTime <= 0) {
+            this.roundEnd(Team.NULL);
+            this.gameTime = this.getSetGameTime();
+            return;
+        }
+        this.gameTime--;
+    }
+
+    /**
+     * 检查队伍人数
+     */
+    protected void checkTeamPlayerCount() {
+        int red = 0;
+        int blue = 0;
+        for (Team team : this.getPlayers().values()) {
+            switch (team) {
+                case RED:
+                case RED_DEATH:
+                    red++;
+                    break;
+                case BLUE:
+                case BLUE_DEATH:
+                    blue++;
+                    break;
+                default:
+                    break;
             }
-            this.gameTime--;
+        }
+        if (red == 0) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
+        } else if (blue == 0) {
+            this.setStatus(ROOM_STATUS_VICTORY);
+            Server.getInstance().getScheduler().scheduleRepeatingTask(
+                    this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
         }
     }
 
@@ -855,7 +893,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }, 10);
     }
 
-    public void playerDeath(Player player, Entity damager) {
+    public final void playerDeath(Player player, Entity damager) {
         this.playerDeath(player, damager, "");
     }
 

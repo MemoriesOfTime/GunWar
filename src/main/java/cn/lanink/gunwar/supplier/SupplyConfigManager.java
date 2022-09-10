@@ -51,6 +51,10 @@ public class SupplyConfigManager {
         }
     }
 
+    public static void clear() {
+        SUPPLY_CONFIG_MAP.clear();
+    }
+
     public static SupplyConfig getSupplyConfig(String supply) {
         return SUPPLY_CONFIG_MAP.get(supply);
     }

@@ -82,6 +82,7 @@ classic: "Clasico"
 ctf: "Captura la bandera"
 blasting: "blasting"
 team: "team"
+conquest: "conquest"
 
 supplyType_Close: "close"
 supplyType_All_Round: "Globally available"
@@ -119,15 +120,18 @@ game_blasting_bombHasFallen: "§cBomb has fallen!"
 game_blasting_bombHasBeenPickedUp: "§aThe bomb has been picked up!"
 scoreBoardTitle: "§eGuerra de armas"
 waitTimeScoreBoard: |-
+  GameMode: %gameMode%
   Equipo: %team%
   Jugadores: §a %playerNumber%/%maxPlayerNumber%
   §aTiempo: §e%time%
 waitScoreBoard: |-
+  GameMode: %gameMode%
   Equipo: %team%
   Jugadores: §a %playerNumber%/%maxPlayerNumber%
   2 jugadores requeridos
   Esperando jugadores
 gameTimeScoreBoard: |-
+  §l§aGameMode: %gameMode%
   §l§aEquipo: %team%
   §l§aSalud:§e %health%
   §l§aTiempo:§e %time% (s)

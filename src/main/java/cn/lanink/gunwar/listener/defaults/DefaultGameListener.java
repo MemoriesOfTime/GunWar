@@ -6,6 +6,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.entity.EntityLongFlag;
 import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.GunWarPlayerDamageEvent;
 import cn.lanink.gunwar.item.ItemManage;
@@ -19,13 +20,12 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.InventoryClickEvent;
+import cn.nukkit.event.player.PlayerChangeSkinEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerRespawnEvent;
@@ -56,6 +56,16 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 event.setCancelled();
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerChangeSkin(PlayerChangeSkinEvent event) { //此事件仅玩家主动修改皮肤时触发，不需要针对插件修改特判
+        Player player = event.getPlayer();
+        BaseRoom room = this.getListenerRoom(player.getLevel());
+        if (room == null || !room.isPlaying(player)) {
+            return;
+        }
+        event.setCancelled(true);
     }
 
     /**
@@ -112,7 +122,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             }
         }else if (event.getEntity() instanceof EntityPlayerCorpse ||
                 event.getEntity() instanceof EntityFlagStand ||
-                event.getEntity() instanceof EntityFlag) {
+                event.getEntity() instanceof EntityFlag ||
+                event.getEntity() instanceof EntityLongFlag ||
+                event.getEntity() instanceof EntityLongFlag.EntityFlagHead) {
             event.setCancelled(true);
         }
     }

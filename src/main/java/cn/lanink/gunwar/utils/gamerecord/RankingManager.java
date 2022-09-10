@@ -30,13 +30,7 @@ public class RankingManager {
      * 加载排行榜 (可当reload用)
      */
     public static void load() {
-        RANKING_DATA_LIST.clear();
-        if (!RANKING_MAP.isEmpty()) {
-            for (Ranking ranking : RANKING_MAP.values()) {
-                ranking.close();
-            }
-            RANKING_MAP.clear();
-        }
+        clear();
 
         //读取排行榜数据
         Config rankingConfig = new Config(GunWar.getInstance().getDataFolder() + "/RankingConfig.yml", Config.YAML);
@@ -103,6 +97,19 @@ public class RankingManager {
         Config rankingConfig = new Config(GunWar.getInstance().getDataFolder() + "/RankingConfig.yml", Config.YAML);
         rankingConfig.set("pos", list);
         rankingConfig.save();
+    }
+
+    /**
+     * 清理已加载的排行榜
+     */
+    public static void clear() {
+        RANKING_DATA_LIST.clear();
+        if (!RANKING_MAP.isEmpty()) {
+            for (Ranking ranking : RANKING_MAP.values()) {
+                ranking.close();
+            }
+            RANKING_MAP.clear();
+        }
     }
 
     @AllArgsConstructor

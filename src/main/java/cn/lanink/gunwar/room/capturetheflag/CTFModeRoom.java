@@ -55,34 +55,7 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
             this.checkSlownessEffect(this.haveBlueFlag);
         }
 
-        if (this.victoryJudgment()) {
-            return;
-        }
-
-        int red = 0, blue = 0;
-        for (Team team : this.getPlayers().values()) {
-            switch (team) {
-                case RED:
-                case RED_DEATH:
-                    red++;
-                    break;
-                case BLUE:
-                case BLUE_DEATH:
-                    blue++;
-                    break;
-                default:
-                    break;
-            }
-        }
-        if (red == 0) {
-            this.setStatus(ROOM_STATUS_VICTORY);
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    this.gunWar, new VictoryTask(this.gunWar, this, 2), 20);
-        } else if (blue == 0) {
-            this.setStatus(ROOM_STATUS_VICTORY);
-            Server.getInstance().getScheduler().scheduleRepeatingTask(
-                    this.gunWar, new VictoryTask(this.gunWar, this, 1), 20);
-        }
+        this.victoryJudgment();
     }
 
     private void checkSlownessEffect(@NotNull Player player) {

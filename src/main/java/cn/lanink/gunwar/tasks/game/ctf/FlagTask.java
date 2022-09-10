@@ -5,12 +5,15 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
+import cn.lanink.gunwar.utils.FlagSkinType;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
+ * 夺旗模式 旗帜生成检查 位置检查
+ *
  * @author lt_name
  */
 public class FlagTask extends PluginTask<GunWar> {
@@ -31,7 +34,7 @@ public class FlagTask extends PluginTask<GunWar> {
         //旗帜与底座生成
         //红方底座
         if (room.redFlagStand == null || room.redFlagStand.isClosed()) {
-            Skin skin = owner.getFlagSkin(1);
+            Skin skin = owner.getFlagSkin(FlagSkinType.FLAG_STAND_RED);
             CompoundTag nbt = EntityFlagStand.getDefaultNBT(room.getRedSpawn());
             nbt.putFloat("Scale", 1.0F);
             nbt.putCompound("Skin", new CompoundTag()
@@ -45,7 +48,7 @@ public class FlagTask extends PluginTask<GunWar> {
         }
         //红方旗帜
         if (room.redFlag == null || room.redFlag.isClosed()) {
-            Skin skin = owner.getFlagSkin(11);
+            Skin skin = owner.getFlagSkin(FlagSkinType.FLAG_RED);
             CompoundTag nbt = EntityFlag.getDefaultNBT(new Vector3(room.getRedSpawn().getX(),
                     room.getRedSpawn().getY() + 0.3D,
                     room.getRedSpawn().getZ()));
@@ -61,7 +64,7 @@ public class FlagTask extends PluginTask<GunWar> {
         }
         //蓝方底座
         if (room.blueFlagStand == null || room.blueFlagStand.isClosed()) {
-            Skin skin = owner.getFlagSkin(2);
+            Skin skin = owner.getFlagSkin(FlagSkinType.FLAG_STAND_BLUE);
             CompoundTag nbt = EntityFlagStand.getDefaultNBT(room.getBlueSpawn());
             nbt.putFloat("Scale", 1.0F);
             nbt.putCompound("Skin", new CompoundTag()
@@ -75,7 +78,7 @@ public class FlagTask extends PluginTask<GunWar> {
         }
         //蓝方旗帜
         if (room.blueFlag == null || room.blueFlag.isClosed()) {
-            Skin skin = owner.getFlagSkin(12);
+            Skin skin = owner.getFlagSkin(FlagSkinType.FLAG_BLUE);
             CompoundTag nbt = EntityFlag.getDefaultNBT(new Vector3(room.getBlueSpawn().getX(),
                     room.getBlueSpawn().getY() + 0.3D,
                     room.getBlueSpawn().getZ()));
