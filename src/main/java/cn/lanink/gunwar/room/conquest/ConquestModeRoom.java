@@ -50,8 +50,6 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
      */
     public ConquestModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
-        this.redScore = this.getVictoryScore() / 2;
-        this.blueScore = this.getVictoryScore() / 2;
 
         String aPosString = config.getString("ConquestPointA");
         String bPosString = config.getString("ConquestPointB");
@@ -76,6 +74,9 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
     @Override
     protected void initData() {
         super.initData();
+
+        this.redScore = this.getVictoryScore() / 2;
+        this.blueScore = this.getVictoryScore() / 2;
 
         if (this.aFlag != null) {
             this.aFlag.close();
