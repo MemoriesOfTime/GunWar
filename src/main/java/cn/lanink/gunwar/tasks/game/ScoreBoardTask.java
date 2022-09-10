@@ -5,6 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.Team;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
 
@@ -43,7 +44,8 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             for (Player player : this.room.getPlayers().keySet()) {
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : this.language.translateString("gameTimeScoreBoard").split("\n")) {
-                    ms.add(string.replace("%team%", this.room.getPlayerTeamAccurate(player).getShowName())
+                    ms.add(string.replace("%gameMode%", Tools.getShowGameMode(this.room.getGameMode()))
+                            .replace("%team%", this.room.getPlayerTeamAccurate(player).getShowName())
                             .replace("%health%", String.format("%.1f", room.getPlayerHealth().getOrDefault(player, 0F)))
                             .replace("%time%", room.gameTime + "")
                             .replace("%red%", red + "")

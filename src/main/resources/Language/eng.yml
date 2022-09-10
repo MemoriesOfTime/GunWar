@@ -119,15 +119,18 @@ game_blasting_bombHasFallen: "§cBomb has fallen!"
 game_blasting_bombHasBeenPickedUp: "§aThe bomb has been picked up!"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
+  GameMode: %gameMode%
   Team: %team%
   Players: §a %playerNumber%/%maxPlayerNumber%
   §aCountdown: §e%time%
 waitScoreBoard: |-
+  GameMode: %gameMode%
   Team: %team%
   Players: §a %playerNumber%/%maxPlayerNumber%
   Two players required
   Waiting for players
 gameTimeScoreBoard: |-
+  §l§aGameMode: %gameMode%
   §l§aTeam: %team%
   §l§aHealth:§e %health%
   §l§aTime:§e %time% (s)

@@ -65,8 +65,10 @@ public class WaitTask extends PluginTask<GunWar> {
                 for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
                     LinkedList<String> ms = new LinkedList<>();
                     for (String string : this.language.translateString("waitTimeScoreBoard").split("\n")) {
-                        ms.add(string.replace("%team%", entry.getValue().getShowName())
+                        ms.add(string.replace("%gameMode%", Tools.getShowGameMode(this.room.getGameMode()))
+                                .replace("%team%", entry.getValue().getShowName())
                                 .replace("%playerNumber%", room.getPlayers().size() + "")
+                                .replace("%minPlayerNumber%", room.getMinPlayers() + "")
                                 .replace("%maxPlayerNumber%", room.getMaxPlayers() + "")
                                 .replace("%time%", room.waitTime + ""));
                     }
@@ -85,8 +87,10 @@ public class WaitTask extends PluginTask<GunWar> {
             for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : language.translateString("waitScoreBoard").split("\n")) {
-                    ms.add(string.replace("%team%", entry.getValue().getShowName())
+                    ms.add(string.replace("%gameMode%", Tools.getShowGameMode(this.room.getGameMode()))
+                            .replace("%team%", entry.getValue().getShowName())
                             .replace("%playerNumber%", room.getPlayers().size() + "")
+                            .replace("%minPlayerNumber%", room.getMinPlayers() + "")
                             .replace("%maxPlayerNumber%", room.getMaxPlayers() + ""));
                 }
                 owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
