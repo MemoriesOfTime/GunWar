@@ -82,6 +82,7 @@ classic: "Clasico"
 ctf: "Captura la bandera"
 blasting: "blasting"
 team: "team"
+conquest: "conquest"
 
 supplyType_Close: "close"
 supplyType_All_Round: "Globally available"

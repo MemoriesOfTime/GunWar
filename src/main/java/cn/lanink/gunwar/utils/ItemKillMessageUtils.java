@@ -37,6 +37,10 @@ public class ItemKillMessageUtils {
         });
     }
 
+    public static void clear() {
+        ITEM_KILL_MESSAGE.clear();
+    }
+
     public static String getKillMessage(Item item) {
         return ITEM_KILL_MESSAGE.get(ItemData.of(item));
     }

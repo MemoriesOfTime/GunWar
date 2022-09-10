@@ -17,6 +17,7 @@ import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
+import cn.lanink.gunwar.room.conquest.ConquestModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
@@ -148,6 +149,9 @@ public class GunWar extends PluginBase {
         registerRoom("ctf", CTFModeRoom.class);
         registerRoom("blasting", BlastingModeRoom.class);
         registerRoom("team", TeamModeRoom.class);
+        if (GunWar.debug) {
+            registerRoom("conquest", ConquestModeRoom.class);
+        }
     }
 
     @Override
@@ -233,6 +237,12 @@ public class GunWar extends PluginBase {
     @Override
     public void onDisable() {
         this.gameRecord.save();
+
+        SupplyConfigManager.clear();
+        ItemKillMessageUtils.clear();
+        RankingManager.save();
+        RankingManager.clear();
+
         this.unloadAllRoom();
         this.getGameListeners().values().forEach(BaseGameListener::clearListenerRooms);
         this.getLogger().info("§c插件卸载完成！");
@@ -431,15 +441,19 @@ public class GunWar extends PluginBase {
         this.saveResource("Resources/Flag/LongFlag.json", true);
         this.saveResource("Resources/Flag/LongFlagNoHead.json", true);
         this.saveResource("Resources/Flag/FlagStand.json", true);
+        this.saveResource("Resources/Flag/WhiteFlag.png", true);
         this.saveResource("Resources/Flag/RedFlag.png", true);
         this.saveResource("Resources/Flag/BlueFlag.png", true);
 
+        File whiteFileImg = new File(this.getDataFolder() + "/Resources/Flag/WhiteFlag.png");
         File redFileImg = new File(this.getDataFolder() + "/Resources/Flag/RedFlag.png");
         File blueFileImg = new File(this.getDataFolder() + "/Resources/Flag/BlueFlag.png");
         File flagStandFileJson = new File(this.getDataFolder() + "/Resources/Flag/FlagStand.json");
         File flagFileJson = new File(this.getDataFolder() + "/Resources/Flag/Flag.json");
         File flagHeadJson = new File(this.getDataFolder() + "/Resources/Flag/FlagHead.json");
 
+        this.loadFlagSkin(whiteFileImg, flagStandFileJson, FlagSkinType.FLAG_STAND_WHITE);
+        this.loadFlagSkin(whiteFileImg, flagFileJson, FlagSkinType.FLAG_WHITE);
         this.loadFlagSkin(redFileImg, flagStandFileJson, FlagSkinType.FLAG_STAND_RED);
         this.loadFlagSkin(redFileImg, flagFileJson, FlagSkinType.FLAG_RED);
         this.loadFlagSkin(blueFileImg, flagStandFileJson, FlagSkinType.FLAG_STAND_BLUE);
@@ -450,6 +464,7 @@ public class GunWar extends PluginBase {
                 new File(this.getDataFolder() + "/Resources/Flag/LongFlagNoHead.json"),
                 FlagSkinType.LONG_FLAGPOLE
         );
+        this.loadFlagSkin(whiteFileImg, flagHeadJson, FlagSkinType.FLAG_HEAD_WHITE);
         this.loadFlagSkin(redFileImg, flagHeadJson, FlagSkinType.FLAG_HEAD_RED);
         this.loadFlagSkin(blueFileImg, flagHeadJson, FlagSkinType.FLAG_HEAD_BLUE);
 

@@ -12,6 +12,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 
 /**
+ * 夺旗模式 旗帜生成检查 位置检查
+ *
  * @author lt_name
  */
 public class FlagTask extends PluginTask<GunWar> {

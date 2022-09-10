@@ -893,7 +893,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }, 10);
     }
 
-    public void playerDeath(Player player, Entity damager) {
+    public final void playerDeath(Player player, Entity damager) {
         this.playerDeath(player, damager, "");
     }
 

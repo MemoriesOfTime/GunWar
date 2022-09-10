@@ -13,6 +13,8 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
@@ -28,6 +30,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.PlaySoundPacket;
+import cn.nukkit.network.protocol.PlayerSkinPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.BossBarColor;
 import cn.nukkit.utils.DummyBossBar;
@@ -44,6 +47,29 @@ public class Tools {
     private Tools() {
         throw new RuntimeException("Tools can not be instantiated");
     }
+
+    /**
+     * 设置Human实体皮肤
+     *
+     * @param human 实体
+     * @param skin 皮肤
+     */
+    public static void setHumanSkin(EntityHuman human, Skin skin) {
+        PlayerSkinPacket packet = new PlayerSkinPacket();
+        packet.skin = skin;
+        packet.newSkinName = skin.getSkinId();
+        packet.oldSkinName = human.getSkin().getSkinId();
+        packet.uuid = human.getUniqueId();
+        HashSet<Player> players = new HashSet<>(human.getViewers().values());
+        if (human instanceof Player) {
+            players.add((Player) human);
+        }
+        if (!players.isEmpty()) {
+            Server.broadcastPacket(players, packet);
+        }
+        human.setSkin(skin);
+    }
+
 
     public static int toInt(Object object) {
         return new BigDecimal(object.toString()).intValue();
@@ -107,8 +133,10 @@ public class Tools {
     }
 
     /**
+     * 根据圆心坐标和圆的半径获取圆边上的点
      * @param center 圆心
      * @param diameter 半径
+     *
      * @return 圆边上的点
      */
     public static LinkedList<Vector3> getRoundEdgePoint(Vector3 center, double diameter) {

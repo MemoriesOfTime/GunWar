@@ -82,6 +82,7 @@ classic: "클래식"
 ctf: "CaptureTheFlag"
 blasting: "blasting"
 team: "team"
+conquest: "conquest"
 
 supplyType_Close: "close"
 supplyType_All_Round: "Globally available"
