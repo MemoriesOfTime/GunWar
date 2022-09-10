@@ -127,38 +127,39 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
                     this.bossBarShowTime = 0;
                 }
 
-                int redFlagCount = 0;
-                int blueFlagCount = 0;
-                if (this.aFlag.getKeepTime() > 5) {
-                    if (this.aFlag.getTeam() == Team.RED) {
-                        redFlagCount++;
-                    }else if (this.aFlag.getTeam() == Team.BLUE) {
-                        blueFlagCount++;
+                if (this.gameTime%5 == 0) {
+                    int redFlagCount = 0;
+                    int blueFlagCount = 0;
+                    if (this.aFlag.getKeepTime() > 5) {
+                        if (this.aFlag.getTeam() == Team.RED) {
+                            redFlagCount++;
+                        } else if (this.aFlag.getTeam() == Team.BLUE) {
+                            blueFlagCount++;
+                        }
                     }
-                    this.aFlag.setKeepTime(0);
-                }
-                if (this.bFlag.getKeepTime() > 5) {
-                    if (this.bFlag.getTeam() == Team.RED) {
-                        redFlagCount++;
-                    }else if (this.bFlag.getTeam() == Team.BLUE) {
-                        blueFlagCount++;
+                    if (this.bFlag.getKeepTime() > 5) {
+                        if (this.bFlag.getTeam() == Team.RED) {
+                            redFlagCount++;
+                        } else if (this.bFlag.getTeam() == Team.BLUE) {
+                            blueFlagCount++;
+                        }
                     }
-                    this.bFlag.setKeepTime(0);
-                }
-                if (this.cFlag.getKeepTime() > 5) {
-                    if (this.cFlag.getTeam() == Team.RED) {
-                        redFlagCount++;
-                    }else if (this.cFlag.getTeam() == Team.BLUE) {
-                        blueFlagCount++;
+                    if (this.cFlag.getKeepTime() > 5) {
+                        if (this.cFlag.getTeam() == Team.RED) {
+                            redFlagCount++;
+                        } else if (this.cFlag.getTeam() == Team.BLUE) {
+                            blueFlagCount++;
+                        }
                     }
-                    this.cFlag.setKeepTime(0);
-                }
-                if (redFlagCount > blueFlagCount) {
-                    this.redScore++;
-                    this.blueScore--;
-                }else if (blueFlagCount > redFlagCount) {
-                    this.redScore--;
-                    this.blueScore++;
+                    if (redFlagCount > blueFlagCount) {
+                        int difference = redFlagCount - blueFlagCount;
+                        this.redScore += difference;
+                        this.blueScore -= difference;
+                    } else if (blueFlagCount > redFlagCount) {
+                        int difference = blueFlagCount - redFlagCount;
+                        this.redScore -= difference;
+                        this.blueScore += difference;
+                    }
                 }
             }
 
