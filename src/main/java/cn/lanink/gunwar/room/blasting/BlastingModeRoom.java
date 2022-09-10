@@ -72,33 +72,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
 
     @Override
     public void timeTask() {
-        if (this.getPlayers().isEmpty()) {
-            this.endGame();
-            return;
-        }
-
-        if (this.gunWar.isEnableAloneHealth()) {
-            for (Player player : this.players.keySet()) {
-                player.setHealth(player.getMaxHealth() - 1);
-            }
-        }
-
-        //玩家无敌时间计算
-        for (Map.Entry<Player, Integer> entry : this.playerInvincibleTime.entrySet()) {
-            if (entry.getValue() > 0) {
-                entry.setValue(entry.getValue() - 1);
-            }
-        }
-
-        //回收商店物品
-        if (this.getSupplyType() == SupplyType.ONLY_ROUND_START) {
-            int startTime = this.getSetGameTime() - this.gameTime;
-            if (startTime == this.getSupplyEnableTime() + 1) {
-                for (Player player : this.getPlayers().keySet()) {
-                    Tools.removeGunWarItem(player.getInventory(), Tools.getItem(13));  //商店物品
-                }
-            }
-        }
+        super.timeTask();
 
         if (!this.isRoundEnd()) {
             //Boss血条显示炸弹爆炸倒计时
@@ -144,30 +118,6 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                 }
                 this.bossBarMap.clear();
             }
-
-            if (this.gameTime <= 0 && (this.entityGunWarBomb == null || this.entityGunWarBomb.isClosed())) {
-                this.roundEnd(Team.BLUE);
-                this.gameTime = this.getSetGameTime();
-                return;
-            }
-            this.gameTime--;
-            int red = 0, blue = 0;
-            for (Team team : this.getPlayers().values()) {
-                if (team == Team.RED) {
-                    red++;
-                } else if (team == Team.BLUE) {
-                    blue++;
-                }
-            }
-            if (red == 0) {
-                if (this.entityGunWarBomb == null) {
-                    this.roundEnd(Team.BLUE);
-                    this.gameTime = this.getSetGameTime();
-                }
-            } else if (blue == 0) {
-                this.roundEnd(Team.RED);
-                this.gameTime = this.getSetGameTime();
-            }
         }
 
         //显示爆破点
@@ -197,6 +147,34 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                 }
             }
         });
+    }
+
+    @Override
+    protected void checkGameTime() {
+        if (this.gameTime <= 0 && (this.entityGunWarBomb == null || this.entityGunWarBomb.isClosed())) {
+            this.roundEnd(Team.BLUE);
+            this.gameTime = this.getSetGameTime();
+            return;
+        }
+        this.gameTime--;
+        int red = 0;
+        int blue = 0;
+        for (Team team : this.getPlayers().values()) {
+            if (team == Team.RED) {
+                red++;
+            } else if (team == Team.BLUE) {
+                blue++;
+            }
+        }
+        if (red == 0) {
+            if (this.entityGunWarBomb == null) {
+                this.roundEnd(Team.BLUE);
+                this.gameTime = this.getSetGameTime();
+            }
+        } else if (blue == 0) {
+            this.roundEnd(Team.RED);
+            this.gameTime = this.getSetGameTime();
+        }
     }
 
     @Override

@@ -174,16 +174,22 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
             }
         }
 
-        //TODO 拆分胜利判断 让BlastingModeRoom可以调用此方法
         if(!this.roundEnd) {
-            if (this.gameTime <= 0) {
-                this.roundEnd(Team.NULL);
-                this.gameTime = this.getSetGameTime();
-                return;
-            }
-            this.gameTime--;
+            this.checkGameTime();
             this.checkTeamPlayerCount();
         }
+    }
+
+    /**
+     * 检查游戏时间
+     */
+    protected void checkGameTime() {
+        if (this.gameTime <= 0) {
+            this.roundEnd(Team.NULL);
+            this.gameTime = this.getSetGameTime();
+            return;
+        }
+        this.gameTime--;
     }
 
     /**
