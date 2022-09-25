@@ -5,6 +5,7 @@ import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.Team;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
@@ -67,10 +68,13 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
             }
             return;
         }
-        message = this.gunWar.getLanguage().translateString("playerTeamChat", player.getName(), message);
-        Team team = room.getPlayerTeamAccurate(player);
-        for (Player target : room.getPlayers().keySet()) {
-            if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
+        if (message.startsWith("@") || room.getStatus() != IRoomStatus.ROOM_STATUS_GAME) {
+            message = this.gunWar.getLanguage().translateString("playerAllChat", player.getName(), message);
+            Tools.sendMessage(room, message);
+        }else {
+            message = this.gunWar.getLanguage().translateString("playerTeamChat", player.getName(), message);
+            Team team = room.getPlayerTeamAccurate(player);
+            for (Player target : room.getPlayers().keySet()) {
                 Team targetTeam = room.getPlayerTeamAccurate(target);
                 if (team == targetTeam) {
                     target.sendMessage(message);
@@ -83,8 +87,6 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
                         target.sendMessage(message);
                     }
                 }
-            }else {
-                target.sendMessage(message);
             }
         }
         event.setMessage("");
