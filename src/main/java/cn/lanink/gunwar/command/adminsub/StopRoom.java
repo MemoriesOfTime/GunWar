@@ -28,7 +28,7 @@ public class StopRoom extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        BaseRoom room = this.gunWar.getRooms().get(player.getLevel().getFolderName());
+        BaseRoom room = this.gunWar.getGameRoomManager().getGameRoom(player.getLevel().getFolderName());
         if (room != null) {
             room.endGame();
             sender.sendMessage(this.language.translateString("adminStopRoom"));

@@ -208,7 +208,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.sendMessage(this.owner.getLanguage().translateString("admin_setRoom_setSuccessful"));
                 config.save(true);
                 this.closeEntity();
-                this.owner.loadRoom(this.level.getFolderName());
+                this.owner.getGameRoomManager().loadGameRoom(this.level.getFolderName());
                 this.cancel();
                 return;
             case 200: //设置爆破点A

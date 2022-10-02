@@ -61,7 +61,7 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
         }
         BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
-            for (BaseRoom r : this.gunWar.getRooms().values()) {
+            for (BaseRoom r : this.gunWar.getGameRoomManager().getGameRoomMap().values()) {
                 for (Player p : r.getPlayers().keySet()) {
                     event.getRecipients().remove(p);
                 }

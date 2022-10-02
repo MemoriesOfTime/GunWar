@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.room.base;
 
 import cn.lanink.gamecore.GameCore;
+import cn.lanink.gamecore.room.GameRoom;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
@@ -47,7 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基础/通用 房间类
  * @author lt_name
  */
-public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
+public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, ITimeTask {
 
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
@@ -988,7 +989,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         File backup = new File(this.gunWar.getWorldBackupPath() + this.getLevelName());
         if (!backup.exists()) {
             this.gunWar.getLogger().error(this.language.translateString("roomLevelBackupNotExist", this.getLevelName()));
-            this.gunWar.unloadRoom(this.getLevelName());
+            this.gunWar.getGameRoomManager().unloadGameRoom(this.getLevelName());
         }
         Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override
@@ -1002,7 +1003,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                     }
                 }else {
                     gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", getLevelName()));
-                    gunWar.unloadRoom(getLevelName());
+                    gunWar.getGameRoomManager().unloadGameRoom(getLevelName());
                 }
             }
         });

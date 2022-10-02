@@ -39,7 +39,7 @@ public class QuitCommand extends BaseSubCommand {
             }
         }
 
-        for (BaseRoom room : this.gunWar.getRooms().values()) {
+        for (BaseRoom room : this.gunWar.getGameRoomManager().getGameRoomMap().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);
                 return true;

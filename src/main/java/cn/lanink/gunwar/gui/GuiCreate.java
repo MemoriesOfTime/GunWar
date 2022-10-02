@@ -7,6 +7,7 @@ import cn.lanink.gamecore.form.windows.AdvancedFormWindowSimple;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.GunWarGameRoomManager;
 import cn.lanink.gunwar.room.base.RoomConfig;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.utils.Tools;
@@ -278,7 +279,7 @@ public class GuiCreate {
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
         Config nowConfig = GunWar.getInstance().getRoomConfig(player.getLevel());
-        LinkedList<String> list = new LinkedList<>(GunWar.getRoomClass().keySet());
+        LinkedList<String> list = new LinkedList<>(GunWarGameRoomManager.getGameRoomClassMap().keySet());
         LinkedList<String> showList = new LinkedList<>();
         int nowChoose = 0;
         int i = 0;
@@ -297,7 +298,7 @@ public class GuiCreate {
 
         custom.onResponded((formResponseCustom, cp) -> {
             String gameMode = list.get(formResponseCustom.getDropdownResponse(0).getElementID());
-            if (GunWar.getRoomClass().containsKey(gameMode)) {
+            if (GunWarGameRoomManager.getGameRoomClassMap().containsKey(gameMode)) {
                 Config config = GunWar.getInstance().getRoomConfig(player.getLevel());
                 config.set("gameMode", gameMode);
                 config.save();
@@ -382,7 +383,7 @@ public class GuiCreate {
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowSimple simple = new AdvancedFormWindowSimple(PLUGIN_NAME, "");
 
-        for (Map.Entry<String, BaseRoom> entry : GunWar.getInstance().getRooms().entrySet()) {
+        for (Map.Entry<String, BaseRoom> entry : GunWar.getInstance().getGameRoomManager().getGameRoomMap().entrySet()) {
             simple.addButton(new ResponseElementButton("§e" + entry.getKey() +
                     "\n§r§eMode: " + Tools.getShowGameMode(entry.getValue().getGameMode()) +
                             " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
@@ -402,7 +403,7 @@ public class GuiCreate {
     public static void sendRoomJoinOkMenu(Player player, String roomName) {
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowModal modal;
-        BaseRoom room = GunWar.getInstance().getRooms().get(roomName);
+        BaseRoom room = GunWar.getInstance().getGameRoomManager().getGameRoom(roomName);
         if (room != null) {
             if (room.getStatus() == 2 || room.getStatus() == 3) {
                 modal = new AdvancedFormWindowModal(
