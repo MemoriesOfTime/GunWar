@@ -83,6 +83,7 @@ ctf: "Захват флага"
 blasting: "blasting"
 team: "team"
 conquest: "conquest"
+ffa: "FreeForAll"
 
 supplyType_Close: "close"
 supplyType_All_Round: "Globally available"

@@ -142,9 +142,9 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
         if (hasPlayer) {
             list.sort((o1, o2) -> {
                 if (o1.getPlayers().size() > o2.getPlayers().size()) {
-                    return 1;
-                } else if (o1.getPlayers().size() < o2.getPlayers().size()) {
                     return -1;
+                } else if (o1.getPlayers().size() < o2.getPlayers().size()) {
+                    return 1;
                 }
                 return 0;
             });
@@ -168,9 +168,9 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
         if (hasPlayer) {
             list.sort((o1, o2) -> {
                 if (o1.getPlayers().size() > o2.getPlayers().size()) {
-                    return 1;
-                } else if (o1.getPlayers().size() < o2.getPlayers().size()) {
                     return -1;
+                } else if (o1.getPlayers().size() < o2.getPlayers().size()) {
+                    return 1;
                 }
                 return 0;
             });
