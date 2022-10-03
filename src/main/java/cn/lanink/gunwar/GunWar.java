@@ -151,9 +151,9 @@ public class GunWar extends PluginBase {
         GunWarGameRoomManager.registerGameRoomClass("ctf", CTFModeRoom.class);
         GunWarGameRoomManager.registerGameRoomClass("blasting", BlastingModeRoom.class);
         GunWarGameRoomManager.registerGameRoomClass("team", TeamModeRoom.class);
+        GunWarGameRoomManager.registerGameRoomClass("ffa", FreeForAllModeRoom.class);
         if (GunWar.debug) {
             GunWarGameRoomManager.registerGameRoomClass("conquest", ConquestModeRoom.class);
-            GunWarGameRoomManager.registerGameRoomClass("ffa", FreeForAllModeRoom.class);
         }
     }
 

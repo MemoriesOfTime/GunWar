@@ -297,7 +297,7 @@ public class Tools {
      * @param player 玩家
      * @param cmds 命令
      */
-    public static void cmd(Player player, List<String> cmds) {
+    public static void executeCommands(Player player, List<String> cmds) {
         if (player == null || cmds == null || cmds.size() < 1) {
             return;
         }
