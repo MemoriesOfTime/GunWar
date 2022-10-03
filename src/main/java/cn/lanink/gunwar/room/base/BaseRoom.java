@@ -14,6 +14,7 @@ import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
+import cn.lanink.gunwar.room.freeforall.FreeForAllModeRoom;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
@@ -919,8 +920,8 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         }else {
             if (damager instanceof Player) {
                 Player damagerPlayer = (Player) damager;
-                if (this.getPlayerTeam(damagerPlayer) != this.getPlayerTeam(player)) {
-                    this.playerKillMap.put(damagerPlayer, this.playerKillMap.get(damagerPlayer) + 1);
+                if (this.getPlayerTeam(damagerPlayer) != this.getPlayerTeam(player) || this instanceof FreeForAllModeRoom) {
+                    this.playerKillMap.put(damagerPlayer, this.playerKillMap.getOrDefault(damagerPlayer, 0) + 1);
                     GameRecord.addPlayerRecord(damagerPlayer, RecordType.KILLS);
                     this.addPlayerIntegral(damagerPlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
                 }else {

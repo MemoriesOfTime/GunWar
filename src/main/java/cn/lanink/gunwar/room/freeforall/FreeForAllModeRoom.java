@@ -60,7 +60,21 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
         if (this.getPlayers().isEmpty()) {
             this.roundEnd(Team.NULL);
         }
-        //TODO 胜利判断
+        int killAtMost = this.getKillAtMost();
+        this.redScore = killAtMost;
+        this.blueScore = this.getVictoryScore();
+        if (killAtMost >= this.getVictoryScore()) {
+            this.roundEnd(Team.NULL);
+        }
+    }
+
+    public int getKillAtMost() {
+        ArrayList<Map.Entry<Player, Integer>> list = new ArrayList<>(this.playerKillMap.entrySet());
+        list.sort((o1, o2) -> o2.getValue() - o1.getValue());
+        if (!list.isEmpty()) {
+            return list.get(0).getValue();
+        }
+        return 0;
     }
 
     @Override
