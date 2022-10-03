@@ -22,6 +22,10 @@ cmdWhitelist:
   - me 我失败了
   - tell "@p" 很遗憾你失败了！&con
 
+QuitRoom:
+  #退出房间执行命令
+  cmd: []
+
 #游戏内积分 （商店用）
 integral:
   #游戏开始时玩家基础积分

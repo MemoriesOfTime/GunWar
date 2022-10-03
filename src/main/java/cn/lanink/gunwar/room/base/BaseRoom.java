@@ -389,12 +389,12 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
                 if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
                     for (Player player : victoryPlayers) {
-                        Tools.cmd(player, vCmds);
+                        Tools.executeCommands(player, vCmds);
                     }
                 }
                 if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
                     for (Player player : defeatPlayers) {
-                        Tools.cmd(player, dCmds);
+                        Tools.executeCommands(player, dCmds);
                     }
                 }
             }, 10);
@@ -638,6 +638,10 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         }
 
         player.sendMessage(this.language.translateString("quitRoom"));
+
+        if (this.gunWar.getConfig().exists("QuitRoom.cmd")) {
+            Tools.executeCommands(player, this.gunWar.getConfig().getStringList("QuitRoom.cmd"));
+        }
     }
 
     /**
