@@ -18,15 +18,15 @@ public class VictoryTask extends PluginTask<GunWar> {
 
     private final Language language;
     private final BaseRoom room;
-    private final int victory;
     private int victoryTime;
+    private int victory = 0;
+    private Player victoryPlayer;
 
     public VictoryTask(GunWar owner, BaseRoom room, int victory) {
-        super(owner);
-        this.language = owner.getLanguage();
-        this.room = room;
-        this.victoryTime = 10;
+        this(owner, room);
+
         this.victory = victory;
+
         for (Map.Entry<Player, Team> entry: room.getPlayers().entrySet()) {
             LinkedList<String> ms = new LinkedList<>();
             switch (this.victory) {
@@ -61,6 +61,30 @@ public class VictoryTask extends PluginTask<GunWar> {
         }
     }
 
+    public VictoryTask(GunWar owner, BaseRoom room, Player victory) {
+        this(owner, room);
+
+        this.victoryPlayer = victory;
+
+        for (Map.Entry<Player, Team> entry: room.getPlayers().entrySet()) {
+            LinkedList<String> ms = new LinkedList<>();
+            if (entry.getKey() == this.victoryPlayer) {
+                GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
+            }else {
+                GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
+            }
+            ms.add(this.language.translateString("victoryMessage", this.victoryPlayer.getName()));
+            owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
+        }
+    }
+
+    private VictoryTask(GunWar owner, BaseRoom room) {
+        super(owner);
+        this.language = owner.getLanguage();
+        this.room = room;
+        this.victoryTime = 10;
+    }
+
     @Override
     public void onRun(int i) {
         if (this.room.getStatus() != 3) {
@@ -74,7 +98,10 @@ public class VictoryTask extends PluginTask<GunWar> {
             this.victoryTime--;
             if (!this.room.getPlayers().isEmpty()) {
                 for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
-                    if (entry.getValue() != Team.NULL) {
+                    if (this.victoryPlayer != null) {
+                        entry.getKey().sendTip(this.language.translateString("victoryMessage", this.victoryPlayer.getName()));
+                        Tools.spawnFirework(this.victoryPlayer);
+                    }else if (entry.getValue() != Team.NULL) {
                         if (this.victory == 1) {
                             entry.getKey().sendTip(this.language.translateString("victoryMessage",
                                     this.language.translateString("teamNameRed")));

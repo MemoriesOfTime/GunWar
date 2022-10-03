@@ -22,7 +22,7 @@ public class ReloadCommand extends BaseSubCommand {
 
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        this.gunWar.reLoadRooms();
+        this.gunWar.getGameRoomManager().reloadAllGameRoom();
         sender.sendMessage(this.language.translateString("adminReload"));
         return true;
     }

@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.room.base;
 
 import cn.lanink.gamecore.GameCore;
+import cn.lanink.gamecore.room.GameRoom;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.FileUtil;
@@ -13,6 +14,7 @@ import cn.lanink.gunwar.entity.EntityPlayerCorpse;
 import cn.lanink.gunwar.event.*;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
+import cn.lanink.gunwar.room.freeforall.FreeForAllModeRoom;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.WaitTask;
 import cn.lanink.gunwar.tasks.game.ScoreBoardTask;
@@ -47,7 +49,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基础/通用 房间类
  * @author lt_name
  */
-public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
+public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, ITimeTask {
 
     protected final GunWar gunWar = GunWar.getInstance();
     protected final Language language = GunWar.getInstance().getLanguage();
@@ -61,6 +63,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     protected final HashMap<Player, Integer> playerInvincibleTime = new HashMap<>(); //玩家无敌时间
     protected final HashMap<Player, Integer> playerIntegralMap = new HashMap<>(); //玩家积分
+    protected final HashMap<Player, Integer> playerKillMap = new HashMap<>(); //玩家击杀数
 
     public int redScore; //队伍得分
     public int blueScore;
@@ -242,6 +245,9 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         this.blueScore = 0;
         this.players.clear();
         this.playerHealth.clear();
+        this.playerInvincibleTime.clear();
+        this.playerIntegralMap.clear();
+        this.playerKillMap.clear();
         this.roundEnd = false;
     }
 
@@ -383,12 +389,12 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                 List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
                 if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
                     for (Player player : victoryPlayers) {
-                        Tools.cmd(player, vCmds);
+                        Tools.executeCommands(player, vCmds);
                     }
                 }
                 if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
                     for (Player player : defeatPlayers) {
-                        Tools.cmd(player, dCmds);
+                        Tools.executeCommands(player, dCmds);
                     }
                 }
             }, 10);
@@ -592,6 +598,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomPlayerQuitEvent(this, player));
 
         this.players.remove(player);
+        this.playerHealth.remove(player);
+        this.playerInvincibleTime.remove(player);
+        this.playerIntegralMap.remove(player);
+        this.playerKillMap.remove(player);
         if (GunWar.getInstance().isHasTips()) {
             Tips.removeTipsConfig(this.getLevelName(), player);
         }
@@ -628,6 +638,10 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }
 
         player.sendMessage(this.language.translateString("quitRoom"));
+
+        if (this.gunWar.getConfig().exists("QuitRoom.cmd")) {
+            Tools.executeCommands(player, this.gunWar.getConfig().getStringList("QuitRoom.cmd"));
+        }
     }
 
     /**
@@ -843,7 +857,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         //清理尸体
         for (Entity entity : this.getLevel().getEntities()) {
             if (entity instanceof EntityPlayerCorpse) {
-                if (entity.namedTag != null &&
+                if (entity.namedTag == null ||
                         entity.namedTag.getString("playerName").equals(player.getName())) {
                     entity.close();
                 }
@@ -910,7 +924,8 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         }else {
             if (damager instanceof Player) {
                 Player damagerPlayer = (Player) damager;
-                if (this.getPlayerTeam(damagerPlayer) != this.getPlayerTeam(player)) {
+                if (this.getPlayerTeam(damagerPlayer) != this.getPlayerTeam(player) || this instanceof FreeForAllModeRoom) {
+                    this.playerKillMap.put(damagerPlayer, this.playerKillMap.getOrDefault(damagerPlayer, 0) + 1);
                     GameRecord.addPlayerRecord(damagerPlayer, RecordType.KILLS);
                     this.addPlayerIntegral(damagerPlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.KILL_SCORE));
                 }else {
@@ -988,7 +1003,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
         File backup = new File(this.gunWar.getWorldBackupPath() + this.getLevelName());
         if (!backup.exists()) {
             this.gunWar.getLogger().error(this.language.translateString("roomLevelBackupNotExist", this.getLevelName()));
-            this.gunWar.unloadRoom(this.getLevelName());
+            this.gunWar.getGameRoomManager().unloadGameRoom(this.getLevelName());
         }
         Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override
@@ -1002,7 +1017,7 @@ public abstract class BaseRoom extends RoomConfig implements IRoom, ITimeTask {
                     }
                 }else {
                     gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", getLevelName()));
-                    gunWar.unloadRoom(getLevelName());
+                    gunWar.getGameRoomManager().unloadGameRoom(getLevelName());
                 }
             }
         });

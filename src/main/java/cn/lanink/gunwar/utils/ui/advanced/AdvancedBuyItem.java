@@ -20,7 +20,7 @@ public class AdvancedBuyItem extends ResponseItem {
 
     @Override
     public void callClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player) {
-        for (BaseRoom room : GunWar.getInstance().getRooms().values()) {
+        for (BaseRoom room : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
             if (room.isPlaying(player)) {
                 int nowIntegral = room.getPlayerIntegral(player);
                 if (nowIntegral < this.itemConfig.getNeedIntegral()) {

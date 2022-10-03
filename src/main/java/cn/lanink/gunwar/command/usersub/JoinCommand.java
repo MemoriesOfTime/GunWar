@@ -31,12 +31,12 @@ public class JoinCommand extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         Player player = (Player) sender;
-        if (this.gunWar.getRooms().size() > 0) {
+        if (this.gunWar.getGameRoomManager().getGameRoomMap().size() > 0) {
             if (player.riding != null) {
                 sender.sendMessage(this.language.translateString("joinRoomIsRiding"));
                 return true;
             }
-            for (BaseRoom room : this.gunWar.getRooms().values()) {
+            for (BaseRoom room : this.gunWar.getGameRoomManager().getGameRoomMap().values()) {
                 if (room.isPlaying(player)) {
                     sender.sendMessage(this.language.translateString("joinRoomIsInRoom"));
                     return true;
@@ -60,19 +60,8 @@ public class JoinCommand extends BaseSubCommand {
             }
 
             if (args.length < 2) {
-                LinkedList<BaseRoom> rooms = new LinkedList<>();
-                for (BaseRoom room : this.gunWar.getRooms().values()) {
-                    if (room.canJoin(player)) {
-                        if (room.getPlayers().size() > 0) {
-                            room.joinRoom(player);
-                            sender.sendMessage(this.language.translateString("joinRandomRoom"));
-                            return true;
-                        }
-                        rooms.add(room);
-                    }
-                }
-                if (rooms.size() > 0) {
-                    BaseRoom room = rooms.get(GunWar.RANDOM.nextInt(rooms.size()));
+                BaseRoom room = this.gunWar.getGameRoomManager().getCanJoinGameRoom(player);
+                if (room != null) {
                     room.joinRoom(player);
                     sender.sendMessage(this.language.translateString("joinRandomRoom"));
                     return true;
@@ -82,8 +71,8 @@ public class JoinCommand extends BaseSubCommand {
                 if (s.length == 2 && s[0].toLowerCase().trim().equals("mode")) {
                     String modeName = s[1].toLowerCase().trim();
                     LinkedList<BaseRoom> rooms = new LinkedList<>();
-                    for (BaseRoom room : this.gunWar.getRooms().values()) {
-                        if (room.canJoin(player) && room.getGameMode().equals(modeName)) {
+                    for (BaseRoom room : this.gunWar.getGameRoomManager().getCanJoinGameRoomList(modeName)) {
+                        if (room.canJoin(player)) {
                             if (room.getPlayers().size() > 0) {
                                 room.joinRoom(player);
                                 sender.sendMessage(this.language.translateString("joinRandomRoom"));
@@ -100,8 +89,8 @@ public class JoinCommand extends BaseSubCommand {
                     }
                     sender.sendMessage(this.language.translateString("joinRoomIsNotFound"));
                     return true;
-                }else if (this.gunWar.getRooms().containsKey(args[1])) {
-                    BaseRoom room = this.gunWar.getRooms().get(args[1]);
+                }else if (this.gunWar.getGameRoomManager().hasGameRoom(args[1])) {
+                    BaseRoom room = this.gunWar.getGameRoomManager().getGameRoom(args[1]);
                     if (room.getStatus() != 0 && room.getStatus() != 1) {
                         sender.sendMessage(this.language.translateString("joinRoomIsPlaying"));
                     } else if (room.getPlayers().size() >= room.getMaxPlayers()) {

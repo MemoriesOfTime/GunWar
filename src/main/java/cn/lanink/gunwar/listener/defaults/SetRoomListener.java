@@ -15,6 +15,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.utils.Config;
 
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * @author lt_name
@@ -132,7 +133,24 @@ public class SetRoomListener implements Listener {
                             player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setBlastingPointSuccessful", "§9B"));
                             task.setRoomSchedule(task.getNextRoomSchedule());
                             break;
+                        case 300:
+                            List<String> randomSpawns = config.getStringList("randomSpawns");
+                            randomSpawns.add(pos);
+                            config.set("randomSpawns", randomSpawns);
+                            player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_addRandomSpawnSuccessful"));
+                            break;
                         default:
+                            break;
+                    }
+                    break;
+                case 114: //删除已设置的点
+                    String removePos = block.getFloorX() + ":" + (block.getFloorY() + 1) + ":" + block.getFloorZ();
+                    switch (task.getSetRoomSchedule()) {
+                        case 300:
+                            List<String> randomSpawns = config.getStringList("randomSpawns");
+                            randomSpawns.remove(removePos);
+                            config.set("randomSpawns", randomSpawns);
+                            player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_removeRandomSpawnSuccessful"));
                             break;
                     }
                     break;

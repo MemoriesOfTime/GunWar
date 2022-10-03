@@ -23,7 +23,7 @@ public class ListCommand extends BaseSubCommand {
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
         StringBuilder list = new StringBuilder();
-        for (String string : this.gunWar.getRooms().keySet()) {
+        for (String string : this.gunWar.getGameRoomManager().getGameRoomMap().keySet()) {
             list.append(string).append(" ");
         }
         sender.sendMessage(this.language.translateString("listRoom",  list));

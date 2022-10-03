@@ -20,7 +20,7 @@ import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.scheduler.Task;
 
 import java.io.File;
-import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 玩家进入/退出服务器 或传送到其他世界时，退出房间
@@ -36,7 +36,7 @@ public class PlayerJoinAndQuit implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player != null && this.gunWar.getRooms().containsKey(player.getLevel().getFolderName())) {
+        if (player != null && this.gunWar.getGameRoomManager().hasGameRoom(player.getLevel().getFolderName())) {
             Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, new Task() {
                 @Override
                 public void onRun(int i) {
@@ -70,7 +70,7 @@ public class PlayerJoinAndQuit implements Listener {
         if (this.gunWar.setRoomTask.containsKey(player)) {
             this.gunWar.setRoomTask.get(player).cancel();
         }
-        for (BaseRoom room : this.gunWar.getRooms().values()) {
+        for (BaseRoom room : this.gunWar.getGameRoomManager().getGameRoomMap().values()) {
             if (room.isPlaying(player)) {
                 room.quitRoom(player);
             }
@@ -93,7 +93,7 @@ public class PlayerJoinAndQuit implements Listener {
             return;
         }
         if (!fromLevel.equals(toLevel)) {
-            LinkedHashMap<String, BaseRoom> room =  this.gunWar.getRooms();
+            Map<String, BaseRoom> room =  this.gunWar.getGameRoomManager().getGameRoomMap();
             if (room.containsKey(fromLevel) && room.get(fromLevel).isPlaying(player)) {
                 room.get(fromLevel).quitRoom(player);
             }else if (!player.isOp() && room.containsKey(toLevel) &&

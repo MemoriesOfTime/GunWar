@@ -5,6 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.Team;
+import cn.lanink.gunwar.room.freeforall.FreeForAllModeRoom;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -33,12 +34,17 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             return;
         }
         if (this.room.getPlayers().size() > 0) {
-            int red = 0, blue = 0;
-            for (Team team : this.room.getPlayers().values()) {
-                if (team == Team.RED) {
-                    red++;
-                }else if (team == Team.BLUE) {
-                    blue++;
+            int red = 0;
+            int blue = 0;
+            if (this.room instanceof FreeForAllModeRoom) {
+                red = this.room.getPlayers().size();
+            }else {
+                for (Team team : this.room.getPlayers().values()) {
+                    if (team == Team.RED) {
+                        red++;
+                    } else if (team == Team.BLUE) {
+                        blue++;
+                    }
                 }
             }
             for (Player player : this.room.getPlayers().keySet()) {

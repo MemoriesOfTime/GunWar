@@ -1,7 +1,6 @@
 package cn.lanink.gunwar;
 
 import cn.lanink.gamecore.listener.BaseGameListener;
-import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gamecore.utils.Language;
@@ -12,12 +11,14 @@ import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
-import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.listener.freeforall.FFADamageListener;
+import cn.lanink.gunwar.room.base.GunWarGameRoomManager;
 import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.room.classic.ClassicModeRoom;
 import cn.lanink.gunwar.room.conquest.ConquestModeRoom;
+import cn.lanink.gunwar.room.freeforall.FreeForAllModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.tasks.FStageTask;
@@ -30,7 +31,6 @@ import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
 import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariableV2;
 import cn.lanink.gunwar.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -65,12 +65,13 @@ public class GunWar extends PluginBase {
 
     @SuppressWarnings("rawtypes")
     private static final HashMap<String, Class<? extends BaseGameListener>> LISTENER_CLASS = new HashMap<>();
-    private static final LinkedHashMap<String, Class<? extends BaseRoom>> ROOM_CLASS = new LinkedHashMap<>();
 
     @SuppressWarnings("rawtypes")
     private final HashMap<String, BaseGameListener> gameListeners = new HashMap<>();
-    private final LinkedHashMap<String, BaseRoom> rooms = new LinkedHashMap<>();
     private final HashMap<String, Config> roomConfigs = new HashMap<>();
+
+    @Getter
+    private GunWarGameRoomManager gameRoomManager;
 
     private String cmdUser;
     private String cmdAdmin;
@@ -144,14 +145,16 @@ public class GunWar extends PluginBase {
         registerListener("DefaultDamageListener", DefaultDamageListener.class);
         registerListener("CTFDamageListener", CTFDamageListener.class);
         registerListener("BlastingGameListener", BlastingGameListener.class);
+        registerListener("FFADamageListener", FFADamageListener.class);
 
         //注册房间类
-        registerRoom("classic", ClassicModeRoom.class);
-        registerRoom("ctf", CTFModeRoom.class);
-        registerRoom("blasting", BlastingModeRoom.class);
-        registerRoom("team", TeamModeRoom.class);
+        GunWarGameRoomManager.registerGameRoomClass("classic", ClassicModeRoom.class);
+        GunWarGameRoomManager.registerGameRoomClass("ctf", CTFModeRoom.class);
+        GunWarGameRoomManager.registerGameRoomClass("blasting", BlastingModeRoom.class);
+        GunWarGameRoomManager.registerGameRoomClass("team", TeamModeRoom.class);
+        GunWarGameRoomManager.registerGameRoomClass("ffa", FreeForAllModeRoom.class);
         if (GunWar.debug) {
-            registerRoom("conquest", ConquestModeRoom.class);
+            GunWarGameRoomManager.registerGameRoomClass("conquest", ConquestModeRoom.class);
         }
     }
 
@@ -231,7 +234,9 @@ public class GunWar extends PluginBase {
 
         this.loadAllListener();
 
-        this.loadAllRoom();
+        this.gameRoomManager = new GunWarGameRoomManager(this);
+
+        this.gameRoomManager.loadAllGameRoom();
 
         try {
             new MetricsLite(this, 7448);
@@ -251,7 +256,7 @@ public class GunWar extends PluginBase {
         RankingManager.save();
         RankingManager.clear();
 
-        this.unloadAllRoom();
+        this.gameRoomManager.unloadAllGameRoom();
         this.getGameListeners().values().forEach(BaseGameListener::clearListenerRooms);
         this.getLogger().info("§c插件卸载完成！");
     }
@@ -264,14 +269,6 @@ public class GunWar extends PluginBase {
     @SuppressWarnings("rawtypes")
     public static HashMap<String, Class<? extends BaseGameListener>> getListenerClass() {
         return LISTENER_CLASS;
-    }
-
-    public static void registerRoom(String name, Class<? extends BaseRoom> roomClass) {
-        ROOM_CLASS.put(name, roomClass);
-    }
-
-    public static LinkedHashMap<String, Class<? extends BaseRoom>> getRoomClass() {
-        return ROOM_CLASS;
     }
 
     public String getServerWorldPath() {
@@ -311,10 +308,6 @@ public class GunWar extends PluginBase {
         return this.gameListeners;
     }
 
-    public LinkedHashMap<String, BaseRoom> getRooms() {
-        return this.rooms;
-    }
-
     public HashMap<String, Config> getRoomConfigs() {
         return this.roomConfigs;
     }
@@ -340,85 +333,6 @@ public class GunWar extends PluginBase {
         if (GunWar.debug) {
             this.getLogger().info("[debug] registerListener: " + gameListener.getListenerName());
         }
-    }
-
-    /**
-     * 加载所有房间
-     */
-    private void loadAllRoom() {
-        File[] s = new File(getDataFolder() + "/Rooms").listFiles();
-        if (s != null) {
-            for (File file1 : s) {
-                String[] fileName = file1.getName().split("\\.");
-                if (fileName.length > 0) {
-                    this.loadRoom(fileName[0]);
-                }
-            }
-        }
-        this.getLogger().info("§e房间加载完成！当前已加载 " + this.rooms.size() + " 个房间！");
-    }
-
-    public void loadRoom(String world) {
-        Config config = this.getRoomConfig(world);
-        if (config.getInt("waitTime", 0) == 0 ||
-                config.getInt("gameTime", 0) == 0 ||
-                "".equals(config.getString("waitSpawn", "").trim()) ||
-                "".equals(config.getString("redSpawn", "").trim()) ||
-                "".equals(config.getString("blueSpawn", "").trim()) ||
-                "".equals(config.getString("gameMode", "").trim())) {
-            this.getLogger().warning("§c房间：" + world + " 配置不完整，加载失败！");
-            return;
-        }
-        if (Server.getInstance().getLevelByName(world) == null && !Server.getInstance().loadLevel(world)) {
-            this.getLogger().warning("§c房间：" + world + " 地图加载失败！");
-            return;
-        }
-
-        String gameMode = config.getString("gameMode", "classic");
-        if (!ROOM_CLASS.containsKey(gameMode)) {
-            this.getLogger().warning("§c房间：" + world + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
-            return;
-        }
-        try {
-            Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
-            BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(world), config);
-            baseRoom.setGameMode(gameMode);
-            this.rooms.put(world, baseRoom);
-            this.getLogger().info("§a房间：" + world + " 已加载！");
-        } catch (Exception e) {
-            this.getLogger().error("§c加载房间：" + world + " 时出错，请检查配置文件", e);
-        }
-    }
-
-    /**
-     * 卸载所有房间
-     */
-    public void unloadAllRoom() {
-        for (String world : new HashSet<>(this.rooms.keySet())) {
-            this.unloadRoom(world);
-        }
-        this.rooms.clear();
-        this.roomConfigs.clear();
-    }
-
-    public void unloadRoom(String world) {
-        if (this.rooms.containsKey(world)) {
-            BaseRoom room = this.rooms.get(world);
-            room.endGame();
-            room.setStatus(IRoomStatus.ROOM_STATUS_LEVEL_NOT_LOADED);
-            this.rooms.remove(world);
-            this.getGameListeners().values().forEach(listener -> listener.removeListenerRoom(world));
-            this.getLogger().info("§c房间：" + world + " 已卸载！");
-        }
-        this.roomConfigs.remove(world);
-    }
-
-    /**
-     * 重载所有房间
-     */
-    public void reLoadRooms() {
-        this.unloadAllRoom();
-        this.loadAllRoom();
     }
 
     private void loadResources() {

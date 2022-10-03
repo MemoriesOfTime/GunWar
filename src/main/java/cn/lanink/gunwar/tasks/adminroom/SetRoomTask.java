@@ -5,8 +5,8 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityText;
 import cn.lanink.gunwar.gui.GuiCreate;
 import cn.lanink.gunwar.item.ItemManage;
+import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
@@ -16,6 +16,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,9 +38,10 @@ public class SetRoomTask extends PluginTask<GunWar> {
     private final Item offHandItem;
     private final int beforeGameMode;
 
-    private Entity waitSpawnText;
-    private Entity redSpawnText;
-    private Entity blueSpawnText;
+    private EntityText waitSpawnText;
+    private EntityText redSpawnText;
+    private EntityText blueSpawnText;
+    private List<EntityText> randomSpawnTextList = new ArrayList<>();
 
     private int particleEffectTick = 0;
 
@@ -194,8 +198,16 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.getInventory().setItem(4, item);
                 String setMode = config.getString("gameMode", "").trim();
                 if (!"".equals(setMode)) {
-                    if ("blasting".equals(setMode)) {
-                        this.nextRoomSchedule = 200;
+                    switch (setMode) {
+                        case "blasting":
+                            this.nextRoomSchedule = 200;
+                            break;
+                        case "ffa":
+                            this.nextRoomSchedule = 300;
+                            break;
+                        case "conquest":
+                            this.nextRoomSchedule = 400;
+                            break;
                     }
                     if (autoNext) {
                         this.setRoomSchedule(this.nextRoomSchedule);
@@ -208,10 +220,10 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.sendMessage(this.owner.getLanguage().translateString("admin_setRoom_setSuccessful"));
                 config.save(true);
                 this.closeEntity();
-                this.owner.loadRoom(this.level.getFolderName());
+                this.owner.getGameRoomManager().loadGameRoom(this.level.getFolderName());
                 this.cancel();
                 return;
-            case 200: //设置爆破点A
+            case 200: //爆破模式 设置爆破点A
                 this.backRoomSchedule = 60;
                 this.nextRoomSchedule = 210;
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setBlastingPoint", "§cA"));
@@ -236,6 +248,30 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 if (!"".equals(config.getString("blastingPointB").trim())) {
                     canNext = true;
                 }
+                break;
+            case 300: //个人战模式 设置随机出生点
+                this.backRoomSchedule = 60;
+                this.nextRoomSchedule = 70;
+
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setRandomSpawn"));
+
+                this.player.getInventory().setItem(4, Item.get(0));
+
+                item = Item.get(138);
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_addRandomSpawn"));
+                this.player.getInventory().setItem(3, item);
+
+                item = Item.get(241, 14);//红色玻璃
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 114));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_removeRandomSpawn"));
+                this.player.getInventory().setItem(5, item);
+
+                if (!config.getStringList("randomSpawns").isEmpty()) {
+                    canNext = true;
+                }
+                break;
+            case 400: //征服模式
                 break;
         }
         //判断给 下一步/保存 物品
@@ -303,6 +339,38 @@ public class SetRoomTask extends PluginTask<GunWar> {
             this.blueSpawnText.teleport(pos);
             this.particleEffect(pos);
         } catch (Exception ignored) {
+        }
+        try{
+            List<String> randomSpawns = config.getStringList("randomSpawns");
+            Iterator<EntityText> iterator = this.randomSpawnTextList.iterator();
+            while (iterator.hasNext()) {
+                EntityText entityText = iterator.next();
+                if (!randomSpawns.contains(entityText.namedTag.getString("stringPos"))) {
+                    entityText.close();
+                }
+                if (entityText.isClosed()) {
+                    iterator.remove();
+                }
+            }
+            for (String string : randomSpawns) {
+                this.particleEffect(Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level));
+                boolean isExist = false;
+                for (EntityText entityText : this.randomSpawnTextList) {
+                    if (entityText.namedTag.getString("stringPos").equals(string)) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    Position pos = Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level);
+                    EntityText entityText = new EntityText(pos, "§aRandom §eSpawn");
+                    entityText.namedTag.putString("stringPos", string);
+                    entityText.spawnToAll();
+                    this.randomSpawnTextList.add(entityText);
+                }
+            }
+        } catch (Exception ignored) {
+            ignored.printStackTrace();
         }
     }
 

@@ -297,7 +297,7 @@ public class Tools {
      * @param player 玩家
      * @param cmds 命令
      */
-    public static void cmd(Player player, List<String> cmds) {
+    public static void executeCommands(Player player, List<String> cmds) {
         if (player == null || cmds == null || cmds.size() < 1) {
             return;
         }
@@ -344,15 +344,11 @@ public class Tools {
      * @param team 所属队伍
      */
     public static void giveItem(@NotNull BaseRoom room, @NotNull Player player, @NotNull Team team) {
-        //如果玩家未加入队伍则不给物品
-        if (team == Team.NULL) {
-            return;
-        }
         player.getInventory().setArmorContents(getArmors(team));
         ArrayList<String> items = new ArrayList<>(room.getInitialItems());
         if (team == Team.RED || team == Team.RED_DEATH) {
             items.addAll(room.getRedTeamInitialItems());
-        }else {
+        }else if(team == Team.BLUE || team == Team.BLUE_DEATH) {
             items.addAll(room.getBlueTeamInitialItems());
         }
         for (String string : items) {
@@ -390,25 +386,28 @@ public class Tools {
      * @return 盔甲
      */
     public static Item[] getArmors(Team team) {
-        //如果玩家未加入队伍则不给物品
-        if (team == Team.NULL) {
-            return new Item[4];
-        }
         ItemColorArmor helmet = (ItemColorArmor) Item.get(298, 0, 1);
         ItemColorArmor chestPlate = (ItemColorArmor) Item.get(299, 0, 1);
         ItemColorArmor leggings = (ItemColorArmor) Item.get(300, 0, 1);
         ItemColorArmor boots = (ItemColorArmor) Item.get(301, 0, 1);
-        BlockColor color;
-        if (team == Team.RED || team == Team.RED_DEATH) {
-            color = new BlockColor(255, 0, 0);
-        }else {
-            color = new BlockColor(0, 0, 255);
-        }
         Item[] armor = new Item[4];
-        armor[0] = helmet.setColor(color);
-        armor[1] = chestPlate.setColor(color);
-        armor[2] = leggings.setColor(color);
-        armor[3] = boots.setColor(color);
+        if (team != Team.NULL) {
+            BlockColor color;
+            if (team == Team.RED || team == Team.RED_DEATH) {
+                color = new BlockColor(255, 0, 0);
+            } else {
+                color = new BlockColor(0, 0, 255);
+            }
+            armor[0] = helmet.setColor(color);
+            armor[1] = chestPlate.setColor(color);
+            armor[2] = leggings.setColor(color);
+            armor[3] = boots.setColor(color);
+        }else {
+            armor[0] = helmet;
+            armor[1] = chestPlate;
+            armor[2] = leggings;
+            armor[3] = boots;
+        }
         return armor;
     }
 

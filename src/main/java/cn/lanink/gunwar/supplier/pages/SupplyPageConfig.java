@@ -134,7 +134,7 @@ public class SupplyPageConfig {
         this.items.forEach((slotPos, itemConfig) ->
                 advancedFormWindowSimple.addButton(itemConfig.getTitle() + "§r\n" + itemConfig.getSubTitle(), (player) -> {
                     BaseRoom room = null;
-                    for (BaseRoom r : GunWar.getInstance().getRooms().values()) {
+                    for (BaseRoom r : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
                         if (r.isPlaying(player)) {
                             room = r;
                         }

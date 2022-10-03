@@ -18,7 +18,7 @@ public class RsNpcXVariableV2 extends BaseVariableV2 {
     public void onUpdate(Player player, RsNpcConfig rsNpcConfig) {
         HashMap<String, Integer> map = new HashMap<>();
         int all = 0;
-        for (BaseRoom room : GunWar.getInstance().getRooms().values()) {
+        for (BaseRoom room : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
             map.put(room.getGameMode(),
                     map.getOrDefault(room.getGameMode(), 0) + room.getPlayers().size());
             all += room.getPlayers().size();
@@ -28,7 +28,7 @@ public class RsNpcXVariableV2 extends BaseVariableV2 {
         }
 
         HashMap<String, Integer> map1 = new HashMap<>();
-        for (BaseRoom room : GunWar.getInstance().getRooms().values()) {
+        for (BaseRoom room : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
             map1.put(room.getLevelName(), map1.getOrDefault(room.getLevelName(), 0) + room.getPlayers().size());
         }
         for (Map.Entry<String, Integer> entry : map1.entrySet()) {
