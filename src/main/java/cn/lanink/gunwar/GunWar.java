@@ -196,7 +196,7 @@ public class GunWar extends PluginBase {
         //检查FAP群组服插件
         try {
             Class.forName("net.fap.stage.FStage");
-            Server.getInstance().getScheduler().scheduleRepeatingTask(this, new FStageTask(this), 20, true);
+            this.getServer().getScheduler().scheduleRepeatingTask(this, new FStageTask(this), 20, true);
         } catch (Exception ignored) {
 
         }

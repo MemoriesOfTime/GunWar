@@ -17,7 +17,7 @@ public class FStageTask extends PluginTask<GunWar> {
 
     @Override
     public void onRun(int i) {
-        for (BaseRoom room : this.owner.getRooms().values()) {
+        for (BaseRoom room : this.owner.getGameRoomManager().getGameRoomMap().values()) {
             if (room.getStatus() == IRoomStatus.ROOM_STATUS_TASK_NEED_INITIALIZED || room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
                 FStage.setLocalStatus("free");
                 return;
