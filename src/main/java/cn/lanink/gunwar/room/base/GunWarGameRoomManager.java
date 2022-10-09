@@ -35,14 +35,13 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
     }
 
     public void loadAllGameRoom() {
-        File[] s = new File(this.gunWar.getDataFolder() + "/Rooms").listFiles();
-        if (s != null) {
-            for (File file1 : s) {
-                String[] fileName = file1.getName().split("\\.");
-                if (fileName.length > 0) {
-                    this.loadGameRoom(fileName[0]);
-                }
-            }
+        File[] files = new File(this.gunWar.getDataFolder() + "/Rooms").listFiles();
+        if (files != null) {
+            Arrays.stream(files)
+                    .filter(File::isFile)
+                    .filter(file -> file.getName().endsWith(".yml"))
+                    .filter(file -> file.getName().split("\\.").length > 0)
+                    .forEach(file -> this.loadGameRoom(file.getName().split("\\.")[0]));
         }
         this.gunWar.getLogger().info("§e房间加载完成！当前已加载 " + this.getGameRoomMap().size() + " 个房间！");
     }
