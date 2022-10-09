@@ -67,19 +67,18 @@ public class SetRoomListener implements Listener {
                     switch (task.getSetRoomSchedule()) {
                         case 10:
                             return;
-                        case 50:
+                        case 45:
                             if (task.isAutoNext()) {
                                 config.remove("waitTime");
                                 config.remove("gameTime");
                                 config.remove("victoryScore");
                             }
                             break;
-                        case 60:
+                        case 50:
                             if (task.isAutoNext()) {
-                                config.remove("minPlayers");
-                                config.remove("maxPlayers");
+                                config.remove("supplyType");
+                                config.remove("supplyEnableTime");
                             }
-                            break;
                         default:
                             break;
                     }
@@ -96,7 +95,10 @@ public class SetRoomListener implements Listener {
                     switch (task.getSetRoomSchedule()) {
                         case 10:
                             config.set("waitSpawn", pos);
-                            task.setRoomSchedule(20);
+                            task.setRoomSchedule(15);
+                            break;
+                        case 15:
+                            GuiCreate.sendAdminModeMenu(player);
                             break;
                         case 20:
                             config.set("redSpawn", pos);
@@ -120,9 +122,6 @@ public class SetRoomListener implements Listener {
                         case 50:
                             GuiCreate.sendAdminPlayersMenu(player);
                             break;
-                        case 60:
-                            GuiCreate.sendAdminModeMenu(player);
-                            break;
                         case 200:
                             config.set("blastingPointA", pos);
                             player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setBlastingPointSuccessful", "§cA"));
@@ -138,6 +137,18 @@ public class SetRoomListener implements Listener {
                             randomSpawns.add(pos);
                             config.set("randomSpawns", randomSpawns);
                             player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_addRandomSpawnSuccessful"));
+                            break;
+                        case 400:
+                            config.set("ConquestPointA", pos);
+                            player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setConquestPointSuccessful", "§eA"));
+                            break;
+                        case 410:
+                            config.set("ConquestPointB", pos);
+                            player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setConquestPointSuccessful", "§eB"));
+                            break;
+                        case 420:
+                            config.set("ConquestPointC", pos);
+                            player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setConquestPointSuccessful", "§eC"));
                             break;
                         default:
                             break;

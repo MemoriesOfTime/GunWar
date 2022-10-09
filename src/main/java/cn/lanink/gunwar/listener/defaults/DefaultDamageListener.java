@@ -44,7 +44,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                 return;
             }
             if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME &&
-                    room.getPlayerTeamAccurate(damagePlayer) != room.getPlayerTeamAccurate(player)) {
+                    (room.getPlayerTeam(damagePlayer) != room.getPlayerTeam(player) || room.canDamageTeammates())) {
                 if (event instanceof EntityDamageByChildEntityEvent) {
                     Entity entity = ((EntityDamageByChildEntityEvent) event).getChild();
                     switch (ItemManage.getItemType(entity)) {

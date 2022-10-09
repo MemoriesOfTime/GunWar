@@ -7,12 +7,14 @@ import cn.lanink.gunwar.gui.GuiCreate;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ParticleEffect;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.utils.Config;
 
@@ -20,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author lt_name
@@ -41,7 +42,12 @@ public class SetRoomTask extends PluginTask<GunWar> {
     private EntityText waitSpawnText;
     private EntityText redSpawnText;
     private EntityText blueSpawnText;
-    private List<EntityText> randomSpawnTextList = new ArrayList<>();
+
+    private final List<EntityText> randomSpawnTextList = new ArrayList<>(); //个人模式 随机出生点
+
+    private EntityText conquestPointTextA;
+    private EntityText conquestPointTextB;
+    private EntityText conquestPointTextC;
 
     private int particleEffectTick = 0;
 
@@ -85,7 +91,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
         Config config = this.owner.getRoomConfig(player.getLevel());
         switch (this.setRoomSchedule) {
             case 10: //设置等待出生点
-                this.nextRoomSchedule = 20;
+                this.nextRoomSchedule = 15;
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setWaitSpawn"));
                 item = Item.get(138);
                 item.setNamedTag(new CompoundTag()
@@ -94,6 +100,35 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.player.getInventory().setItem(4, item);
                 if (!"".equals(config.getString("waitSpawn").trim())) {
                     canNext = true;
+                }
+                break;
+            case 15: //设置游戏模式
+                this.backRoomSchedule = 10;
+                this.nextRoomSchedule = 20;
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
+                item = Item.get(347, 11);
+                item.setNamedTag(new CompoundTag()
+                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
+                this.player.getInventory().setItem(4, item);
+                String setMode = config.getString("gameMode", "").trim();
+                if (!"".equals(setMode)) {
+                    switch (setMode) {
+                        case "blasting":
+                            this.nextRoomSchedule = 200;
+                            break;
+                        case "ffa":
+                            this.nextRoomSchedule = 300;
+                            break;
+                        case "conquest":
+                            this.nextRoomSchedule = 400;
+                            break;
+                    }
+                    if (autoNext) {
+                        this.setRoomSchedule(this.nextRoomSchedule);
+                    }else {
+                        canNext = true;
+                    }
                 }
                 break;
             case 20: //设置红队出生点
@@ -135,6 +170,8 @@ public class SetRoomTask extends PluginTask<GunWar> {
                         .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setMoreParameters"));
                 this.player.getInventory().setItem(4, item);
+                this.player.getInventory().setItem(3, Item.get(0));
+                this.player.getInventory().setItem(5, Item.get(0));
                 if (config.getInt("waitTime") > 0 &&
                         config.getInt("gameTime") > 0 &&
                         config.getInt("victoryScore") > 0) {
@@ -170,47 +207,18 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 break;
             case 50: //设置房间人数
                 this.backRoomSchedule = 45;
-                this.nextRoomSchedule = 60;
+                this.nextRoomSchedule = 70;
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setRoomPlayers"));
                 item = Item.get(347, 11);
                 item.setNamedTag(new CompoundTag()
                         .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setRoomPlayers"));
                 this.player.getInventory().setItem(4, item);
-                if (config.getInt("minPlayers") > 0 &&
-                        config.getInt("maxPlayers") > 0) {
+                if (config.getInt("minPlayers") > 1 &&
+                        config.getInt("maxPlayers") > 1) {
                     if (autoNext) {
                         this.setRoomSchedule(this.nextRoomSchedule);
                         GuiCreate.sendAdminModeMenu(player);
-                    }else {
-                        canNext = true;
-                    }
-                }
-                break;
-            case 60: //设置游戏模式
-                this.backRoomSchedule = 50;
-                this.nextRoomSchedule = 70;
-                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
-                item = Item.get(347, 11);
-                item.setNamedTag(new CompoundTag()
-                        .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
-                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setGameMode"));
-                this.player.getInventory().setItem(4, item);
-                String setMode = config.getString("gameMode", "").trim();
-                if (!"".equals(setMode)) {
-                    switch (setMode) {
-                        case "blasting":
-                            this.nextRoomSchedule = 200;
-                            break;
-                        case "ffa":
-                            this.nextRoomSchedule = 300;
-                            break;
-                        case "conquest":
-                            this.nextRoomSchedule = 400;
-                            break;
-                    }
-                    if (autoNext) {
-                        this.setRoomSchedule(this.nextRoomSchedule);
                     }else {
                         canNext = true;
                     }
@@ -223,8 +231,9 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 this.owner.getGameRoomManager().loadGameRoom(this.level.getFolderName());
                 this.cancel();
                 return;
+            /* 爆破模式设置 **/
             case 200: //爆破模式 设置爆破点A
-                this.backRoomSchedule = 60;
+                this.backRoomSchedule = 15;
                 this.nextRoomSchedule = 210;
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setBlastingPoint", "§cA"));
                 item = Item.get(46);
@@ -238,7 +247,7 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 break;
             case 210: //设置爆破点B
                 this.backRoomSchedule = 200;
-                this.nextRoomSchedule = 70;
+                this.nextRoomSchedule = 20;
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setBlastingPoint", "§9B"));
                 item = Item.get(46);
                 item.setNamedTag(new CompoundTag()
@@ -249,9 +258,10 @@ public class SetRoomTask extends PluginTask<GunWar> {
                     canNext = true;
                 }
                 break;
+            /* 个人模式设置 **/
             case 300: //个人战模式 设置随机出生点
-                this.backRoomSchedule = 60;
-                this.nextRoomSchedule = 70;
+                this.backRoomSchedule = 15;
+                this.nextRoomSchedule = 40;
 
                 this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setRandomSpawn"));
 
@@ -271,8 +281,44 @@ public class SetRoomTask extends PluginTask<GunWar> {
                     canNext = true;
                 }
                 break;
+            /* 征服模式设置 **/
             case 400: //征服模式
+                this.backRoomSchedule = 5;
+                this.nextRoomSchedule = 410;
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setConquestPoint", "§eA"));
+                item = Item.get(Item.BEACON); //信标
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setConquestPoint", "§eA"));
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("ConquestPointA").trim())) {
+                    canNext = true;
+                }
                 break;
+            case 410:
+                this.backRoomSchedule = 400;
+                this.nextRoomSchedule = 420;
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setConquestPoint", "§eB"));
+                item = Item.get(Item.BEACON); //信标
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setConquestPoint", "§eB"));
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("ConquestPointB").trim())) {
+                    canNext = true;
+                }
+                break;
+            case 420:
+                this.backRoomSchedule = 410;
+                this.nextRoomSchedule = 20;
+                this.player.sendTip(this.owner.getLanguage().translateString("admin_setRoom_setConquestPoint", "§eC"));
+                item = Item.get(Item.BEACON); //信标
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setConquestPoint", "§eC"));
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("ConquestPointC").trim())) {
+                    canNext = true;
+                }
+                break;
+
         }
         //判断给 下一步/保存 物品
         if (canNext) {
@@ -369,8 +415,43 @@ public class SetRoomTask extends PluginTask<GunWar> {
                     this.randomSpawnTextList.add(entityText);
                 }
             }
-        } catch (Exception ignored) {
-            ignored.printStackTrace();
+        } catch (Exception e) {
+            if (GunWar.debug) {
+                GunWar.getInstance().getLogger().error("SetRoomTask randomSpawnTextList Error:", e);
+            }
+        }
+        try{
+            if (config.exists("ConquestPointA")) {
+                Position posA = Position.fromObject(Tools.stringToVector3(config.getString("ConquestPointA")).add(0.5, 0, 0.5), this.level);
+                if (this.conquestPointTextA == null || this.conquestPointTextA.isClosed()) {
+                    this.conquestPointTextA = new EntityText(posA, "§eConquest Point §aA");
+                    this.conquestPointTextA.spawnToAll();
+                }
+                this.conquestPointTextA.teleport(posA);
+                this.particleEffect(posA);
+            }
+            if (config.exists("ConquestPointB")) {
+                Position posB = Position.fromObject(Tools.stringToVector3(config.getString("ConquestPointB")).add(0.5, 0, 0.5), this.level);
+                if (this.conquestPointTextB == null || this.conquestPointTextB.isClosed()) {
+                    this.conquestPointTextB = new EntityText(posB, "§eConquest Point §aB");
+                    this.conquestPointTextB.spawnToAll();
+                }
+                this.conquestPointTextB.teleport(posB);
+                this.particleEffect(posB);
+            }
+            if (config.exists("ConquestPointC")) {
+                Position posC = Position.fromObject(Tools.stringToVector3(config.getString("ConquestPointC")).add(0.5, 0, 0.5), this.level);
+                if (this.conquestPointTextC == null || this.conquestPointTextC.isClosed()) {
+                    this.conquestPointTextC = new EntityText(posC, "§eConquest Point §aC");
+                    this.conquestPointTextC.spawnToAll();
+                }
+                this.conquestPointTextC.teleport(posC);
+                this.particleEffect(posC);
+            }
+        } catch (Exception e) {
+            if (GunWar.debug) {
+                GunWar.getInstance().getLogger().error("SetRoomTask conquestPointText Error:", e);
+            }
         }
     }
 
@@ -408,30 +489,45 @@ public class SetRoomTask extends PluginTask<GunWar> {
         if (this.blueSpawnText != null) {
             this.blueSpawnText.close();
         }
+        for (EntityText entityText : this.randomSpawnTextList) {
+            entityText.close();
+        }
+        if (this.conquestPointTextA != null) {
+            this.conquestPointTextA.close();
+        }
+        if (this.conquestPointTextB != null) {
+            this.conquestPointTextB.close();
+        }
+        if (this.conquestPointTextC != null) {
+            this.conquestPointTextC.close();
+        }
     }
 
     private void particleEffect(Vector3 center) {
         if (this.particleEffectTick != 0) {
             return;
         }
-        CompletableFuture.runAsync(() -> {
-            try {
-                center.y += 0.2;
-                Vector3 v = center.clone();
-                v.x += 0.8;
-                double x = v.x - center.x;
-                double z = v.z - center.z;
-                for (int i = 0; i < 360; i += 10) {
-                    this.level.addParticleEffect(
-                            new Vector3(
-                                    x * Math.cos(i) - z * Math.sin(i) + center.x,
-                                    center.y + (i * 0.0055),
-                                    x * Math.sin(i) + z * Math.cos(i) + center.z),
-                            ParticleEffect.REDSTONE_TORCH_DUST);
-                    Thread.sleep(15);
-                }
-            } catch (Exception ignored) {
+        Server.getInstance().getScheduler().scheduleAsyncTask(this.owner, new AsyncTask() {
+            @Override
+            public void onRun() {
+                try {
+                    center.y += 0.2;
+                    Vector3 v = center.clone();
+                    v.x += 0.8;
+                    double x = v.x - center.x;
+                    double z = v.z - center.z;
+                    for (int i = 0; i < 360; i += 10) {
+                        level.addParticleEffect(
+                                new Vector3(
+                                        x * Math.cos(i) - z * Math.sin(i) + center.x,
+                                        center.y + (i * 0.0055),
+                                        x * Math.sin(i) + z * Math.cos(i) + center.z),
+                                ParticleEffect.REDSTONE_TORCH_DUST);
+                        Thread.sleep(15);
+                    }
+                } catch (Exception ignored) {
 
+                }
             }
         });
     }

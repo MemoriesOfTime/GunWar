@@ -25,7 +25,7 @@ public class AsyncFlagRadiusCheckTask extends AsyncTask {
 
     private int tick = 0;
     private final ConquestModeRoom room;
-    private HashMap<Player, Integer> playerLastIn = new HashMap<>();
+    private final HashMap<Player, Integer> playerLastIn = new HashMap<>();
 
     public AsyncFlagRadiusCheckTask(ConquestModeRoom room) {
         this.room = room;

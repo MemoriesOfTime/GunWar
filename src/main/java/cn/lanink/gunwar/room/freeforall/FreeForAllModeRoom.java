@@ -15,7 +15,6 @@ import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,16 +47,13 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
     }
 
     @Override
-    public List<String> getListeners() {
-        List<String> list = super.getListeners();
-        list.remove("DefaultDamageListener");
-        list.add("FFADamageListener");
-        return list;
+    public boolean canDamageTeammates() {
+        return true;
     }
 
     @Override
     protected void checkTeamPlayerCount() {
-        if (this.getPlayers().isEmpty()) {
+        if (this.getPlayers().size() < 2) {
             this.roundEnd(Team.NULL);
         }
         int killAtMost = this.getKillAtMost();
@@ -86,13 +82,15 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
     public void roundEnd(Team victory) {
         ArrayList<Map.Entry<Player, Integer>> list = new ArrayList<>(this.playerKillMap.entrySet());
         list.sort((o1, o2) -> o2.getValue() - o1.getValue());
+        this.setStatus(ROOM_STATUS_VICTORY);
         if (!list.isEmpty()) {
-            this.setStatus(ROOM_STATUS_VICTORY);
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar,
                     new VictoryTask(this.gunWar, this, list.get(0).getKey()),
                     20
             );
+        }else {
+            this.endGame();
         }
     }
 

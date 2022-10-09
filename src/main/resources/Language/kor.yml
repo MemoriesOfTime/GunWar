@@ -82,6 +82,8 @@ admin_setRoom_addRandomSpawn: "§aAdd random spawn points"
 admin_setRoom_addRandomSpawnSuccessful: "§aSuccessfully add a random spawn point"
 admin_setRoom_removeRandomSpawn: "§aRemove random spawn points"
 admin_setRoom_removeRandomSpawnSuccessful: "§aSuccessfully delete random spawn points"
+admin_setRoom_setConquestPoint: "§aSet conquest point: %1%"
+admin_setRoom_setConquestPointSuccessful: "§aConquer Point: %1% Set Successfully!"
 
 classic: "클래식"
 ctf: "CaptureTheFlag"

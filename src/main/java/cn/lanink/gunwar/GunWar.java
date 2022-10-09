@@ -11,7 +11,6 @@ import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
-import cn.lanink.gunwar.listener.freeforall.FFADamageListener;
 import cn.lanink.gunwar.room.base.GunWarGameRoomManager;
 import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
@@ -145,7 +144,6 @@ public class GunWar extends PluginBase {
         registerListener("DefaultDamageListener", DefaultDamageListener.class);
         registerListener("CTFDamageListener", CTFDamageListener.class);
         registerListener("BlastingGameListener", BlastingGameListener.class);
-        registerListener("FFADamageListener", FFADamageListener.class);
 
         //注册房间类
         GunWarGameRoomManager.registerGameRoomClass("classic", ClassicModeRoom.class);
@@ -153,9 +151,8 @@ public class GunWar extends PluginBase {
         GunWarGameRoomManager.registerGameRoomClass("blasting", BlastingModeRoom.class);
         GunWarGameRoomManager.registerGameRoomClass("team", TeamModeRoom.class);
         GunWarGameRoomManager.registerGameRoomClass("ffa", FreeForAllModeRoom.class);
-        if (GunWar.debug) {
-            GunWarGameRoomManager.registerGameRoomClass("conquest", ConquestModeRoom.class);
-        }
+        GunWarGameRoomManager.registerGameRoomClass("conquest", ConquestModeRoom.class);
+
     }
 
     @Override

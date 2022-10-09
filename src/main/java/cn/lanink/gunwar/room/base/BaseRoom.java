@@ -133,6 +133,13 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
     }
 
     /**
+     * @return 可以攻击队友
+     */
+    public boolean canDamageTeammates() {
+        return false;
+    }
+
+    /**
      * @return 使用的监听器
      */
     public List<String> getListeners() {
