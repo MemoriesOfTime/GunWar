@@ -5,6 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityFlag;
 import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.Tools;
@@ -66,6 +67,7 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                                     room.redScore++;
                                     room.haveBlueFlag = null;
                                     Tools.playSound(room, Sound.RANDOM_LEVELUP);
+                                    room.addPlayerIntegral(damagePlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.FLAG_GET_SCORE));
                                 }
                                 break;
                             case 2:
@@ -76,6 +78,7 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                                     room.blueScore++;
                                     room.haveRedFlag = null;
                                     Tools.playSound(room, Sound.RANDOM_LEVELUP);
+                                    room.addPlayerIntegral(damagePlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.FLAG_GET_SCORE));
                                 }
                                 break;
                             default:

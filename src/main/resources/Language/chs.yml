@@ -79,6 +79,8 @@ admin_setRoom_addRandomSpawn: "§a添加随机出生点"
 admin_setRoom_addRandomSpawnSuccessful: "§a成功添加随机出生点"
 admin_setRoom_removeRandomSpawn: "§a删除随机出生点"
 admin_setRoom_removeRandomSpawnSuccessful: "§a成功删除随机出生点"
+admin_setRoom_setConquestPoint: "§a设置征服点: %1%"
+admin_setRoom_setConquestPointSuccessful: "§a征服点: %1% 设置成功！"
 
 classic: "经典"
 ctf: "夺旗"

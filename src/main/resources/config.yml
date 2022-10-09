@@ -38,6 +38,8 @@ integral:
   Bomb_Score: 20
   #拆除炸弹获得积分 （仅爆破模式）
   Destroy_Score: 20
+  #运回旗帜获得积分 （仅限夺旗模式）
+  Flag_Get_Score: 20
   #回合胜利获得积分
   Round_Win_Score: 100
   #回合失败获得积分

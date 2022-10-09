@@ -15,7 +15,6 @@ import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,11 +47,8 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
     }
 
     @Override
-    public List<String> getListeners() {
-        List<String> list = super.getListeners();
-        list.remove("DefaultDamageListener");
-        list.add("FFADamageListener");
-        return list;
+    public boolean canDamageTeammates() {
+        return true;
     }
 
     @Override

@@ -76,6 +76,11 @@ public class IntegralConfig {
         DESTROY_SCORE,
 
         /**
+         * 运回旗帜得分 （仅夺旗模式）
+         */
+        FLAG_GET_SCORE,
+
+        /**
          * 回合胜利
          */
         ROUND_WIN_SCORE,
