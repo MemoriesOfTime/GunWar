@@ -55,8 +55,8 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
         if (config.getInt("waitTime", 0) == 0 ||
                 config.getInt("gameTime", 0) == 0 ||
                 "".equals(config.getString("waitSpawn", "").trim()) ||
-                "".equals(config.getString("redSpawn", "").trim()) ||
-                "".equals(config.getString("blueSpawn", "").trim()) ||
+                /*"".equals(config.getString("redSpawn", "").trim()) ||
+                "".equals(config.getString("blueSpawn", "").trim()) ||*/
                 "".equals(config.getString("gameMode", "").trim())) {
             this.gunWar.getLogger().warning("§c房间：" + level + " 配置不完整，加载失败！");
             return false;
