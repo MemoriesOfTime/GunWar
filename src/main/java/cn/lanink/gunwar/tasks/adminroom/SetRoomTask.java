@@ -170,6 +170,8 @@ public class SetRoomTask extends PluginTask<GunWar> {
                         .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
                 item.setCustomName(this.owner.getLanguage().translateString("admin_setRoom_setMoreParameters"));
                 this.player.getInventory().setItem(4, item);
+                this.player.getInventory().setItem(3, Item.get(0));
+                this.player.getInventory().setItem(5, Item.get(0));
                 if (config.getInt("waitTime") > 0 &&
                         config.getInt("gameTime") > 0 &&
                         config.getInt("victoryScore") > 0) {
