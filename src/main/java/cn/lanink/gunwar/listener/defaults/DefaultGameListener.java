@@ -195,7 +195,12 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             item.setNamedTag(tag);
             player.getInventory().setItemInHand(item);
 
-            SupplyPageConfig defaultPageConfig = room.getSupplyConfig().getDefaultPageConfig();
+            SupplyPageConfig defaultPageConfig;
+            if (room.getPlayerTeam(player) == Team.RED) {
+                defaultPageConfig = room.getRedTeamSupplyConfig().getDefaultPageConfig();
+            }else {
+                defaultPageConfig = room.getBlueTeamSupplyConfig().getDefaultPageConfig();
+            }
             if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
                 player.addWindow(defaultPageConfig.generateWindow());
             }else {

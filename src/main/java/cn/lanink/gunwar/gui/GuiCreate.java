@@ -169,7 +169,6 @@ public class GuiCreate {
      * @param player 玩家
      */
     public static void sendAdminShopMenu(Player player) {
-        //TODO 多语言支持
         Language language = GunWar.getInstance().getLanguage();
         AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME);
         Config nowConfig = GunWar.getInstance().getRoomConfig(player.getLevel());
@@ -197,6 +196,7 @@ public class GuiCreate {
             }
         }
         custom.addElement(new ElementDropdown(language.translateString("gui_admin_AdminShopMenu_Supply"), new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()), nowChoose)); //1
+        //TODO 添加红队和蓝队的商店配置
         custom.addElement(new ElementInput(
                 language.translateString("gui_admin_AdminShopMenu_SupplyEnableTime",
                         Tools.getShowSupplyType(RoomConfig.SupplyType.ONLY_ROUND_START)),
