@@ -374,37 +374,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 }
             }
 
-            LinkedList<Player> victoryPlayers = new LinkedList<>();
-            LinkedList<Player> defeatPlayers = new LinkedList<>();
-            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
-                if (victory == 1) {
-                    if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
-                        victoryPlayers.add(entry.getKey());
-                    }else {
-                        defeatPlayers.add(entry.getKey());
-                    }
-                }else if (victory == 2) {
-                    if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
-                        victoryPlayers.add(entry.getKey());
-                    }else {
-                        defeatPlayers.add(entry.getKey());
-                    }
-                }
-            }
-            Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
-                List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
-                List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
-                if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
-                    for (Player player : victoryPlayers) {
-                        Tools.executeCommands(player, vCmds);
-                    }
-                }
-                if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
-                    for (Player player : defeatPlayers) {
-                        Tools.executeCommands(player, dCmds);
-                    }
-                }
-            }, 10);
+            this.victoryCommand(victory);
 
             for (Player player : new HashSet<>(this.getPlayers().keySet())) {
                 this.quitRoom(player);
@@ -418,6 +388,14 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         for (Player player : this.getLevel().getPlayers().values()) {
             player.kick("Teleport error!");
         }
+        for (Entity entity : new ArrayList<>(Arrays.asList(this.getLevel().getEntities()))) {
+            if (entity instanceof Player) { //nk bug?
+                entity.teleport(Server.getInstance().getDefaultLevel().getSafeSpawn());
+                entity.setPosition(Server.getInstance().getDefaultLevel().getSafeSpawn()); //防止传送失败
+            }else if (entity != null && !entity.isClosed()) {
+                entity.close();
+            }
+        }
 
         this.initData();
         Tools.cleanEntity(getLevel(), true);
@@ -430,6 +408,48 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             default:
                 break;
         }
+    }
+
+    /**
+     * 游戏结束 结算命令
+     *
+     * @param victory 胜利队伍
+     */
+    protected void victoryCommand(int victory) {
+        if (victory != 1 && victory != 2) {
+            return;
+        }
+        LinkedList<Player> victoryPlayers = new LinkedList<>();
+        LinkedList<Player> defeatPlayers = new LinkedList<>();
+        for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
+            if (victory == 1) {
+                if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
+                    victoryPlayers.add(entry.getKey());
+                }else {
+                    defeatPlayers.add(entry.getKey());
+                }
+            }else {
+                if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
+                    victoryPlayers.add(entry.getKey());
+                }else {
+                    defeatPlayers.add(entry.getKey());
+                }
+            }
+        }
+        Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
+            List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
+            List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
+            if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
+                for (Player player : victoryPlayers) {
+                    Tools.executeCommands(player, vCmds);
+                }
+            }
+            if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
+                for (Player player : defeatPlayers) {
+                    Tools.executeCommands(player, dCmds);
+                }
+            }
+        }, 10);
     }
 
     protected final void setRoundEnd(boolean roundEnd) throws IllegalArgumentException {

@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>23.0.0</version>
+            <version>23.1.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -153,14 +153,14 @@
         <dependency>
             <groupId>cn.lanink</groupId>
             <artifactId>MemoriesOfTime-GameCore</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.8</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
-            <groupId>com.smallaswater.npc</groupId>
+            <groupId>com.smallaswater</groupId>
             <artifactId>RsNPC</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.4</version>
             <scope>provided</scope>
         </dependency>
 
