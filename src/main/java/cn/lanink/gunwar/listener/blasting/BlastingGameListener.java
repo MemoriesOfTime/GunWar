@@ -84,8 +84,8 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            //不需要检查 直接删除即可
             Player player = (Player) event.getEntity();
+            //中断安装/拆除炸弹
             PlantBombTask.PLANT_BOMB_PLAYERS.remove(player);
             DemolitionBombTask.DEMOLITION_BOMB_PLAYERS.remove(player);
         }
@@ -136,6 +136,7 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         if (room == null) {
             return;
         }
+        //覆盖默认规则，允许丢弃炸弹
         if (Tools.getItem(201).equals(item)) {
             event.setCancelled(false);
         }
@@ -156,6 +157,8 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             return;
         }
         if (Tools.getItem(201).equals(entityItem.getItem())) {
+            entityItem.setNameTag("§l§eTNT");
+            entityItem.setNameTagAlwaysVisible(true);
             Tools.sendTitle(room, Team.RED, "",
                     GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasFallen"));
         }

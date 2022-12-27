@@ -1,8 +1,8 @@
 package cn.lanink.gunwar.room.capturetheflag;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
-import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.entity.flag.EntityFlag;
+import cn.lanink.gunwar.entity.flag.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.base.BaseRespawnModeRoom;
 import cn.lanink.gunwar.room.base.Team;

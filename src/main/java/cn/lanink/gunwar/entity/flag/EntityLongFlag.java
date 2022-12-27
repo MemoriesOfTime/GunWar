@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.entity;
+package cn.lanink.gunwar.entity.flag;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.Team;

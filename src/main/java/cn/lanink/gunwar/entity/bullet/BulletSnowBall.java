@@ -63,6 +63,7 @@ public class BulletSnowBall extends EntitySnowball implements IBullet {
         player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
     }
 
+    @Override
     public void setGravity(float gravity) {
         this.gravity = gravity;
     }

@@ -2,7 +2,11 @@ package cn.lanink.gunwar.utils;
 
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.*;
+import cn.lanink.gunwar.entity.EntityGunWarBomb;
+import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
+import cn.lanink.gunwar.entity.EntityPlayerCorpse;
+import cn.lanink.gunwar.entity.flag.EntityFlag;
+import cn.lanink.gunwar.entity.flag.EntityFlagStand;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.RoomConfig;

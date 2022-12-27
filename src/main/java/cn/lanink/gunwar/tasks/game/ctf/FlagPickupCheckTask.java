@@ -1,7 +1,7 @@
 package cn.lanink.gunwar.tasks.game.ctf;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityFlag;
+import cn.lanink.gunwar.entity.flag.EntityFlag;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.nukkit.level.Sound;
 import cn.nukkit.scheduler.PluginTask;

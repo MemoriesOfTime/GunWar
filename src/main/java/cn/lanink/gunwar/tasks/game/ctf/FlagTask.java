@@ -2,8 +2,8 @@ package cn.lanink.gunwar.tasks.game.ctf;
 
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.entity.flag.EntityFlag;
+import cn.lanink.gunwar.entity.flag.EntityFlagStand;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
 import cn.lanink.gunwar.utils.FlagSkinType;
 import cn.nukkit.entity.data.Skin;
