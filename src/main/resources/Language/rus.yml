@@ -114,6 +114,7 @@ gameArmor: "§e >> §cНевозможно снять броню во время
 playerTeamChat: "§a[Команда]§f %1% §b >>> %2%"
 playerAllChat: "§a[§eALL]§f %1% §b >>> %2%"
 game_ctf_playerPickUpTheFlag: "§e%player% §a got the banner of %1%"
+game_ctf_playerDeliveryFlag: "§e%1%§a successfully delivered the flag,%2%§a gained a point!"
 game_ctf_overtime: "§eOvertime!"
 game_ctf_draw: "draw"
 game_blasting_plantBomb: "§C Bomb§e is installed!"
