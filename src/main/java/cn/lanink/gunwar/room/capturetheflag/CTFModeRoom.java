@@ -51,16 +51,31 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
     public void timeTask() {
         super.timeTask();
 
+        //旗帜自动拾取/传递
         if (this.haveRedFlag != null) {
             this.checkSlownessEffect(this.haveRedFlag);
             if (this.blueFlagStand.distance(this.haveRedFlag) <= 1.5) {
                 this.redFlagDelivery(this.haveRedFlag);
+            }
+        }else if (this.redFlag != null && !this.redFlag.isClosed()) {
+            for (Player player : this.getPlayersAccurate(Team.BLUE)) {
+                if (player.distance(this.redFlag) <= 1.5) {
+                    this.redFlagPickup(player);
+                    break;
+                }
             }
         }
         if (this.haveBlueFlag != null) {
             this.checkSlownessEffect(this.haveBlueFlag);
             if (this.redFlagStand.distance(this.haveBlueFlag) <= 1.5) {
                 this.blueFlagDelivery(this.haveBlueFlag);
+            }
+        }else if (this.blueFlag != null && !this.blueFlag.isClosed()) {
+            for (Player player : this.getPlayersAccurate(Team.RED)) {
+                if (player.distance(this.blueFlag) <= 1.5) {
+                    this.blueFlagPickup(player);
+                    break;
+                }
             }
         }
 
@@ -185,7 +200,31 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
     }
 
     /**
+     * 拾取红队旗帜
+     *
+     * @param player 拾取旗帜的玩家
+     */
+    public void redFlagPickup(Player player) {
+        this.haveRedFlag = player;
+        Tools.sendTitle(this, "",
+                language.translateString("game_ctf_playerPickUpTheFlag", player.getName(), Tools.getShowTeamName(Team.RED)));
+    }
+
+    /**
+     * 拾取蓝队旗帜
+     *
+     * @param player 拾取旗帜的玩家
+     */
+    public void blueFlagPickup(Player player) {
+        this.haveBlueFlag = player;
+        Tools.sendTitle(this, "",
+                language.translateString("game_ctf_playerPickUpTheFlag", player.getName(), Tools.getShowTeamName(Team.BLUE)));
+    }
+
+    /**
      * 红方旗帜被送达到蓝方
+     *
+     * @param player 运送旗帜的玩家
      */
     public void redFlagDelivery(@NotNull Player player) {
         this.redFlag.teleport(new Vector3(this.getRedSpawn().getX(),
@@ -200,6 +239,8 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
 
     /**
      * 蓝方旗帜被送达到红方
+     *
+     * @param player 运送旗帜的玩家
      */
     public void blueFlagDelivery(@NotNull Player player) {
         this.blueFlag.teleport(new Vector3(this.getBlueSpawn().getX(),

@@ -7,7 +7,6 @@ import cn.lanink.gunwar.entity.flag.EntityFlag;
 import cn.lanink.gunwar.entity.flag.EntityFlagStand;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
-import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -40,15 +39,9 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                     int team = entityFlag.namedTag.getInt("GunWarTeam");
                     Language language = GunWar.getInstance().getLanguage();
                     if (team == 11 && room.getPlayerTeamAccurate(damagePlayer) == Team.BLUE) {
-                        room.haveRedFlag = damagePlayer;
-                        Tools.sendTitle(room, "",
-                                language.translateString("game_ctf_playerPickUpTheFlag",
-                                        damagePlayer.getName(), language.translateString("teamNameRed")));
+                        room.redFlagPickup(damagePlayer);
                     } else if (team == 12 && room.getPlayerTeamAccurate(damagePlayer) == Team.RED) {
-                        room.haveBlueFlag = damagePlayer;
-                        Tools.sendTitle(room, "",
-                                language.translateString("game_ctf_playerPickUpTheFlag",
-                                        damagePlayer.getName(), language.translateString("teamNameBlue")));
+                        room.blueFlagPickup(damagePlayer);
                     }
                 } else if (event.getEntity() instanceof EntityFlagStand) {
                     EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
