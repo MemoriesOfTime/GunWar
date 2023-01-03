@@ -459,6 +459,9 @@ public class Tools {
                         .putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 201));
                 item.setCustomName(language.translateString("item_Bomb_Name"));
                 return item;
+            case 345: //指南针
+                item = Item.get(345);
+                return item;
             default:
                 return item;
         }
