@@ -7,6 +7,8 @@ import cn.nukkit.level.ParticleEffect;
  */
 public interface IBullet {
 
+    void setGravity(float gravity);
+
     float getGravity();
 
     void setParticleEffect(ParticleEffect particleEffect);

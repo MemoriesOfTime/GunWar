@@ -4,6 +4,11 @@ RankingFormat:
   Line: "§bTop[%ranking%] §cName: §a%player% §cVictory: §b%score%"
   LineSelf: "§bTop[%ranking%] §cName: §e%player%(me) §cVictory: §b%score%"
   Bottom: "§b<<§a[§e%name%§a]§b>>"
+  ShowLine:
+    '3': 15
+    '5': 10
+    '15': 5
+    '20': 3
 #pos:
 #  - name: "测试排行榜"
 #    type: kills

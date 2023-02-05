@@ -2,7 +2,7 @@ package cn.lanink.gunwar.tasks.game.conquest;
 
 import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityLongFlag;
+import cn.lanink.gunwar.entity.flag.EntityLongFlag;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.conquest.ConquestModeRoom;
 import cn.lanink.gunwar.utils.Tools;

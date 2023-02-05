@@ -73,8 +73,7 @@ public class PlantBombTask extends PluginTask<GunWar> {
                 entityBomb.spawnToAll();
                 this.room.setEntityGunWarBomb(entityBomb);
 
-                EntityGunWarBombBlock entityBombBlock = new EntityGunWarBombBlock(
-                        this.player.getChunk(), nbt.putCompound("Skin", new CompoundTag()));
+                EntityGunWarBombBlock entityBombBlock = new EntityGunWarBombBlock(this.player.getChunk(), nbt);
                 entityBombBlock.setPosition(this.placePoint);
                 entityBombBlock.setSkin(GameCore.DEFAULT_SKIN);
                 Server.getInstance().getScheduler().scheduleDelayedTask(this.getOwner(), () -> {

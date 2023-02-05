@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.listener.blasting;
 
 import cn.lanink.gamecore.listener.BaseGameListener;
+import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
 import cn.lanink.gunwar.item.ItemManage;
@@ -26,6 +27,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.SetSpawnPositionPacket;
 
 /**
  * @author lt_name
@@ -84,8 +86,8 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
-            //不需要检查 直接删除即可
             Player player = (Player) event.getEntity();
+            //中断安装/拆除炸弹
             PlantBombTask.PLANT_BOMB_PLAYERS.remove(player);
             DemolitionBombTask.DEMOLITION_BOMB_PLAYERS.remove(player);
         }
@@ -136,7 +138,9 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
         if (room == null) {
             return;
         }
-        if (Tools.getItem(201).equals(item)) {
+        //覆盖默认规则，允许丢弃炸弹
+        if (item.getNamedTag().getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG) &&
+                item.getNamedTag().getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 201) {
             event.setCancelled(false);
         }
     }
@@ -156,8 +160,26 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
             return;
         }
         if (Tools.getItem(201).equals(entityItem.getItem())) {
+            entityItem.setNameTag("§l§eTNT");
+            entityItem.setNameTagAlwaysVisible(true);
             Tools.sendTitle(room, Team.RED, "",
                     GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasFallen"));
+            //掉落3秒后给指南针
+            Server.getInstance().getScheduler().scheduleDelayedTask(GunWar.getInstance(), () -> {
+                if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME || entityItem.isClosed()) {
+                    return;
+                }
+                SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
+                pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+                pk.x = entityItem.getFloorX();
+                pk.y = entityItem.getFloorY();
+                pk.z = entityItem.getFloorZ();
+                pk.dimension = 0;
+                for (Player player : room.getPlayersAccurate(Team.RED)) {
+                    player.dataPacket(pk);
+                    player.getInventory().addItem(Tools.getItem(345));
+                }
+            }, 60);
         }
     }
 
@@ -186,6 +208,9 @@ public class BlastingGameListener extends BaseGameListener<BlastingModeRoom> {
                 if (room.getPlayerTeamAccurate(player) == Team.RED) {
                     Tools.sendTitle(room, Team.RED, "",
                             GunWar.getInstance().getLanguage().translateString("game_blasting_bombHasBeenPickedUp"));
+                    for (Player p : room.getPlayersAccurate(Team.RED)) {
+                        p.getInventory().removeItem(Tools.getItem(345));
+                    }
                     return;
                 }
             }

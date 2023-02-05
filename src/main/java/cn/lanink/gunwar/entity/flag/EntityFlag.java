@@ -1,4 +1,4 @@
-package cn.lanink.gunwar.entity;
+package cn.lanink.gunwar.entity.flag;
 
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.level.format.FullChunk;

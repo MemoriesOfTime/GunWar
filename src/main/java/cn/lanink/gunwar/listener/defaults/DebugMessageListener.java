@@ -1,7 +1,8 @@
 package cn.lanink.gunwar.listener.defaults;
 
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityLongFlag;
+import cn.lanink.gunwar.entity.flag.EntityLongFlag;
+import cn.lanink.gunwar.entity.tower.EntityCrossbowTower;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.FlagSkinType;
 import cn.nukkit.Player;
@@ -18,7 +19,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class DebugMessageListener implements Listener {
 
-    private GunWar gunWar;
+    private final GunWar gunWar;
 
     public DebugMessageListener(GunWar gunWar) {
         this.gunWar = gunWar;
@@ -28,12 +29,12 @@ public class DebugMessageListener implements Listener {
     public void onChat(PlayerChatEvent event) {
         Player player = event.getPlayer();
         String message = event.getMessage();
-        if (player == null || message == null) {
+        if (player == null || !player.isOp() || message == null) {
             return;
         }
 
         if ("LongFlagSpawn".equalsIgnoreCase(message)) {
-            Skin skin = GunWar.getInstance().getFlagSkin(FlagSkinType.LONG_FLAGPOLE);
+            Skin skin = this.gunWar.getFlagSkin(FlagSkinType.LONG_FLAGPOLE);
             CompoundTag tag = EntityLongFlag.getDefaultNBT(player);
             tag.putCompound("Skin", new CompoundTag()
                     .putByteArray("Data", skin.getSkinData().data)
@@ -57,6 +58,10 @@ public class DebugMessageListener implements Listener {
                     this.gunWar.getLogger().info("[debug] LongFlag Now Height" + longFlag.getFlagHeight());
                 }
             }
+        } else if ("CrossbowTowerSpawn".equalsIgnoreCase(message)) {
+            EntityCrossbowTower crossbowTower = new EntityCrossbowTower(this.gunWar.getGameRoomManager().getCanJoinGameRoom(), Team.RED, player.getChunk(), EntityCrossbowTower.getDefaultNBT(player));
+            crossbowTower.spawnToAll();
+            crossbowTower.addTarget(player);
         }
     }
 }

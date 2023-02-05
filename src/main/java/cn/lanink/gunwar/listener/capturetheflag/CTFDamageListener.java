@@ -3,18 +3,14 @@ package cn.lanink.gunwar.listener.capturetheflag;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.entity.EntityFlagStand;
-import cn.lanink.gunwar.room.base.IntegralConfig;
+import cn.lanink.gunwar.entity.flag.EntityFlag;
+import cn.lanink.gunwar.entity.flag.EntityFlagStand;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.capturetheflag.CTFModeRoom;
-import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.level.Sound;
-import cn.nukkit.math.Vector3;
 
 /**
  * @author lt_name
@@ -43,15 +39,9 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                     int team = entityFlag.namedTag.getInt("GunWarTeam");
                     Language language = GunWar.getInstance().getLanguage();
                     if (team == 11 && room.getPlayerTeamAccurate(damagePlayer) == Team.BLUE) {
-                        room.haveRedFlag = damagePlayer;
-                        Tools.sendTitle(room, "",
-                                language.translateString("game_ctf_playerPickUpTheFlag",
-                                        damagePlayer.getName(), language.translateString("teamNameRed")));
+                        room.redFlagPickup(damagePlayer);
                     } else if (team == 12 && room.getPlayerTeamAccurate(damagePlayer) == Team.RED) {
-                        room.haveBlueFlag = damagePlayer;
-                        Tools.sendTitle(room, "",
-                                language.translateString("game_ctf_playerPickUpTheFlag",
-                                        damagePlayer.getName(), language.translateString("teamNameBlue")));
+                        room.blueFlagPickup(damagePlayer);
                     }
                 } else if (event.getEntity() instanceof EntityFlagStand) {
                     EntityFlagStand entityFlagStand = (EntityFlagStand) event.getEntity();
@@ -61,24 +51,12 @@ public class CTFDamageListener extends BaseGameListener<CTFModeRoom> {
                         switch (team) {
                             case 1:
                                 if (room.haveBlueFlag == damagePlayer) {
-                                    room.blueFlag.teleport(new Vector3(room.getBlueSpawn().getX(),
-                                            room.getBlueSpawn().getY() + 0.3D,
-                                            room.getBlueSpawn().getZ()));
-                                    room.redScore++;
-                                    room.haveBlueFlag = null;
-                                    Tools.playSound(room, Sound.RANDOM_LEVELUP);
-                                    room.addPlayerIntegral(damagePlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.FLAG_GET_SCORE));
+                                    room.blueFlagDelivery(damagePlayer);
                                 }
                                 break;
                             case 2:
                                 if (room.haveRedFlag == damagePlayer) {
-                                    room.redFlag.teleport(new Vector3(room.getRedSpawn().getX(),
-                                            room.getRedSpawn().getY() + 0.3D,
-                                            room.getRedSpawn().getZ()));
-                                    room.blueScore++;
-                                    room.haveRedFlag = null;
-                                    Tools.playSound(room, Sound.RANDOM_LEVELUP);
-                                    room.addPlayerIntegral(damagePlayer, IntegralConfig.getIntegral(IntegralConfig.IntegralType.FLAG_GET_SCORE));
+                                    room.redFlagDelivery(damagePlayer);
                                 }
                                 break;
                             default:

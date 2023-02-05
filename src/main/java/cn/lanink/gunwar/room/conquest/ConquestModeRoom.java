@@ -2,7 +2,7 @@ package cn.lanink.gunwar.room.conquest;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
-import cn.lanink.gunwar.entity.EntityLongFlag;
+import cn.lanink.gunwar.entity.flag.EntityLongFlag;
 import cn.lanink.gunwar.room.base.BaseRespawnModeRoom;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.tasks.game.conquest.AsyncFlagRadiusCheckTask;
@@ -19,7 +19,6 @@ import cn.nukkit.utils.DummyBossBar;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,13 +61,6 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
         this.conquestPointA = Tools.stringToVector3(aPosString);
         this.conquestPointB = Tools.stringToVector3(bPosString);
         this.conquestPointC = Tools.stringToVector3(cPosString);
-    }
-
-    @Override
-    public List<String> getListeners() {
-        List<String> list = super.getListeners();
-        //TODO
-        return list;
     }
 
     @Override

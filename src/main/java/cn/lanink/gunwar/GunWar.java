@@ -1,5 +1,6 @@
 package cn.lanink.gunwar;
 
+import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
@@ -26,8 +27,8 @@ import cn.lanink.gunwar.utils.FlagSkinType;
 import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.gamerecord.RankingManager;
-import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariable;
-import cn.lanink.gunwar.utils.rsnpcx.RsNpcXVariableV2;
+import cn.lanink.gunwar.utils.rsnpc.RsNpcVariable;
+import cn.lanink.gunwar.utils.rsnpc.RsNpcVariableV2;
 import cn.lanink.gunwar.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.Skin;
@@ -176,9 +177,9 @@ public class GunWar extends PluginBase {
         try {
             Class.forName("com.smallaswater.npc.variable.VariableManage");
             try {
-                com.smallaswater.npc.variable.VariableManage.addVariableV2("GunWarVariable", RsNpcXVariableV2.class);
+                com.smallaswater.npc.variable.VariableManage.addVariableV2("GunWarVariable", RsNpcVariableV2.class);
             } catch (Exception e) {
-                com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcXVariable.class);
+                com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcVariable.class);
             }
         } catch (Exception ignored) {
 
@@ -387,10 +388,24 @@ public class GunWar extends PluginBase {
         this.loadFlagSkin(redFileImg, flagHeadJson, FlagSkinType.FLAG_HEAD_RED);
         this.loadFlagSkin(blueFileImg, flagHeadJson, FlagSkinType.FLAG_HEAD_BLUE);
 
+        //加载防御塔皮肤
+        this.saveResource("Resources/CrossbowTower/CrossbowTower.png", true);
+        this.saveResource("Resources/CrossbowTower/CrossbowTower.json", true);
+
+        Skin cSkin = this.loadSkin(
+                new File(this.getDataFolder() + "/Resources/CrossbowTower/CrossbowTower.png"),
+                new File(this.getDataFolder() + "/Resources/CrossbowTower/CrossbowTower.json")
+        );
+        GameCore.MODEL.register("GunWar:CrossbowTower", cSkin);
+
         this.getLogger().info("§e资源文件加载完成");
     }
 
     private void loadFlagSkin(File img, File json, FlagSkinType flagSkinType) {
+        this.flagSkinMap.put(flagSkinType, this.loadSkin(img, json));
+    }
+
+    private Skin loadSkin(File img, File json) {
         BufferedImage skinData;
         try {
             skinData = ImageIO.read(img);
@@ -399,7 +414,7 @@ public class GunWar extends PluginBase {
                 skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
                 skin.setTrusted(true);
                 skin.setSkinData(skinData);
-                String skinId = "flag" + flagSkinType.ordinal();
+                String skinId = "GunWar" + img.getName().split("\\.")[0];
                 skin.setSkinId(skinId);
 
                 Map<String, Object> skinJson = new Config(json, Config.JSON).getAll();
@@ -433,14 +448,15 @@ public class GunWar extends PluginBase {
                         skin.setGeometryData(Utils.readFile(json));
                         break;
                 }
-                this.flagSkinMap.put(flagSkinType, skin);
                 this.getLogger().info("§a " + img.getName() + ":" + json.getName() + " 皮肤加载完成！");
+                return skin;
             }else {
                 this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
             }
         } catch (IOException e) {
-            this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！");
+            this.getLogger().error("§c " + img.getName() + ":" + json.getName() + " 皮肤加载失败！请检查插件完整性！", e);
         }
+        return null;
     }
 
     public String getGeometryName(File file) {

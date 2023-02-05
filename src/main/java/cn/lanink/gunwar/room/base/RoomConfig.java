@@ -53,13 +53,16 @@ public class RoomConfig {
     @Getter
     private final SupplyType supplyType;
     @Getter
-    private final SupplyConfig defaultSupplyConfig;
-    @Getter
     private final SupplyConfig redTeamSupplyConfig;
     @Getter
     private final SupplyConfig blueTeamSupplyConfig;
     @Getter
     private final int supplyEnableTime;
+
+
+    @Deprecated
+    @Getter
+    private final SupplyConfig defaultSupplyConfig;
 
     public RoomConfig(@NotNull Level level, @NotNull Config config) {
         this.level = level;
@@ -109,16 +112,16 @@ public class RoomConfig {
 
         this.supplyType = SupplyType.valueOf(config.getString("supplyType", "ALL_ROUND").toUpperCase());
         this.defaultSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("supply", "DefaultSupply"));
-        if (config.exists("redTeamSupply")) {
-            this.redTeamSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("redTeamSupply"));
-        }else {
-            this.redTeamSupplyConfig = this.defaultSupplyConfig;
+        if (!config.exists("redTeamSupply")) {
+            config.set("redTeamSupply", config.getString("supply", "DefaultSupply"));
+            config.save();
         }
-        if (config.exists("blueTeamSupply")) {
-            this.blueTeamSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("blueTeamSupply"));
-        }else {
-            this.blueTeamSupplyConfig = this.defaultSupplyConfig;
+        this.redTeamSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("redTeamSupply"));
+        if (!config.exists("blueTeamSupply")) {
+            config.set("blueTeamSupply", config.getString("supply", "DefaultSupply"));
+            config.save();
         }
+        this.blueTeamSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("blueTeamSupply"));
         this.supplyEnableTime = config.getInt("supplyEnableTime", 10);  //商店启用时间 单位：秒 仅ONLY_ROUND_START商店模式有效
     }
 
@@ -146,16 +149,9 @@ public class RoomConfig {
         this.config.set("blueTeamInitialItems", this.blueTeamInitialItems);
 
         this.config.set("supplyType", this.supplyType.name());
-        if (this.defaultSupplyConfig != null) {
-            this.config.set("supply", this.defaultSupplyConfig.getName());
-            if (this.redTeamSupplyConfig != null && this.redTeamSupplyConfig != this.defaultSupplyConfig) {
-                this.config.set("redTeamSupply", this.redTeamSupplyConfig.getName());
-            }
-            if (this.blueTeamSupplyConfig != null && this.blueTeamSupplyConfig != this.defaultSupplyConfig) {
-                this.config.set("blueTeamSupply", this.blueTeamSupplyConfig.getName());
-            }
-            this.config.set("supplyEnableTime", this.supplyEnableTime);
-        }
+        this.config.set("redTeamSupply", this.redTeamSupplyConfig.getName());
+        this.config.set("blueTeamSupply", this.blueTeamSupplyConfig.getName());
+        this.config.set("supplyEnableTime", this.supplyEnableTime);
 
         this.config.save();
     }

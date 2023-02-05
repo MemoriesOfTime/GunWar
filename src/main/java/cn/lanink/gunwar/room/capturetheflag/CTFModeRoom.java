@@ -1,10 +1,11 @@
 package cn.lanink.gunwar.room.capturetheflag;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
-import cn.lanink.gunwar.entity.EntityFlag;
-import cn.lanink.gunwar.entity.EntityFlagStand;
+import cn.lanink.gunwar.entity.flag.EntityFlag;
+import cn.lanink.gunwar.entity.flag.EntityFlagStand;
 import cn.lanink.gunwar.event.GunWarRoomRoundEndEvent;
 import cn.lanink.gunwar.room.base.BaseRespawnModeRoom;
+import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.tasks.game.ctf.FlagPickupCheckTask;
@@ -14,6 +15,8 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
@@ -48,11 +51,32 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
     public void timeTask() {
         super.timeTask();
 
+        //旗帜自动拾取/传递
         if (this.haveRedFlag != null) {
             this.checkSlownessEffect(this.haveRedFlag);
+            if (this.blueFlagStand.distance(this.haveRedFlag) <= 1.5) {
+                this.redFlagDelivery(this.haveRedFlag);
+            }
+        }else if (this.redFlag != null && !this.redFlag.isClosed()) {
+            for (Player player : this.getPlayersAccurate(Team.BLUE)) {
+                if (player.distance(this.redFlag) <= 1.5) {
+                    this.redFlagPickup(player);
+                    break;
+                }
+            }
         }
         if (this.haveBlueFlag != null) {
             this.checkSlownessEffect(this.haveBlueFlag);
+            if (this.redFlagStand.distance(this.haveBlueFlag) <= 1.5) {
+                this.blueFlagDelivery(this.haveBlueFlag);
+            }
+        }else if (this.blueFlag != null && !this.blueFlag.isClosed()) {
+            for (Player player : this.getPlayersAccurate(Team.RED)) {
+                if (player.distance(this.blueFlag) <= 1.5) {
+                    this.blueFlagPickup(player);
+                    break;
+                }
+            }
         }
 
         this.victoryJudgment();
@@ -173,6 +197,60 @@ public class CTFModeRoom extends BaseRespawnModeRoom {
             Server.getInstance().getScheduler().scheduleRepeatingTask(this.gunWar,
                     new FlagPickupCheckTask(this.gunWar, this, this.blueFlag), 20);
         }
+    }
+
+    /**
+     * 拾取红队旗帜
+     *
+     * @param player 拾取旗帜的玩家
+     */
+    public void redFlagPickup(Player player) {
+        this.haveRedFlag = player;
+        Tools.sendTitle(this, "",
+                language.translateString("game_ctf_playerPickUpTheFlag", player.getName(), Tools.getShowTeamName(Team.RED)));
+    }
+
+    /**
+     * 拾取蓝队旗帜
+     *
+     * @param player 拾取旗帜的玩家
+     */
+    public void blueFlagPickup(Player player) {
+        this.haveBlueFlag = player;
+        Tools.sendTitle(this, "",
+                language.translateString("game_ctf_playerPickUpTheFlag", player.getName(), Tools.getShowTeamName(Team.BLUE)));
+    }
+
+    /**
+     * 红方旗帜被送达到蓝方
+     *
+     * @param player 运送旗帜的玩家
+     */
+    public void redFlagDelivery(@NotNull Player player) {
+        this.redFlag.teleport(new Vector3(this.getRedSpawn().getX(),
+                this.getRedSpawn().getY() + 0.3D,
+                this.getRedSpawn().getZ()));
+        this.blueScore++;
+        this.haveRedFlag = null;
+        Tools.playSound(this, Sound.RANDOM_LEVELUP);
+        this.addPlayerIntegral(player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.FLAG_GET_SCORE));
+        Tools.sendTitle(this, "", this.language.translateString("game_ctf_playerDeliveryFlag", player.getName(), Team.BLUE.getShowName()));
+    }
+
+    /**
+     * 蓝方旗帜被送达到红方
+     *
+     * @param player 运送旗帜的玩家
+     */
+    public void blueFlagDelivery(@NotNull Player player) {
+        this.blueFlag.teleport(new Vector3(this.getBlueSpawn().getX(),
+                this.getBlueSpawn().getY() + 0.3D,
+                this.getBlueSpawn().getZ()));
+        this.redScore++;
+        this.haveBlueFlag = null;
+        Tools.playSound(this, Sound.RANDOM_LEVELUP);
+        this.addPlayerIntegral(player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.FLAG_GET_SCORE));
+        Tools.sendTitle(this, "", this.language.translateString("game_ctf_playerDeliveryFlag", player.getName(), Team.RED.getShowName()));
     }
 
 }

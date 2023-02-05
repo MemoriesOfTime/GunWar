@@ -1,21 +1,20 @@
-package cn.lanink.gunwar.utils.rsnpcx;
+package cn.lanink.gunwar.utils.rsnpc;
 
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.nukkit.Player;
-import com.smallaswater.npc.data.RsNpcConfig;
-import com.smallaswater.npc.variable.BaseVariableV2;
+import com.smallaswater.npc.variable.BaseVariable;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author LT_Name
+ * @author lt_name
  */
-public class RsNpcXVariableV2 extends BaseVariableV2 {
+public class RsNpcVariable extends BaseVariable {
 
     @Override
-    public void onUpdate(Player player, RsNpcConfig rsNpcConfig) {
+    public String stringReplace(Player player, String s) {
         HashMap<String, Integer> map = new HashMap<>();
         int all = 0;
         for (BaseRoom room : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
@@ -24,18 +23,18 @@ public class RsNpcXVariableV2 extends BaseVariableV2 {
             all += room.getPlayers().size();
         }
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            this.addVariable("{GunWarRoomPlayerNumber" + entry.getKey() + "}", entry.getValue().toString());
+            s = s.replace("{GunWarRoomPlayerNumber" + entry.getKey() + "}", entry.getValue() + "");
         }
-
+        
         HashMap<String, Integer> map1 = new HashMap<>();
         for (BaseRoom room : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
-            map1.put(room.getLevelName(), map1.getOrDefault(room.getLevelName(), 0) + room.getPlayers().size());
+                map1.put(room.getLevelName(), map1.getOrDefault(room.getLevelName(), 0) + room.getPlayers().size());
         }
         for (Map.Entry<String, Integer> entry : map1.entrySet()) {
-            this.addVariable("{GunWarLevelPlayerNumber" + entry.getKey() + "}", entry.getValue().toString());
+            s = s.replace("{GunWarLevelPlayerNumber" + entry.getKey() + "}", entry.getValue() + "");
         }
-
-        this.addVariable("{GunWarRoomPlayerNumberAll}", String.valueOf(all));
+        
+        return s.replace("{GunWarRoomPlayerNumberAll}", all + "");
     }
 
 }

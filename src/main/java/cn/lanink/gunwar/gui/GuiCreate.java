@@ -9,6 +9,7 @@ import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.GunWarGameRoomManager;
 import cn.lanink.gunwar.room.base.RoomConfig;
+import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
@@ -157,6 +158,9 @@ public class GuiCreate {
                 cp.sendMessage(language.translateString("adminSetVictoryScore", victoryScore));
             } catch (Exception e) {
                 cp.sendMessage(language.translateString("adminNotNumber"));
+                if (GunWar.debug) {
+                    GunWar.getInstance().getLogger().error("设置时间参数错误", e);
+                }
             }
         });
 
@@ -195,14 +199,14 @@ public class GuiCreate {
                 i++;
             }
         }
-        custom.addElement(new ElementDropdown(language.translateString("gui_admin_AdminShopMenu_Supply"), new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()), nowChoose)); //1
-        //TODO 添加红队和蓝队的商店配置
+        custom.addElement(new ElementDropdown(language.translateString("gui_admin_AdminShopMenu_Supply", Tools.getShowTeamName(Team.RED)), new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()), nowChoose)); //1
+        custom.addElement(new ElementDropdown(language.translateString("gui_admin_AdminShopMenu_Supply", Tools.getShowTeamName(Team.BLUE)), new ArrayList<>(SupplyConfigManager.getSUPPLY_CONFIG_MAP().keySet()), nowChoose)); //2
         custom.addElement(new ElementInput(
                 language.translateString("gui_admin_AdminShopMenu_SupplyEnableTime",
                         Tools.getShowSupplyType(RoomConfig.SupplyType.ONLY_ROUND_START)),
                 "",
                 nowConfig.getInt("supplyEnableTime", 10) + ""
-        )); //2
+        )); //3
 
         custom.onResponded((formResponseCustom, cp) -> {
             try {
@@ -213,15 +217,19 @@ public class GuiCreate {
                 cp.sendMessage(language.translateString("admin_Set_SupplyType", Tools.getShowSupplyType(supplyType)));
 
                 if (supplyType != RoomConfig.SupplyType.CLOSE) {
-                    String sConfig = formResponseCustom.getDropdownResponse(1).getElementContent();
-                    config.set("supply", sConfig);
-                    cp.sendMessage(language.translateString("admin_Set_Supply", sConfig));
+                    String redConfig = formResponseCustom.getDropdownResponse(1).getElementContent();
+                    config.set("redTeamSupply", redConfig);
+                    cp.sendMessage(language.translateString("admin_Set_Supply", redConfig, Tools.getShowTeamName(Team.RED)));
+
+                    String blueConfig = formResponseCustom.getDropdownResponse(2).getElementContent();
+                    config.set("blueTeamSupply", blueConfig);
+                    cp.sendMessage(language.translateString("admin_Set_Supply", blueConfig, Tools.getShowTeamName(Team.BLUE)));
 
                     if (supplyType == RoomConfig.SupplyType.ONLY_ROUND_START) {
-                        int time = Tools.toInt(formResponseCustom.getInputResponse(2));
+                        int time = Tools.toInt(formResponseCustom.getInputResponse(3));
                         if (time < 1) {
-                            cp.sendMessage("时间不能小于1");
-                            throw new Exception();
+                            cp.sendMessage(language.translateString("admin_Set_SupplyEnableTime_Short"));
+                            return;
                         }
                         config.set("supplyEnableTime", time);
                         cp.sendMessage(language.translateString("admin_Set_SupplyEnableTime", time));
@@ -229,7 +237,7 @@ public class GuiCreate {
                 }
                 config.save();
             } catch (Exception e) {
-                //TODO
+                cp.sendMessage(language.translateString("adminNotNumber"));
                 if (GunWar.debug) {
                     GunWar.getInstance().getLogger().error("设置商店错误：", e);
                 }

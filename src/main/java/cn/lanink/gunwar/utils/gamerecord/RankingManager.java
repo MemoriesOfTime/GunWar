@@ -40,6 +40,17 @@ public class RankingManager {
         rankingFormat.setLine(rankingConfig.getString("RankingFormat.Line"));
         rankingFormat.setLineSelf(rankingConfig.getString("RankingFormat.LineSelf"));
         rankingFormat.setBottom(rankingConfig.getString("RankingFormat.Bottom"));
+        try { //ShowLine 配置不好很容易出错，这里捕获下
+            if (rankingConfig.exists("RankingFormat.ShowLine")) {
+                Map<String, Integer> map = (Map<String, Integer>) rankingConfig.get("RankingFormat.ShowLine");
+                rankingFormat.getShowLine().clear();
+                for (Map.Entry<String, Integer> entry : map.entrySet()) {
+                    rankingFormat.getShowLine().put(Integer.parseInt(entry.getKey()), entry.getValue());
+                }
+            }
+        }catch (Exception e) {
+            GunWar.getInstance().getLogger().error("加载排行榜格式失败！请检查配置文件！", e);
+        }
 
         List<Map> list = rankingConfig.getMapList("pos");
         for (Map map : list) {
@@ -74,7 +85,7 @@ public class RankingManager {
             ranking.setRankingFormat(rankingFormat);
             RANKING_MAP.put(rankingData.getName(), ranking);
         }
-        GunWar.getInstance().getLogger().info("排行榜加载完成！成功创建" + RANKING_MAP.size() + " 个排行榜！");
+        GunWar.getInstance().getLogger().info("排行榜加载完成！成功创建 " + RANKING_MAP.size() + " 个排行榜！");
     }
 
     public static void addRanking(RankingData rankingData) {
