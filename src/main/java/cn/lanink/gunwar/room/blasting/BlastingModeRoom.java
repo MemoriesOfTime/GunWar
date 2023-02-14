@@ -4,6 +4,7 @@ import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
+import cn.lanink.gunwar.event.GunWarSwapTeamEvent;
 import cn.lanink.gunwar.room.base.BaseRoundModeRoom;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
@@ -198,9 +199,6 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
         int delay = 0;
         //交换队伍
         if (!this.changeTeam && (this.redScore + this.blueScore) >= this.victoryScore * 0.6) {
-            delay = 60;
-            Tools.sendTitle(this, this.language.translateString("game_blasting_changeTeam"));
-            this.changeTeam = true;
             LinkedList<Player> oldRedTeam = new LinkedList<>();
             LinkedList<Player> oldBlueTeam = new LinkedList<>();
             for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
@@ -218,17 +216,23 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                         break;
                 }
             }
-            for (Player player : oldRedTeam) {
-                this.players.put(player, Team.BLUE);
-                player.setNameTag("§9" + player.getName());
+            GunWarSwapTeamEvent ev = new GunWarSwapTeamEvent(this, oldRedTeam, oldBlueTeam, this.redScore, this.blueScore);
+            Server.getInstance().getPluginManager().callEvent(ev);
+            if (!ev.isCancelled()) {
+                this.changeTeam = true;
+                delay = 60;
+                Tools.sendTitle(this, this.language.translateString("game_blasting_changeTeam"));
+                for (Player player : ev.getNewRedTeam()) {
+                    this.players.put(player, Team.RED);
+                    player.setNameTag("§c" + player.getName());
+                }
+                for (Player player : ev.getNewBlueTeam()) {
+                    this.players.put(player, Team.BLUE);
+                    player.setNameTag("§9" + player.getName());
+                }
+                this.redScore = ev.getNewRedScore();
+                this.blueScore = ev.getNewBlueScore();
             }
-            for (Player player : oldBlueTeam) {
-                this.players.put(player, Team.RED);
-                player.setNameTag("§c" + player.getName());
-            }
-            int cache = this.redScore;
-            this.redScore = this.blueScore;
-            this.blueScore = cache;
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
             super.roundStart();
