@@ -266,6 +266,12 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
 
         for (Player player : this.players.keySet()) {
             this.setPlayerIntegral(player, IntegralConfig.getIntegral(IntegralConfig.IntegralType.START_BASE_INTEGRAL));
+
+            //清除玩家在房间等待阶段获取到的物品
+            if (!this.isRoundEndCleanItem()) {
+                player.getInventory().clearAll();
+                player.getUIInventory().clearAll();
+            }
         }
 
         this.roundStart();
@@ -877,8 +883,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
 
         //重置枪械
         for (GunWeapon gunWeapon : ItemManage.getGunWeaponMap().values()) {
-            gunWeapon.stopReload(player);
-            gunWeapon.getMagazineMap().remove(player);
+            gunWeapon.resetStatus(player);
         }
 
         //清理尸体
@@ -919,13 +924,13 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 this.getPlayers().put(player, Team.RED);
             case RED:
                 player.teleport(this.getRedSpawn());
-                Tools.giveItem(this, player, Team.RED);
+                Tools.giveItem(this, player, Team.RED, !this.isRoundEndCleanItem());
                 break;
             case BLUE_DEATH:
                 this.getPlayers().put(player, Team.BLUE);
             case BLUE:
                 player.teleport(this.getBlueSpawn());
-                Tools.giveItem(this, player, Team.BLUE);
+                Tools.giveItem(this, player, Team.BLUE, !this.isRoundEndCleanItem());
         }
         //复活音效
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
