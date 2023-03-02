@@ -111,7 +111,7 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
             Tools.removeGunWarItem(inventory, Tools.getItem(201));
         }
 
-        Tools.giveItem(this, player, Team.NULL);
+        Tools.giveItem(this, player, Team.NULL, !this.isRoundEndCleanItem());
 
         player.teleport(this.randomSpawns.get(GunWar.RANDOM.nextInt(this.randomSpawns.size())));
     }

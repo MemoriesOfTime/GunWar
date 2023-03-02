@@ -346,8 +346,9 @@ public class Tools {
      * @param room 房间
      * @param player 玩家
      * @param team 所属队伍
+     * @param allowAlreadyExists 是否允许重复
      */
-    public static void giveItem(@NotNull BaseRoom room, @NotNull Player player, @NotNull Team team) {
+    public static void giveItem(@NotNull BaseRoom room, @NotNull Player player, @NotNull Team team, boolean allowAlreadyExists) {
         player.getInventory().setArmorContents(getArmors(team));
         ArrayList<String> items = new ArrayList<>(room.getInitialItems());
         if (team == Team.RED || team == Team.RED_DEATH) {
@@ -357,6 +358,9 @@ public class Tools {
         }
         for (String string : items) {
             Item item = ItemManage.of(string);
+            if (player.getInventory().contains(item) && !allowAlreadyExists) {
+                continue;
+            }
             player.getInventory().addItem(item);
             if (GunWar.debug) {
                 GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +

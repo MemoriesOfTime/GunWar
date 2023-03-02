@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.PluginTask;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.Config;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -96,6 +97,11 @@ public class GunWeapon extends BaseWeapon {
 
     public int getMagazine(Player player) {
         return this.magazineMap.getOrDefault(player, 0);
+    }
+
+    public void resetStatus(@NotNull Player player) {
+        this.stopReload(player);
+        this.magazineMap.remove(player);
     }
 
     public int shooting(Player player, Vector3 directionVector) {
