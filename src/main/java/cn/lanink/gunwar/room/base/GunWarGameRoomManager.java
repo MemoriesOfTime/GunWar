@@ -134,15 +134,15 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
             if (room.canJoin(player)) {
                 list.add(room);
             }
-            if (room.getPlayers().size() > 0) {
+            if (room.getPlayerDataMap().size() > 0) {
                 hasPlayer = true;
             }
         }
         if (hasPlayer) {
             list.sort((o1, o2) -> {
-                if (o1.getPlayers().size() > o2.getPlayers().size()) {
+                if (o1.getPlayerDataMap().size() > o2.getPlayerDataMap().size()) {
                     return -1;
-                } else if (o1.getPlayers().size() < o2.getPlayers().size()) {
+                } else if (o1.getPlayerDataMap().size() < o2.getPlayerDataMap().size()) {
                     return 1;
                 }
                 return 0;
@@ -160,15 +160,15 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
             if (room.canJoin() && room.getGameMode().equalsIgnoreCase(gameMode)) {
                 list.add(room);
             }
-            if (room.getPlayers().size() > 0) {
+            if (room.getPlayerDataMap().size() > 0) {
                 hasPlayer = true;
             }
         }
         if (hasPlayer) {
             list.sort((o1, o2) -> {
-                if (o1.getPlayers().size() > o2.getPlayers().size()) {
+                if (o1.getPlayerDataMap().size() > o2.getPlayerDataMap().size()) {
                     return -1;
-                } else if (o1.getPlayers().size() < o2.getPlayers().size()) {
+                } else if (o1.getPlayerDataMap().size() < o2.getPlayerDataMap().size()) {
                     return 1;
                 }
                 return 0;

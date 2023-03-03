@@ -53,7 +53,7 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
 
     @Override
     protected void checkTeamPlayerCount() {
-        if (this.getPlayers().size() < 2) {
+        if (this.getPlayerDataMap().size() < 2) {
             this.roundEnd(Team.NULL);
         }
         int killAtMost = this.getKillAtMost();

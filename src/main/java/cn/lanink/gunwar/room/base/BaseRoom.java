@@ -59,7 +59,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
     public int waitTime;
     public int gameTime;
 
-    protected ConcurrentHashMap<Player, Team> players = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<Player, PlayerGameData> players = new ConcurrentHashMap<>();
     protected final HashMap<Player, Float> playerHealth = new HashMap<>(); //玩家血量
     protected final HashMap<Player, Integer> playerInvincibleTime = new HashMap<>(); //玩家无敌时间
     protected final HashMap<Player, Integer> playerIntegralMap = new HashMap<>(); //玩家积分
@@ -156,7 +156,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
 
     @Override
     public void timeTask() {
-        if (this.getPlayers().isEmpty()) {
+        if (this.getPlayerDataMap().isEmpty()) {
             this.endGame();
             return;
         }
@@ -178,7 +178,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         if (this.getSupplyType() == SupplyType.ONLY_ROUND_START) {
             int startTime = this.getSetGameTime() - this.gameTime;
             if (startTime == this.getSupplyEnableTime() + 1) {
-                for (Player player : this.getPlayers().keySet()) {
+                for (Player player : this.getPlayerDataMap().keySet()) {
                     Tools.removeGunWarItem(player.getInventory(), Tools.getItem(13));  //商店物品
                 }
             }
@@ -208,8 +208,8 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
     protected void checkTeamPlayerCount() {
         int red = 0;
         int blue = 0;
-        for (Team team : this.getPlayers().values()) {
-            switch (team) {
+        for (PlayerGameData gameData : this.getPlayerDataMap().values()) {
+            switch (gameData.getTeam()) {
                 case RED:
                 case RED_DEATH:
                     red++;
@@ -237,7 +237,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
      * 初始化Task （等待状态）
      */
     protected void initTask() {
-        this.setStatus(1);
+        this.setStatus(ROOM_STATUS_WAIT);
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 GunWar.getInstance(), new WaitTask(GunWar.getInstance(), this), 20);
     }
@@ -304,8 +304,8 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         LinkedList<Player> redTeam = new LinkedList<>();
         LinkedList<Player> blueTeam = new LinkedList<>();
         LinkedList<Player> noTeam = new LinkedList<>();
-        for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
-            switch (entry.getValue()) {
+        for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
+            switch (entry.getValue().getTeam()) {
                 case RED:
                     redTeam.add(entry.getKey());
                     break;
@@ -349,12 +349,12 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             }
         }
         for (Player player : redTeam) {
-            this.getPlayers().put(player, Team.RED);
+            this.getPlayerData(player).setTeam(Team.RED);
             player.sendTitle(this.language.translateString("teamNameRed"), "", 10, 30, 10);
             player.setNameTag("§c" + player.getName());
         }
         for (Player player : blueTeam) {
-            this.getPlayers().put(player, Team.BLUE);
+            this.getPlayerData(player).setTeam(Team.BLUE);
             player.sendTitle(this.language.translateString("teamNameBlue"), "", 10, 30, 10);
             player.setNameTag("§9" + player.getName());
         }
@@ -372,7 +372,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         this.setStatus(ROOM_STATUS_LEVEL_NOT_LOADED);
         Server.getInstance().getPluginManager().callEvent(new GunWarRoomEndEvent(this, victory));
 
-        if (!this.getPlayers().isEmpty()) {
+        if (!this.getPlayerDataMap().isEmpty()) {
             for (Player p1 : this.players.keySet()) {
                 for (Player p2 : this.players.keySet()) {
                     p1.showPlayer(p2);
@@ -382,7 +382,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
 
             this.victoryCommand(victory);
 
-            for (Player player : new HashSet<>(this.getPlayers().keySet())) {
+            for (Player player : new HashSet<>(this.getPlayerDataMap().keySet())) {
                 this.quitRoom(player);
             }
         }
@@ -427,15 +427,15 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         }
         LinkedList<Player> victoryPlayers = new LinkedList<>();
         LinkedList<Player> defeatPlayers = new LinkedList<>();
-        for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
             if (victory == 1) {
-                if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
+                if (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH) {
                     victoryPlayers.add(entry.getKey());
                 }else {
                     defeatPlayers.add(entry.getKey());
                 }
             }else {
-                if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
+                if (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH) {
                     victoryPlayers.add(entry.getKey());
                 }else {
                     defeatPlayers.add(entry.getKey());
@@ -475,7 +475,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         Tools.cleanEntity(this.getLevel(), true);
         this.roundEnd = false;
         this.gameTime = this.getSetGameTime();
-        for (Player player : this.getPlayers().keySet()) {
+        for (Player player : this.getPlayerDataMap().keySet()) {
             this.playerRespawn(player);
         }
     }
@@ -499,10 +499,10 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         //本回合胜利计算
         if (v == Team.NULL) { //平局
             int red = 0, blue = 0;
-            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == Team.RED) {
+            for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
+                if (entry.getValue().getTeam() == Team.RED) {
                     red++;
-                }else if (entry.getValue() == Team.BLUE) {
+                }else if (entry.getValue().getTeam() == Team.BLUE) {
                     blue++;
                 }
             }
@@ -559,13 +559,13 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
     public boolean canJoin(Player player) {
         if (player != null && this.gunWar.isHasTeamSystem()) {
             cn.lanink.teamsystem.team.Team team = TeamSystem.Companion.getTeamByPlayer(player);
-            if (team != null && team.getPlayers().size() + this.getPlayers().size() > this.getMaxPlayers()) {
+            if (team != null && team.getPlayers().size() + this.getPlayerDataMap().size() > this.getMaxPlayers()) {
                 return false;
             }
         }
 
         return (this.getStatus() == ROOM_STATUS_TASK_NEED_INITIALIZED || this.getStatus() == ROOM_STATUS_WAIT) &&
-                this.getPlayers().size() < this.getMaxPlayers();
+                this.getPlayerDataMap().size() < this.getMaxPlayers();
     }
 
     public void joinRoom(Player player) {
@@ -582,7 +582,8 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         if (this.status == 0) {
             this.initTask();
         }
-        this.players.put(player, Team.NULL);
+        this.players.put(player, new PlayerGameData(player));
+
         this.playerHealth.put(player, 20F);
         this.setPlayerIntegral(player, Integer.MAX_VALUE);
 
@@ -607,7 +608,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             if (team != null && team.isTeamLeader(player)) {
                 team.getPlayers().forEach(playerName -> {
                     Player p = Server.getInstance().getPlayer(playerName);
-                    if (p != null && !this.getPlayers().containsKey(p)) {
+                    if (p != null && !this.getPlayerDataMap().containsKey(p)) {
                         this.joinRoom(p);
                     }
                 });
@@ -663,7 +664,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             if (team != null && team.isTeamLeader(player)) {
                 team.getPlayers().forEach(playerName -> {
                     Player p = Server.getInstance().getPlayer(playerName);
-                    if (p != null && this.getPlayers().containsKey(p)) {
+                    if (p != null && this.getPlayerDataMap().containsKey(p)) {
                         this.quitRoom(p);
                     }
                 });
@@ -690,8 +691,12 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
      * 获取玩家列表
      * @return 玩家列表
      */
-    public ConcurrentHashMap<Player, Team> getPlayers() {
+    public ConcurrentHashMap<Player, PlayerGameData> getPlayerDataMap() {
         return this.players;
+    }
+
+    public PlayerGameData getPlayerData(@NotNull Player player) {
+        return this.getPlayerDataMap().getOrDefault(player, new PlayerGameData(player));
     }
 
     /**
@@ -700,7 +705,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
      * @return 玩家队伍
      */
     public Team getPlayerTeam(Player player) {
-        Team team = this.players.getOrDefault(player, Team.NULL);
+        Team team = this.getPlayerTeamAccurate(player);
         if (team == Team.RED_DEATH) {
             team = Team.RED;
         }else if (team == Team.BLUE_DEATH) {
@@ -715,21 +720,21 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
      * @return 玩家准确队伍
      */
     public Team getPlayerTeamAccurate(Player player) {
-        return this.players.getOrDefault(player, Team.NULL);
+        return this.getPlayerData(player).getTeam();
     }
 
     /**
      * 根据队伍获取玩家列表
      * @return 玩家列表
      */
-    public Set<Player> getPlayers(Team team) {
+    public Set<Player> getPlayerDataMap(Team team) {
         HashSet<Player> set = new HashSet<>();
-        for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
-            if (team == Team.NULL && entry.getValue() == Team.NULL) {
+        for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
+            if (team == Team.NULL && entry.getValue().getTeam() == Team.NULL) {
                 set.add(entry.getKey());
-            }else if ((team == Team.RED || team == Team.RED_DEATH) && (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH)) {
+            }else if ((team == Team.RED || team == Team.RED_DEATH) && (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH)) {
                 set.add(entry.getKey());
-            }else if ((team == Team.BLUE || team == Team.BLUE_DEATH) && (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH)) {
+            }else if ((team == Team.BLUE || team == Team.BLUE_DEATH) && (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH)) {
                 set.add(entry.getKey());
             }
         }
@@ -738,13 +743,13 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
 
     public Set<Player> getPlayersAccurate(Team team) {
         HashSet<Player> set = new HashSet<>();
-        this.getPlayers().entrySet().stream()
+        this.getPlayerDataMap().entrySet().stream()
                 .filter(
-                        entry -> (team == Team.NULL && entry.getValue() == Team.NULL) ||
-                                (team == Team.RED && entry.getValue() == Team.RED) ||
-                                (team == Team.RED_DEATH && entry.getValue() == Team.RED_DEATH) ||
-                                (team == Team.BLUE && entry.getValue() == Team.BLUE) ||
-                                (team == Team.BLUE_DEATH && entry.getValue() == Team.BLUE_DEATH)
+                        entry -> (team == Team.NULL && entry.getValue().getTeam() == Team.NULL) ||
+                                (team == Team.RED && entry.getValue().getTeam() == Team.RED) ||
+                                (team == Team.RED_DEATH && entry.getValue().getTeam() == Team.RED_DEATH) ||
+                                (team == Team.BLUE && entry.getValue().getTeam() == Team.BLUE) ||
+                                (team == Team.BLUE_DEATH && entry.getValue().getTeam() == Team.BLUE_DEATH)
                 ).forEach(entry -> set.add(entry.getKey()));
         return set;
     }
@@ -921,13 +926,13 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
 
         switch (this.getPlayerTeamAccurate(player)) {
             case RED_DEATH:
-                this.getPlayers().put(player, Team.RED);
+                this.getPlayerData(player).setTeam(Team.RED);
             case RED:
                 player.teleport(this.getRedSpawn());
                 Tools.giveItem(this, player, Team.RED, !this.isRoundEndCleanItem());
                 break;
             case BLUE_DEATH:
-                this.getPlayers().put(player, Team.BLUE);
+                this.getPlayerData(player).setTeam(Team.BLUE);
             case BLUE:
                 player.teleport(this.getBlueSpawn());
                 Tools.giveItem(this, player, Team.BLUE, !this.isRoundEndCleanItem());
@@ -951,7 +956,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         }
         GameRecord.addPlayerRecord(player, RecordType.DEATHS);
         if (player == damager) {
-            this.getPlayers().keySet().forEach(p ->
+            this.getPlayerDataMap().keySet().forEach(p ->
                     p.sendMessage(language.translateString("suicideMessage", player.getName())));
         }else {
             if (damager instanceof Player) {
@@ -968,10 +973,10 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                     language.translateString("titleDeathSubtitle", damager.getName()),
                     10, 30, 10);
             if (killMessage == null || "".equals(killMessage.trim())) {
-                this.getPlayers().keySet().forEach(p ->
+                this.getPlayerDataMap().keySet().forEach(p ->
                         p.sendMessage(language.translateString("killMessage", damager.getName(), player.getName())));
             }else {
-                this.getPlayers().keySet().forEach(p -> p.sendMessage(killMessage));
+                this.getPlayerDataMap().keySet().forEach(p -> p.sendMessage(killMessage));
             }
         }
         player.getInventory().clearAll();
@@ -981,9 +986,9 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         player.setGamemode(Player.VIEW);
         Tools.hidePlayer(this, player);
         if (this.getPlayerTeamAccurate(player) == Team.RED) {
-            this.getPlayers().put(player, Team.RED_DEATH);
+            this.getPlayerData(player).setTeam(Team.RED_DEATH);
         }else if (this.getPlayerTeamAccurate(player) == Team.BLUE) {
-            this.getPlayers().put(player, Team.BLUE_DEATH);
+            this.getPlayerData(player).setTeam(Team.BLUE_DEATH);
         }
         this.corpseSpawn(player);
     }

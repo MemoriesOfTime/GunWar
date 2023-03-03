@@ -4,6 +4,7 @@ import cn.lanink.gamecore.room.IRoomStatus;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.room.freeforall.FreeForAllModeRoom;
 import cn.lanink.gunwar.utils.Tools;
@@ -33,21 +34,21 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             this.cancel();
             return;
         }
-        if (this.room.getPlayers().size() > 0) {
+        if (this.room.getPlayerDataMap().size() > 0) {
             int red = 0;
             int blue = 0;
             if (this.room instanceof FreeForAllModeRoom) {
-                red = this.room.getPlayers().size();
+                red = this.room.getPlayerDataMap().size();
             }else {
-                for (Team team : this.room.getPlayers().values()) {
-                    if (team == Team.RED) {
+                for (PlayerGameData gameData : this.room.getPlayerDataMap().values()) {
+                    if (gameData.getTeam() == Team.RED) {
                         red++;
-                    } else if (team == Team.BLUE) {
+                    } else if (gameData.getTeam() == Team.BLUE) {
                         blue++;
                     }
                 }
             }
-            for (Player player : this.room.getPlayers().keySet()) {
+            for (Player player : this.room.getPlayerDataMap().keySet()) {
                 LinkedList<String> ms = new LinkedList<>();
                 for (String string : this.language.translateString("gameTimeScoreBoard").split("\n")) {
                     ms.add(string.replace("%gameMode%", Tools.getShowGameMode(this.room.getGameMode()))

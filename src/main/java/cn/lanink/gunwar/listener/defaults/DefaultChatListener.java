@@ -62,7 +62,7 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
         BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
             for (BaseRoom r : this.gunWar.getGameRoomManager().getGameRoomMap().values()) {
-                for (Player p : r.getPlayers().keySet()) {
+                for (Player p : r.getPlayerDataMap().keySet()) {
                     event.getRecipients().remove(p);
                 }
             }
@@ -74,7 +74,7 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
         }else {
             message = this.gunWar.getLanguage().translateString("playerTeamChat", player.getName(), message);
             Team team = room.getPlayerTeamAccurate(player);
-            for (Player target : room.getPlayers().keySet()) {
+            for (Player target : room.getPlayerDataMap().keySet()) {
                 Team targetTeam = room.getPlayerTeamAccurate(target);
                 if (team == targetTeam) {
                     target.sendMessage(message);
