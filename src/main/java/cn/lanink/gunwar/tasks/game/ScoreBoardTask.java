@@ -53,13 +53,13 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
                 for (String string : this.language.translateString("gameTimeScoreBoard").split("\n")) {
                     ms.add(string.replace("%gameMode%", Tools.getShowGameMode(this.room.getGameMode()))
                             .replace("%team%", this.room.getPlayerTeamAccurate(player).getShowName())
-                            .replace("%health%", String.format("%.1f", room.getPlayerHealth().getOrDefault(player, 0F)))
-                            .replace("%time%", room.gameTime + "")
-                            .replace("%red%", red + "")
-                            .replace("%blue%", blue + "")
-                            .replace("%redRound%", room.redScore + "")
-                            .replace("%blueRound%", room.blueScore + "")
-                            .replace("%integral%", room.getPlayerIntegral(player) + ""));
+                            .replace("%health%", String.format("%.1f", room.getPlayerHealth(player)))
+                            .replace("%time%", String.valueOf(room.gameTime))
+                            .replace("%red%", String.valueOf(red))
+                            .replace("%blue%", String.valueOf(blue))
+                            .replace("%redRound%", String.valueOf(room.redScore))
+                            .replace("%blueRound%", String.valueOf(room.blueScore))
+                            .replace("%integral%", String.valueOf(room.getPlayerIntegral(player))));
                 }
                 owner.getScoreboard().showScoreboard(player, this.language.translateString("scoreBoardTitle"), ms);
             }

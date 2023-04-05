@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.room.base;
 
+import cn.lanink.gunwar.GunWar;
 import cn.nukkit.Player;
 import lombok.Data;
 
@@ -20,7 +21,20 @@ public class PlayerGameData {
     public PlayerGameData(Player player) {
         this.player = player;
         this.team = Team.NULL;
-        this.health = 20F;
+        if (GunWar.getInstance().isEnableAloneHealth()) {
+            this.health = 20F;
+        } else {
+            this.health = player.getMaxHealth();
+        }
         this.integral = Integer.MAX_VALUE;
+        this.killCount = 0;
+        this.assistsKillCount = 0;
+    }
+
+    public void setHealth(float health) {
+        this.health = health;
+        if (!GunWar.getInstance().isEnableAloneHealth()) {
+            this.player.setHealth(health);
+        }
     }
 }

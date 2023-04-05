@@ -3,6 +3,7 @@ package cn.lanink.gunwar.room.base;
 import cn.lanink.gunwar.supplier.SupplyConfig;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
@@ -164,6 +165,42 @@ public class RoomConfig {
 
     public final String getGameMode() {
         return gameMode;
+    }
+
+    /**
+     * 获取等待出生点
+     * @return 出生点
+     */
+    public Position getWaitSpawn() {
+        String[] s = this.waitSpawn.split(":");
+        return new Position(Integer.parseInt(s[0]),
+                Integer.parseInt(s[1]),
+                Integer.parseInt(s[2]),
+                this.getLevel());
+    }
+
+    /**
+     * 获取红队出生点
+     * @return 出生点
+     */
+    public Position getRedSpawn() {
+        String[] s = this.redSpawn.split(":");
+        return new Position(Integer.parseInt(s[0]),
+                Integer.parseInt(s[1]),
+                Integer.parseInt(s[2]),
+                this.getLevel());
+    }
+
+    /**
+     * 获取蓝队出生点
+     * @return 出生点
+     */
+    public Position getBlueSpawn() {
+        String[] s = this.blueSpawn.split(":");
+        return new Position(Integer.parseInt(s[0]),
+                Integer.parseInt(s[1]),
+                Integer.parseInt(s[2]),
+                this.getLevel());
     }
 
     /**

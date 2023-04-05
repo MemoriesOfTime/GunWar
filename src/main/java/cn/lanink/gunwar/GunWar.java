@@ -50,7 +50,7 @@ import java.util.*;
 public class GunWar extends PluginBase {
 
     public static boolean debug = false;
-    public static final String VERSION = "1.7.2-SNAPSHOT git-0970554";
+    public static final String VERSION = "1.7.2-SNAPSHOT git-a78cd2b";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
 

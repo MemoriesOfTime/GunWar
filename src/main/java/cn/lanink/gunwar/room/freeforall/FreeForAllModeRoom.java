@@ -3,6 +3,7 @@ package cn.lanink.gunwar.room.freeforall;
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRespawnModeRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.utils.Tools;
@@ -15,7 +16,6 @@ import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * F.F.A 个人战 模式房间
@@ -65,10 +65,10 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
     }
 
     public int getKillAtMost() {
-        ArrayList<Map.Entry<Player, Integer>> list = new ArrayList<>(this.playerKillMap.entrySet());
-        list.sort((o1, o2) -> o2.getValue() - o1.getValue());
+        ArrayList<PlayerGameData> list = new ArrayList<>(this.getPlayerDataMap().values());
+        list.sort((o1, o2) -> o2.getKillCount() - o1.getKillCount());
         if (!list.isEmpty()) {
-            return list.get(0).getValue();
+            return list.get(0).getKillCount();
         }
         return 0;
     }
@@ -80,13 +80,13 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
 
     @Override
     public void roundEnd(Team victory) {
-        ArrayList<Map.Entry<Player, Integer>> list = new ArrayList<>(this.playerKillMap.entrySet());
-        list.sort((o1, o2) -> o2.getValue() - o1.getValue());
+        ArrayList<PlayerGameData> list = new ArrayList<>(this.getPlayerDataMap().values());
+        list.sort((o1, o2) -> o2.getKillCount() - o1.getKillCount());
         this.setStatus(ROOM_STATUS_VICTORY);
         if (!list.isEmpty()) {
             Server.getInstance().getScheduler().scheduleRepeatingTask(
                     this.gunWar,
-                    new VictoryTask(this.gunWar, this, list.get(0).getKey()),
+                    new VictoryTask(this.gunWar, this, list.get(0).getPlayer()),
                     20
             );
         }else {
