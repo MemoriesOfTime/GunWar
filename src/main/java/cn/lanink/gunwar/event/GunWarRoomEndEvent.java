@@ -1,6 +1,7 @@
 package cn.lanink.gunwar.event;
 
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.Player;
 import cn.nukkit.event.HandlerList;
@@ -36,13 +37,13 @@ public class GunWarRoomEndEvent extends GunWarRoomEvent {
      */
     public LinkedList<Player> getVictoryPlayers() {
         LinkedList<Player> players = new LinkedList<>();
-        for (Map.Entry<Player, Team> entry : this.room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerGameData> entry : this.room.getPlayerDataMap().entrySet()) {
             if (this.victory == 1) {
-                if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
+                if (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH) {
                     players.add(entry.getKey());
                 }
             }else if (this.victory == 2) {
-                if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
+                if (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH) {
                     players.add(entry.getKey());
                 }
             }
@@ -56,13 +57,13 @@ public class GunWarRoomEndEvent extends GunWarRoomEvent {
      */
     public LinkedList<Player> getDefeatPlayers() {
         LinkedList<Player> players = new LinkedList<>();
-        for (Map.Entry<Player, Team> entry : this.room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerGameData> entry : this.room.getPlayerDataMap().entrySet()) {
             if (this.victory == 1) {
-                if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
+                if (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH) {
                     players.add(entry.getKey());
                 }
             }else if (this.victory == 2) {
-                if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
+                if (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH) {
                     players.add(entry.getKey());
                 }
             }

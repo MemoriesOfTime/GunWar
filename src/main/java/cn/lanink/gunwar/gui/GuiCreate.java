@@ -394,7 +394,7 @@ public class GuiCreate {
         for (Map.Entry<String, BaseRoom> entry : GunWar.getInstance().getGameRoomManager().getGameRoomMap().entrySet()) {
             simple.addButton(new ResponseElementButton("§e" + entry.getKey() +
                     "\n§r§eMode: " + Tools.getShowGameMode(entry.getValue().getGameMode()) +
-                            " Player: " + entry.getValue().getPlayers().size() + "/" + entry.getValue().getMaxPlayers(),
+                            " Player: " + entry.getValue().getPlayerDataMap().size() + "/" + entry.getValue().getMaxPlayers(),
                     new ElementButtonImageData("path", "textures/ui/switch_start_button"))
                     .onClicked(cp -> sendRoomJoinOkMenu(cp, entry.getKey())));
         }
@@ -418,7 +418,7 @@ public class GuiCreate {
                         PLUGIN_NAME, language.translateString("joinRoomIsPlaying"),
                         language.translateString("buttonReturn"),
                         language.translateString("buttonReturn"));
-            }else if (room.getPlayers().size() > 15){
+            }else if (room.getPlayerDataMap().size() > 15){
                 modal = new AdvancedFormWindowModal(
                         PLUGIN_NAME, language.translateString("joinRoomIsFull"),
                         language.translateString("buttonReturn"),

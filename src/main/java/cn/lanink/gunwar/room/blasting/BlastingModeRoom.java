@@ -6,6 +6,7 @@ import cn.lanink.gunwar.entity.EntityGunWarBomb;
 import cn.lanink.gunwar.entity.EntityGunWarBombBlock;
 import cn.lanink.gunwar.event.GunWarSwapTeamEvent;
 import cn.lanink.gunwar.room.base.BaseRoundModeRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
@@ -81,8 +82,8 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                     this.entityGunWarBomb.getExplosionTime() > 0) {
                 double discoveryDistance = this.getBlastingPointRadius() * 0.8 + 5;
                 if (!this.bombWasFound) {
-                    for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
-                        if (entry.getValue() == Team.BLUE) {
+                    for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
+                        if (entry.getValue().getTeam() == Team.BLUE) {
                             if (entry.getKey().distance(this.getBlastingPointA()) <= discoveryDistance ||
                                     entry.getKey().distance(this.getBlastingPointB()) <= discoveryDistance) {
                                 this.bombWasFound = true;
@@ -107,7 +108,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                 }
                 s += this.language.translateString("game_blasting_countdownToBombExplosion",
                         this.entityGunWarBomb.getExplosionTime());
-                for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
+                for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
                     Tools.createBossBar(entry.getKey(), this.bossBarMap);
                     DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
                     bossBar.setText(s);
@@ -160,10 +161,10 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
         this.gameTime--;
         int red = 0;
         int blue = 0;
-        for (Team team : this.getPlayers().values()) {
-            if (team == Team.RED) {
+        for (PlayerGameData gameData : this.getPlayerDataMap().values()) {
+            if (gameData.getTeam() == Team.RED) {
                 red++;
-            } else if (team == Team.BLUE) {
+            } else if (gameData.getTeam() == Team.BLUE) {
                 blue++;
             }
         }
@@ -201,8 +202,8 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
         if (!this.changeTeam && (this.redScore + this.blueScore) >= this.victoryScore * 0.6) {
             LinkedList<Player> oldRedTeam = new LinkedList<>();
             LinkedList<Player> oldBlueTeam = new LinkedList<>();
-            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
-                switch (entry.getValue()) {
+            for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
+                switch (entry.getValue().getTeam()) {
                     case RED:
                     case RED_DEATH:
                         oldRedTeam.add(entry.getKey());
@@ -223,11 +224,11 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                 delay = 60;
                 Tools.sendTitle(this, this.language.translateString("game_blasting_changeTeam"));
                 for (Player player : ev.getNewRedTeam()) {
-                    this.players.put(player, Team.RED);
+                    this.getPlayerData(player).setTeam(Team.RED);
                     player.setNameTag("§c" + player.getName());
                 }
                 for (Player player : ev.getNewBlueTeam()) {
-                    this.players.put(player, Team.BLUE);
+                    this.getPlayerData(player).setTeam(Team.BLUE);
                     player.setNameTag("§9" + player.getName());
                 }
                 this.redScore = ev.getNewRedScore();
@@ -238,8 +239,8 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
             super.roundStart();
             //随机挑选一名红队成员给炸弹
             LinkedList<Player> list = new LinkedList<>();
-            for (Map.Entry<Player, Team> entry : this.getPlayers().entrySet()) {
-                if (entry.getValue() == Team.RED) {
+            for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
+                if (entry.getValue().getTeam() == Team.RED) {
                     list.add(entry.getKey());
                 }
             }

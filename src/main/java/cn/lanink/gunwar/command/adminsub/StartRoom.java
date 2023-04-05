@@ -30,7 +30,7 @@ public class StartRoom extends BaseSubCommand {
         Player player = (Player) sender;
         BaseRoom room = this.gunWar.getGameRoomManager().getGameRoom(player.getLevel().getFolderName());
         if (room != null) {
-            if (room.getPlayers().size() >= 2) {
+            if (room.getPlayerDataMap().size() >= 2) {
                 if (room.getStatus() == 1) {
                     room.startGame();
                     sender.sendMessage(this.language.translateString("adminStartRoom"));

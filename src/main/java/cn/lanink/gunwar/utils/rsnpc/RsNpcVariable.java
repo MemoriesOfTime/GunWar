@@ -19,8 +19,8 @@ public class RsNpcVariable extends BaseVariable {
         int all = 0;
         for (BaseRoom room : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
             map.put(room.getGameMode(),
-                    map.getOrDefault(room.getGameMode(), 0) + room.getPlayers().size());
-            all += room.getPlayers().size();
+                    map.getOrDefault(room.getGameMode(), 0) + room.getPlayerDataMap().size());
+            all += room.getPlayerDataMap().size();
         }
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             s = s.replace("{GunWarRoomPlayerNumber" + entry.getKey() + "}", entry.getValue() + "");
@@ -28,7 +28,7 @@ public class RsNpcVariable extends BaseVariable {
         
         HashMap<String, Integer> map1 = new HashMap<>();
         for (BaseRoom room : GunWar.getInstance().getGameRoomManager().getGameRoomMap().values()) {
-                map1.put(room.getLevelName(), map1.getOrDefault(room.getLevelName(), 0) + room.getPlayers().size());
+                map1.put(room.getLevelName(), map1.getOrDefault(room.getLevelName(), 0) + room.getPlayerDataMap().size());
         }
         for (Map.Entry<String, Integer> entry : map1.entrySet()) {
             s = s.replace("{GunWarLevelPlayerNumber" + entry.getKey() + "}", entry.getValue() + "");
