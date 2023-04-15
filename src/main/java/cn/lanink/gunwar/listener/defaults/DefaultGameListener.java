@@ -14,6 +14,7 @@ import cn.lanink.gunwar.item.base.BaseItem;
 import cn.lanink.gunwar.item.weapon.GunWeapon;
 import cn.lanink.gunwar.item.weapon.ProjectileWeapon;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.supplier.pages.SupplyPageConfig;
 import cn.lanink.gunwar.utils.Tools;
@@ -218,7 +219,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     break;
                 //选择红队
                 case 11:
-                    room.getPlayers().put(player, Team.RED);
+                    room.getPlayerData(player).setTeam(Team.RED);
                     player.getInventory().setArmorContents(Tools.getArmors(Team.RED));
                     player.sendTitle(this.language.translateString("teamNameRed"),
                             this.language.translateString("playerTeamSelect"),
@@ -226,7 +227,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     break;
                 //选择蓝队
                 case 12:
-                    room.getPlayers().put(player, Team.BLUE);
+                    room.getPlayerData(player).setTeam(Team.BLUE);
                     player.getInventory().setArmorContents(Tools.getArmors(Team.BLUE));
                     player.sendTitle(this.language.translateString("teamNameBlue"),
                             this.language.translateString("playerTeamSelect"),
@@ -340,9 +341,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 if (weapon.getRange() > 0) {
                     level.addSound(position, Sound.RANDOM_EXPLODE);
                     level.addParticle(weapon.getParticle(position));
-                    for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
+                    for (Map.Entry<Player, PlayerGameData> entry : room.getPlayerDataMap().entrySet()) {
                         //跳过已死亡的玩家
-                        if (entry.getValue() != Team.RED && entry.getValue() != Team.BLUE) {
+                        if (entry.getValue().getTeam() != Team.RED && entry.getValue().getTeam() != Team.BLUE) {
                             continue;
                         }
 

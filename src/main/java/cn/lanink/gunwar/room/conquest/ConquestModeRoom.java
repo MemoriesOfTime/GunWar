@@ -102,7 +102,7 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
                         "   §aB: " + (this.bFlag.getTeam() == Team.NULL ? "§fX" : this.bFlag.getTeam().getShowName()) +
                         "   §aC: " + (this.cFlag.getTeam() == Team.NULL ? "§fX" : this.cFlag.getTeam().getShowName());
 
-                for (Player player : this.getPlayers().keySet()) {
+                for (Player player : this.getPlayerDataMap().keySet()) {
                     Tools.createBossBar(player, this.bossBarMap);
                     DummyBossBar bossBar = this.bossBarMap.get(player);
                     bossBar.setText(text);

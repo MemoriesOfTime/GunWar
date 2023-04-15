@@ -9,6 +9,7 @@ import cn.lanink.gunwar.entity.flag.EntityFlag;
 import cn.lanink.gunwar.entity.flag.EntityFlagStand;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.RoomConfig;
 import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.AdventureSettings;
@@ -165,7 +166,7 @@ public class Tools {
      * @param player 玩家
      */
     public static void showPlayer(BaseRoom room, Player player) {
-        for (Player p : room.getPlayers().keySet()) {
+        for (Player p : room.getPlayerDataMap().keySet()) {
             p.showPlayer(player);
         }
     }
@@ -177,7 +178,7 @@ public class Tools {
      * @param player 玩家
      */
     public static void hidePlayer(BaseRoom room, Player player) {
-        for (Player p : room.getPlayers().keySet()) {
+        for (Player p : room.getPlayerDataMap().keySet()) {
             p.hidePlayer(player);
         }
     }
@@ -232,7 +233,7 @@ public class Tools {
     }
 
     public static void sendMessage(BaseRoom room, String message) {
-        for (Player player : room.getPlayers().keySet()) {
+        for (Player player : room.getPlayerDataMap().keySet()) {
             player.sendMessage(message);
         }
     }
@@ -242,7 +243,7 @@ public class Tools {
     }
 
     public static void sendTitle(BaseRoom room, String title, String subtitle) {
-        for (Player player : room.getPlayers().keySet()) {
+        for (Player player : room.getPlayerDataMap().keySet()) {
             player.sendTitle(title, subtitle);
         }
     }
@@ -252,13 +253,13 @@ public class Tools {
     }
 
     public static void sendTitle(BaseRoom room, Team team, String title, String subtitle) {
-        for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerGameData> entry : room.getPlayerDataMap().entrySet()) {
             if (team == Team.RED || team == Team.RED_DEATH) {
-                if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
+                if (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH) {
                     entry.getKey().sendTitle(title, subtitle);
                 }
             }else {
-                if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
+                if (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH) {
                     entry.getKey().sendTitle(title, subtitle);
                 }
             }
@@ -266,7 +267,7 @@ public class Tools {
     }
 
     public static void sendRoundVictoryTitle(BaseRoom room, Team v) {
-        for (Player player : room.getPlayers().keySet()) {
+        for (Player player : room.getPlayerDataMap().keySet()) {
             String title;
             switch (v) {
                 case RED:
@@ -287,7 +288,7 @@ public class Tools {
     }
 
     public static void giveTeamIntegral(BaseRoom room, Team team, int integral) {
-        for (Player player : room.getPlayers(team)) {
+        for (Player player : room.getPlayerDataMap(team)) {
             room.addPlayerIntegral(player, integral);
         }
     }
@@ -505,7 +506,7 @@ public class Tools {
      * @param sound 声音
      */
     public static void playSound(BaseRoom room, Sound sound) {
-        room.getPlayers().keySet().forEach(player -> playSound(player, sound));
+        room.getPlayerDataMap().keySet().forEach(player -> playSound(player, sound));
     }
 
     /**

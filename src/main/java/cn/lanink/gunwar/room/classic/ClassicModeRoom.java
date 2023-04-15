@@ -2,6 +2,7 @@ package cn.lanink.gunwar.room.classic;
 
 import cn.lanink.gamecore.utils.exception.RoomLoadException;
 import cn.lanink.gunwar.room.base.BaseRoundModeRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.Team;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Config;
@@ -19,10 +20,10 @@ public class ClassicModeRoom extends BaseRoundModeRoom {
     protected void checkTeamPlayerCount() {
         int red = 0;
         int blue = 0;
-        for (Team team : this.getPlayers().values()) {
-            if (team == Team.RED) {
+        for (PlayerGameData gameData : this.getPlayerDataMap().values()) {
+            if (gameData.getTeam() == Team.RED) {
                 red++;
-            } else if (team == Team.BLUE) {
+            } else if (gameData.getTeam() == Team.BLUE) {
                 blue++;
             }
         }

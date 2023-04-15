@@ -58,7 +58,7 @@ public class AsyncFlagRadiusCheckTask extends AsyncTask {
         ArrayList<Player> aFlagPlayers = new ArrayList<>();
         ArrayList<Player> bFlagPlayers = new ArrayList<>();
         ArrayList<Player> cFlagPlayers = new ArrayList<>();
-        for (Player player : this.room.getPlayers().keySet()) {
+        for (Player player : this.room.getPlayerDataMap().keySet()) {
             if (player.distance(this.room.getConquestPointA()) <= this.room.getConquestPointRadius()) {
                 aFlagPlayers.add(player);
             }else if (player.distance(this.room.getConquestPointB()) <= this.room.getConquestPointRadius()) {

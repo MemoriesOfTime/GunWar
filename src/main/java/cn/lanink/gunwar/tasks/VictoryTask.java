@@ -3,6 +3,7 @@ package cn.lanink.gunwar.tasks;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRoom;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.Team;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
@@ -27,11 +28,11 @@ public class VictoryTask extends PluginTask<GunWar> {
 
         this.victory = victory;
 
-        for (Map.Entry<Player, Team> entry: room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerGameData> entry: room.getPlayerDataMap().entrySet()) {
             LinkedList<String> ms = new LinkedList<>();
             switch (this.victory) {
                 case 1:
-                    if (entry.getValue() == Team.RED || entry.getValue() == Team.RED_DEATH) {
+                    if (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH) {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
@@ -42,7 +43,7 @@ public class VictoryTask extends PluginTask<GunWar> {
                     entry.getKey().sendTitle(this.language.translateString("victoryRed"), "", 10, 40, 20);
                     break;
                 case 2:
-                    if (entry.getValue() == Team.BLUE || entry.getValue() == Team.BLUE_DEATH) {
+                    if (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH) {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
                     }else {
                         GameRecord.addPlayerRecord(entry.getKey(), RecordType.DEFEAT);
@@ -66,7 +67,7 @@ public class VictoryTask extends PluginTask<GunWar> {
 
         this.victoryPlayer = victory;
 
-        for (Map.Entry<Player, Team> entry: room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerGameData> entry: room.getPlayerDataMap().entrySet()) {
             LinkedList<String> ms = new LinkedList<>();
             if (entry.getKey() == this.victoryPlayer) {
                 GameRecord.addPlayerRecord(entry.getKey(), RecordType.VICTORY);
@@ -96,22 +97,22 @@ public class VictoryTask extends PluginTask<GunWar> {
             this.cancel();
         }else {
             this.victoryTime--;
-            if (!this.room.getPlayers().isEmpty()) {
-                for (Map.Entry<Player, Team> entry : room.getPlayers().entrySet()) {
+            if (!this.room.getPlayerDataMap().isEmpty()) {
+                for (Map.Entry<Player, PlayerGameData> entry : room.getPlayerDataMap().entrySet()) {
                     if (this.victoryPlayer != null) {
                         entry.getKey().sendTip(this.language.translateString("victoryMessage", this.victoryPlayer.getName()));
                         Tools.spawnFirework(this.victoryPlayer);
-                    }else if (entry.getValue() != Team.NULL) {
+                    }else if (entry.getValue().getTeam() != Team.NULL) {
                         if (this.victory == 1) {
                             entry.getKey().sendTip(this.language.translateString("victoryMessage",
                                     this.language.translateString("teamNameRed")));
-                            if (entry.getValue() == Team.RED) {
+                            if (entry.getValue().getTeam() == Team.RED) {
                                 Tools.spawnFirework(entry.getKey());
                             }
                         }else if (this.victory == 2) {
                             entry.getKey().sendTip(this.language.translateString("victoryMessage",
                                     this.language.translateString("teamNameBlue")));
-                            if (entry.getValue() == Team.BLUE) {
+                            if (entry.getValue().getTeam() == Team.BLUE) {
                                 Tools.spawnFirework(entry.getKey());
                             }
                         }else {

@@ -2,6 +2,7 @@ package cn.lanink.gunwar.event;
 
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
 import cn.nukkit.Player;
+import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import java.util.LinkedList;
  *
  * @author LT_Name
  */
-public class GunWarSwapTeamEvent extends GunWarRoomEvent {
+public class GunWarSwapTeamEvent extends GunWarRoomEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 

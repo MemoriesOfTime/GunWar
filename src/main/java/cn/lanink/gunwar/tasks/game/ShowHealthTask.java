@@ -5,7 +5,7 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.room.base.BaseRespawnModeRoom;
 import cn.lanink.gunwar.room.base.BaseRoom;
-import cn.lanink.gunwar.room.base.Team;
+import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.scheduler.PluginTask;
@@ -32,10 +32,10 @@ public class ShowHealthTask extends PluginTask<GunWar> {
             this.cancel();
             return;
         }
-        for (Map.Entry<Player, Team> entry : this.room.getPlayers().entrySet()) {
+        for (Map.Entry<Player, PlayerGameData> entry : this.room.getPlayerDataMap().entrySet()) {
             Tools.createBossBar(entry.getKey(), this.bossBarMap);
             DummyBossBar bossBar = this.bossBarMap.get(entry.getKey());
-            switch (entry.getValue()) {
+            switch (entry.getValue().getTeam()) {
                 case RED_DEATH:
                 case BLUE_DEATH:
                     if (this.room instanceof BaseRespawnModeRoom) {
