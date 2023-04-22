@@ -4,7 +4,7 @@ import cn.lanink.gamecore.GameCore;
 import cn.lanink.gamecore.room.GameRoom;
 import cn.lanink.gamecore.room.IRoom;
 import cn.lanink.gamecore.room.IRoomStatus;
-import cn.lanink.gamecore.utils.FileUtil;
+import cn.lanink.gamecore.utils.FileUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.PlayerDataUtils;
 import cn.lanink.gamecore.utils.Tips;
@@ -79,7 +79,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         if (!backup.exists()) {
             this.gunWar.getLogger().info(this.language.translateString("roomLevelBackup", this.getLevelName()));
             Server.getInstance().unloadLevel(this.getLevel(), true);
-            if (FileUtil.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.getLevelName(), backup)) {
+            if (FileUtils.copyDir(Server.getInstance().getFilePath() + "/worlds/" + this.getLevelName(), backup)) {
                 Server.getInstance().loadLevel(this.getLevelName());
                 this.level = Server.getInstance().getLevelByName(this.getLevelName());
             }else {
@@ -802,9 +802,15 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         PlayerGameData playerGameData = this.getPlayerData(player);
         float newHealth = playerGameData.getHealth() - health;
         if (newHealth < 1) {
+            health = playerGameData.getHealth();
             this.playerDeath(player, damager, killMessage);
         } else {
             playerGameData.setHealth(newHealth);
+        }
+        if (damager instanceof Player) {
+            Player damagePlayer = (Player) damager;
+            playerGameData.setLastDamagePlayer(damagePlayer);
+            playerGameData.getDamager().put(damagePlayer, playerGameData.getDamager().getOrDefault(damagePlayer, 0F) + health);
         }
         return newHealth;
     }
@@ -914,6 +920,17 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 this.getPlayerDataMap().keySet().forEach(p -> p.sendMessage(killMessage));
             }
         }
+
+        PlayerGameData playerGameData = this.getPlayerData(player);
+        for (Player p : playerGameData.getDamager().keySet()) {
+            if (p == damager) {
+                this.getPlayerData(p).addKillCount();
+            } else {
+                this.getPlayerData(p).addAssistsKillCount();
+            }
+        }
+        playerGameData.getDamager().clear();
+
         player.getInventory().clearAll();
         player.getUIInventory().clearAll();
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
@@ -921,9 +938,9 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         player.setGamemode(Player.VIEW);
         Tools.hidePlayer(this, player);
         if (this.getPlayerTeamAccurate(player) == Team.RED) {
-            this.getPlayerData(player).setTeam(Team.RED_DEATH);
+            playerGameData.setTeam(Team.RED_DEATH);
         }else if (this.getPlayerTeamAccurate(player) == Team.BLUE) {
-            this.getPlayerData(player).setTeam(Team.BLUE_DEATH);
+            playerGameData.setTeam(Team.BLUE_DEATH);
         }
         this.corpseSpawn(player);
     }
@@ -980,7 +997,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
             @Override
             public void onRun() {
-                if (FileUtil.deleteFile(levelFile) && FileUtil.copyDir(backup, levelFile)) {
+                if (FileUtils.deleteFile(levelFile) && FileUtils.copyDir(backup, levelFile)) {
                     Server.getInstance().loadLevel(getLevelName());
                     level = Server.getInstance().getLevelByName(getLevelName());
                     setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
