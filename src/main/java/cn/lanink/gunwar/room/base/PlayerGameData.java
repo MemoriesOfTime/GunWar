@@ -4,6 +4,8 @@ import cn.lanink.gunwar.GunWar;
 import cn.nukkit.Player;
 import lombok.Data;
 
+import java.util.HashMap;
+
 /**
  * @author LT_Name
  */
@@ -17,6 +19,9 @@ public class PlayerGameData {
     private int integral;
     private int killCount;
     private int assistsKillCount;
+
+    private Player lastDamagePlayer;
+    private final HashMap<Player, Float> damager = new HashMap<>();
 
     public PlayerGameData(Player player) {
         this.player = player;
@@ -36,5 +41,13 @@ public class PlayerGameData {
         if (!GunWar.getInstance().isEnableAloneHealth()) {
             this.player.setHealth(health);
         }
+    }
+
+    public void addKillCount() {
+        this.killCount++;
+    }
+
+    public void addAssistsKillCount() {
+        this.assistsKillCount++;
     }
 }
