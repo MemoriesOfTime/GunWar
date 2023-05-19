@@ -994,22 +994,30 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             this.gunWar.getLogger().error(this.language.translateString("roomLevelBackupNotExist", this.getLevelName()));
             this.gunWar.getGameRoomManager().unloadGameRoom(this.getLevelName());
         }
-        Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
-            @Override
-            public void onRun() {
-                if (FileUtils.deleteFile(levelFile) && FileUtils.copyDir(backup, levelFile)) {
-                    Server.getInstance().loadLevel(getLevelName());
-                    level = Server.getInstance().getLevelByName(getLevelName());
-                    setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
-                    if (GunWar.debug) {
-                        gunWar.getLogger().info("§a房间：" + getLevelName() + " 地图还原完成！");
-                    }
-                }else {
-                    gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", getLevelName()));
-                    gunWar.getGameRoomManager().unloadGameRoom(getLevelName());
+        if (GunWar.getInstance().isDisabled()) {
+            this.privateRestoreWorld(levelFile, backup);
+        } else {
+            Server.getInstance().getScheduler().scheduleAsyncTask(this.gunWar, new AsyncTask() {
+                @Override
+                public void onRun() {
+                    privateRestoreWorld(levelFile, backup);
                 }
+            });
+        }
+    }
+
+    private void privateRestoreWorld(File levelFile, File backup) {
+        if (FileUtils.deleteFile(levelFile) && FileUtils.copyDir(backup, levelFile)) {
+            Server.getInstance().loadLevel(getLevelName());
+            level = Server.getInstance().getLevelByName(getLevelName());
+            setStatus(ROOM_STATUS_TASK_NEED_INITIALIZED);
+            if (GunWar.debug) {
+                gunWar.getLogger().info("§a房间：" + getLevelName() + " 地图还原完成！");
             }
-        });
+        }else {
+            gunWar.getLogger().error(language.translateString("roomLevelRestoreLevelFailure", getLevelName()));
+            gunWar.getGameRoomManager().unloadGameRoom(getLevelName());
+        }
     }
 
 }
