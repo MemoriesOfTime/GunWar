@@ -27,19 +27,25 @@ public class DefaultChatListener extends BaseGameListener<BaseRoom> {
     @EventHandler
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();
-        if (player == null || event.getMessage() == null) {
+        String message = event.getMessage();
+        if (player == null || message == null) {
             return;
         }
+        String[] split = message.replace("/", "").split(" ");
+        if (split.length == 0) {
+            return;
+        }
+        message = split[0];
         BaseRoom room = this.getListenerRoom(player.getLevel());
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-        if (event.getMessage().startsWith(this.gunWar.getCmdUser(), 1) ||
-                event.getMessage().startsWith(this.gunWar.getCmdAdmin(), 1)) {
+        if (this.gunWar.getCmdUser().equalsIgnoreCase(message) ||
+                this.gunWar.getCmdAdmin().equalsIgnoreCase(message)) {
             return;
         }
         for (String string : this.gunWar.getCmdWhitelist()) {
-            if (string.equalsIgnoreCase(event.getMessage())) {
+            if (string.equalsIgnoreCase(message)) {
                 return;
             }
         }
