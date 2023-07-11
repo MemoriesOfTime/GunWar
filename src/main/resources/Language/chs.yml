@@ -34,6 +34,7 @@ adminHelp: |-
   §a/%1% reloadroom §e重载所有房间
   §a/%1% unloadroom §e关闭所有房间,并卸载配置
   §a/%1% AddWeapon §e打开添加武器界面
+  §a/%1% CreateRank §e创建排行榜
 adminSetWaitSpawn: "§a等待出生点设置成功！"
 adminSetRedSpawn: "§a红队出生点设置成功！"
 adminSetBlueSpawn: "§a蓝队出生点设置成功！"
