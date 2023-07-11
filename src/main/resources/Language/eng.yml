@@ -1,3 +1,6 @@
+# Translate By indishipp
+# You can help me improve the translation through github
+# https://github.com/lt-name/GunWar_Nukkit
 roomLevelBackup: "§aRoom: %1% did not detect the map backup, the map is being backed up..."
 roomLevelBackupExist: "§aRoom: %1% detected map backup!"
 roomLevelBackupNotExist: "§cRoom: %1% map backup does not exist! Unable to restore the map!"
