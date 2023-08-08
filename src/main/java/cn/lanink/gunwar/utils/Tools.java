@@ -12,6 +12,7 @@ import cn.lanink.gunwar.room.base.BaseRoom;
 import cn.lanink.gunwar.room.base.PlayerGameData;
 import cn.lanink.gunwar.room.base.RoomConfig;
 import cn.lanink.gunwar.room.base.Team;
+import cn.nsgamebase.entity.pojo.AbstractDataGamePlayerPojo;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -51,6 +52,14 @@ public class Tools {
 
     private Tools() {
         throw new RuntimeException("Tools can not be instantiated");
+    }
+
+    public static AbstractDataGamePlayerPojo getGamePlayerPojo(Player player) {
+        AbstractDataGamePlayerPojo pojo = new AbstractDataGamePlayerPojo();
+
+        pojo.registerKey("killCount", "击杀数");
+
+        return pojo;
     }
 
     /**

@@ -24,6 +24,8 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.lanink.teamsystem.TeamSystem;
+import cn.nsgamebase.api.GbGameApi;
+import cn.nsgamebase.entity.pojo.AbstractDataGamePlayerPojo;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -417,20 +419,20 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         if (victory != 1 && victory != 2) {
             return;
         }
-        LinkedList<Player> victoryPlayers = new LinkedList<>();
-        LinkedList<Player> defeatPlayers = new LinkedList<>();
+        LinkedHashMap<Player, PlayerGameData> victoryPlayers = new LinkedHashMap<>();
+        LinkedHashMap<Player, PlayerGameData> defeatPlayers = new LinkedHashMap<>();
         for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
             if (victory == 1) {
                 if (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH) {
-                    victoryPlayers.add(entry.getKey());
+                    victoryPlayers.put(entry.getKey(), entry.getValue());
                 }else {
-                    defeatPlayers.add(entry.getKey());
+                    defeatPlayers.put(entry.getKey(), entry.getValue());
                 }
             }else {
                 if (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH) {
-                    victoryPlayers.add(entry.getKey());
+                    victoryPlayers.put(entry.getKey(), entry.getValue());
                 }else {
-                    defeatPlayers.add(entry.getKey());
+                    defeatPlayers.put(entry.getKey(), entry.getValue());
                 }
             }
         }
@@ -438,13 +440,36 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
             List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
             if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
-                for (Player player : victoryPlayers) {
+                for (Player player : victoryPlayers.keySet()) {
                     Tools.executeCommands(player, vCmds);
+                    if (this.gunWar.isHasNsGB()) {
+                        AbstractDataGamePlayerPojo pojo = Tools.getGamePlayerPojo(player);
+                        pojo.add("played");
+                        pojo.add("win");
+                        pojo.add("killCount", victoryPlayers.get(player).getKillCount());
+                        Config gunWarConfig = this.gunWar.getConfig();
+                        GbGameApi.saveAndReward(player, "GunWar", pojo,
+                                gunWarConfig.getInt("fapWinIntegral.money"),
+                                gunWarConfig.getInt("fapWinIntegral.point"),
+                                gunWarConfig.getInt("fapWinIntegral.exp"),
+                                gunWarConfig.getInt("fapWinIntegral.maxMultiplier"));
+                    }
                 }
             }
             if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
-                for (Player player : defeatPlayers) {
+                for (Player player : defeatPlayers.keySet()) {
                     Tools.executeCommands(player, dCmds);
+                    if (this.gunWar.isHasNsGB()) {
+                        AbstractDataGamePlayerPojo pojo = Tools.getGamePlayerPojo(player);
+                        pojo.add("played");
+                        pojo.add("killCount", victoryPlayers.get(player).getKillCount());
+                        Config gunWarConfig = this.gunWar.getConfig();
+                        GbGameApi.saveAndReward(player, "GunWar", pojo,
+                                gunWarConfig.getInt("fapLoseIntegral.money"),
+                                gunWarConfig.getInt("fapLoseIntegral.point"),
+                                gunWarConfig.getInt("fapLoseIntegral.exp"),
+                                gunWarConfig.getInt("fapLoseIntegral.maxMultiplier"));
+                    }
                 }
             }
         }, 10);

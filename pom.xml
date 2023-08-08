@@ -146,7 +146,7 @@
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>PM1E_1.19.62.2619</version>
+            <version>PM1E_1.20.10.2933</version>
             <scope>provided</scope>
         </dependency>
 
@@ -172,11 +172,11 @@
         </dependency>
 
         <dependency>
-            <groupId>FakeFStage</groupId>
-            <artifactId>FakeFStage</artifactId>
+            <groupId>FakeNsGameBase</groupId>
+            <artifactId>FakeNsGameBase</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/FakeFStage.jar</systemPath>
+            <systemPath>${project.basedir}/lib/FakeNsGameBase.jar</systemPath>
         </dependency>
     </dependencies>
 

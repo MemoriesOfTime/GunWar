@@ -21,7 +21,6 @@ import cn.lanink.gunwar.room.conquest.ConquestModeRoom;
 import cn.lanink.gunwar.room.freeforall.FreeForAllModeRoom;
 import cn.lanink.gunwar.room.team.TeamModeRoom;
 import cn.lanink.gunwar.supplier.SupplyConfigManager;
-import cn.lanink.gunwar.tasks.FStageTask;
 import cn.lanink.gunwar.tasks.adminroom.SetRoomTask;
 import cn.lanink.gunwar.utils.FlagSkinType;
 import cn.lanink.gunwar.utils.ItemKillMessageUtils;
@@ -85,6 +84,8 @@ public class GunWar extends PluginBase {
     private boolean hasTips = false;
     @Getter
     private boolean hasTeamSystem = false;
+    @Getter
+    private boolean hasNsGB = false;
 
     private boolean restoreWorld = false;
     @Getter
@@ -191,10 +192,11 @@ public class GunWar extends PluginBase {
         } catch (Exception ignored) {
 
         }
-        //检查FAP群组服插件
+        //检查FAP基础插件
         try {
-            Class.forName("net.fap.stage.FStage");
-            this.getServer().getScheduler().scheduleRepeatingTask(this, new FStageTask(this), 20, true);
+            Class.forName("cn.nsgamebase.NsGameBaseMain");
+            ConfigUpdateUtils.checkFapNsGB(this);
+            this.hasNsGB = true;
         } catch (Exception ignored) {
 
         }
