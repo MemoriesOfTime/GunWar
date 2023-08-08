@@ -7,6 +7,8 @@ author: "LT_Name"
 website: "https://www.lanink.cn"
 depend:
   - "MemoriesOfTime-GameCore"
+softdepend:
+  - "NsGameBase"
 
 permissions:
   GunWar.command.user:
