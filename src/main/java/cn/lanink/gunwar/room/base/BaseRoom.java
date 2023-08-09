@@ -439,7 +439,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
             List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
             List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
-            if (!victoryPlayers.isEmpty() && !vCmds.isEmpty()) {
+            if (!victoryPlayers.isEmpty()) {
                 for (Player player : victoryPlayers.keySet()) {
                     Tools.executeCommands(player, vCmds);
                     if (this.gunWar.isHasNsGB()) {
@@ -456,7 +456,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                     }
                 }
             }
-            if (!defeatPlayers.isEmpty() && !dCmds.isEmpty()) {
+            if (!defeatPlayers.isEmpty()) {
                 for (Player player : defeatPlayers.keySet()) {
                     Tools.executeCommands(player, dCmds);
                     if (this.gunWar.isHasNsGB()) {

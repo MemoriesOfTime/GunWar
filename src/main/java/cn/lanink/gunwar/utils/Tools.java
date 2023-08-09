@@ -312,7 +312,7 @@ public class Tools {
      * @param cmds 命令
      */
     public static void executeCommands(Player player, List<String> cmds) {
-        if (player == null || cmds == null || cmds.size() < 1) {
+        if (player == null || cmds == null || cmds.isEmpty()) {
             return;
         }
         for (String s : cmds) {
