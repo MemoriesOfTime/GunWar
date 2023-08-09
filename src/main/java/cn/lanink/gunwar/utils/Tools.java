@@ -359,13 +359,24 @@ public class Tools {
         }
         for (String string : items) {
             Item item = ItemManage.of(string);
-            if (player.getInventory().contains(item) && !allowAlreadyExists) {
-                continue;
+
+            boolean canAdd = true;
+            if (!allowAlreadyExists) {
+                for (Map.Entry<Integer, Item> entry : player.getInventory().getContents().entrySet()) {
+                    //TODO 更合适的NBT检查判断
+                    if (entry.getValue().equals(item, item.hasMeta(), /*item.hasCompoundTag()*/ false)) {
+                        canAdd = false;
+                        break;
+                    }
+                }
             }
-            player.getInventory().addItem(item);
-            if (GunWar.debug) {
-                GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
-                        "物品：" + item.getCustomName() + "数量：" + item.getCount());
+
+            if (canAdd) {
+                player.getInventory().addItem(item);
+                if (GunWar.debug) {
+                    GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
+                            "物品：" + item.getCustomName() + "数量：" + item.getCount());
+                }
             }
         }
     }

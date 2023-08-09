@@ -312,7 +312,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         //队伍平衡
         Player cache;
         while (true) {
-            if (noTeam.size() > 0) {
+            if (!noTeam.isEmpty()) {
                 Collections.shuffle(noTeam, GunWar.RANDOM);
                 for (Player player : noTeam) {
                     if (redTeam.size() > blueTeam.size()) {
@@ -437,12 +437,12 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
             List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
             List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
-            if (victoryPlayers.size() > 0 && vCmds.size() > 0) {
+            if (!victoryPlayers.isEmpty() && !vCmds.isEmpty()) {
                 for (Player player : victoryPlayers) {
                     Tools.executeCommands(player, vCmds);
                 }
             }
-            if (defeatPlayers.size() > 0 && dCmds.size() > 0) {
+            if (!defeatPlayers.isEmpty() && !dCmds.isEmpty()) {
                 for (Player player : defeatPlayers) {
                     Tools.executeCommands(player, dCmds);
                 }
