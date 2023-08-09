@@ -35,32 +35,25 @@ public class ConfigUpdateUtils {
 
             Config config = gunWar.getConfig();
 
-            /*
-              fapWinIntegral:
-                money: 1
-                point: 0
-                exp: 0
-                maxMultiplier: 1
-              fapLoseIntegral:
-                money: 1
-                point: 0
-                exp: 0
-                maxMultiplier: 1
-            */
+            LinkedHashMap<String, Object> fapWinIntegral = new LinkedHashMap<>();
+            fapWinIntegral.put("money", 10);
+            fapWinIntegral.put("point", 0);
+            fapWinIntegral.put("exp", 10);
+            fapWinIntegral.put("maxMultiplier", 1);
 
-            LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-            map.put("money", 1);
-            map.put("point", 0);
-            map.put("exp", 0);
-            map.put("maxMultiplier", 1);
+            LinkedHashMap<String, Object> fapLoseIntegral = new LinkedHashMap<>();
+            fapLoseIntegral.put("money", 5);
+            fapLoseIntegral.put("point", 0);
+            fapLoseIntegral.put("exp", 5);
+            fapLoseIntegral.put("maxMultiplier", 1);
 
             boolean needSave = false;
             if (!config.exists("fapWinIntegral")) {
-                config.set("fapWinIntegral", map);
+                config.set("fapWinIntegral", fapWinIntegral);
                 needSave = true;
             }
             if (!config.exists("fapLoseIntegral")) {
-                config.set("fapLoseIntegral", map);
+                config.set("fapLoseIntegral", fapLoseIntegral);
                 needSave = true;
             }
 
