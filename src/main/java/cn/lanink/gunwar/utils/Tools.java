@@ -23,6 +23,7 @@ import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemColorArmor;
 import cn.nukkit.item.ItemFirework;
@@ -359,7 +360,8 @@ public class Tools {
      * @param allowAlreadyExists 是否允许重复
      */
     public static void giveItem(@NotNull BaseRoom room, @NotNull Player player, @NotNull Team team, boolean allowAlreadyExists) {
-        player.getInventory().setArmorContents(getArmors(team));
+        PlayerInventory inv = player.getInventory();
+        inv.setArmorContents(getArmors(team));
         ArrayList<String> items = new ArrayList<>(room.getInitialItems());
         if (team == Team.RED || team == Team.RED_DEATH) {
             items.addAll(room.getRedTeamInitialItems());
@@ -369,23 +371,24 @@ public class Tools {
         for (String string : items) {
             Item item = ItemManage.of(string);
 
-            boolean canAdd = true;
             if (!allowAlreadyExists) {
-                for (Map.Entry<Integer, Item> entry : player.getInventory().getContents().entrySet()) {
+                for (Map.Entry<Integer, Item> entry : inv.getContents().entrySet()) {
                     //TODO 更合适的NBT检查判断
                     if (entry.getValue().equals(item, item.hasMeta(), /*item.hasCompoundTag()*/ false)) {
-                        canAdd = false;
-                        break;
+                        entry.getValue().setCount(entry.getValue().getCount() - item.getCount());
+                        if (entry.getValue().getCount() <= 0) {
+                            inv.clear(entry.getKey());
+                        } else {
+                            inv.setItem(entry.getKey(), entry.getValue());
+                        }
                     }
                 }
             }
 
-            if (canAdd) {
-                player.getInventory().addItem(item);
-                if (GunWar.debug) {
-                    GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
-                            "物品：" + item.getCustomName() + "数量：" + item.getCount());
-                }
+            inv.addItem(item);
+            if (GunWar.debug) {
+                GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
+                        "物品：" + item.getCustomName() + "数量：" + item.getCount());
             }
         }
     }
