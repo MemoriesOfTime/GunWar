@@ -1,7 +1,7 @@
 name: GunWar
 main: cn.lanink.gunwar.GunWar
-version: "1.7.2-PM1E-SNAPSHOT"
-api: ["Nukkit-PM1E"]
+version: "1.7.2-NKMOT-SNAPSHOT"
+api: ["Nukkit-MOT"]
 load: POSTWORLD
 author: "LT_Name"
 website: "https://www.lanink.cn"

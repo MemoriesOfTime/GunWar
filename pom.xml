@@ -6,13 +6,13 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>GunWar</artifactId>
-    <version>1.7.2-PM1E-SNAPSHOT</version>
+    <version>1.7.2-NKMOT-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
 
@@ -146,7 +146,7 @@
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>PM1E_1.20.10.2933</version>
+            <version>MOT-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
