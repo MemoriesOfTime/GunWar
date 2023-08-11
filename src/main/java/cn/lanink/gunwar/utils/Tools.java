@@ -369,26 +369,37 @@ public class Tools {
             items.addAll(room.getBlueTeamInitialItems());
         }
         for (String string : items) {
-            Item item = ItemManage.of(string);
+            Item newItem = ItemManage.of(string);
 
             if (!allowAlreadyExists) {
                 for (Map.Entry<Integer, Item> entry : inv.getContents().entrySet()) {
+                    Item item = entry.getValue();
+                    if (item.getId() == Item.AIR || item.getCount() <= 0) {
+                        continue;
+                    }
                     //TODO 更合适的NBT检查判断
-                    if (entry.getValue().equals(item, item.hasMeta(), /*item.hasCompoundTag()*/ false)) {
-                        entry.getValue().setCount(entry.getValue().getCount() - item.getCount());
-                        if (entry.getValue().getCount() <= 0) {
+                    if (item.equals(newItem, newItem.hasMeta(), /*newItem.hasCompoundTag()*/ false)) {
+                        int amount = Math.min(item.getCount(), newItem.getCount());
+                        item.setCount(item.getCount() - amount);
+                        newItem.setCount(newItem.getCount() - amount);
+
+                        if (item.getCount() <= 0) {
                             inv.clear(entry.getKey());
                         } else {
-                            inv.setItem(entry.getKey(), entry.getValue());
+                            inv.setItem(entry.getKey(), item);
+                        }
+
+                        if (newItem.getCount() <= 0) {
+                            break;
                         }
                     }
                 }
             }
 
-            inv.addItem(item);
+            inv.addItem(newItem);
             if (GunWar.debug) {
                 GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
-                        "物品：" + item.getCustomName() + "数量：" + item.getCount());
+                        "物品：" + newItem.getCustomName() + "数量：" + newItem.getCount());
             }
         }
     }
