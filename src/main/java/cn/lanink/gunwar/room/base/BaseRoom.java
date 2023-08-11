@@ -448,11 +448,15 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                         pojo.add("win");
                         pojo.add("killCount", victoryPlayers.get(player).getKillCount());
                         Config gunWarConfig = this.gunWar.getConfig();
-                        GbGameApi.saveAndReward(player, "GunWar", pojo,
-                                gunWarConfig.getInt("fapWinIntegral.money"),
-                                gunWarConfig.getInt("fapWinIntegral.point"),
-                                gunWarConfig.getInt("fapWinIntegral.exp"),
-                                gunWarConfig.getInt("fapWinIntegral.maxMultiplier"));
+                        int money = gunWarConfig.getInt("fapWinIntegral.money");
+                        int point = gunWarConfig.getInt("fapWinIntegral.point");
+                        int exp = gunWarConfig.getInt("fapWinIntegral.exp");
+                        int maxMultiplier = gunWarConfig.getInt("fapWinIntegral.maxMultiplier");
+                        if (maxMultiplier > 1) { //nsgb没有检查，这里检查下防止报错
+                            GbGameApi.saveAndReward(player, "GunWar", pojo, money, point, exp, maxMultiplier);
+                        } else {
+                            GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, point, exp);
+                        }
                     }
                 }
             }
@@ -464,11 +468,15 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                         pojo.add("played");
                         pojo.add("killCount", victoryPlayers.get(player).getKillCount());
                         Config gunWarConfig = this.gunWar.getConfig();
-                        GbGameApi.saveAndReward(player, "GunWar", pojo,
-                                gunWarConfig.getInt("fapLoseIntegral.money"),
-                                gunWarConfig.getInt("fapLoseIntegral.point"),
-                                gunWarConfig.getInt("fapLoseIntegral.exp"),
-                                gunWarConfig.getInt("fapLoseIntegral.maxMultiplier"));
+                        int money = gunWarConfig.getInt("fapLoseIntegral.money");
+                        int point = gunWarConfig.getInt("fapLoseIntegral.point");
+                        int exp = gunWarConfig.getInt("fapLoseIntegral.exp");
+                        int maxMultiplier = gunWarConfig.getInt("fapLoseIntegral.maxMultiplier");
+                        if (maxMultiplier > 1) { //nsgb没有检查，这里检查下防止报错
+                            GbGameApi.saveAndReward(player, "GunWar", pojo, money, point, exp, maxMultiplier);
+                        } else {
+                            GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, point, exp);
+                        }
                     }
                 }
             }
