@@ -869,13 +869,14 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 playerGameData.setTeam(Team.RED);
             case RED:
                 player.teleport(this.getRedSpawn());
-                Tools.giveItem(this, player, Team.RED, !this.isRoundEndCleanItem());
+                Tools.giveItem(this, player, Team.RED, this.isRoundEndCleanItem());
                 break;
             case BLUE_DEATH:
                 playerGameData.setTeam(Team.BLUE);
             case BLUE:
                 player.teleport(this.getBlueSpawn());
-                Tools.giveItem(this, player, Team.BLUE, !this.isRoundEndCleanItem());
+                Tools.giveItem(this, player, Team.BLUE, this.isRoundEndCleanItem());
+                break;
         }
         //复活音效
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {

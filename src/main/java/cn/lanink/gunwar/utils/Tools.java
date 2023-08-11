@@ -361,6 +361,7 @@ public class Tools {
         }
         for (String string : items) {
             Item newItem = ItemManage.of(string);
+            Item clone = newItem.clone();
 
             if (!allowAlreadyExists) {
                 for (Map.Entry<Integer, Item> entry : inv.getContents().entrySet()) {
@@ -387,7 +388,7 @@ public class Tools {
                 }
             }
 
-            inv.addItem(newItem);
+            inv.addItem(clone);
             if (GunWar.debug) {
                 GunWar.getInstance().getLogger().info("[debug] 给玩家：" + player.getName() +
                         "物品：" + newItem.getCustomName() + "数量：" + newItem.getCount());
