@@ -466,7 +466,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                     if (this.gunWar.isHasNsGB()) {
                         AbstractDataGamePlayerPojo pojo = Tools.getGamePlayerPojo(player);
                         pojo.add("played");
-                        pojo.add("killCount", victoryPlayers.get(player).getKillCount());
+                        pojo.add("killCount", defeatPlayers.get(player).getKillCount());
                         Config gunWarConfig = this.gunWar.getConfig();
                         int money = gunWarConfig.getInt("fapLoseIntegral.money");
                         int point = gunWarConfig.getInt("fapLoseIntegral.point");
