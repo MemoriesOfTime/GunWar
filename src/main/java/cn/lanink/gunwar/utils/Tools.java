@@ -1,5 +1,6 @@
 package cn.lanink.gunwar.utils;
 
+import cn.lanink.gamecore.utils.EntityUtils;
 import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gunwar.GunWar;
 import cn.lanink.gunwar.entity.EntityGunWarBomb;
@@ -20,6 +21,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.inventory.Inventory;
@@ -61,6 +65,32 @@ public class Tools {
         pojo.registerKey("killCount", "击杀数");
 
         return pojo;
+    }
+
+    /**
+     * 将玩家的NameTag显示给指定玩家
+     *
+     * @param player 玩家
+     * @param target 目标玩家
+     */
+    public static void showNameTag(Player player, Player target, boolean isShow) {
+        if (player == target) {
+            return;
+        }
+        //发包实现setNameTagVisible(true)
+        int dataFlags = EntityUtils.getEntityField("DATA_FLAGS", Entity.DATA_FLAGS);
+        int dataFlagCanShowNametag = EntityUtils.getEntityField("DATA_FLAG_CAN_SHOW_NAMETAG", Entity.DATA_FLAG_CAN_SHOW_NAMETAG);
+        if (player.getDataFlag(dataFlags, dataFlagCanShowNametag) != isShow) {
+            long flags = player.getDataPropertyLong(dataFlags);
+            flags ^= 1L << dataFlagCanShowNametag;
+            EntityMetadata metadata = new EntityMetadata();
+            metadata.put(new LongEntityData(dataFlags, flags));
+            player.sendData(target, metadata);
+        }
+        //发包实现setNameTagAlwaysVisible(true)
+        EntityMetadata metadata = new EntityMetadata();
+        metadata.put(new ByteEntityData(EntityUtils.getEntityField("DATA_ALWAYS_SHOW_NAMETAG", Entity.DATA_ALWAYS_SHOW_NAMETAG), isShow ? 1 : 0));
+        player.sendData(target, metadata);
     }
 
     /**

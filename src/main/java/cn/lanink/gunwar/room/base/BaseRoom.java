@@ -503,6 +503,13 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         for (Player player : this.getPlayerDataMap().keySet()) {
             this.playerRespawn(player);
         }
+
+        //名片显示给队友
+        for (Player p1 : this.getPlayerDataMap().keySet()) {
+            for (Player p2 : this.getPlayerDataMap().keySet()) {
+                Tools.showNameTag(p1, p2, this.getPlayerTeam(p1) == this.getPlayerTeam(p2));
+            }
+        }
     }
 
     public void roundEnd(Team victory) {
@@ -897,6 +904,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             player.getInventory().addItem(Tools.getItem(13)); //打开商店物品
         }
 
+        //队伍设置 位置传送 给予初始物品
         switch (this.getPlayerTeamAccurate(player)) {
             case RED_DEATH:
                 playerGameData.setTeam(Team.RED);
@@ -911,6 +919,10 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 Tools.giveItem(this, player, Team.BLUE, this.isRoundEndCleanItem());
                 break;
         }
+
+        //名片显示给队友
+        this.getPlayerDataMap(this.getPlayerTeamAccurate(player)).forEach(p -> Tools.showNameTag(player, p, true));
+
         //复活音效
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
             Tools.playSound(player, Sound.MOB_ENDERMEN_PORTAL);
