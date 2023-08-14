@@ -34,7 +34,7 @@ public class ScoreBoardTask extends PluginTask<GunWar> {
             this.cancel();
             return;
         }
-        if (this.room.getPlayerDataMap().size() > 0) {
+        if (!this.room.getPlayerDataMap().isEmpty()) {
             int red = 0;
             int blue = 0;
             if (this.room instanceof FreeForAllModeRoom) {

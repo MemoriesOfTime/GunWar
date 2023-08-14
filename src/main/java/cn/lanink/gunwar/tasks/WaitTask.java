@@ -80,7 +80,7 @@ public class WaitTask extends PluginTask<GunWar> {
                         () -> Tools.playSound(this.room, Sound.NOTE_FLUTE), 2, true);
                 this.cancel();
             }
-        }else if (this.room.getPlayerDataMap().size() > 0) {
+        }else if (!this.room.getPlayerDataMap().isEmpty()) {
             if (this.room.waitTime != this.room.getSetWaitTime()) {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
