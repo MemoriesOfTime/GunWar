@@ -127,6 +127,7 @@ game_blasting_youCarryBomb: "你携带着炸弹!"
 game_blasting_bombHasExploded: "§c炸弹已爆炸！"
 game_blasting_bombHasFallen: "§c炸弹已掉落！"
 game_blasting_bombHasBeenPickedUp: "§a炸弹已被拾取！"
+game_blasting_nameTag_carryBomb: "§eTNT"
 scoreBoardTitle: "§eGunWar"
 waitTimeScoreBoard: |-
   游戏模式: %gameMode%

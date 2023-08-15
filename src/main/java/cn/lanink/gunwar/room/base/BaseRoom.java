@@ -750,11 +750,16 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         return this.getPlayerData(player).getTeam();
     }
 
+    @Deprecated
+    public Set<Player> getPlayerDataMap(Team team) {
+        return this.getPlayers(team);
+    }
+
     /**
      * 根据队伍获取玩家列表
      * @return 玩家列表
      */
-    public Set<Player> getPlayerDataMap(Team team) {
+    public Set<Player> getPlayers(Team team) {
         HashSet<Player> set = new HashSet<>();
         for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
             if (team == Team.NULL && entry.getValue().getTeam() == Team.NULL) {
@@ -921,7 +926,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         }
 
         //名片显示给队友
-        this.getPlayerDataMap(this.getPlayerTeamAccurate(player)).forEach(p -> Tools.showNameTag(player, p, true));
+        this.getPlayers(this.getPlayerTeamAccurate(player)).forEach(p -> Tools.showNameTag(player, p, true));
 
         //复活音效
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {

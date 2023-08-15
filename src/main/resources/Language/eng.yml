@@ -130,6 +130,7 @@ game_blasting_youCarryBomb: "You carry a bomb!"
 game_blasting_bombHasExploded: "§cBomb has exploded!"
 game_blasting_bombHasFallen: "§cBomb has fallen!"
 game_blasting_bombHasBeenPickedUp: "§aThe bomb has been picked up!"
+game_blasting_nameTag_carryBomb: "§eTNT"
 scoreBoardTitle: "§eGunWars"
 waitTimeScoreBoard: |-
   GameMode: %gameMode%
