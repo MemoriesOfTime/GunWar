@@ -90,7 +90,7 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                                 String s;
                                 if (this.entityGunWarBomb.distance(this.getBlastingPointA()) <= this.getBlastingPointRadius()) {
                                     s = this.language.translateString("game_blasting_bombFound", "§cA");
-                                }else {
+                                } else {
                                     s = this.language.translateString("game_blasting_bombFound", "§9B");
                                 }
                                 Tools.sendTitle(this, Team.BLUE, "", s);
@@ -114,11 +114,27 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
                     bossBar.setText(s);
                     bossBar.setLength(this.entityGunWarBomb.getExplosionTime() / 50F * 100);
                 }
-            }else if (!this.bossBarMap.isEmpty()) {
+            } else if (!this.bossBarMap.isEmpty()) {
                 for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
                     entry.getKey().removeBossBar(entry.getValue().getBossBarId());
                 }
                 this.bossBarMap.clear();
+            }
+
+            //检查玩家是否还持有炸弹
+            Item item = Tools.getItem(201);
+            for (Player player : this.getPlayersAccurate(Team.RED)) {
+                boolean hasBomb = false;
+                for (Item i : player.getInventory().getContents().values()) {
+                    if (item.equals(i)) {
+                        hasBomb = true;
+                        player.setNameTag("§c" + player.getName() + " §r" + this.language.translateString("game_blasting_nameTag_carryBomb"));
+                    }
+                }
+
+                if (!hasBomb) {
+                    player.setNameTag("§c" + player.getName());
+                }
             }
         }
 

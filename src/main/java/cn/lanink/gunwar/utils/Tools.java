@@ -319,7 +319,7 @@ public class Tools {
     }
 
     public static void giveTeamIntegral(BaseRoom room, Team team, int integral) {
-        for (Player player : room.getPlayerDataMap(team)) {
+        for (Player player : room.getPlayers(team)) {
             room.addPlayerIntegral(player, integral);
         }
     }
