@@ -29,6 +29,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
 
     /**
      * 实体受到另一实体伤害事件
+     *
      * @param event 事件
      */
     @EventHandler(priority = EventPriority.LOWEST)
@@ -39,7 +40,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
             BaseRoom room = this.getListenerRoom(damagePlayer.getLevel());
             if (room == null) {
                 return;
-            }else if (!room.isPlaying(player) || !room.isPlaying(damagePlayer)) {
+            } else if (!room.isPlaying(player) || !room.isPlaying(damagePlayer)) {
                 event.setCancelled(true);
                 return;
             }
@@ -69,7 +70,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                                                     .replace("%damager%", damagePlayer.getName())
                                                     .replace("%player%", player.getName())
                                     );
-                                }else {
+                                } else {
                                     event.setCancelled(true);
                                 }
                                 return;
@@ -94,14 +95,14 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                                                 .replace("%damager%", damagePlayer.getName())
                                                 .replace("%player%", player.getName())
                                 );
-                            }else {
+                            } else {
                                 event.setCancelled(true);
                             }
                             return;
                         default:
                             break;
                     }
-                }else {
+                } else {
                     Item item = damagePlayer.getInventory().getItemInHand();
                     if (ItemManage.getItemType(item) == ItemManage.ItemType.WEAPON_MELEE) {
                         MeleeWeapon weapon = ItemManage.getMeleeWeapon(item);
@@ -115,7 +116,7 @@ public class DefaultDamageListener extends BaseGameListener<BaseRoom> {
                             Server.getInstance().getPluginManager().callEvent(ev);
                             if (ev.isCancelled()) {
                                 event.setCancelled(true);
-                            }else {
+                            } else {
                                 event.setKnockBack(weapon.getKnockBack());
                                 for (Effect effect : weapon.getEffects()) {
                                     player.addEffect(effect);
