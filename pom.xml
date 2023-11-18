@@ -6,7 +6,7 @@
 
     <groupId>cn.lanink</groupId>
     <artifactId>GunWar</artifactId>
-    <version>1.7.2-SNAPSHOT</version>
+    <version>1.7.2<!-- -SNAPSHOT--></version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -95,9 +95,13 @@
     </build>
 
     <distributionManagement>
+        <snapshotRepository>
+            <id>repo-lanink-cn</id>
+            <url>https://repo.lanink.cn/repository/maven-snapshots/</url>
+        </snapshotRepository>
         <repository>
-            <id>maven-repo</id>
-            <url>file:/www/wwwroot/repo.lanink.cn</url>
+            <id>repo-lanink-cn</id>
+            <url>https://repo.lanink.cn/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 
@@ -124,7 +128,7 @@
         </repository>
         <repository>
             <id>repo-lanink-cn</id>
-            <url>https://repo.lanink.cn/</url>
+            <url>https://repo.lanink.cn/repository/maven-public/</url>
         </repository>
     </repositories>
 

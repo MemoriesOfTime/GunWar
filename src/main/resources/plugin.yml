@@ -1,6 +1,6 @@
 name: GunWar
 main: cn.lanink.gunwar.GunWar
-version: "1.7.2-SNAPSHOT"
+version: "1.7.2"
 api: ["1.0.11"]
 load: POSTWORLD
 author: "LT_Name"
