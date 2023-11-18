@@ -903,7 +903,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
 
         Tools.rePlayerState(player, true);
         Tools.showPlayer(this, player);
-        playerGameData.setHealth(20F);
+        playerGameData.setHealth(this.gunWar.isEnableAloneHealth() ? 20F : player.getMaxHealth());
 
         if (this.getSupplyType() != SupplyType.CLOSE) {
             player.getInventory().addItem(Tools.getItem(13)); //打开商店物品

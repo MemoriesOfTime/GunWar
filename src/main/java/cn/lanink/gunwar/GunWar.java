@@ -416,7 +416,10 @@ public class GunWar extends PluginBase {
                 skin.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
                 skin.setTrusted(true);
                 skin.setSkinData(skinData);
-                String skinId = "GunWar" + img.getName().split("\\.")[0];
+                String skinId = "GunWar:" +
+                        img.getName().split("\\.")[0] + ":" +
+                        json.getName().split("\\.")[0] + ":" +
+                        flagSkinMap.size() + ":" + RANDOM.nextInt(1000);
                 skin.setSkinId(skinId);
 
                 Map<String, Object> skinJson = new Config(json, Config.JSON).getAll();

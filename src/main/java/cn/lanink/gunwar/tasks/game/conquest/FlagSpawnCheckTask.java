@@ -43,15 +43,15 @@ public class FlagSpawnCheckTask extends PluginTask<GunWar> {
         Vector3 vector3 = null;
         switch (i) {
             case 1:
-                entityLongFlag = this.room.aFlag;
+                entityLongFlag = this.room.flagA;
                 vector3 = this.room.getConquestPointA();
                 break;
             case 2:
-                entityLongFlag = this.room.bFlag;
+                entityLongFlag = this.room.flagB;
                 vector3 = this.room.getConquestPointB();
                 break;
             case 3:
-                entityLongFlag = this.room.cFlag;
+                entityLongFlag = this.room.flagC;
                 vector3 = this.room.getConquestPointC();
                 break;
         }
@@ -70,13 +70,13 @@ public class FlagSpawnCheckTask extends PluginTask<GunWar> {
             entityLongFlag.spawnToAll();
             switch (i) {
                 case 1:
-                    this.room.aFlag = entityLongFlag;
+                    this.room.flagA = entityLongFlag;
                     break;
                 case 2:
-                    this.room.bFlag = entityLongFlag;
+                    this.room.flagB = entityLongFlag;
                     break;
                 case 3:
-                    this.room.cFlag = entityLongFlag;
+                    this.room.flagC = entityLongFlag;
                     break;
             }
         }

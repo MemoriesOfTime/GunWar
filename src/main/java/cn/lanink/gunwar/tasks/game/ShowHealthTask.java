@@ -45,15 +45,16 @@ public class ShowHealthTask extends PluginTask<GunWar> {
                         break;
                     }
                 default:
-                    float health;
+                    float health = room.getPlayerHealth(entry.getKey());
+                    int maxHealth;
                     if (this.owner.isEnableAloneHealth()) {
-                        health = this.room.getPlayerHealth(entry.getKey());
+                        maxHealth = 20;
                     }else {
-                        health = entry.getKey().getHealth();
+                        maxHealth = entry.getKey().getMaxHealth();
                     }
                     bossBar.setText(this.language.translateString("gameTimeBoosBar",
-                            "§c" + String.format("%.1f", health) + "/20  "));
-                    bossBar.setLength(health / 20 * 100);
+                            "§c" + String.format("%.1f", health) + "/" + maxHealth + "§f  "));
+                    bossBar.setLength(health / maxHealth * 100);
                     break;
             }
         }

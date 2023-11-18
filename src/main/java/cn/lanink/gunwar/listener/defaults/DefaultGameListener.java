@@ -88,6 +88,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     event.getRegainReason() != EntityRegainHealthEvent.CAUSE_REGEN &&
                     event.getRegainReason() != EntityRegainHealthEvent.CAUSE_EATING) {
                 room.addHealth(player, event.getAmount());
+                if (GunWar.debug) {
+                    Server.getInstance().getLogger().info("[debug] Player:" + player.getName() + " RegainHealth:" + event.getAmount());
+                }
             }
             event.setCancelled(true);
         }
@@ -95,6 +98,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     /**
      * 伤害事件
+     *
      * @param event 事件
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -105,7 +109,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             if (room == null || !room.isPlaying(player)) {
                 return;
             }
-            
+
             if (room.getStatus() != IRoomStatus.ROOM_STATUS_GAME || room.getPlayerInvincibleTime(player) > 0) {
                 event.setCancelled(true);
                 return;
@@ -114,7 +118,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             if (player.getHealth() - event.getFinalDamage() < 1) {
                 event.setCancelled(true); //阻止死亡
             }
-            
+
             if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK &&
                     event.getCause() != EntityDamageEvent.DamageCause.PROJECTILE) {
                 GunWarPlayerDamageEvent ev = new GunWarPlayerDamageEvent(room, player, player, event.getFinalDamage());
@@ -123,7 +127,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                     room.lessHealth(player, ev.getDamagePlayer(), ev.getDamage());
                 }
             }
-        }else if (event.getEntity() instanceof EntityPlayerCorpse ||
+        } else if (event.getEntity() instanceof EntityPlayerCorpse ||
                 event.getEntity() instanceof EntityFlagStand ||
                 event.getEntity() instanceof EntityFlag ||
                 event.getEntity() instanceof EntityLongFlag ||
@@ -134,6 +138,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     /**
      * 玩家点击事件
+     *
      * @param event 事件
      */
     @EventHandler
@@ -147,7 +152,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (room == null || !room.isPlaying(player)) {
             return;
         }
-    
+
         Block block = event.getBlock();
         switch (block.getId()) {
             case Item.CRAFTING_TABLE:
@@ -171,7 +176,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             default:
                 break;
         }
-        
+
         if (item == null) {
             return;
         }
@@ -199,12 +204,12 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             SupplyPageConfig defaultPageConfig;
             if (room.getPlayerTeam(player) == Team.RED) {
                 defaultPageConfig = room.getRedTeamSupplyConfig().getDefaultPageConfig();
-            }else {
+            } else {
                 defaultPageConfig = room.getBlueTeamSupplyConfig().getDefaultPageConfig();
             }
             if (player.getLoginChainData().getDeviceOS() == 7) { //Win10
                 player.addWindow(defaultPageConfig.generateWindow());
-            }else {
+            } else {
                 player.showFormWindow(defaultPageConfig.generateForm());
             }
             event.setCancelled(true);
@@ -239,7 +244,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
             if (item.getId() < 1000) { //不阻止自定义物品
                 event.setCancelled(true);
             }
-        }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
+        } else if (room.getStatus() == IRoomStatus.ROOM_STATUS_GAME) {
             if (ItemManage.getItemType(tag) == ItemManage.ItemType.WEAPON_GUN) {
                 GunWeapon weapon = ItemManage.getGunWeapon(tag);
                 if (weapon == null) {
@@ -267,6 +272,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     /**
      * 玩家点击背包栏格子事件
+     *
      * @param event 事件
      */
     @EventHandler
@@ -282,13 +288,14 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         if (event.getSlot() >= event.getInventory().getSize()) {
             event.setCancelled(true);
             player.sendMessage(this.language.translateString("gameArmor"));
-        }else if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
+        } else if (room.getStatus() == IRoomStatus.ROOM_STATUS_WAIT) {
             event.setCancelled(true);
         }
     }
 
     /**
      * 抛射物被发射事件
+     *
      * @param event 事件
      */
     @EventHandler
@@ -306,7 +313,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
                 if (weapon != null) {
                     if (ItemManage.canAttack(player, weapon)) {
                         entity.namedTag.putCompound(BaseItem.GUN_WAR_ITEM_TAG, tag.getCompound(BaseItem.GUN_WAR_ITEM_TAG));
-                    }else {
+                    } else {
                         event.setCancelled(true);
                     }
                 }
@@ -316,6 +323,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     /**
      * 抛射物击中物体事件
+     *
      * @param event 事件
      */
     @EventHandler
@@ -380,6 +388,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     /**
      * 玩家重生事件
+     *
      * @param event 事件
      */
     @EventHandler(priority = EventPriority.MONITOR)
@@ -406,6 +415,7 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     /**
      * 玩家游戏模式改变事件
+     *
      * @param event 事件
      */
     @EventHandler(priority = EventPriority.MONITOR)

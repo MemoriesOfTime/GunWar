@@ -34,9 +34,9 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
     @Getter
     private final Vector3 conquestPointC;
 
-    public EntityLongFlag aFlag;
-    public EntityLongFlag bFlag;
-    public EntityLongFlag cFlag;
+    public EntityLongFlag flagA;
+    public EntityLongFlag flagB;
+    public EntityLongFlag flagC;
 
     private final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
     private int bossBarShowTime = 0;
@@ -53,9 +53,9 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
         String aPosString = config.getString("ConquestPointA");
         String bPosString = config.getString("ConquestPointB");
         String cPosString = config.getString("ConquestPointC");
-        if ("".equals(aPosString.trim()) ||
-                "".equals(bPosString.trim()) ||
-                "".equals(cPosString.trim())) {
+        if (aPosString.trim().isEmpty() ||
+                bPosString.trim().isEmpty() ||
+                cPosString.trim().isEmpty()) {
             throw new RoomLoadException("§c房间：" + level.getFolderName() + " 配置不完整，加载失败！");
         }
         this.conquestPointA = Tools.stringToVector3(aPosString);
@@ -70,17 +70,17 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
         this.redScore = this.getVictoryScore() / 2;
         this.blueScore = this.getVictoryScore() / 2;
 
-        if (this.aFlag != null) {
-            this.aFlag.close();
-            this.aFlag = null;
+        if (this.flagA != null) {
+            this.flagA.close();
+            this.flagA = null;
         }
-        if (this.bFlag != null) {
-            this.bFlag.close();
-            this.bFlag = null;
+        if (this.flagB != null) {
+            this.flagB.close();
+            this.flagB = null;
         }
-        if (this.cFlag != null) {
-            this.cFlag.close();
-            this.cFlag = null;
+        if (this.flagC != null) {
+            this.flagC.close();
+            this.flagC = null;
         }
 
         if (this.bossBarMap != null && !this.bossBarMap.isEmpty()) {
@@ -97,10 +97,10 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
         super.timeTask();
 
         if (!this.isRoundEnd()) {
-            if (this.aFlag != null && this.bFlag != null && this.cFlag != null) { //初始化时可能为空
-                String text = "§aA: " + (this.aFlag.getTeam() == Team.NULL ? "§fX" : this.aFlag.getTeam().getShowName()) +
-                        "   §aB: " + (this.bFlag.getTeam() == Team.NULL ? "§fX" : this.bFlag.getTeam().getShowName()) +
-                        "   §aC: " + (this.cFlag.getTeam() == Team.NULL ? "§fX" : this.cFlag.getTeam().getShowName());
+            if (this.flagA != null && this.flagB != null && this.flagC != null) { //初始化时可能为空
+                String text = "§aA: " + (this.flagA.getTeam() == Team.NULL ? "§fX" : this.flagA.getTeam().getShowName()) +
+                        "   §aB: " + (this.flagB.getTeam() == Team.NULL ? "§fX" : this.flagB.getTeam().getShowName()) +
+                        "   §aC: " + (this.flagC.getTeam() == Team.NULL ? "§fX" : this.flagC.getTeam().getShowName());
 
                 for (Player player : this.getPlayerDataMap().keySet()) {
                     Tools.createBossBar(player, this.bossBarMap);
@@ -122,24 +122,24 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
                 if (this.gameTime%5 == 0) {
                     int redFlagCount = 0;
                     int blueFlagCount = 0;
-                    if (this.aFlag.getKeepTime() > 5) {
-                        if (this.aFlag.getTeam() == Team.RED) {
+                    if (this.flagA.getKeepTime() > 5) {
+                        if (this.flagA.getTeam() == Team.RED) {
                             redFlagCount++;
-                        } else if (this.aFlag.getTeam() == Team.BLUE) {
+                        } else if (this.flagA.getTeam() == Team.BLUE) {
                             blueFlagCount++;
                         }
                     }
-                    if (this.bFlag.getKeepTime() > 5) {
-                        if (this.bFlag.getTeam() == Team.RED) {
+                    if (this.flagB.getKeepTime() > 5) {
+                        if (this.flagB.getTeam() == Team.RED) {
                             redFlagCount++;
-                        } else if (this.bFlag.getTeam() == Team.BLUE) {
+                        } else if (this.flagB.getTeam() == Team.BLUE) {
                             blueFlagCount++;
                         }
                     }
-                    if (this.cFlag.getKeepTime() > 5) {
-                        if (this.cFlag.getTeam() == Team.RED) {
+                    if (this.flagC.getKeepTime() > 5) {
+                        if (this.flagC.getTeam() == Team.RED) {
                             redFlagCount++;
-                        } else if (this.cFlag.getTeam() == Team.BLUE) {
+                        } else if (this.flagC.getTeam() == Team.BLUE) {
                             blueFlagCount++;
                         }
                     }

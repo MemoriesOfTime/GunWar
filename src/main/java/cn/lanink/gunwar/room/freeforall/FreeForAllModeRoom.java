@@ -11,11 +11,13 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Config;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * F.F.A 个人战 模式房间
@@ -34,6 +36,11 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
      */
     public FreeForAllModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
+
+        //移除FFA模式不需要的配置
+        config.remove("redTeamInitialItems");
+        config.remove("blueTeamInitialItems");
+        config.save();
 
         //针对未配置的情况，缩短默认的时间
         this.respawnNeedTime = config.getInt("respawn-need-time", 3);
@@ -75,7 +82,9 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
 
     @Override
     public void assignTeam() {
-        //无需分配队伍
+        for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
+            entry.getValue().setTeam(Team.RED);
+        }
     }
 
     @Override
@@ -89,7 +98,7 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
                     new VictoryTask(this.gunWar, this, list.get(0).getPlayer()),
                     20
             );
-        }else {
+        } else {
             this.endGame();
         }
     }
@@ -101,7 +110,7 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
         if (this.isRoundEndCleanItem()) {
             player.getInventory().clearAll();
             player.getUIInventory().clearAll();
-        }else {
+        } else {
             //清除一些必须清除的特殊物品
             PlayerInventory inventory = player.getInventory();
             Tools.removeGunWarItem(inventory, Tools.getItem(10));
@@ -113,6 +122,26 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
 
         Tools.giveItem(this, player, Team.NULL, !this.isRoundEndCleanItem());
 
-        player.teleport(this.randomSpawns.get(GunWar.RANDOM.nextInt(this.randomSpawns.size())));
+        //player.teleport(this.randomSpawns.get(GunWar.RANDOM.nextInt(this.randomSpawns.size())));
+    }
+
+    @Override
+    public Position getRedSpawn() {
+        return Position.fromObject(this.randomSpawns.get(GunWar.RANDOM.nextInt(this.randomSpawns.size())), this.getLevel());
+    }
+
+    @Override
+    public Position getBlueSpawn() {
+        return Position.fromObject(this.randomSpawns.get(GunWar.RANDOM.nextInt(this.randomSpawns.size())), this.getLevel());
+    }
+
+    @Override
+    public ArrayList<String> getRedTeamInitialItems() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public ArrayList<String> getBlueTeamInitialItems() {
+        return new ArrayList<>();
     }
 }
