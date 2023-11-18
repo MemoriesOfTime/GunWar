@@ -40,7 +40,7 @@ public class AsyncFlagRadiusCheckTask extends AsyncTask {
             try {
                 this.work(this.tick);
             } catch (Exception e) {
-                GunWar.getInstance().getLogger().error("FlagRadiusShowTask Error!", e);
+                GunWar.getInstance().getLogger().error("AsyncFlagRadiusCheckTask Error!", e);
             }
 
             this.tick++;
@@ -49,7 +49,7 @@ public class AsyncFlagRadiusCheckTask extends AsyncTask {
             try {
                 Thread.sleep(Math.max(50L - duration, 1));
             } catch (Exception e) {
-                GunWar.getInstance().getLogger().error("FlagRadiusShowTask Error!", e);
+                GunWar.getInstance().getLogger().error("AsyncFlagRadiusCheckTask Error!", e);
             }
         }
     }
@@ -67,15 +67,21 @@ public class AsyncFlagRadiusCheckTask extends AsyncTask {
                 cFlagPlayers.add(player);
             }
         }
-        this.checkCapturePoints(aFlagPlayers, this.room.aFlag);
-        this.checkCapturePoints(bFlagPlayers, this.room.bFlag);
-        this.checkCapturePoints(cFlagPlayers, this.room.cFlag);
+        this.checkCapturePoints(aFlagPlayers, this.room.flagA);
+        this.checkCapturePoints(bFlagPlayers, this.room.flagB);
+        this.checkCapturePoints(cFlagPlayers, this.room.flagC);
 
         if (tick%20 == 1) {
             this.showParticleEffect();
         }
     }
 
+    /**
+     * 检查旗帜占领进度
+     *
+     * @param players 在占领范围内的玩家列表
+     * @param flag 旗帜
+     */
     private void checkCapturePoints(ArrayList<Player> players, EntityLongFlag flag) {
         ArrayList<Player> redCount = new ArrayList<>();
         ArrayList<Player> blueCount = new ArrayList<>();
@@ -98,6 +104,9 @@ public class AsyncFlagRadiusCheckTask extends AsyncTask {
         }
     }
 
+    /**
+     * 显示占领范围粒子效果
+     */
     private void showParticleEffect() {
         LinkedList<Vector3> list = Tools.getRoundEdgePoint(this.room.getConquestPointA(), this.room.getConquestPointRadius());
         list.addAll(Tools.getRoundEdgePoint(this.room.getConquestPointB(), this.room.getConquestPointRadius()));
