@@ -232,13 +232,18 @@ public class ItemManage {
             if (GunWar.debug) {
                 GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )");
             }
+
+            if (!string.matches("\\w+:?\\w+&\\d+@[a-zA-Z_]+")) {
+                    throw new IllegalArgumentException("string format error");
+            }
+
             String[] s1 = string.split("&");
             String[] s2 = s1[1].split("@");
-            int count = Integer.parseInt(s2[0]);
+            int count = Math.max(0, Integer.parseInt(s2[0]));
             Item item = null;
             if ("item".equalsIgnoreCase(s2[1])) {
                 item = Item.fromString(s1[0]);
-            }else {
+            } else {
                 BaseItem baseItem = null;
                 switch (ItemManage.getItemType(s2[1])) {
                     case WEAPON_MELEE:
@@ -265,10 +270,7 @@ public class ItemManage {
                 return item;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (GunWar.debug) {
-            GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )  error out: air");
+            GunWar.getInstance().getLogger().error("ItemManage#of( " + string + " )  error out: air", e);
         }
         return Item.get(Item.AIR);
     }
