@@ -30,12 +30,14 @@ import cn.lanink.gunwar.utils.rsnpc.RsNpcVariable;
 import cn.lanink.gunwar.utils.rsnpc.RsNpcVariableV2;
 import cn.lanink.gunwar.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 import lombok.Getter;
+import updata.AutoData;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -160,6 +162,16 @@ public class GunWar extends PluginBase {
         this.getLogger().info("§l§e 插件开始加载！本插件是免费哒~如果你花钱了，那一定是被骗了~");
         this.getLogger().info("§l§e https://github.com/MemoriesOfTime/GunWar");
         this.getLogger().info("§l§e Version: " + VERSION);
+
+        try {
+            if (Server.getInstance().getPluginManager().getPlugin("AutoUpData") != null) {
+                if (AutoData.defaultUpDataByMaven(this, this.getFile(), "cn.lanink", "GunWar", null)) {
+                    return;
+                }
+            }
+        } catch (Throwable e) {
+            this.getLogger().warning("插件自动更新失败！请检查AutoUpData前置插件！");
+        }
 
         this.scoreboard = ScoreboardUtil.getScoreboard();
         //检查Tips
