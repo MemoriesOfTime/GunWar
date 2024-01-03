@@ -76,6 +76,7 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
             Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
             BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(level), config);
             baseRoom.setGameMode(gameMode);
+            baseRoom.saveConfig(); //保存配置，补全缺失的配置项
             this.addGameRoom(level, baseRoom);
             this.gunWar.getLogger().info("§a房间：" + level + " 已加载！");
             return true;

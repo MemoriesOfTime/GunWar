@@ -23,7 +23,7 @@ public abstract class BaseItem {
         this.item = Item.fromString(config.getString("id"));
         this.item.setCustomName(config.getString("showName", this.item.getName()));
         String lore = config.getString("lore");
-        if (!"".equals(lore.trim())) {
+        if (!lore.trim().isEmpty()) {
             this.item.setLore(lore.split("\n"));
         }
         if (!this.item.hasCompoundTag()) {
