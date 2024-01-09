@@ -51,34 +51,36 @@ public class GunWarGameRoomManager extends GameRoomManager<BaseRoom> {
         if (this.hasGameRoom(level)) {
             return false;
         }
-        Config config = this.gunWar.getRoomConfig(level);
-        if (config.getInt("waitTime", 0) == 0 ||
-                config.getInt("gameTime", 0) == 0 ||
-                "".equals(config.getString("waitSpawn", "").trim()) ||
-                /*"".equals(config.getString("redSpawn", "").trim()) ||
-                "".equals(config.getString("blueSpawn", "").trim()) ||*/
-                "".equals(config.getString("gameMode", "").trim())) {
-            this.gunWar.getLogger().warning("§c房间：" + level + " 配置不完整，加载失败！");
-            return false;
-        }
-        if (Server.getInstance().getLevelByName(level) == null && !Server.getInstance().loadLevel(level)) {
-            this.gunWar.getLogger().warning("§c房间：" + level + " 地图加载失败！");
-            return false;
-        }
-
-        String gameMode = config.getString("gameMode", "classic");
-        if (!ROOM_CLASS.containsKey(gameMode)) {
-            this.gunWar.getLogger().warning("§c房间：" + level + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
-            return false;
-        }
         try {
+            Config config = this.gunWar.getRoomConfig(level);
+            if (config.getInt("waitTime", 0) == 0 ||
+                    config.getInt("gameTime", 0) == 0 ||
+                    "".equals(config.getString("waitSpawn", "").trim()) ||
+                    /*"".equals(config.getString("redSpawn", "").trim()) ||
+                    "".equals(config.getString("blueSpawn", "").trim()) ||*/
+                    "".equals(config.getString("gameMode", "").trim())) {
+                this.gunWar.getLogger().warning("§c房间：" + level + " 配置不完整，加载失败！");
+                return false;
+            }
+            if (Server.getInstance().getLevelByName(level) == null && !Server.getInstance().loadLevel(level)) {
+                this.gunWar.getLogger().warning("§c房间：" + level + " 地图加载失败！");
+                return false;
+            }
+
+            String gameMode = config.getString("gameMode", "classic");
+            if (!ROOM_CLASS.containsKey(gameMode)) {
+                this.gunWar.getLogger().warning("§c房间：" + level + " 游戏模式设置错误！没有找到游戏模式: " + gameMode);
+                return false;
+            }
+
             Constructor<? extends BaseRoom> constructor = ROOM_CLASS.get(gameMode).getConstructor(Level.class, Config.class);
             BaseRoom baseRoom = constructor.newInstance(Server.getInstance().getLevelByName(level), config);
             baseRoom.setGameMode(gameMode);
+            baseRoom.saveConfig(); //保存配置，补全缺失的配置项
             this.addGameRoom(level, baseRoom);
             this.gunWar.getLogger().info("§a房间：" + level + " 已加载！");
             return true;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             this.gunWar.getLogger().error("§c加载房间：" + level + " 时出错，请检查配置文件", e);
             return false;
         }

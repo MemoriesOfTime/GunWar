@@ -57,12 +57,10 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
 
     @Override
     public void saveConfig() {
-        super.saveConfig();
-
         this.config.set("blastingPointA", this.blastingPointA);
         this.config.set("blastingPointB", this.blastingPointB);
 
-        this.config.save();
+        super.saveConfig();
     }
 
     @Override

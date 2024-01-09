@@ -97,17 +97,14 @@ public class RoomConfig {
                             "DemoFlashbang&1@weapon_projectile",
                             "DemoGun&1@weapon_gun"));
             config.set("initialItems", defaultItems);
-            config.save();
         }
         this.initialItems.addAll(config.getStringList("initialItems"));
         if (!config.exists("redTeamInitialItems")) {
             config.set("redTeamInitialItems", new ArrayList<>());
-            config.save();
         }
         this.redTeamInitialItems.addAll(config.getStringList("redTeamInitialItems"));
         if (!config.exists("blueTeamInitialItems")) {
             config.set("blueTeamInitialItems", new ArrayList<>());
-            config.save();
         }
         this.blueTeamInitialItems.addAll(config.getStringList("blueTeamInitialItems"));
 
@@ -115,12 +112,10 @@ public class RoomConfig {
         this.defaultSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("supply", "DefaultSupply"));
         if (!config.exists("redTeamSupply")) {
             config.set("redTeamSupply", config.getString("supply", "DefaultSupply"));
-            config.save();
         }
         this.redTeamSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("redTeamSupply"));
         if (!config.exists("blueTeamSupply")) {
             config.set("blueTeamSupply", config.getString("supply", "DefaultSupply"));
-            config.save();
         }
         this.blueTeamSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("blueTeamSupply"));
         this.supplyEnableTime = config.getInt("supplyEnableTime", 10);  //商店启用时间 单位：秒 仅ONLY_ROUND_START商店模式有效

@@ -9,7 +9,6 @@ import cn.lanink.gunwar.tasks.VictoryTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
@@ -37,11 +36,6 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
     public FreeForAllModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
 
-        //移除FFA模式不需要的配置
-        config.remove("redTeamInitialItems");
-        config.remove("blueTeamInitialItems");
-        config.save();
-
         //针对未配置的情况，缩短默认的时间
         this.respawnNeedTime = config.getInt("respawn-need-time", 3);
 
@@ -51,6 +45,18 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
         if (this.randomSpawns.isEmpty()) {
             throw new RoomLoadException("randomSpawns is empty");
         }
+    }
+
+    @Override
+    public void saveConfig() {
+        super.saveConfig();
+
+        //移除FFA模式不需要的配置
+        config.remove("redTeamInitialItems");
+        config.remove("blueTeamInitialItems");
+        config.remove("roundEndCleanItem");
+
+        config.save();
     }
 
     @Override
@@ -107,18 +113,8 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
     public void playerRespawn(Player player) {
         super.playerRespawn(player);
 
-        if (this.isRoundEndCleanItem()) {
-            player.getInventory().clearAll();
-            player.getUIInventory().clearAll();
-        } else {
-            //清除一些必须清除的特殊物品
-            PlayerInventory inventory = player.getInventory();
-            Tools.removeGunWarItem(inventory, Tools.getItem(10));
-            Tools.removeGunWarItem(inventory, Tools.getItem(11));
-            Tools.removeGunWarItem(inventory, Tools.getItem(12));
-            Tools.removeGunWarItem(inventory, Tools.getItem(13));
-            Tools.removeGunWarItem(inventory, Tools.getItem(201));
-        }
+        player.getInventory().clearAll();
+        player.getUIInventory().clearAll();
 
         Tools.giveItem(this, player, Team.NULL, !this.isRoundEndCleanItem());
 
