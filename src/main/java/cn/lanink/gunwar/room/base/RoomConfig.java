@@ -129,6 +129,8 @@ public class RoomConfig {
             this.config.remove(key);
         }
 
+        this.config.set("gameMode", this.gameMode);
+
         this.config.set("minPlayers", this.minPlayers);
         this.config.set("maxPlayers", this.maxPlayers);
         this.config.set("waitSpawn", this.waitSpawn);
