@@ -23,9 +23,9 @@ import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
+import cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojo;
 import cn.lanink.teamsystem.TeamSystem;
 import cn.nsgamebase.api.GbGameApi;
-import cn.nsgamebase.entity.pojo.AbstractDataGamePlayerPojo;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -443,20 +443,15 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 for (Player player : victoryPlayers.keySet()) {
                     Tools.executeCommands(player, vCmds);
                     if (this.gunWar.isHasNsGB()) {
-                        AbstractDataGamePlayerPojo pojo = Tools.getGamePlayerPojo(player);
+                        GunWarDataGamePlayerPojo pojo = GunWarDataGamePlayerPojo.getGamePlayerPojo(player);
                         pojo.add("played");
                         pojo.add("win");
                         pojo.add("killCount", victoryPlayers.get(player).getKillCount());
                         Config gunWarConfig = this.gunWar.getConfig();
                         int money = gunWarConfig.getInt("fapWinIntegral.money");
-                        int point = gunWarConfig.getInt("fapWinIntegral.point");
                         int exp = gunWarConfig.getInt("fapWinIntegral.exp");
                         int maxMultiplier = gunWarConfig.getInt("fapWinIntegral.maxMultiplier");
-                        if (maxMultiplier > 1) { //nsgb没有检查，这里检查下防止报错
-                            GbGameApi.saveAndReward(player, "GunWar", pojo, money, point, exp, maxMultiplier);
-                        } else {
-                            GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, point, exp);
-                        }
+                        GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, exp, maxMultiplier);
                     }
                 }
             }
@@ -464,19 +459,14 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 for (Player player : defeatPlayers.keySet()) {
                     Tools.executeCommands(player, dCmds);
                     if (this.gunWar.isHasNsGB()) {
-                        AbstractDataGamePlayerPojo pojo = Tools.getGamePlayerPojo(player);
+                        GunWarDataGamePlayerPojo pojo = GunWarDataGamePlayerPojo.getGamePlayerPojo(player);
                         pojo.add("played");
                         pojo.add("killCount", defeatPlayers.get(player).getKillCount());
                         Config gunWarConfig = this.gunWar.getConfig();
                         int money = gunWarConfig.getInt("fapLoseIntegral.money");
-                        int point = gunWarConfig.getInt("fapLoseIntegral.point");
                         int exp = gunWarConfig.getInt("fapLoseIntegral.exp");
                         int maxMultiplier = gunWarConfig.getInt("fapLoseIntegral.maxMultiplier");
-                        if (maxMultiplier > 1) { //nsgb没有检查，这里检查下防止报错
-                            GbGameApi.saveAndReward(player, "GunWar", pojo, money, point, exp, maxMultiplier);
-                        } else {
-                            GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, point, exp);
-                        }
+                        GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, exp, maxMultiplier);
                     }
                 }
             }

@@ -183,11 +183,11 @@
         </dependency>
 
         <dependency>
-            <groupId>FakeNsGameBase</groupId>
-            <artifactId>FakeNsGameBase</artifactId>
+            <groupId>NsGameBase</groupId>
+            <artifactId>NsGameBase</artifactId>
             <version>1.0.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/FakeNsGameBase.jar</systemPath>
+            <systemPath>${project.basedir}/lib/NsGameBase_FakeLib.jar</systemPath>
         </dependency>
     </dependencies>
 

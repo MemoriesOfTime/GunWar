@@ -37,13 +37,11 @@ public class ConfigUpdateUtils {
 
             LinkedHashMap<String, Object> fapWinIntegral = new LinkedHashMap<>();
             fapWinIntegral.put("money", 10);
-            fapWinIntegral.put("point", 0);
             fapWinIntegral.put("exp", 10);
             fapWinIntegral.put("maxMultiplier", 1);
 
             LinkedHashMap<String, Object> fapLoseIntegral = new LinkedHashMap<>();
             fapLoseIntegral.put("money", 5);
-            fapLoseIntegral.put("point", 0);
             fapLoseIntegral.put("exp", 5);
             fapLoseIntegral.put("maxMultiplier", 1);
 
