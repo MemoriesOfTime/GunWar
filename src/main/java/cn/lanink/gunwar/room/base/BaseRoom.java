@@ -25,7 +25,6 @@ import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
 import cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojo;
 import cn.lanink.teamsystem.TeamSystem;
-import cn.nsgamebase.api.GbGameApi;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
@@ -451,7 +450,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                         int money = gunWarConfig.getInt("fapWinIntegral.money");
                         int exp = gunWarConfig.getInt("fapWinIntegral.exp");
                         int maxMultiplier = gunWarConfig.getInt("fapWinIntegral.maxMultiplier");
-                        GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, exp, maxMultiplier);
+                        cn.nsgamebase.api.GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, exp, maxMultiplier);
                     }
                 }
             }
@@ -466,7 +465,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                         int money = gunWarConfig.getInt("fapLoseIntegral.money");
                         int exp = gunWarConfig.getInt("fapLoseIntegral.exp");
                         int maxMultiplier = gunWarConfig.getInt("fapLoseIntegral.maxMultiplier");
-                        GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, exp, maxMultiplier);
+                        cn.nsgamebase.api.GbGameApi.saveAndReward(player.getName(), "GunWar", pojo, money, exp, maxMultiplier);
                     }
                 }
             }
