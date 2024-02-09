@@ -23,7 +23,6 @@ import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
-import cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojo;
 import cn.lanink.teamsystem.TeamSystem;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -442,7 +441,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 for (Player player : victoryPlayers.keySet()) {
                     Tools.executeCommands(player, vCmds);
                     if (this.gunWar.isHasNsGB()) {
-                        GunWarDataGamePlayerPojo pojo = GunWarDataGamePlayerPojo.getGamePlayerPojo(player);
+                        cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojo pojo = cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojo.getGamePlayerPojo(player);
                         pojo.add("played");
                         pojo.add("win");
                         pojo.add("killCount", victoryPlayers.get(player).getKillCount());
@@ -458,7 +457,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
                 for (Player player : defeatPlayers.keySet()) {
                     Tools.executeCommands(player, dCmds);
                     if (this.gunWar.isHasNsGB()) {
-                        GunWarDataGamePlayerPojo pojo = GunWarDataGamePlayerPojo.getGamePlayerPojo(player);
+                        cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojo pojo = cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojo.getGamePlayerPojo(player);
                         pojo.add("played");
                         pojo.add("killCount", defeatPlayers.get(player).getKillCount());
                         Config gunWarConfig = this.gunWar.getConfig();
