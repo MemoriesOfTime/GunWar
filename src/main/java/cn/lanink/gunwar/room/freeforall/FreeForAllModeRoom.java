@@ -56,7 +56,9 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
         config.remove("blueTeamInitialItems");
         config.remove("roundEndCleanItem");
 
-        config.set("randomSpawns", this.randomSpawns);
+        for (Vector3 vector3 : this.randomSpawns) {
+            config.set("randomSpawns", Tools.vector3ToString(vector3));
+        }
 
         config.save();
     }
