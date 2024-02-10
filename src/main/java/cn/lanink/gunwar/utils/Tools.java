@@ -117,10 +117,15 @@ public class Tools {
 
     public static Vector3 stringToVector3(String string) {
         String[] s = string.split(":");
-        return new Vector3(Integer.parseInt(s[0]),
-                Integer.parseInt(s[1]),
-                Integer.parseInt(s[2])
+        return new Vector3(
+                toDouble(s[0]),
+                toDouble(s[1]),
+                toDouble(s[2])
         );
+    }
+
+    public static String vector3ToString(Vector3 vector3) {
+        return vector3.x + ":" + vector3.y + ":" + vector3.z;
     }
 
     /**
