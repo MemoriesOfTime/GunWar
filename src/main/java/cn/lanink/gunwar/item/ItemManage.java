@@ -239,7 +239,7 @@ public class ItemManage {
 
             String[] s1 = string.split("&");
             String[] s2 = s1[1].split("@");
-            int count = Math.max(0, Integer.parseInt(s2[0]));
+            int count = Math.max(1, Integer.parseInt(s2[0]));
             Item item = null;
             if ("item".equalsIgnoreCase(s2[1])) {
                 item = Item.fromString(s1[0]);
