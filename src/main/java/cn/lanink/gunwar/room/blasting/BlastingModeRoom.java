@@ -32,7 +32,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BlastingModeRoom extends BaseRoundModeRoom {
 
-    protected final String blastingPointA, blastingPointB;
+    protected final String blastingPointA;
+    protected final String blastingPointB;
+    protected final int bombExplosionTime;
+
     protected EntityGunWarBomb entityGunWarBomb;
     private EntityGunWarBombBlock entityGunWarBombBlock;
     protected final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
@@ -53,14 +56,18 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
         if ("".equals(this.blastingPointA.trim()) || "".equals(this.blastingPointB.trim())) {
             throw new RoomLoadException("§c房间：" + level.getFolderName() + " 配置不完整，加载失败！");
         }
+        this.bombExplosionTime = config.getInt("bombExplosionTime", 50);
     }
 
     @Override
     public void saveConfig() {
+        super.saveConfig();
+
         this.config.set("blastingPointA", this.blastingPointA);
         this.config.set("blastingPointB", this.blastingPointB);
+        this.config.set("bombExplosionTime", this.bombExplosionTime);
 
-        super.saveConfig();
+        this.config.save();
     }
 
     @Override
@@ -368,6 +375,13 @@ public class BlastingModeRoom extends BaseRoundModeRoom {
      */
     public int getDemolitionBombTime() {
         return 5 * 20;
+    }
+
+    /**
+     * @return 炸弹爆炸时间 (秒)
+     */
+    public int getBombExplosionTime() {
+        return this.bombExplosionTime;
     }
 
 }

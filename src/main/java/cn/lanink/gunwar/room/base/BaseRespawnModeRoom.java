@@ -43,9 +43,11 @@ public abstract class BaseRespawnModeRoom extends BaseRoom {
 
     @Override
     public void saveConfig() {
+        super.saveConfig();
+
         this.config.set("respawn-need-time", this.respawnNeedTime);
 
-        super.saveConfig();
+        this.config.save();
     }
 
     @Override

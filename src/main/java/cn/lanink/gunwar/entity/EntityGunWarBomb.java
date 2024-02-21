@@ -27,7 +27,7 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
         this.room = room;
         this.source = source;
         this.setNameTagAlwaysVisible(false);
-        this.fuse = 50*20;
+        this.fuse = room.getBombExplosionTime() * 20;
     }
 
     @Override
