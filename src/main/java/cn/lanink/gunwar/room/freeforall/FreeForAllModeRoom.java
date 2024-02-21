@@ -52,17 +52,17 @@ public class FreeForAllModeRoom extends BaseRespawnModeRoom {
         super.saveConfig();
 
         //移除FFA模式不需要的配置
-        config.remove("redTeamInitialItems");
-        config.remove("blueTeamInitialItems");
-        config.remove("roundEndCleanItem");
+        this.config.remove("redTeamInitialItems");
+        this.config.remove("blueTeamInitialItems");
+        this.config.remove("roundEndCleanItem");
 
         ArrayList<String> randomSpawnList = new ArrayList<>();
         for (Vector3 vector3 : this.randomSpawns) {
             randomSpawnList.add(Tools.vector3ToString(vector3));
         }
-        config.set("randomSpawns", randomSpawnList);
+        this.config.set("randomSpawns", randomSpawnList);
 
-        config.save();
+        this.config.save();
     }
 
     @Override
