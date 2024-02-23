@@ -233,7 +233,7 @@ public class ItemManage {
                 GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )");
             }
 
-            if (!string.matches("\\w+:?\\w+&\\d+@[a-zA-Z_]+")) {
+            if (!string.matches("(\\w+:?\\w)+:?\\d+&\\d+@[a-zA-Z_]+")) {
                     throw new IllegalArgumentException("string format error");
             }
 
