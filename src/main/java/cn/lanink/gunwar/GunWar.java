@@ -5,6 +5,7 @@ import cn.lanink.gamecore.listener.BaseGameListener;
 import cn.lanink.gamecore.scoreboard.ScoreboardUtil;
 import cn.lanink.gamecore.scoreboard.base.IScoreboard;
 import cn.lanink.gamecore.utils.Language;
+import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
 import cn.lanink.gunwar.gui.GuiListener;
@@ -12,6 +13,8 @@ import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
 import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
+import cn.lanink.gunwar.listener.defaults.nkmot.NKMOTRoomLevelProtection;
+import cn.lanink.gunwar.listener.defaults.nkpm1e.PM1ERoomLevelProtection;
 import cn.lanink.gunwar.room.base.GunWarGameRoomManager;
 import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
@@ -142,7 +145,11 @@ public class GunWar extends PluginBase {
         }
 
         //注册监听器
-        registerListener("RoomLevelProtection", RoomLevelProtection.class);
+        if (NukkitTypeUtils.getNukkitType() == NukkitTypeUtils.NukkitType.MOT) {
+            registerListener("RoomLevelProtection", NKMOTRoomLevelProtection.class);
+        } else {
+            registerListener("RoomLevelProtection", PM1ERoomLevelProtection.class);
+        }
         registerListener("DefaultChatListener", DefaultChatListener.class);
         registerListener("DefaultGameListener", DefaultGameListener.class);
         registerListener("DefaultDamageListener", DefaultDamageListener.class);

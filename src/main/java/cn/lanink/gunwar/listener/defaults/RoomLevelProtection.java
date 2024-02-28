@@ -120,18 +120,6 @@ public class RoomLevelProtection extends BaseGameListener<BaseRoom> {
     }
 
     /**
-     * 物品展示框丢出事件
-     * @param event 事件
-     */
-    @EventHandler
-    public void onFrameDropItem(ItemFrameDropItemEvent event) {
-        Level level = event.getItemFrame() == null ? null : event.getItemFrame().getLevel();
-        if (level != null && this.getListenerRooms().containsKey(level.getFolderName())) {
-            event.setCancelled();
-        }
-    }
-
-    /**
      * 饥饿值变化事件
      * @param event 事件
      */
