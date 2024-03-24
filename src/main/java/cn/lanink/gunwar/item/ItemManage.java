@@ -14,6 +14,7 @@ import cn.nukkit.utils.Config;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -233,9 +234,9 @@ public class ItemManage {
                 GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )");
             }
 
-            if (!string.matches("(\\w+:?\\w)+:?\\d+&\\d+@[a-zA-Z_]+")) {
-                    throw new IllegalArgumentException("string format error");
-            }
+            /*if (!string.matches("(\\w+:?\\w)+:?\\d+&\\d+@[a-zA-Z_]+")) {
+                throw new IllegalArgumentException("string format error");
+            }*/
 
             String[] s1 = string.split("&");
             String[] s2 = s1[1].split("@");
@@ -262,13 +263,12 @@ public class ItemManage {
                     item = baseItem.getItem();
                 }
             }
-            if (item != null) {
-                item.setCount(count);
-                if (GunWar.debug) {
-                    GunWar.getInstance().getLogger().info("[debug] ItemManage#of( " + string + " )  out: " + item);
-                }
-                return item;
+            Objects.requireNonNull(item);
+            item.setCount(count);
+            if (GunWar.debug || item.getId() == 0) {
+                GunWar.getInstance().getLogger().info((GunWar.debug ? "[debug] " : "") + "ItemManage#of( " + string + " )  out: " + item);
             }
+            return item;
         } catch (Exception e) {
             GunWar.getInstance().getLogger().error("ItemManage#of( " + string + " )  error out: air", e);
         }
