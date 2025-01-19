@@ -953,7 +953,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         player.getUIInventory().clearAll();
         player.getLevel().addSound(player, Sound.GAME_PLAYER_DIE);
         player.getAdventureSettings().set(AdventureSettings.Type.ALLOW_FLIGHT, true).update();
-        player.setGamemode(Player.VIEW);
+        player.setGamemode(Player.SPECTATOR);
         Tools.hidePlayer(this, player);
         if (this.getPlayerTeamAccurate(player) == Team.RED) {
             playerGameData.setTeam(Team.RED_DEATH);
