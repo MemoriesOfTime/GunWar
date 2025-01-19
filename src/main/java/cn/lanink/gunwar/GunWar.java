@@ -26,7 +26,6 @@ import cn.lanink.gunwar.utils.FlagSkinType;
 import cn.lanink.gunwar.utils.ItemKillMessageUtils;
 import cn.lanink.gunwar.utils.MetricsLite;
 import cn.lanink.gunwar.utils.gamerecord.RankingManager;
-import cn.lanink.gunwar.utils.rsnpc.RsNpcVariable;
 import cn.lanink.gunwar.utils.rsnpc.RsNpcVariableV2;
 import cn.lanink.gunwar.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
@@ -186,12 +185,8 @@ public class GunWar extends PluginBase {
         }
         //对接RsNPC变量
         try {
-            Class.forName("com.smallaswater.npc.variable.VariableManage");
-            try {
-                com.smallaswater.npc.variable.VariableManage.addVariableV2("GunWarVariable", RsNpcVariableV2.class);
-            } catch (Exception e) {
-                com.smallaswater.npc.variable.VariableManage.addVariable("GunWarVariable", RsNpcVariable.class);
-            }
+            Class.forName("com.smallaswater.npc.variable.BaseVariableV2");
+            com.smallaswater.npc.variable.VariableManage.addVariableV2("GunWarVariable", RsNpcVariableV2.class);
         } catch (Exception ignored) {
 
         }
