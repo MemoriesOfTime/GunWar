@@ -1,12 +1,14 @@
 name: GunWar
 main: cn.lanink.gunwar.GunWar
-version: "1.7.3"
-api: ["1.0.11"]
+version: "1.7.3-NKMOT"
+api: ["Nukkit-MOT"]
 load: POSTWORLD
 author: "LT_Name"
 website: "https://www.lanink.cn"
 depend:
   - "MemoriesOfTime-GameCore"
+softdepend:
+  - "NsGameBase"
 
 permissions:
   GunWar.command.user:

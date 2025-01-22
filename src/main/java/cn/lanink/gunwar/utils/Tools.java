@@ -339,7 +339,7 @@ public class Tools {
      * @param cmds 命令
      */
     public static void executeCommands(Player player, List<String> cmds) {
-        if (player == null || cmds == null || cmds.size() < 1) {
+        if (player == null || cmds == null || cmds.isEmpty()) {
             return;
         }
         for (String s : cmds) {
@@ -627,6 +627,7 @@ public class Tools {
         tag.putCompound("Fireworks",(new CompoundTag("Fireworks")).putList(new ListTag<CompoundTag>("Explosions").add(ex)).putByte("Flight",1));
         item.setNamedTag(tag);
         CompoundTag nbt = new CompoundTag();
+        nbt.putBoolean("IsGunWarFirework", true);
         nbt.putList(new ListTag<DoubleTag>("Pos")
                 .add(new DoubleTag("",position.x+0.5D))
                 .add(new DoubleTag("",position.y+0.5D))

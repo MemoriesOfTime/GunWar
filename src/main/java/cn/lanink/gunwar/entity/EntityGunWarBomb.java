@@ -31,6 +31,12 @@ public class EntityGunWarBomb extends EntityPrimedTNT {
     }
 
     @Override
+    protected void initEntity() {
+        super.initEntity();
+        this.fuse = 50*20;
+    }
+
+    @Override
     public String getName() {
         return GunWar.getInstance().getLanguage().translateString("item_Bomb_Name");
     }

@@ -23,6 +23,7 @@ import cn.lanink.gunwar.tasks.game.TimeTask;
 import cn.lanink.gunwar.utils.Tools;
 import cn.lanink.gunwar.utils.gamerecord.GameRecord;
 import cn.lanink.gunwar.utils.gamerecord.RecordType;
+import cn.lanink.gunwar.utils.nsgb.GunWarDataGamePlayerPojoUtils;
 import cn.lanink.teamsystem.TeamSystem;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
@@ -417,34 +418,40 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         if (victory != 1 && victory != 2) {
             return;
         }
-        LinkedList<Player> victoryPlayers = new LinkedList<>();
-        LinkedList<Player> defeatPlayers = new LinkedList<>();
+        LinkedHashMap<Player, PlayerGameData> victoryPlayers = new LinkedHashMap<>();
+        LinkedHashMap<Player, PlayerGameData> defeatPlayers = new LinkedHashMap<>();
         for (Map.Entry<Player, PlayerGameData> entry : this.getPlayerDataMap().entrySet()) {
             if (victory == 1) {
                 if (entry.getValue().getTeam() == Team.RED || entry.getValue().getTeam() == Team.RED_DEATH) {
-                    victoryPlayers.add(entry.getKey());
+                    victoryPlayers.put(entry.getKey(), entry.getValue());
                 }else {
-                    defeatPlayers.add(entry.getKey());
+                    defeatPlayers.put(entry.getKey(), entry.getValue());
                 }
             }else {
                 if (entry.getValue().getTeam() == Team.BLUE || entry.getValue().getTeam() == Team.BLUE_DEATH) {
-                    victoryPlayers.add(entry.getKey());
+                    victoryPlayers.put(entry.getKey(), entry.getValue());
                 }else {
-                    defeatPlayers.add(entry.getKey());
+                    defeatPlayers.put(entry.getKey(), entry.getValue());
                 }
             }
         }
         Server.getInstance().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
             List<String> vCmds = GunWar.getInstance().getConfig().getStringList("胜利执行命令");
             List<String> dCmds = GunWar.getInstance().getConfig().getStringList("失败执行命令");
-            if (!victoryPlayers.isEmpty() && !vCmds.isEmpty()) {
-                for (Player player : victoryPlayers) {
+            if (!victoryPlayers.isEmpty()) {
+                for (Player player : victoryPlayers.keySet()) {
                     Tools.executeCommands(player, vCmds);
+                    if (this.gunWar.isHasNsGB()) {
+                        GunWarDataGamePlayerPojoUtils.onWin(victoryPlayers.get(player));
+                    }
                 }
             }
-            if (!defeatPlayers.isEmpty() && !dCmds.isEmpty()) {
-                for (Player player : defeatPlayers) {
+            if (!defeatPlayers.isEmpty()) {
+                for (Player player : defeatPlayers.keySet()) {
                     Tools.executeCommands(player, dCmds);
+                    if (this.gunWar.isHasNsGB()) {
+                        GunWarDataGamePlayerPojoUtils.onLose(defeatPlayers.get(player));
+                    }
                 }
             }
         }, 10);

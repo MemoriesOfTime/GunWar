@@ -21,13 +21,12 @@ import cn.lanink.gunwar.utils.Tools;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.EventPriority;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityRegainHealthEvent;
-import cn.nukkit.event.entity.ProjectileHitEvent;
-import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.player.PlayerChangeSkinEvent;
 import cn.nukkit.event.player.PlayerGameModeChangeEvent;
@@ -51,6 +50,16 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
 
     private final GunWar gunWar = GunWar.getInstance();
     private final Language language = GunWar.getInstance().getLanguage();
+
+    @EventHandler()
+    public void onEntityExplosionPrime(EntityExplosionPrimeEvent event) {
+        if (event.getEntity() instanceof EntityFirework) {
+            Entity entity = event.getEntity();
+            if (entity.namedTag != null && entity.namedTag.getBoolean("IsGunWarFirework")) {
+                event.setCancelled();
+            }
+        }
+    }
 
     @EventHandler
     public void onPlayerChangeSkin(PlayerChangeSkinEvent event) { //此事件仅玩家主动修改皮肤时触发，不需要针对插件修改特判
