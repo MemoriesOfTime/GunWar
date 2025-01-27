@@ -64,6 +64,17 @@ public class ConquestModeRoom extends BaseRespawnModeRoom {
     }
 
     @Override
+    public void saveConfig() {
+        super.saveConfig();
+
+        this.config.set("ConquestPointA", Tools.vector3ToString(this.conquestPointA));
+        this.config.set("ConquestPointB", Tools.vector3ToString(this.conquestPointB));
+        this.config.set("ConquestPointC", Tools.vector3ToString(this.conquestPointC));
+
+        this.config.save();
+    }
+
+    @Override
     protected void initData() {
         super.initData();
 
