@@ -42,12 +42,14 @@ public class WaitTask extends PluginTask<GunWar> {
             player.getInventory().setItem(5, Tools.getItem(12)); //队伍选择
             player.getInventory().setItem(8, Tools.getItem(10)); //退出房间
         }
-
-        if (this.room.getPlayerDataMap().size() >= this.room.getMinPlayers()) {
+        boolean isEvenPlayerNum = room.isEvenPlayerNum();
+        if (this.room.getPlayerDataMap().size() >= this.room.getMinPlayers()
+                && (isEvenPlayerNum && this.room.getPlayerDataMap().size() % 2 == 0) || !isEvenPlayerNum) {
             if (this.room.getPlayerDataMap().size() == this.room.getMaxPlayers() && this.room.waitTime > 10) {
                 this.room.waitTime = 10;
             }
             this.room.waitTime--;
+
             if (this.room.waitTime > 0) {
                 String title = "§e";
                 if (this.room.waitTime <= 10) {
@@ -74,13 +76,13 @@ public class WaitTask extends PluginTask<GunWar> {
                     }
                     owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
                 }
-            }else {
+            } else {
                 this.room.startGame();
                 Server.getInstance().getScheduler().scheduleDelayedTask(this.owner,
                         () -> Tools.playSound(this.room, Sound.NOTE_FLUTE), 2, true);
                 this.cancel();
             }
-        }else if (!this.room.getPlayerDataMap().isEmpty()) {
+        } else if (!this.room.getPlayerDataMap().isEmpty()) {
             if (this.room.waitTime != this.room.getSetWaitTime()) {
                 this.room.waitTime = this.room.getSetWaitTime();
             }
@@ -95,7 +97,7 @@ public class WaitTask extends PluginTask<GunWar> {
                 }
                 owner.getScoreboard().showScoreboard(entry.getKey(), this.language.translateString("scoreBoardTitle"), ms);
             }
-        }else {
+        } else {
             this.room.endGame();
             this.cancel();
         }

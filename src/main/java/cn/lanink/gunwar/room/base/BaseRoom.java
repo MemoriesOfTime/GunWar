@@ -59,6 +59,8 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
     public int waitTime;
     public int gameTime;
 
+
+
     protected final ConcurrentHashMap<Player, PlayerGameData> players = new ConcurrentHashMap<>();
 
     public int redScore; //队伍得分
