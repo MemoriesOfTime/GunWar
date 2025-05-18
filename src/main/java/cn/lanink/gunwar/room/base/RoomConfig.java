@@ -45,6 +45,9 @@ public class RoomConfig {
     protected boolean roundEndCleanItem;
 
     @Getter
+    protected boolean evenPlayerNum;
+
+    @Getter
     protected ArrayList<String> initialItems = new ArrayList<>();
     @Getter
     protected ArrayList<String> redTeamInitialItems = new ArrayList<>();
@@ -86,6 +89,7 @@ public class RoomConfig {
         this.victoryScore = config.getInt("victoryScore", 5);
 
         this.roundEndCleanItem = config.getBoolean("roundEndCleanItem", true);
+        this.evenPlayerNum = config.getBoolean("evenPlayerNum", true);
 
         if (!config.exists("initialItems")) {
             ArrayList<String> defaultItems = new ArrayList<>(
@@ -119,6 +123,7 @@ public class RoomConfig {
         }
         this.blueTeamSupplyConfig = SupplyConfigManager.getSupplyConfig(config.getString("blueTeamSupply"));
         this.supplyEnableTime = config.getInt("supplyEnableTime", 10);  //商店启用时间 单位：秒 仅ONLY_ROUND_START商店模式有效
+
     }
 
     /**
@@ -141,6 +146,7 @@ public class RoomConfig {
         this.config.set("victoryScore", this.victoryScore);
 
         this.config.set("roundEndCleanItem", this.roundEndCleanItem);
+        this.config.set("evenPlayerNum", this.evenPlayerNum);
 
         this.config.set("initialItems", this.initialItems);
         this.config.set("redTeamInitialItems", this.redTeamInitialItems);
