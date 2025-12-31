@@ -186,9 +186,9 @@ public class DefaultGameListener extends BaseGameListener<BaseRoom> {
         }
 
         //商店
-        int startTime = room.getSetGameTime() - room.gameTime;
-        if (tag.getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG) && tag.getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 13 &&
-                startTime <= room.getSupplyEnableTime()) {
+        if (tag.getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG)
+                && tag.getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 13
+                && room.canUseShop(player)) {
 
             //防止win10重复打开商店
             int nowTick = Server.getInstance().getTick();

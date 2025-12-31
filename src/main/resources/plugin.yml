@@ -1,6 +1,6 @@
 name: GunWar
 main: cn.lanink.gunwar.GunWar
-version: "1.7.3-NKMOT"
+version: "1.7.4-NKMOT-SNAPSHOT"
 api: ["Nukkit-MOT"]
 load: POSTWORLD
 author: "LT_Name"

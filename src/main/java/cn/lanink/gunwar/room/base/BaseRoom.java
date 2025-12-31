@@ -31,6 +31,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.inventory.PlayerInventory;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -165,18 +166,16 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         }
 
         //玩家无敌时间计算
-        for (PlayerGameData playerGameData : this.players.values()) {
-            if (playerGameData.getInvincibleTime() > 0) {
-                playerGameData.setInvincibleTime(playerGameData.getInvincibleTime() - 1);
+        for (Map.Entry<Player, PlayerGameData> entry : this.players.entrySet()) {
+            if (entry.getValue().getInvincibleTime() > 0) {
+                entry.getValue().setInvincibleTime(entry.getValue().getInvincibleTime() - 1);
             }
-        }
-
-        //回收商店物品
-        if (this.getSupplyType() == SupplyType.ONLY_ROUND_START) {
-            int startTime = this.getSetGameTime() - this.gameTime;
-            if (startTime == this.getSupplyEnableTime() + 1) {
-                for (Player player : this.getPlayerDataMap().keySet()) {
-                    Tools.removeGunWarItem(player.getInventory(), Tools.getItem(13));  //商店物品
+            if (!this.canUseShop(entry.getKey())) {
+                for (Item item : entry.getKey().getInventory().getContents().values()) {
+                    CompoundTag namedTag = item.getNamedTag();
+                    if (namedTag.getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG) && namedTag.getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 13) {
+                        entry.getKey().getInventory().remove(item);
+                    }
                 }
             }
         }
@@ -679,6 +678,22 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         }
     }
 
+    public boolean canUseShop(Player player) {
+        switch (this.getSupplyType()) {
+            case ALL_ROUND:
+                return true;
+            case ONLY_ROUND_START:
+                int startTime = this.getSetGameTime() - this.gameTime;
+                if (startTime > this.getSupplyEnableTime() + 1) {
+                    return false;
+                }
+                return true;
+            case CLOSE:
+            default:
+                return false;
+        }
+    }
+
     /**
      * 获取玩家是否在房间内
      * @param player 玩家
@@ -844,6 +859,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
         PlayerGameData playerGameData = this.getPlayerData(player);
 
         playerGameData.setInvincibleTime(3); //重生三秒无敌
+        playerGameData.setSpawnTime(this.gameTime);
 
         //重置枪械物品状态
         for (GunWeapon gunWeapon : ItemManage.getGunWeaponMap().values()) {

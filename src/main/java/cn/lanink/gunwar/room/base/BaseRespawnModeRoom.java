@@ -101,6 +101,15 @@ public abstract class BaseRespawnModeRoom extends BaseRoom {
     }
 
     @Override
+    public boolean canUseShop(Player player) {
+        if (this.getSupplyType() == SupplyType.ONLY_ROUND_START) {
+            PlayerGameData playerData = this.getPlayerData(player);
+            return this.gameTime - playerData.getSpawnTime() <= this.getSupplyEnableTime();
+        }
+        return super.canUseShop(player);
+    }
+
+    @Override
     public void playerDeath(Player player, Entity damager, String killMessage) {
         super.playerDeath(player, damager, killMessage);
         this.getPlayerRespawnTime().put(player, this.respawnNeedTime);

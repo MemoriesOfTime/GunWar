@@ -20,6 +20,8 @@ public class PlayerGameData {
     private int killCount;
     private int assistsKillCount;
 
+    private int spawnTime;
+
     private Player lastDamagePlayer;
     private final HashMap<Player, Float> damager = new HashMap<>();
 
