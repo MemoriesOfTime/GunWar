@@ -15,6 +15,7 @@ import cn.lanink.gunwar.listener.capturetheflag.CTFDamageListener;
 import cn.lanink.gunwar.listener.defaults.*;
 import cn.lanink.gunwar.listener.defaults.nkmot.NKMOTRoomLevelProtection;
 import cn.lanink.gunwar.listener.defaults.nkpm1e.PM1ERoomLevelProtection;
+import cn.lanink.gunwar.room.action.ActionModeRoom;
 import cn.lanink.gunwar.room.base.GunWarGameRoomManager;
 import cn.lanink.gunwar.room.base.IntegralConfig;
 import cn.lanink.gunwar.room.blasting.BlastingModeRoom;
@@ -54,7 +55,7 @@ import java.util.*;
 public class GunWar extends PluginBase {
 
     public static boolean debug = false;
-    public static final String VERSION = "?";
+    public static final String VERSION = "1.7.4-NKMOT-SNAPSHOT git-9bdc793";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
 
@@ -162,6 +163,7 @@ public class GunWar extends PluginBase {
         GunWarGameRoomManager.registerGameRoomClass("team", TeamModeRoom.class);
         GunWarGameRoomManager.registerGameRoomClass("ffa", FreeForAllModeRoom.class);
         GunWarGameRoomManager.registerGameRoomClass("conquest", ConquestModeRoom.class);
+        GunWarGameRoomManager.registerGameRoomClass("action", ActionModeRoom.class);
 
     }
 

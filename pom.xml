@@ -11,8 +11,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
     </properties>
 
@@ -150,7 +150,7 @@
         <dependency>
             <groupId>cn.nukkit</groupId>
             <artifactId>Nukkit</artifactId>
-            <version>MOT-java8-SNAPSHOT</version>
+            <version>MOT-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -190,5 +190,39 @@
             <systemPath>${project.basedir}/lib/NsGameBase_FakeLib.jar</systemPath>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>copy-to-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>copy-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <!-- 复制构建好的 jar -->
+                                        <copy
+                                                file="${project.build.directory}/${project.build.finalName}.jar"
+                                                todir="D:\Minecraft_Server_Test\Nukkit-MOT\plugins"
+                                                overwrite="true"/>
+                                    </target>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+    </profiles>
 
 </project>

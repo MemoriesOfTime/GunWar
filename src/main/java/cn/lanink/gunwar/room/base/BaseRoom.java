@@ -173,7 +173,7 @@ public abstract class BaseRoom extends RoomConfig implements GameRoom, IRoom, IT
             if (!this.canUseShop(entry.getKey())) {
                 for (Item item : entry.getKey().getInventory().getContents().values()) {
                     CompoundTag namedTag = item.getNamedTag();
-                    if (namedTag.getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG) && namedTag.getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 13) {
+                    if (namedTag != null && namedTag.getBoolean(ItemManage.IS_GUN_WAR_ITEM_TAG) && namedTag.getInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG) == 13) {
                         entry.getKey().getInventory().remove(item);
                     }
                 }

@@ -79,6 +79,17 @@ public class SetRoomListener implements Listener {
                                 config.remove("supplyType");
                                 config.remove("supplyEnableTime");
                             }
+                            break;
+                        case 530:
+                            if (task.isAutoNext()) {
+                                config.remove("actionAttackerInitialResource");
+                                config.remove("actionResourceReward");
+                                config.remove("enableCameraAnimation");
+                                config.remove("enableOvertime");
+                                config.remove("overtimeResource");
+                                config.remove("overtimeTime");
+                            }
+                            break;
                         default:
                             break;
                     }
@@ -150,6 +161,42 @@ public class SetRoomListener implements Listener {
                             config.set("ConquestPointC", pos);
                             player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_setConquestPointSuccessful", "§eC"));
                             break;
+                        case 500: //行动模式 添加区域A控制点
+                            List<String> zoneAControlPoints = config.getStringList("actionZoneA_controlPoints");
+                            zoneAControlPoints.add(pos);
+                            config.set("actionZoneA_controlPoints", zoneAControlPoints);
+                            player.sendMessage("§a成功添加 §e区域A §6控制点");
+                            break;
+                        case 501: //行动模式 设置区域A防守方重生点
+                            config.set("actionZoneA_defenderSpawn", pos);
+                            player.sendMessage("§a成功设置 §e区域A §9防守方重生点");
+                            task.setRoomSchedule(task.getNextRoomSchedule());
+                            break;
+                        case 510: //行动模式 添加区域B控制点
+                            List<String> zoneBControlPoints = config.getStringList("actionZoneB_controlPoints");
+                            zoneBControlPoints.add(pos);
+                            config.set("actionZoneB_controlPoints", zoneBControlPoints);
+                            player.sendMessage("§a成功添加 §e区域B §6控制点");
+                            break;
+                        case 511: //行动模式 设置区域B防守方重生点
+                            config.set("actionZoneB_defenderSpawn", pos);
+                            player.sendMessage("§a成功设置 §e区域B §9防守方重生点");
+                            task.setRoomSchedule(task.getNextRoomSchedule());
+                            break;
+                        case 520: //行动模式 添加区域C控制点
+                            List<String> zoneCControlPoints = config.getStringList("actionZoneC_controlPoints");
+                            zoneCControlPoints.add(pos);
+                            config.set("actionZoneC_controlPoints", zoneCControlPoints);
+                            player.sendMessage("§a成功添加 §e区域C §6控制点");
+                            break;
+                        case 521: //行动模式 设置区域C防守方重生点
+                            config.set("actionZoneC_defenderSpawn", pos);
+                            player.sendMessage("§a成功设置 §e区域C §9防守方重生点");
+                            task.setRoomSchedule(task.getNextRoomSchedule());
+                            break;
+                        case 530: //行动模式 配置参数
+                            GuiCreate.sendAdminActionConfigMenu(player);
+                            break;
                         default:
                             break;
                     }
@@ -162,6 +209,24 @@ public class SetRoomListener implements Listener {
                             randomSpawns.remove(removePos);
                             config.set("randomSpawns", randomSpawns);
                             player.sendMessage(this.gunWar.getLanguage().translateString("admin_setRoom_removeRandomSpawnSuccessful"));
+                            break;
+                        case 500: //行动模式 删除区域A控制点
+                            List<String> zoneAControlPoints = config.getStringList("actionZoneA_controlPoints");
+                            zoneAControlPoints.remove(removePos);
+                            config.set("actionZoneA_controlPoints", zoneAControlPoints);
+                            player.sendMessage("§a成功删除 §e区域A §6控制点");
+                            break;
+                        case 510: //行动模式 删除区域B控制点
+                            List<String> zoneBControlPoints = config.getStringList("actionZoneB_controlPoints");
+                            zoneBControlPoints.remove(removePos);
+                            config.set("actionZoneB_controlPoints", zoneBControlPoints);
+                            player.sendMessage("§a成功删除 §e区域B §6控制点");
+                            break;
+                        case 520: //行动模式 删除区域C控制点
+                            List<String> zoneCControlPoints = config.getStringList("actionZoneC_controlPoints");
+                            zoneCControlPoints.remove(removePos);
+                            config.set("actionZoneC_controlPoints", zoneCControlPoints);
+                            player.sendMessage("§a成功删除 §e区域C §6控制点");
                             break;
                     }
                     break;

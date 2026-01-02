@@ -552,6 +552,106 @@ public class GuiCreate {
         custom.showToPlayer(player);
     }
 
+    /**
+     * 设置行动模式配置菜单
+     *
+     * @param player 玩家
+     */
+    public static void sendAdminActionConfigMenu(Player player) {
+        Language language = GunWar.getInstance().getLanguage();
+        AdvancedFormWindowCustom custom = new AdvancedFormWindowCustom(PLUGIN_NAME + " - 行动模式配置");
+        Config nowConfig = GunWar.getInstance().getRoomConfig(player.getLevel());
+
+        // 0. 进攻方初始资源
+        custom.addElement(new ElementInput(
+                "§e进攻方初始资源\n§7进攻方开始时的复活票数",
+                "",
+                nowConfig.getInt("attackerInitialResource", 100) + ""
+        ));
+
+        // 1. 占领区域资源奖励
+        custom.addElement(new ElementInput(
+                "§e占领区域资源奖励\n§7每占领一个区域获得的额外资源",
+                "",
+                nowConfig.getInt("attackerResourceReward", 20) + ""
+        ));
+
+        // 2. 是否启用开场动画
+        custom.addElement(new ElementToggle(
+                "§e启用开场动画\n§7游戏开始时播放摄像机动画",
+                nowConfig.getBoolean("enableCameraAnimation", true)
+        ));
+
+        // 3. 是否启用加时赛
+        custom.addElement(new ElementToggle(
+                "§e启用加时赛\n§7当防守方原本获胜时触发加时赛",
+                nowConfig.getBoolean("enableOvertime", true)
+        ));
+
+        // 4. 加时赛资源
+        custom.addElement(new ElementInput(
+                "§e加时赛资源\n§7加时赛时进攻方获得的额外资源",
+                "",
+                nowConfig.getInt("overtimeResource", 50) + ""
+        ));
+
+        // 5. 加时赛时间
+        custom.addElement(new ElementInput(
+                "§e加时赛时间(秒)\n§7加时赛的持续时间",
+                "",
+                nowConfig.getInt("overtimeTime", 120) + ""
+        ));
+
+        custom.onResponded((formResponseCustom, cp) -> {
+            try {
+                // 获取输入值
+                int attackerInitialResource = Integer.parseInt(formResponseCustom.getInputResponse(0));
+                int attackerResourceReward = Integer.parseInt(formResponseCustom.getInputResponse(1));
+                boolean enableCameraAnimation = formResponseCustom.getToggleResponse(2);
+                boolean enableOvertime = formResponseCustom.getToggleResponse(3);
+                int overtimeResource = Integer.parseInt(formResponseCustom.getInputResponse(4));
+                int overtimeTime = Integer.parseInt(formResponseCustom.getInputResponse(5));
+
+                // 验证数值
+                if (attackerInitialResource < 1 || attackerResourceReward < 0 ||
+                    overtimeResource < 0 || overtimeTime < 1) {
+                    cp.sendMessage("§c错误: 数值不能为负数或零！");
+                    return;
+                }
+
+                // 保存配置
+                Config config = GunWar.getInstance().getRoomConfig(cp.getLevel());
+                config.set("attackerInitialResource", attackerInitialResource);
+                config.set("attackerResourceReward", attackerResourceReward);
+                config.set("enableCameraAnimation", enableCameraAnimation);
+                config.set("enableOvertime", enableOvertime);
+                config.set("overtimeResource", overtimeResource);
+                config.set("overtimeTime", overtimeTime);
+                config.save();
+
+                // 发送确认消息
+                cp.sendMessage("§6========== §e行动模式配置已保存 §6==========");
+                cp.sendMessage("§a进攻方初始资源: §e" + attackerInitialResource);
+                cp.sendMessage("§a占领区域资源奖励: §e" + attackerResourceReward);
+                cp.sendMessage("§a开场动画: §e" + (enableCameraAnimation ? "§a启用" : "§c禁用"));
+                cp.sendMessage("§a加时赛: §e" + (enableOvertime ? "§a启用" : "§c禁用"));
+                if (enableOvertime) {
+                    cp.sendMessage("§a加时赛资源: §e" + overtimeResource);
+                    cp.sendMessage("§a加时赛时间: §e" + overtimeTime + " 秒");
+                }
+                cp.sendMessage("§6========================================");
+
+            } catch (NumberFormatException e) {
+                cp.sendMessage(language.translateString("adminNotNumber"));
+                if (GunWar.debug) {
+                    GunWar.getInstance().getLogger().error("设置行动模式配置错误", e);
+                }
+            }
+        });
+
+        player.showFormWindow(custom);
+    }
+
     public static void showFormWindow(@NotNull Player player, @NotNull FormWindow window, @NotNull GuiType guiType) {
         UI_CACHE.computeIfAbsent(player, i -> new HashMap<>()).put(player.showFormWindow(window), guiType);
     }

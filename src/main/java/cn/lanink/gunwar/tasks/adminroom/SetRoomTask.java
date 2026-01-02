@@ -49,6 +49,13 @@ public class SetRoomTask extends PluginTask<GunWar> {
     private EntityText conquestPointTextB;
     private EntityText conquestPointTextC;
 
+    private final List<EntityText> actionZoneAControlPointTextList = new ArrayList<>(); //行动模式 区域A控制点
+    private final List<EntityText> actionZoneBControlPointTextList = new ArrayList<>(); //行动模式 区域B控制点
+    private final List<EntityText> actionZoneCControlPointTextList = new ArrayList<>(); //行动模式 区域C控制点
+    private EntityText actionZoneADefenderSpawnText;
+    private EntityText actionZoneBDefenderSpawnText;
+    private EntityText actionZoneCDefenderSpawnText;
+
     private int particleEffectTick = 0;
 
     public SetRoomTask(GunWar owner, Player player, Level level) {
@@ -122,6 +129,9 @@ public class SetRoomTask extends PluginTask<GunWar> {
                             break;
                         case "conquest":
                             this.nextRoomSchedule = 400;
+                            break;
+                        case "action":
+                            this.nextRoomSchedule = 500;
                             break;
                     }
                     if (autoNext) {
@@ -318,6 +328,130 @@ public class SetRoomTask extends PluginTask<GunWar> {
                     canNext = true;
                 }
                 break;
+            /* 行动模式设置 **/
+            case 500: //行动模式 设置区域A控制点
+                this.backRoomSchedule = 15;
+                this.nextRoomSchedule = 501;
+
+                this.player.sendTip("§e行动模式 §a区域A §6控制点设置\n§b左键添加 §c右键删除");
+
+                this.player.getInventory().setItem(4, Item.get(0));
+
+                item = Item.get(Item.BEACON); //信标
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName("§e添加 §a区域A §6控制点");
+                this.player.getInventory().setItem(3, item);
+
+                item = Item.get(241, 14); //红色玻璃
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 114));
+                item.setCustomName("§c删除 §a区域A §6控制点");
+                this.player.getInventory().setItem(5, item);
+
+                if (!config.getStringList("actionZoneA_controlPoints").isEmpty()) {
+                    canNext = true;
+                }
+                break;
+            case 501: //行动模式 设置区域A防守方重生点
+                this.backRoomSchedule = 500;
+                this.nextRoomSchedule = 510;
+                this.player.sendTip("§e行动模式 §a区域A §9防守方重生点");
+                item = Item.get(241, 11); //蓝色玻璃
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName("§e设置 §a区域A §9防守方重生点");
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("actionZoneA_defenderSpawn", "").trim())) {
+                    canNext = true;
+                }
+                break;
+            case 510: //行动模式 设置区域B控制点
+                this.backRoomSchedule = 501;
+                this.nextRoomSchedule = 511;
+
+                this.player.sendTip("§e行动模式 §a区域B §6控制点设置\n§b左键添加 §c右键删除");
+
+                this.player.getInventory().setItem(4, Item.get(0));
+
+                item = Item.get(Item.BEACON); //信标
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName("§e添加 §a区域B §6控制点");
+                this.player.getInventory().setItem(3, item);
+
+                item = Item.get(241, 14); //红色玻璃
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 114));
+                item.setCustomName("§c删除 §a区域B §6控制点");
+                this.player.getInventory().setItem(5, item);
+
+                if (!config.getStringList("actionZoneB_controlPoints").isEmpty()) {
+                    canNext = true;
+                }
+                break;
+            case 511: //行动模式 设置区域B防守方重生点
+                this.backRoomSchedule = 510;
+                this.nextRoomSchedule = 520;
+                this.player.sendTip("§e行动模式 §a区域B §9防守方重生点");
+                item = Item.get(241, 11); //蓝色玻璃
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName("§e设置 §a区域B §9防守方重生点");
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("actionZoneB_defenderSpawn", "").trim())) {
+                    canNext = true;
+                }
+                break;
+            case 520: //行动模式 设置区域C控制点
+                this.backRoomSchedule = 511;
+                this.nextRoomSchedule = 521;
+
+                this.player.sendTip("§e行动模式 §a区域C §6控制点设置\n§b左键添加 §c右键删除");
+
+                this.player.getInventory().setItem(4, Item.get(0));
+
+                item = Item.get(Item.BEACON); //信标
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName("§e添加 §a区域C §6控制点");
+                this.player.getInventory().setItem(3, item);
+
+                item = Item.get(241, 14); //红色玻璃
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 114));
+                item.setCustomName("§c删除 §a区域C §6控制点");
+                this.player.getInventory().setItem(5, item);
+
+                if (!config.getStringList("actionZoneC_controlPoints").isEmpty()) {
+                    canNext = true;
+                }
+                break;
+            case 521: //行动模式 设置区域C防守方重生点
+                this.backRoomSchedule = 520;
+                this.nextRoomSchedule = 530;
+                this.player.sendTip("§e行动模式 §a区域C §9防守方重生点");
+                item = Item.get(241, 11); //蓝色玻璃
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName("§e设置 §a区域C §9防守方重生点");
+                this.player.getInventory().setItem(4, item);
+                if (!"".equals(config.getString("actionZoneC_defenderSpawn", "").trim())) {
+                    canNext = true;
+                }
+                break;
+            case 530: //行动模式 配置参数
+                this.backRoomSchedule = 521;
+                this.nextRoomSchedule = 20;
+                this.player.sendTip("§e行动模式 §6参数配置\n§7初始资源、加时赛设置等");
+                item = Item.get(347, 11); //时钟
+                item.setNamedTag(new CompoundTag().putInt(ItemManage.GUN_WAR_ITEM_TYPE_TAG, 113));
+                item.setCustomName("§e配置 §6行动模式参数");
+                this.player.getInventory().setItem(4, item);
+                this.player.getInventory().setItem(3, Item.get(0));
+                this.player.getInventory().setItem(5, Item.get(0));
+
+                // 检查是否已配置必要参数（至少需要配置初始资源）
+                if (config.getInt("actionAttackerInitialResource", 0) > 0) {
+                    if (autoNext) {
+                        this.setRoomSchedule(this.nextRoomSchedule);
+                        GuiCreate.sendAdminActionConfigMenu(player);
+                    }else {
+                        canNext = true;
+                    }
+                }
+                break;
 
         }
         //判断给 下一步/保存 物品
@@ -453,6 +587,131 @@ public class SetRoomTask extends PluginTask<GunWar> {
                 GunWar.getInstance().getLogger().error("SetRoomTask conquestPointText Error:", e);
             }
         }
+        try{
+            // 行动模式 区域A控制点
+            List<String> zoneAControlPoints = config.getStringList("actionZoneA_controlPoints");
+            Iterator<EntityText> iteratorA = this.actionZoneAControlPointTextList.iterator();
+            while (iteratorA.hasNext()) {
+                EntityText entityText = iteratorA.next();
+                if (!zoneAControlPoints.contains(entityText.namedTag.getString("stringPos"))) {
+                    entityText.close();
+                }
+                if (entityText.isClosed()) {
+                    iteratorA.remove();
+                }
+            }
+            for (String string : zoneAControlPoints) {
+                this.particleEffect(Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level));
+                boolean isExist = false;
+                for (EntityText entityText : this.actionZoneAControlPointTextList) {
+                    if (entityText.namedTag.getString("stringPos").equals(string)) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    Position pos = Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level);
+                    EntityText entityText = new EntityText(pos, "§a区域A §6控制点");
+                    entityText.namedTag.putString("stringPos", string);
+                    entityText.spawnToAll();
+                    this.actionZoneAControlPointTextList.add(entityText);
+                }
+            }
+            // 行动模式 区域A防守方重生点
+            if (config.exists("actionZoneA_defenderSpawn")) {
+                Position posA = Position.fromObject(Tools.stringToVector3(config.getString("actionZoneA_defenderSpawn")).add(0.5, 0, 0.5), this.level);
+                if (this.actionZoneADefenderSpawnText == null || this.actionZoneADefenderSpawnText.isClosed()) {
+                    this.actionZoneADefenderSpawnText = new EntityText(posA, "§a区域A §9防守重生点");
+                    this.actionZoneADefenderSpawnText.spawnToAll();
+                }
+                this.actionZoneADefenderSpawnText.teleport(posA);
+                this.particleEffect(posA);
+            }
+
+            // 行动模式 区域B控制点
+            List<String> zoneBControlPoints = config.getStringList("actionZoneB_controlPoints");
+            Iterator<EntityText> iteratorB = this.actionZoneBControlPointTextList.iterator();
+            while (iteratorB.hasNext()) {
+                EntityText entityText = iteratorB.next();
+                if (!zoneBControlPoints.contains(entityText.namedTag.getString("stringPos"))) {
+                    entityText.close();
+                }
+                if (entityText.isClosed()) {
+                    iteratorB.remove();
+                }
+            }
+            for (String string : zoneBControlPoints) {
+                this.particleEffect(Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level));
+                boolean isExist = false;
+                for (EntityText entityText : this.actionZoneBControlPointTextList) {
+                    if (entityText.namedTag.getString("stringPos").equals(string)) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    Position pos = Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level);
+                    EntityText entityText = new EntityText(pos, "§a区域B §6控制点");
+                    entityText.namedTag.putString("stringPos", string);
+                    entityText.spawnToAll();
+                    this.actionZoneBControlPointTextList.add(entityText);
+                }
+            }
+            // 行动模式 区域B防守方重生点
+            if (config.exists("actionZoneB_defenderSpawn")) {
+                Position posB = Position.fromObject(Tools.stringToVector3(config.getString("actionZoneB_defenderSpawn")).add(0.5, 0, 0.5), this.level);
+                if (this.actionZoneBDefenderSpawnText == null || this.actionZoneBDefenderSpawnText.isClosed()) {
+                    this.actionZoneBDefenderSpawnText = new EntityText(posB, "§a区域B §9防守重生点");
+                    this.actionZoneBDefenderSpawnText.spawnToAll();
+                }
+                this.actionZoneBDefenderSpawnText.teleport(posB);
+                this.particleEffect(posB);
+            }
+
+            // 行动模式 区域C控制点
+            List<String> zoneCControlPoints = config.getStringList("actionZoneC_controlPoints");
+            Iterator<EntityText> iteratorC = this.actionZoneCControlPointTextList.iterator();
+            while (iteratorC.hasNext()) {
+                EntityText entityText = iteratorC.next();
+                if (!zoneCControlPoints.contains(entityText.namedTag.getString("stringPos"))) {
+                    entityText.close();
+                }
+                if (entityText.isClosed()) {
+                    iteratorC.remove();
+                }
+            }
+            for (String string : zoneCControlPoints) {
+                this.particleEffect(Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level));
+                boolean isExist = false;
+                for (EntityText entityText : this.actionZoneCControlPointTextList) {
+                    if (entityText.namedTag.getString("stringPos").equals(string)) {
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    Position pos = Position.fromObject(Tools.stringToVector3(string).add(0.5, 0, 0.5), this.level);
+                    EntityText entityText = new EntityText(pos, "§a区域C §6控制点");
+                    entityText.namedTag.putString("stringPos", string);
+                    entityText.spawnToAll();
+                    this.actionZoneCControlPointTextList.add(entityText);
+                }
+            }
+            // 行动模式 区域C防守方重生点
+            if (config.exists("actionZoneC_defenderSpawn")) {
+                Position posC = Position.fromObject(Tools.stringToVector3(config.getString("actionZoneC_defenderSpawn")).add(0.5, 0, 0.5), this.level);
+                if (this.actionZoneCDefenderSpawnText == null || this.actionZoneCDefenderSpawnText.isClosed()) {
+                    this.actionZoneCDefenderSpawnText = new EntityText(posC, "§a区域C §9防守重生点");
+                    this.actionZoneCDefenderSpawnText.spawnToAll();
+                }
+                this.actionZoneCDefenderSpawnText.teleport(posC);
+                this.particleEffect(posC);
+            }
+        } catch (Exception e) {
+            if (GunWar.debug) {
+                GunWar.getInstance().getLogger().error("SetRoomTask actionZoneText Error:", e);
+            }
+        }
     }
 
     public int getSetRoomSchedule() {
@@ -500,6 +759,24 @@ public class SetRoomTask extends PluginTask<GunWar> {
         }
         if (this.conquestPointTextC != null) {
             this.conquestPointTextC.close();
+        }
+        for (EntityText entityText : this.actionZoneAControlPointTextList) {
+            entityText.close();
+        }
+        for (EntityText entityText : this.actionZoneBControlPointTextList) {
+            entityText.close();
+        }
+        for (EntityText entityText : this.actionZoneCControlPointTextList) {
+            entityText.close();
+        }
+        if (this.actionZoneADefenderSpawnText != null) {
+            this.actionZoneADefenderSpawnText.close();
+        }
+        if (this.actionZoneBDefenderSpawnText != null) {
+            this.actionZoneBDefenderSpawnText.close();
+        }
+        if (this.actionZoneCDefenderSpawnText != null) {
+            this.actionZoneCDefenderSpawnText.close();
         }
     }
 
