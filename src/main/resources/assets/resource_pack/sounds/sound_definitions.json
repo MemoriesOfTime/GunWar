@@ -1,0 +1,13 @@
+﻿{
+  "format_version": "1.14.0",
+  "sound_definitions": {
+    "gunwar.kill": {
+      "category": "player",
+      "sounds": [
+        "sounds/kill/kill-1",
+        "sounds/kill/kill-2",
+        "sounds/kill/kill-3"
+      ]
+    }
+  }
+}

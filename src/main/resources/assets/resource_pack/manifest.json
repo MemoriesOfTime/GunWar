@@ -1,0 +1,18 @@
+{
+	"format_version": 2,
+	"header": {
+		"description": "§l§2GunWar资源包",
+		"name": "§l§6GunWar资源包",
+		"uuid": "05587857-5f41-4ba1-bd22-832c79a378ac",
+		"version": [0, 0, 1],
+		"min_engine_version": [1, 16, 0]
+	},
+	"modules": [
+		{
+			"description": "§l§6GunWar资源包",
+			"type": "resources",
+			"uuid": "e4745260-14b6-4045-9669-7f684eece6e2",
+			"version": [0, 0, 1]
+		}
+	]
+}

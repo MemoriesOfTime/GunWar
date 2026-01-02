@@ -576,8 +576,17 @@ public class Tools {
      * @param sound 声音
      */
     public static void playSound(Player player, Sound sound) {
+        playSound(player, sound.getSound());
+    }
+
+    /**
+     * 发包方式播放声音
+     * @param player 玩家
+     * @param sound 声音
+     */
+    public static void playSound(Player player, String sound) {
         PlaySoundPacket packet = new PlaySoundPacket();
-        packet.name = sound.getSound();
+        packet.name = sound;
         packet.volume = 1.0F;
         packet.pitch = 1.0F;
         packet.x = player.getFloorX();

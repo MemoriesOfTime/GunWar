@@ -8,6 +8,8 @@ import cn.lanink.gamecore.utils.Language;
 import cn.lanink.gamecore.utils.NukkitTypeUtils;
 import cn.lanink.gunwar.command.AdminCommand;
 import cn.lanink.gunwar.command.UserCommand;
+import cn.lanink.gunwar.entity.action.EntityGunWarCoverBlue;
+import cn.lanink.gunwar.entity.action.EntityGunWarCoverRed;
 import cn.lanink.gunwar.gui.GuiListener;
 import cn.lanink.gunwar.item.ItemManage;
 import cn.lanink.gunwar.listener.blasting.BlastingGameListener;
@@ -34,6 +36,7 @@ import cn.lanink.gunwar.utils.rsnpc.RsNpcVariableV2;
 import cn.lanink.gunwar.utils.update.ConfigUpdateUtils;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.custom.EntityManager;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
@@ -55,7 +58,7 @@ import java.util.*;
 public class GunWar extends PluginBase {
 
     public static boolean debug = false;
-    public static final String VERSION = "1.7.4-NKMOT-SNAPSHOT git-9bdc793";
+    public static final String VERSION = "1.7.4-NKMOT-SNAPSHOT git-8bf7512";
     public static final Random RANDOM = new Random();
     private static GunWar gunWar;
 
@@ -253,6 +256,10 @@ public class GunWar extends PluginBase {
         this.gameRoomManager = new GunWarGameRoomManager(this);
 
         this.gameRoomManager.loadAllGameRoom();
+
+        EntityManager entityManager = EntityManager.get();
+        entityManager.registerDefinition(EntityGunWarCoverRed.ENTITY_DEFINITION);
+        entityManager.registerDefinition(EntityGunWarCoverBlue.ENTITY_DEFINITION);
 
         try {
             new MetricsLite(this, 7448);

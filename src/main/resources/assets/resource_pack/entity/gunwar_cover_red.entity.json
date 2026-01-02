@@ -1,0 +1,20 @@
+{
+	"format_version": "1.10.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "gunwar:gunwar_cover_red",
+			"materials": {
+				"default": "entity_alphatest"
+			},
+			"textures": {
+				"default": "textures/entity/gunwar_cover_red"
+			},
+			"geometry": {
+				"default": "geometry.gunwar_cover"
+			},
+			"render_controllers": [
+				"controller.render.default"
+			]
+		}
+	}
+}
