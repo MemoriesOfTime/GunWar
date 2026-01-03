@@ -22,6 +22,7 @@ public class AdminCommand extends BaseCommand {
         this.addSubCommand(new CreateRank("CreateRank"));
         this.addSubCommand(new TestCameraAnimation("TestCameraAnimation"));
         this.addSubCommand(new TestSound("TestSound"));
+        this.addSubCommand(new SetGameTime("SetGameTime"));
         this.loadCommandBase();
     }
 

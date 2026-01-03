@@ -52,9 +52,27 @@ public class ControlPointSpawnCheckTask extends PluginTask<GunWar> {
      */
     private void checkAndSpawnFlag(ActionModeRoom.ControlPoint controlPoint) {
         if (controlPoint.isCaptured()) {
-            // 已占领的控制点不需要旗帜
-            if (controlPoint.getFlag() != null && !controlPoint.getFlag().isClosed()) {
-                controlPoint.getFlag().close();
+            // 已占领的控制点保持红色旗帜
+            EntityLongFlag flag = controlPoint.getFlag();
+            if (flag == null || flag.isClosed()) {
+                Skin skin = GunWar.getInstance().getFlagSkin(FlagSkinType.LONG_FLAGPOLE);
+                Position position = Position.fromObject(controlPoint.getPosition(), this.room.getLevel());
+                CompoundTag tag = EntityLongFlag.getDefaultNBT(position);
+                tag.putCompound("Skin", new CompoundTag()
+                        .putByteArray("Data", skin.getSkinData().data)
+                        .putString("ModelId", skin.getSkinId()));
+
+                flag = new EntityLongFlag(position.getChunk(), tag, Team.RED);
+                flag.setSkin(skin);
+                flag.spawnToAll();
+                controlPoint.setFlag(flag);
+            } else {
+                if (flag.getTeam() != Team.RED) {
+                    flag.setTeam(Team.RED);
+                }
+                if (flag.getFlagHeight() < 100) {
+                    flag.setFlagHeight(100);
+                }
             }
             return;
         }
@@ -69,7 +87,7 @@ public class ControlPointSpawnCheckTask extends PluginTask<GunWar> {
                     .putByteArray("Data", skin.getSkinData().data)
                     .putString("ModelId", skin.getSkinId()));
 
-            flag = new EntityLongFlag(position.getChunk(), tag, Team.NULL);
+            flag = new EntityLongFlag(position.getChunk(), tag, Team.BLUE);
             flag.setSkin(skin);
             flag.spawnToAll();
 

@@ -21,6 +21,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BossBarColor;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.DummyBossBar;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,49 +38,45 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ActionModeRoom extends BaseRespawnModeRoom {
 
-    // 进攻方资源配置
     @Getter
-    private int attackerInitialResource;  // 进攻方初始资源
+    private int attackerInitialResource;
     @Getter
-    private int attackerResourceReward;   // 占领区域资源奖励
+    private int attackerResourceReward;
     @Getter
-    private int attackerCurrentResource;  // 当前资源数量
+    private int attackerCurrentResource;
 
-    // 区域配置
     @Getter
     private final List<Zone> zones = new ArrayList<>();
     @Getter
-    private int currentZoneIndex = 0;  // 当前激活的区域索引
+    private int currentZoneIndex = 0;
 
-    // 防守方重生点配置（每个区域一个）
     private final List<Vector3> defenderSpawnPoints = new ArrayList<>();
 
-    // Boss条显示
     private final ConcurrentHashMap<Player, DummyBossBar> bossBarMap = new ConcurrentHashMap<>();
     private int bossBarShowTime = 0;
 
-    // 摄像机动画配置
     @Getter
-    private boolean enableCameraAnimation;  // 是否启用摄像机动画
+    private boolean enableCameraAnimation;
     private final Map<Player, CameraAnimationTask> playerCameraAnimations = new ConcurrentHashMap<>();
-    private boolean cameraAnimationPlaying = false;  // 是否正在播放摄像机动画
-    private boolean pauseGameTime = false;  // 是否暂停游戏时间（动画播放时）
+    private boolean cameraAnimationPlaying = false;
+    private boolean pauseGameTime = false;
 
-    // 加时赛配置
     @Getter
-    private boolean enableOvertime;  // 是否启用加时赛
+    private boolean enableOvertime;
     @Getter
-    private int overtimeResource;  // 加时赛进攻方资源
+    private int overtimeResource;
     @Getter
-    private int overtimeTime;  // 加时赛时间（秒）
-    private boolean isOvertime = false;  // 是否处于加时赛状态
-    private boolean overtimeTriggered = false;  // 加时赛是否已触发（防止重复触发）
-    private final List<Entity> overtimeCoverEntities = new ArrayList<>();  // 加时赛动画遮盖实体列表
+    private int overtimeTime;
+    private boolean isOvertime = false;
+    private boolean overtimeTriggered = false;
+    private final List<Entity> overtimeCoverEntities = new ArrayList<>();
+    private boolean overtimeAnimationPlaying = false;
 
     /**
      * 区域类
      */
     @Getter
+    @EqualsAndHashCode
     public static class Zone {
         private final String name;
         private final List<ControlPoint> controlPoints;
@@ -130,25 +127,19 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     public ActionModeRoom(@NotNull Level level, @NotNull Config config) throws RoomLoadException {
         super(level, config);
 
-        // 加载进攻方资源配置
         this.attackerInitialResource = config.getInt("attackerInitialResource", 100);
         this.attackerResourceReward = config.getInt("attackerResourceReward", 20);
 
-        // 加载摄像机动画配置
         this.enableCameraAnimation = config.getBoolean("enableCameraAnimation", true);
 
-        // 加载加时赛配置
         this.enableOvertime = config.getBoolean("enableOvertime", true);
         this.overtimeResource = config.getInt("overtimeResource", 50);
         this.overtimeTime = config.getInt("overtimeTime", 120);
 
-        // 加载区域配置
         this.loadZonesFromConfig(config);
 
-        // 加载防守方重生点
         this.loadDefenderSpawnPoints(config);
 
-        // 验证配置完整性
         if (this.zones.isEmpty()) {
             throw new RoomLoadException("§c房间：" + level.getFolderName() + " 未配置任何区域，加载失败！");
         }
@@ -165,7 +156,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         for (String zoneName : zoneNames) {
             String controlPointsKey = "actionZone" + zoneName + "_controlPoints";
             if (!config.exists(controlPointsKey)) {
-                break; // 如果区域不存在则停止
+                break;
             }
 
             List<String> controlPointStrings = config.getStringList(controlPointsKey);
@@ -182,7 +173,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             }
         }
 
-        // 重置所有区域和控制点
         for (Zone zone : this.zones) {
             zone.setCaptured(false);
             for (ControlPoint point : zone.getControlPoints()) {
@@ -203,7 +193,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         for (String zoneName : zoneNames) {
             String spawnKey = "actionZone" + zoneName + "_defenderSpawn";
             if (!config.exists(spawnKey)) {
-                break; // 如果区域不存在则停止
+                break;
             }
             String spawnString = config.getString(spawnKey, "");
             if (!spawnString.trim().isEmpty()) {
@@ -216,32 +206,26 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     public void saveConfig() {
         super.saveConfig();
 
-        // 保存进攻方资源配置
         this.config.set("attackerInitialResource", this.attackerInitialResource);
         this.config.set("attackerResourceReward", this.attackerResourceReward);
 
-        // 保存加时赛配置
         this.config.set("enableOvertime", this.enableOvertime);
         this.config.set("overtimeResource", this.overtimeResource);
         this.config.set("overtimeTime", this.overtimeTime);
 
-        // 保存摄像机动画配置
         this.config.set("enableCameraAnimation", this.enableCameraAnimation);
 
-        // 保存区域配置（新格式）
         String[] zoneNames = {"A", "B", "C"};
         for (int i = 0; i < this.zones.size() && i < zoneNames.length; i++) {
             Zone zone = this.zones.get(i);
             String zoneName = zoneNames[i];
 
-            // 保存控制点列表
             List<String> controlPointStrings = new ArrayList<>();
             for (ControlPoint point : zone.getControlPoints()) {
                 controlPointStrings.add(Tools.vector3ToString(point.getPosition()));
             }
             this.config.set("actionZone" + zoneName + "_controlPoints", controlPointStrings);
 
-            // 保存防守方重生点
             if (i < defenderSpawnPoints.size()) {
                 this.config.set("actionZone" + zoneName + "_defenderSpawn",
                     Tools.vector3ToString(defenderSpawnPoints.get(i)));
@@ -256,13 +240,8 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         super.timeTask();
 
         if (!this.isRoundEnd()) {
-            // 更新Boss条显示
             this.updateBossBar();
-
-            // 检查区域占领状态
             this.checkZoneCaptureStatus();
-
-            // 检查胜负条件
             this.checkVictoryCondition();
         }
     }
@@ -273,12 +252,12 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      */
     @Override
     protected void checkGameTime() {
-        // 如果正在播放动画，暂停游戏时间
         if (this.pauseGameTime) {
             return;
         }
-        // 否则正常递减时间
-        super.checkGameTime();
+        if (this.gameTime > 0) {
+            this.gameTime--;
+        }
     }
 
     /**
@@ -292,7 +271,8 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
 
         StringBuilder text = new StringBuilder();
 
-        // 加时赛时显示特殊标题
+        text.append("§c资源: §f").append(this.attackerCurrentResource).append(" §7|§r ");
+
         if (this.isOvertime) {
             text.append("§6§l【加时赛】§r §e当前目标: §f").append(currentZone.getName()).append(" §7|§r ");
         } else {
@@ -319,7 +299,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             Team team = this.getPlayerTeam(player);
             if (team == Team.RED) {
                 bossBar.setColor(BossBarColor.RED);
-                // 在加时赛中使用加时赛初始资源作为基准
                 float maxResource = this.isOvertime ? this.overtimeResource : this.attackerInitialResource;
                 bossBar.setLength(Math.max(1, this.attackerCurrentResource * 1.0f / maxResource * 100));
             } else if (team == Team.BLUE) {
@@ -339,7 +318,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             return;
         }
 
-        // 检查当前区域是否所有控制点都被占领
         if (currentZone.isAllPointsCaptured()) {
             this.onZoneCaptured(currentZone);
         }
@@ -351,14 +329,11 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     private void onZoneCaptured(Zone zone) {
         zone.setCaptured(true);
 
-        // 进攻方获得资源奖励
         this.attackerCurrentResource += this.attackerResourceReward;
 
-        // 广播消息
         Tools.sendMessage(this, "§a区域 " + zone.getName() + " 已被进攻方占领！");
         Tools.sendMessage(this, "§e进攻方获得 " + this.attackerResourceReward + " 点资源奖励");
 
-        // 推进到下一个区域
         this.currentZoneIndex++;
 
         if (this.currentZoneIndex < this.zones.size()) {
@@ -371,32 +346,33 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * 检查胜负条件
      */
     private void checkVictoryCondition() {
-        // 进攻方胜利：占领所有区域
+        if (this.pauseGameTime) {
+            return;
+        }
+
         if (this.currentZoneIndex >= this.zones.size()) {
             this.roundEnd(Team.RED);
             return;
         }
 
-        // 防守方胜利条件：进攻方资源耗尽
         if (this.attackerCurrentResource <= 0) {
-            // 如果启用加时赛且尚未触发
-            if (this.enableOvertime && !this.overtimeTriggered) {
-                this.triggerOvertime();
-                return;
-            }
-            // 否则防守方直接胜利
-            this.roundEnd(Team.BLUE);
-            return;
-        }
-
-        // 防守方胜利：时间耗尽
-        if (this.gameTime <= 0) {
-            // 如果已经在加时赛中，直接结束
             if (this.isOvertime) {
                 this.roundEnd(Team.BLUE);
                 return;
             }
-            // 否则检查是否触发加时赛
+            if (this.enableOvertime && !this.overtimeTriggered) {
+                this.triggerOvertime();
+                return;
+            }
+            this.roundEnd(Team.BLUE);
+            return;
+        }
+
+        if (this.gameTime <= 0) {
+            if (this.isOvertime) {
+                this.roundEnd(Team.BLUE);
+                return;
+            }
             if (this.enableOvertime && !this.overtimeTriggered) {
                 this.triggerOvertime();
                 return;
@@ -406,19 +382,27 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     }
 
     @Override
+    public void endGame() {
+        this.clearOvertimeCoverEntities();
+        super.endGame();
+    }
+
+    @Override
+    public void endGame(int victory) {
+        this.clearOvertimeCoverEntities();
+        super.endGame(victory);
+    }
+
+    @Override
     public void startGame() {
-        // 重置进攻方资源
         this.attackerCurrentResource = this.attackerInitialResource;
         this.currentZoneIndex = 0;
 
-        // 重置加时赛状态
         this.isOvertime = false;
         this.overtimeTriggered = false;
 
-        // 清除加时赛遮盖实体
         this.clearOvertimeCoverEntities();
 
-        // 清除Boss条
         if (this.bossBarMap != null && !this.bossBarMap.isEmpty()) {
             for (Map.Entry<Player, DummyBossBar> entry : this.bossBarMap.entrySet()) {
                 entry.getKey().removeBossBar(entry.getValue().getBossBarId());
@@ -428,19 +412,16 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
 
         super.startGame();
 
-        // 如果启用摄像机动画，先播放开场动画
         if (this.enableCameraAnimation && !this.zones.isEmpty()) {
             this.playCameraAnimation();
         }
 
-        // 启动控制点生成检查任务
         Server.getInstance().getScheduler().scheduleRepeatingTask(
                 this.gunWar,
                 new ControlPointSpawnCheckTask(GunWar.getInstance(), this),
                 20
         );
 
-        // 启动异步控制点检查任务
         Server.getInstance().getScheduler().scheduleAsyncTask(
                 this.gunWar,
                 new AsyncControlPointCheckTask(this)
@@ -455,22 +436,24 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             } else {
                 Tools.sendMessage(this, "§c进攻方胜利！成功占领所有区域！");
             }
+            this.endGame(1);
         } else if (victory == Team.BLUE) {
             if (this.isOvertime) {
                 Tools.sendMessage(this, "§9§l防守方胜利！最后防线守住了！");
             } else {
                 Tools.sendMessage(this, "§9防守方胜利！成功阻止了进攻方的推进！");
             }
+            this.endGame(2);
+        } else {
+            this.endGame(0);
         }
-        super.roundEnd(victory);
     }
 
     @Override
     public void playerDeath(Player player, Entity damager, String killMessage) {
         super.playerDeath(player, damager, killMessage);
 
-        if (damager instanceof Player) {
-            Player killer = (Player) damager;
+        if (damager instanceof Player killer) {
             if (!killer.equals(player)) {
                 Tools.playSound(killer, "gunwar.kill");
             }
@@ -487,16 +470,13 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
 
     @Override
     public void playerRespawn(Player player) {
-        // 调用父类的playerRespawn方法
         super.playerRespawn(player);
 
-        // 对于防守方，重新传送到当前区域的防守方重生点
         Team team = this.getPlayerTeamAccurate(player);
-        if (team == Team.BLUE) {
-            int spawnIndex = Math.min(this.currentZoneIndex, this.defenderSpawnPoints.size() - 1);
-            if (spawnIndex >= 0 && spawnIndex < this.defenderSpawnPoints.size()) {
-                Vector3 defenderSpawn = this.defenderSpawnPoints.get(spawnIndex);
-                player.teleport(defenderSpawn);
+        if (team == Team.RED || team == Team.BLUE) {
+            Vector3 frontlinePoint = this.getFrontlineControlPoint(team);
+            if (frontlinePoint != null) {
+                player.teleport(frontlinePoint);
             }
         }
     }
@@ -515,7 +495,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * 获取控制点半径
      */
     public int getControlPointRadius() {
-        return 5;
+        return 10;
     }
 
     /**
@@ -523,17 +503,14 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      */
     private void playCameraAnimation() {
         this.cameraAnimationPlaying = true;
-        this.pauseGameTime = true;  // 暂停游戏时间
+        this.pauseGameTime = true;
 
         for (Player player : this.getPlayerDataMap().keySet()) {
-            // 为每个玩家生成并播放摄像机动画
             List<CameraKeyframe> keyframes = this.generateCameraPath(player);
 
-            // 创建并启动摄像机动画任务
             CameraAnimationTask.Builder builder = new CameraAnimationTask.Builder(this.gunWar, player)
                     .onComplete(this::onCameraAnimationComplete);
 
-            // 添加所有关键帧
             for (CameraKeyframe keyframe : keyframes) {
                 builder.addKeyframe(keyframe);
             }
@@ -552,62 +529,51 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     private List<CameraKeyframe> generateCameraPath(Player player) {
         List<CameraKeyframe> keyframes = new ArrayList<>();
 
-        // 获取进攻方和防守方的复活点
-        Vector3 attackerSpawn = this.getRedSpawn();   // 红队=进攻方
-        Vector3 defenderSpawn = this.getBlueSpawn();  // 蓝队=防守方
+        Vector3 attackerSpawn = this.getRedSpawn();
+        Vector3 defenderSpawn = this.getBlueSpawn();
 
-        // 计算战场中心点（所有区域的平均位置）
         Vector3 battlefieldCenter = calculateBattlefieldCenter();
 
-        // 计算概览视角的朝向（使进攻方在左侧，防守方在右侧）
         double vx = defenderSpawn.x - attackerSpawn.x;
         double vz = defenderSpawn.z - attackerSpawn.z;
         float overviewYaw = (float) Math.toDegrees(Math.atan2(-vz, -vx));
 
-        // 第一帧：高空俯视战场全景
         double overviewHeight = 50;
         keyframes.add(new CameraKeyframe(
                 battlefieldCenter.x,
                 battlefieldCenter.y + overviewHeight,
                 battlefieldCenter.z,
-                overviewYaw,  // 朝向：使进攻方在左侧，防守方在右侧
-                70,     // pitch: 向下70度俯视
-                100,    // 持续ticks
-                "§e战场概览",  // 标题
-                "§7准备进入战斗"  // 副标题
+                overviewYaw,
+                70,
+                100,
+                "§e战场概览",
+                "§7准备进入战斗"
         ));
 
-        // 第二帧：移动到进攻方复活点上方
         keyframes.add(new CameraKeyframe(
                 attackerSpawn.x,
-                attackerSpawn.y + 15,  // 复活点上方15格
+                attackerSpawn.y + 15,
                 attackerSpawn.z,
-                this.zones.isEmpty() ? 0 : calculateYawBetween(attackerSpawn, calculateZoneCenter(this.zones.get(0))),  // 朝向第一个区域
-                45,     // pitch: 向下45度
-                60,     // 持续60 ticks = 3秒
-                "§c进攻方起点",  // 标题
-                "§7开始推进"  // 副标题
+                this.zones.isEmpty() ? 0 : calculateYawBetween(attackerSpawn, calculateZoneCenter(this.zones.get(0))),
+                45,
+                60,
+                "§c进攻方起点",
+                "§7开始推进"
         ));
 
-        // 沿着区域推进路线飞行，按顺序展示每个区域
         for (int i = 0; i < this.zones.size(); i++) {
             Zone zone = this.zones.get(i);
             Vector3 zoneCenter = calculateZoneCenter(zone);
 
-            // 每个区域上方停留，给玩家充足时间观察目标点
-            double height = Math.max(25 - (i * 3), 10);  // 从25格逐渐降低到10格
+            double height = Math.max(25 - (i * 3), 10);
 
-            // 准备标题和副标题
-            String zoneTitle = "§6" + zone.getName();  // 区域名称（金色）
-            String zoneSubtitle = "§7控制点: §b" + zone.getControlPoints().size() + " §7个";  // 控制点数量
+            String zoneTitle = "§6" + zone.getName();
+            String zoneSubtitle = "§7控制点: §b" + zone.getControlPoints().size() + " §7个";
 
-            // 计算朝向：如果是最后一个区域，朝向防守方复活点；否则朝向下一个区域
             float yaw;
             if (i >= this.zones.size() - 1) {
-                // 最后一个区域，朝向防守方复活点
                 yaw = calculateYawBetween(zoneCenter, defenderSpawn);
             } else {
-                // 朝向下一个区域
                 Vector3 nextZoneCenter = calculateZoneCenter(this.zones.get(i + 1));
                 yaw = calculateYawBetween(zoneCenter, nextZoneCenter);
             }
@@ -616,38 +582,96 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
                     zoneCenter.x,
                     zoneCenter.y + height,
                     zoneCenter.z,
-                    yaw,                         // 朝向下一个区域或防守方复活点
-                    Math.max(50 - (i * 8), 30),  // 逐渐降低俯视角度，从50度到30度
-                    80,                          // 持续80 ticks = 4秒
-                    zoneTitle,                   // 标题
-                    zoneSubtitle                 // 副标题
+                    yaw,
+                    Math.max(50 - (i * 8), 30),
+                    80,
+                    zoneTitle,
+                    zoneSubtitle
             ));
         }
 
-        // 最后一帧：降落到玩家所在队伍的重生点
         Team team = this.getPlayerTeam(player);
-        Vector3 spawnPoint;
+        Vector3 spawnPoint = this.getFrontlineControlPoint(team);
         String teamName;
         if (team == Team.RED) {
-            spawnPoint = attackerSpawn;
             teamName = "§c进攻方";
         } else {
-            spawnPoint = defenderSpawn;
             teamName = "§9防守方";
         }
 
         keyframes.add(new CameraKeyframe(
                 spawnPoint.x,
-                spawnPoint.y + 2,  // 略高于重生点
+                spawnPoint.y + 2,
                 spawnPoint.z,
-                0,      // yaw
-                20,     // pitch: 向下20度
-                30,     // 持续ticks
-                teamName,  // 标题（队伍名称）
-                "§7战斗开始"  // 副标题
+                0,
+                20,
+                30,
+                teamName,
+                "§7战斗开始"
         ));
 
         return keyframes;
+    }
+
+    /**
+     * 获取最靠近前线的占领点位置
+     */
+    private Vector3 getFrontlineControlPoint(Team team) {
+        Vector3 fallback = team == Team.RED ? this.getRedSpawn() : this.getBlueSpawn();
+        if (this.zones.isEmpty()) {
+            return fallback;
+        }
+
+        Zone currentZone = this.getCurrentZone();
+        if (currentZone == null) {
+            return fallback;
+        }
+
+        Vector3 targetPos = calculateZoneCenter(currentZone);
+        Vector3 bestPoint = null;
+        double bestDist = Double.MAX_VALUE;
+
+        if (team == Team.BLUE) {
+            for (int i = this.currentZoneIndex; i < this.zones.size(); i++) {
+                Zone zone = this.zones.get(i);
+                for (ControlPoint point : zone.getControlPoints()) {
+                    if (!point.isCaptured()) {
+                        Vector3 pos = point.getPosition();
+                        double dx = pos.x - targetPos.x;
+                        double dy = pos.y - targetPos.y;
+                        double dz = pos.z - targetPos.z;
+                        double dist = dx * dx + dy * dy + dz * dz;
+                        if (dist < bestDist) {
+                            bestDist = dist;
+                            bestPoint = pos;
+                        }
+                    }
+                }
+            }
+            return bestPoint != null ? bestPoint : fallback;
+        }
+
+        for (Zone zone : this.zones) {
+            if (zone.equals(currentZone)) {
+                continue;
+            }
+            for (ControlPoint point : zone.getControlPoints()) {
+                if (!point.isCaptured()) {
+                    continue;
+                }
+                Vector3 pos = point.getPosition();
+                double dx = pos.x - targetPos.x;
+                double dy = pos.y - targetPos.y;
+                double dz = pos.z - targetPos.z;
+                double dist = dx * dx + dy * dy + dz * dz;
+                if (dist < bestDist) {
+                    bestDist = dist;
+                    bestPoint = pos;
+                }
+            }
+        }
+
+        return bestPoint != null ? bestPoint : fallback;
     }
 
     /**
@@ -671,7 +695,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             return new Vector3(x / count, y / count, z / count);
         }
 
-        // 如果没有控制点，使用等待出生点
         return this.getWaitSpawn();
     }
 
@@ -683,10 +706,9 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      */
     private double calculateOvertimeObservationHeight() {
         if (this.zones.isEmpty()) {
-            return 60.0; // 默认高度
+            return 60.0;
         }
 
-        // 计算所有占领点的边界
         double minX = Double.POSITIVE_INFINITY, maxX = Double.NEGATIVE_INFINITY;
         double minZ = Double.POSITIVE_INFINITY, maxZ = Double.NEGATIVE_INFINITY;
 
@@ -700,11 +722,9 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             }
         }
 
-        // 计算边界范围
         double rangeX = maxX - minX;
         double rangeZ = maxZ - minZ;
 
-        // 计算对角线长度
         double diagonal = Math.sqrt(rangeX * rangeX + rangeZ * rangeZ);
 
         double height = Math.max(40.0, Math.min(180.0, diagonal * 0.8));
@@ -744,7 +764,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         double dx = to.x - from.x;
         double dz = to.z - from.z;
 
-        // 计算偏航角（弧度转角度）
         double yaw = Math.toDegrees(Math.atan2(-dx, dz));
         return (float) yaw;
     }
@@ -756,7 +775,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     @Deprecated
     private float calculateYawToNextZone(int currentZoneIndex) {
         if (currentZoneIndex >= this.zones.size() - 1) {
-            return 0; // 最后一个区域，朝北
+            return 0;
         }
 
         Vector3 currentCenter = calculateZoneCenter(this.zones.get(currentZoneIndex));
@@ -771,7 +790,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     private void triggerOvertime() {
         this.overtimeTriggered = true;
 
-        // 播放加时赛动画
         this.playOvertimeAnimation();
     }
 
@@ -780,19 +798,16 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * 优化版：按照进攻顺序逐个查看控制点，避免大地图渲染距离问题
      */
     private void playOvertimeAnimation() {
-        this.pauseGameTime = true;  // 暂停游戏时间
+        this.pauseGameTime = true;
+        this.overtimeAnimationPlaying = true;
 
-        // 计算战场中心点
         Vector3 battlefieldCenter = calculateBattlefieldCenter();
 
-        // 动态计算观察高度
         double observationHeight = calculateOvertimeObservationHeight();
 
-        // 获取进攻方和防守方复活点
         Vector3 attackerSpawn = this.getRedSpawn();
         Vector3 defenderSpawn = this.getBlueSpawn();
 
-        // 计算概览视角的朝向
         double vx = defenderSpawn.x - attackerSpawn.x;
         double vz = defenderSpawn.z - attackerSpawn.z;
         float overviewYaw = (float) Math.toDegrees(Math.atan2(-vz, -vx));
@@ -800,7 +815,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         for (Player player : this.getPlayerDataMap().keySet()) {
             Team team = this.getPlayerTeam(player);
 
-            // 准备不同阶段的标题
             String defeatTitle, defeatSubtitle;
             String overtimeTitle, overtimeSubtitle;
 
@@ -816,56 +830,48 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
                 overtimeSubtitle = "";
             }
 
-            // 获取玩家当前位置
             Vector3 playerPos = player.getPosition();
 
-            // 计算玩家身后的位置（第三人称视角）
             Vector3 behindPlayer = calculateBehindPlayerPosition(player, 5);
             float yawToPlayer = calculateYawBetween(behindPlayer, playerPos);
 
-            // 创建加时赛动画
             CameraAnimationTask.Builder builder = new CameraAnimationTask.Builder(this.gunWar, player)
                     .onComplete(this::onOvertimeAnimationComplete);
 
-            // 第一帧：移动到玩家身后（第三人称视角）
-            builder.addKeyframe(
-                    behindPlayer.x,
-                    behindPlayer.y + 2,  // 略高于玩家
-                    behindPlayer.z,
-                    yawToPlayer,  // 朝向玩家
-                    10,     // 俯仰角：略微向下看
-                    40,     // 持续2秒
-                    "",
-                    ""
-            );
-
-            // 第二帧：停留在玩家身后，显示胜败标题
             builder.addKeyframe(
                     behindPlayer.x,
                     behindPlayer.y + 2,
                     behindPlayer.z,
                     yawToPlayer,
                     10,
-                    60,     // 持续3秒
+                    40,
+                    "",
+                    ""
+            );
+
+            builder.addKeyframe(
+                    behindPlayer.x,
+                    behindPlayer.y + 2,
+                    behindPlayer.z,
+                    yawToPlayer,
+                    10,
+                    60,
                     defeatTitle,
                     defeatSubtitle
             );
 
-            // 按照进攻顺序（zones顺序）逐个查看每个控制点
-            int currentTicksAccumulated = 100; // 前两帧总共100 ticks
-            int controlPointIndex = 0; // 全局控制点索引（用于遮盖实体）
-            Vector3 previousPointPos = attackerSpawn;  // 进攻来源起点
+            int currentTicksAccumulated = 100;
+            int controlPointIndex = 0;
+            Vector3 previousPointPos = attackerSpawn;
 
             for (Zone zone : this.zones) {
                 for (ControlPoint point : zone.getControlPoints()) {
                     Vector3 pointPos = point.getPosition();
 
-                    // 计算进攻方向（从上一个点到当前点）
                     double dx = pointPos.x - previousPointPos.x;
                     double dz = pointPos.z - previousPointPos.z;
                     float attackYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
 
-                    // 相机位置：在上一个进攻点附近，稍微抬高 + 稍微往后退
                     double backwardDistance = 5.0;
                     double cameraHeight = 20.0;
 
@@ -887,97 +893,88 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
                     double cameraZ = pointPos.z + dirZ * backwardDistance;
                     double cameraY = pointPos.y + cameraHeight;
 
-                    // 计算相机朝向：看向当前控制点
-                    float cameraYaw = calculateYawBetween(new Vector3(cameraX, cameraY, cameraZ), pointPos);
+                    Vector3 coverEntityPos = new Vector3(pointPos.x, pointPos.y + 10, pointPos.z);
+                    float cameraYaw = calculateYawBetween(new Vector3(cameraX, cameraY, cameraZ), coverEntityPos);
 
-                    // 准备标题
                     String pointTitle = (point.isCaptured() ? "§a已占领" : "§c未占领")
                             + " §7- §f" + zone.getName();
                     String pointSubtitle = "§7控制点 " + ((char)('A' + (zone.getControlPoints().indexOf(point))));
 
-                    // 第一帧：移动到控制点斜后方（30 ticks = 1.5秒过渡时间）
                     builder.addKeyframe(
                             cameraX,
                             cameraY,
                             cameraZ,
                             cameraYaw,
                             45,
-                            30,     // 1.5秒过渡时间
+                            30,
                             "",
                             ""
                     );
 
-                    // 第二帧：在斜后方停留观察（70 ticks = 3.5秒停留时间）
                     builder.addKeyframe(
                             cameraX,
                             cameraY,
                             cameraZ,
                             cameraYaw,
-                            45,     // 向下45度俯视
-                            70,     // 3.5秒停留时间
+                            45,
+                            70,
                             pointTitle,
                             pointSubtitle
                     );
 
-                    // 在这个控制点先生成蓝色遮盖实体
                     final int finalControlPointIndex = controlPointIndex;
                     final Vector3 finalPointPos = pointPos;
                     final boolean isCaptured = point.isCaptured();
 
-                    // 相机移动到位后立即生成蓝色遮盖实体
                     this.gunWar.getServer().getScheduler().scheduleDelayedTask(
                             this.gunWar,
                             () -> this.spawnSingleOvertimeCoverEntity(finalControlPointIndex, finalPointPos, false),
-                            currentTicksAccumulated + 30  // 在移动到位后生成
+                            currentTicksAccumulated + 30
                     );
 
-                    // 如果被占领，延迟40 ticks (2秒) 后更新为红色
                     if (isCaptured) {
                         this.gunWar.getServer().getScheduler().scheduleDelayedTask(
                                 this.gunWar,
                                 () -> this.updateCoverEntityColor(finalControlPointIndex, finalPointPos, true),
-                                currentTicksAccumulated + 30 + 40  // 移动到位30 + 等待40
+                                currentTicksAccumulated + 30 + 40
                         );
                     }
 
-                    currentTicksAccumulated += 100;  // 30 (移动) + 70 (停留) = 100 ticks
+                    currentTicksAccumulated += 100;
                     controlPointIndex++;
-                    previousPointPos = pointPos;  // 更新进攻来源位置
+                    previousPointPos = pointPos;
                 }
             }
 
-            // 拉到上空（快速过渡）
             builder.addKeyframe(
                     battlefieldCenter.x,
                     battlefieldCenter.y + observationHeight,
                     battlefieldCenter.z,
                     overviewYaw,
                     75,
-                    40,     // 2秒过渡时间
+                    40,
                     "",
                     ""
             );
 
-            // 在上空停留等待
             builder.addKeyframe(
                     battlefieldCenter.x,
                     battlefieldCenter.y + observationHeight,
                     battlefieldCenter.z,
                     overviewYaw,
                     75,
-                    60,     // 3秒停留时间
+                    60,
                     "",
                     ""
             );
 
-            // 最终帧：显示加时赛标题
             builder.addKeyframe(
                     battlefieldCenter.x,
                     battlefieldCenter.y + observationHeight,
                     battlefieldCenter.z,
                     overviewYaw,
                     75,
-                    80,     // 4秒显示标题
+                    80,
                     overtimeTitle,
                     overtimeSubtitle
             );
@@ -1014,13 +1011,14 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * 生成单个控制点的遮盖实体
      */
     private void spawnSingleOvertimeCoverEntity(int index, Vector3 pointPos, boolean isCaptured) {
-        // 计算遮盖实体高度
+        if (!this.overtimeAnimationPlaying) {
+            return;
+        }
         double coverY = pointPos.y + 10;
         Vector3 position = new Vector3(pointPos.x, coverY, pointPos.z);
 
         CompoundTag nbt = Entity.getDefaultNBT(position);
 
-        // 根据占领状态生成对应颜色的遮盖实体
         Entity coverEntity;
         if (isCaptured) {
             coverEntity = new EntityGunWarCoverRed(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
@@ -1030,7 +1028,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
 
         coverEntity.spawnToAll();
 
-        // 确保列表足够大
         while (this.overtimeCoverEntities.size() <= index) {
             this.overtimeCoverEntities.add(null);
         }
@@ -1041,31 +1038,28 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * 更新遮盖实体颜色
      */
     private void updateCoverEntityColor(int index, Vector3 pointPos, boolean toRed) {
+        if (!this.overtimeAnimationPlaying) {
+            return;
+        }
         if (index < 0) {
             GunWar.getInstance().getLogger().warning("更新遮盖实体颜色失败：索引 " + index + " 小于0");
             return;
         }
 
-        // 确保列表足够大
         while (this.overtimeCoverEntities.size() <= index) {
             this.overtimeCoverEntities.add(null);
         }
 
-        // 移除旧的遮盖实体
         Entity oldEntity = this.overtimeCoverEntities.get(index);
         if (oldEntity != null && !oldEntity.isClosed()) {
             oldEntity.close();
-        } else if (oldEntity == null) {
-            GunWar.getInstance().getLogger().warning("更新遮盖实体颜色：索引 " + index + " 的旧实体为null");
         }
 
-        // 计算遮盖实体高度
         double coverY = pointPos.y + 10;
         Vector3 position = new Vector3(pointPos.x, coverY, pointPos.z);
 
         CompoundTag nbt = Entity.getDefaultNBT(position);
 
-        // 创建新的遮盖实体
         Entity newEntity;
         if (toRed) {
             newEntity = new EntityGunWarCoverRed(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
@@ -1086,12 +1080,9 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      */
     private Vector3 calculateBehindPlayerPosition(Player player, double distance) {
         double yaw = player.getYaw();
-        
         double yawRadians = Math.toRadians(yaw);
-        
         double x = player.getX() + distance * Math.sin(yawRadians);
         double z = player.getZ() - distance * Math.cos(yawRadians);
-
         return new Vector3(x, player.getY(), z);
     }
 
@@ -1101,21 +1092,17 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     private void onOvertimeAnimationComplete(Player player) {
         this.playerCameraAnimations.remove(player);
 
-        // 复活玩家到重生点（镜头会自动回到玩家身上）
         this.playerRespawn(player);
 
-        // 检查所有玩家的动画是否都完成
         if (this.playerCameraAnimations.isEmpty()) {
-            // 清除遮盖实体
             this.clearOvertimeCoverEntities();
+            this.overtimeAnimationPlaying = false;
 
-            // 进入加时赛状态
             this.isOvertime = true;
             this.attackerCurrentResource = this.overtimeResource;
             this.gameTime = this.overtimeTime;
-            this.pauseGameTime = false;  // 恢复游戏时间
+            this.pauseGameTime = false;
 
-            // 广播加时赛开始消息
             Tools.sendMessage(this, "§6§l========================================");
             Tools.sendMessage(this, "§c§l加时赛开始！");
             Tools.sendMessage(this, "§e进攻方获得 §6" + this.overtimeResource + " §e点资源");
@@ -1128,6 +1115,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * 清除加时赛遮盖实体
      */
     private void clearOvertimeCoverEntities() {
+        this.overtimeAnimationPlaying = false;
         for (Entity entity : this.overtimeCoverEntities) {
             if (entity != null && !entity.isClosed()) {
                 entity.close();
@@ -1143,13 +1131,11 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     private void onCameraAnimationComplete(Player player) {
         this.playerCameraAnimations.remove(player);
 
-        // 传送玩家到重生点
         this.playerRespawn(player);
 
-        // 检查所有玩家的动画是否都完成
         if (this.playerCameraAnimations.isEmpty()) {
             this.cameraAnimationPlaying = false;
-            this.pauseGameTime = false;  // 恢复游戏时间
+            this.pauseGameTime = false;
         }
     }
 
@@ -1160,19 +1146,15 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * @param player 要播放动画的玩家
      */
     public void testCameraAnimation(Player player) {
-        // 生成摄像机路径
         List<CameraKeyframe> keyframes = this.generateCameraPath(player);
 
-        // 创建并启动摄像机动画任务（测试模式不设置完成回调）
         CameraAnimationTask.Builder builder = new CameraAnimationTask.Builder(this.gunWar, player)
                 .onComplete(p -> p.sendMessage("§a开场动画测试完成！"));
 
-        // 添加所有关键帧
         for (CameraKeyframe keyframe : keyframes) {
             builder.addKeyframe(keyframe);
         }
 
-        // 构建并启动
         builder.buildAndStart();
     }
 
@@ -1184,45 +1166,36 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      * @param player 要播放动画的玩家
      */
     public void testOvertimeAnimation(Player player) {
-        // 随机设置控制点的占领状态（按顺序）
+        this.overtimeAnimationPlaying = true;
         boolean continueCapture = true;
         for (Zone zone : this.zones) {
             for (ControlPoint point : zone.getControlPoints()) {
                 if (continueCapture) {
-                    // 50%的概率被占领
                     boolean captured = Math.random() < 0.5;
                     point.setCaptured(captured);
-                    // 如果这个点没被占领，后续的点也不会被占领
                     if (!captured) {
                         continueCapture = false;
                     }
                 } else {
-                    // 后续点都不会被占领
                     point.setCaptured(false);
                 }
             }
         }
 
-        // 计算战场中心点
         Vector3 battlefieldCenter = calculateBattlefieldCenter();
 
-        // 动态计算观察高度
         double observationHeight = calculateOvertimeObservationHeight();
 
-        // 获取进攻方和防守方复活点
         Vector3 attackerSpawn = this.getRedSpawn();
         Vector3 defenderSpawn = this.getBlueSpawn();
 
-        // 计算概览视角的朝向
         double vx = defenderSpawn.x - attackerSpawn.x;
         double vz = defenderSpawn.z - attackerSpawn.z;
         float overviewYaw = (float) Math.toDegrees(Math.atan2(-vz, -vx));
 
-        // 获取玩家队伍
         Team team = this.getPlayerTeam(player);
         team = Team.RED;
 
-        // 准备不同阶段的标题
         String defeatTitle, defeatSubtitle;
         String overtimeTitle, overtimeSubtitle;
 
@@ -1238,62 +1211,53 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             overtimeSubtitle = "";
         }
 
-        // 获取玩家当前位置
         Vector3 playerPos = player.getPosition();
 
-        // 计算玩家身后的位置（第三人称视角）
         Vector3 behindPlayer = calculateBehindPlayerPosition(player, 5);
         float yawToPlayer = calculateYawBetween(behindPlayer, playerPos);
 
-        // 创建加时赛测试动画
         CameraAnimationTask.Builder builder = new CameraAnimationTask.Builder(this.gunWar, player)
                 .onComplete(p -> {
-                    // 动画完成后清除遮盖实体
                     this.clearOvertimeCoverEntities();
                     p.sendMessage("§a加时赛动画测试完成！");
                 });
 
-        // 第一帧：移动到玩家身后（第三人称视角）
-        builder.addKeyframe(
-                behindPlayer.x,
-                behindPlayer.y + 2,  // 略高于玩家
-                behindPlayer.z,
-                yawToPlayer,  // 朝向玩家
-                10,     // 俯仰角：略微向下看
-                40,     // 持续2秒
-                "",
-                ""
-        );
-
-        // 第二帧：停留在玩家身后，显示胜败标题
         builder.addKeyframe(
                 behindPlayer.x,
                 behindPlayer.y + 2,
                 behindPlayer.z,
                 yawToPlayer,
                 10,
-                60,     // 持续3秒
+                40,
+                "",
+                ""
+        );
+
+        builder.addKeyframe(
+                behindPlayer.x,
+                behindPlayer.y + 2,
+                behindPlayer.z,
+                yawToPlayer,
+                10,
+                60,
                 defeatTitle,
                 defeatSubtitle
         );
 
-        // 按照进攻顺序（zones顺序）逐个查看每个控制点
-        int currentTicksAccumulated = 100; // 前两帧总共100 ticks
-        int controlPointIndex = 0; // 全局控制点索引（用于遮盖实体）
-        Vector3 previousPointPos = attackerSpawn;  // 进攻来源起点
+        int currentTicksAccumulated = 100;
+        int controlPointIndex = 0;
+        Vector3 previousPointPos = attackerSpawn;
 
         for (Zone zone : this.zones) {
             for (ControlPoint point : zone.getControlPoints()) {
                 Vector3 pointPos = point.getPosition();
 
-                // 计算进攻方向（从上一个点到当前点）
                 double dx = pointPos.x - previousPointPos.x;
                 double dz = pointPos.z - previousPointPos.z;
                 float attackYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
 
-                // 相机位置：在上一个进攻点附近，稍微抬高 + 稍微往后退
-                double backwardDistance = 5.0;   // 往后退5格（避免太近）
-                double cameraHeight = 20.0;      // 抬高20格
+                double backwardDistance = 5.0;
+                double cameraHeight = 20.0;
 
                 double offsetX = previousPointPos.x - pointPos.x;
                 double offsetZ = previousPointPos.z - pointPos.z;
@@ -1313,102 +1277,92 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
                 double cameraZ = pointPos.z + dirZ * backwardDistance;
                 double cameraY = pointPos.y + cameraHeight;
 
-                // 计算相机朝向：看向当前控制点
-                float cameraYaw = calculateYawBetween(new Vector3(cameraX, cameraY, cameraZ), pointPos);
+                Vector3 coverEntityPos = new Vector3(pointPos.x, pointPos.y + 10, pointPos.z);
+                float cameraYaw = calculateYawBetween(new Vector3(cameraX, cameraY, cameraZ), coverEntityPos);
 
-                // 准备标题
                 String pointTitle = (point.isCaptured() ? "§a已占领" : "§c未占领")
                         + " §7- §f" + zone.getName();
                 String pointSubtitle = "§7控制点 " + ((char)('A' + (zone.getControlPoints().indexOf(point))));
 
-                // 第一帧：移动到控制点斜后方（30 ticks = 1.5秒过渡时间）
                 builder.addKeyframe(
                         cameraX,
                         cameraY,
                         cameraZ,
                         cameraYaw,
-                        45,     // 向下45度俯视（角度减小以看清更多区域）
-                        30,     // 1.5秒过渡时间
+                        45,
+                        30,
                         "",
                         ""
                 );
 
-                // 第二帧：在斜后方停留观察（70 ticks = 3.5秒停留时间）
                 builder.addKeyframe(
                         cameraX,
                         cameraY,
                         cameraZ,
                         cameraYaw,
-                        45,     // 向下45度俯视
-                        70,     // 3.5秒停留时间
+                        45,
+                        70,
                         pointTitle,
                         pointSubtitle
                 );
 
-                // 在这个控制点先生成蓝色遮盖实体
                 final int finalControlPointIndex = controlPointIndex;
                 final Vector3 finalPointPos = pointPos;
                 final boolean isCaptured = point.isCaptured();
 
-                // 相机移动到位后立即生成蓝色遮盖实体
                 this.gunWar.getServer().getScheduler().scheduleDelayedTask(
                         this.gunWar,
                         () -> this.spawnSingleOvertimeCoverEntity(finalControlPointIndex, finalPointPos, false),
-                        currentTicksAccumulated + 30  // 在移动到位后生成
+                        currentTicksAccumulated + 30
                 );
 
-                // 如果被占领，延迟40 ticks (2秒) 后更新为红色
                 if (isCaptured) {
                     this.gunWar.getServer().getScheduler().scheduleDelayedTask(
                             this.gunWar,
                             () -> this.updateCoverEntityColor(finalControlPointIndex, finalPointPos, true),
-                            currentTicksAccumulated + 30 + 40  // 移动到位30 + 等待40
+                            currentTicksAccumulated + 30 + 40
                     );
                 }
 
-                currentTicksAccumulated += 100;  // 30 (移动) + 70 (停留) = 100 ticks
+                currentTicksAccumulated += 100;
                 controlPointIndex++;
-                previousPointPos = pointPos;  // 更新进攻来源位置
+                previousPointPos = pointPos;
             }
         }
 
-        // 拉到上空（快速过渡）
         builder.addKeyframe(
                 battlefieldCenter.x,
                 battlefieldCenter.y + observationHeight,
                 battlefieldCenter.z,
                 overviewYaw,
                 75,
-                40,     // 2秒过渡时间
+                40,
                 "",
                 ""
         );
 
-        // 在上空停留等待
         builder.addKeyframe(
                 battlefieldCenter.x,
                 battlefieldCenter.y + observationHeight,
                 battlefieldCenter.z,
                 overviewYaw,
                 75,
-                60,     // 3秒停留时间
+                60,
                 "",
                 ""
         );
 
-        // 最终帧：显示加时赛标题
         builder.addKeyframe(
                 battlefieldCenter.x,
                 battlefieldCenter.y + observationHeight,
                 battlefieldCenter.z,
                 overviewYaw,
                 75,
-                80,     // 4秒显示标题
+                80,
                 overtimeTitle,
                 overtimeSubtitle
         );
 
-        // 构建并启动
         builder.buildAndStart();
     }
 

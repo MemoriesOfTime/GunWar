@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class AsyncControlPointCheckTask extends AsyncTask {
 
+    private static final int CAPTURE_TICK_INTERVAL = 2;
+
     private int tick = 0;
     private final ActionModeRoom room;
     private final HashMap<Player, Integer> playerLastIn = new HashMap<>();
@@ -77,7 +79,7 @@ public class AsyncControlPointCheckTask extends AsyncTask {
             }
 
             // 检查占领进度
-            this.checkControlPoint(playersInRange, controlPoint);
+            this.checkControlPoint(playersInRange, controlPoint, tick);
         }
 
         // 每秒显示一次粒子效果
@@ -92,7 +94,10 @@ public class AsyncControlPointCheckTask extends AsyncTask {
      * @param players 在占领范围内的玩家列表
      * @param controlPoint 控制点
      */
-    private void checkControlPoint(ArrayList<Player> players, ActionModeRoom.ControlPoint controlPoint) {
+    private void checkControlPoint(ArrayList<Player> players, ActionModeRoom.ControlPoint controlPoint, int tick) {
+        if (tick % CAPTURE_TICK_INTERVAL != 0) {
+            return;
+        }
         ArrayList<Player> attackers = new ArrayList<>();
         ArrayList<Player> defenders = new ArrayList<>();
 
@@ -118,9 +123,12 @@ public class AsyncControlPointCheckTask extends AsyncTask {
         if (attackers.size() > defenders.size()) {
             flag.addTeamPoints(Team.RED, (attackers.size() - defenders.size()));
 
-            // 检查是否完全占领
+            // 检查是否完全占领（team已经在addTeamPoints中自动切换）
             if (flag.getTeam() == Team.RED && flag.getFlagHeight() >= 100) {
-                controlPoint.setCaptured(true);
+                if (!controlPoint.isCaptured()) {
+                    controlPoint.setCaptured(true);
+                }
+                flag.setFlagHeight(100);
             }
         } else if (defenders.size() > attackers.size()) {
             // 防守方人数多时降低占领进度
