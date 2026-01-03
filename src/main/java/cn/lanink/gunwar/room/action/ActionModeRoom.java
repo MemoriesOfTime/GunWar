@@ -18,7 +18,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.BossBarColor;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.DummyBossBar;
@@ -64,6 +63,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     private boolean enableCameraAnimation;  // 是否启用摄像机动画
     private final Map<Player, CameraAnimationTask> playerCameraAnimations = new ConcurrentHashMap<>();
     private boolean cameraAnimationPlaying = false;  // 是否正在播放摄像机动画
+    private boolean pauseGameTime = false;  // 是否暂停游戏时间（动画播放时）
 
     // 加时赛配置
     @Getter
@@ -265,6 +265,20 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             // 检查胜负条件
             this.checkVictoryCondition();
         }
+    }
+
+    /**
+     * 检查游戏时间
+     * 重写父类方法，支持暂停游戏时间
+     */
+    @Override
+    protected void checkGameTime() {
+        // 如果正在播放动画，暂停游戏时间
+        if (this.pauseGameTime) {
+            return;
+        }
+        // 否则正常递减时间
+        super.checkGameTime();
     }
 
     /**
@@ -509,6 +523,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
      */
     private void playCameraAnimation() {
         this.cameraAnimationPlaying = true;
+        this.pauseGameTime = true;  // 暂停游戏时间
 
         for (Player player : this.getPlayerDataMap().keySet()) {
             // 为每个玩家生成并播放摄像机动画
@@ -692,7 +707,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         // 计算对角线长度
         double diagonal = Math.sqrt(rangeX * rangeX + rangeZ * rangeZ);
 
-        double height = Math.max(40.0, Math.min(180.0, diagonal * 0.9));
+        double height = Math.max(40.0, Math.min(180.0, diagonal * 0.8));
 
         return height;
     }
@@ -762,8 +777,11 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
 
     /**
      * 播放加时赛动画
+     * 优化版：按照进攻顺序逐个查看控制点，避免大地图渲染距离问题
      */
     private void playOvertimeAnimation() {
+        this.pauseGameTime = true;  // 暂停游戏时间
+
         // 计算战场中心点
         Vector3 battlefieldCenter = calculateBattlefieldCenter();
 
@@ -779,36 +797,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         double vz = defenderSpawn.z - attackerSpawn.z;
         float overviewYaw = (float) Math.toDegrees(Math.atan2(-vz, -vx));
 
-        // 计算被占领的点数，用于确定遮盖实体更新时间
-        int capturedPointsCount = 0;
-        for (Zone zone : this.zones) {
-            for (ControlPoint point : zone.getControlPoints()) {
-                if (point.isCaptured()) {
-                    capturedPointsCount++;
-                }
-            }
-        }
-
-        // 计算遮盖实体更新完成的时间
-        // 100 ticks开始生成蓝色 + 20 ticks初始延迟 + (占领点数-1) * 20 ticks间隔
-        int coverUpdateCompleteTicks = 100 + 20;
-        if (capturedPointsCount > 0) {
-            coverUpdateCompleteTicks += (capturedPointsCount - 1) * 20;
-        }
-
-        // 激励文本结束时间：160 + 3*40 = 280 ticks（4条文本，每条间隔40 ticks）
-        int motivationalTextEndTicks = 280;
-
-        // 取两者的最大值，确保都完成后再等待一小会（40 ticks）
-        int waitBeforeOvertitleTicks = Math.max(coverUpdateCompleteTicks, motivationalTextEndTicks) + 40;
-
-        // 当前累计时间：第一帧40 + 第二帧40 + 第三帧40 = 120 ticks
-        int currentTicks = 120;
-        // 计算第四帧需要的持续时间（等到加时赛标题前）
-        int frame4Duration = waitBeforeOvertitleTicks - currentTicks;
-        // 确保第四帧至少持续30 ticks
-        frame4Duration = Math.max(frame4Duration, 30);
-
         for (Player player : this.getPlayerDataMap().keySet()) {
             Team team = this.getPlayerTeam(player);
 
@@ -816,31 +804,16 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
             String defeatTitle, defeatSubtitle;
             String overtimeTitle, overtimeSubtitle;
 
-            // 准备激励文本（根据队伍）
-            String[] motivationalTexts;
-
             if (team == Team.RED) {
                 defeatTitle = "§c§l我们输了";
                 defeatSubtitle = "§7无法拿下本区域";
                 overtimeTitle = "§c§l最后攻势";
                 overtimeSubtitle = "";
-                motivationalTexts = new String[] {
-                        "§c§l这是我们最后的机会...",
-                        "§e§l全力以赴，突破防线！",
-                        "§6§l为了胜利，不惜一切！",
-                        "§c§l是时候展现真正的实力了！"
-                };
             } else {
                 defeatTitle = "§9§l我们赢了";
                 defeatSubtitle = "§7成功守住本区域";
                 overtimeTitle = "§9§l最后防线";
                 overtimeSubtitle = "";
-                motivationalTexts = new String[] {
-                        "§9§l敌人发起最后的进攻...",
-                        "§e§l坚守阵地，不让他们前进一步！",
-                        "§6§l胜利就在眼前，别放松警惕！",
-                        "§9§l守住这最后一波！"
-                };
             }
 
             // 获取玩家当前位置
@@ -873,57 +846,235 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
                     behindPlayer.z,
                     yawToPlayer,
                     10,
-                    40,     // 持续2秒
+                    60,     // 持续3秒
                     defeatTitle,
                     defeatSubtitle
             );
 
-            // 第三帧：拉高到战场上空
+            // 按照进攻顺序（zones顺序）逐个查看每个控制点
+            int currentTicksAccumulated = 100; // 前两帧总共100 ticks
+            int controlPointIndex = 0; // 全局控制点索引（用于遮盖实体）
+            Vector3 previousPointPos = attackerSpawn;  // 进攻来源起点
+
+            for (Zone zone : this.zones) {
+                for (ControlPoint point : zone.getControlPoints()) {
+                    Vector3 pointPos = point.getPosition();
+
+                    // 计算进攻方向（从上一个点到当前点）
+                    double dx = pointPos.x - previousPointPos.x;
+                    double dz = pointPos.z - previousPointPos.z;
+                    float attackYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
+
+                    // 相机位置：在上一个进攻点附近，稍微抬高 + 稍微往后退
+                    double backwardDistance = 5.0;
+                    double cameraHeight = 20.0;
+
+                    double offsetX = previousPointPos.x - pointPos.x;
+                    double offsetZ = previousPointPos.z - pointPos.z;
+                    double offsetLen = Math.sqrt(offsetX * offsetX + offsetZ * offsetZ);
+                    double dirX;
+                    double dirZ;
+                    if (offsetLen > 0.0001) {
+                        dirX = offsetX / offsetLen;
+                        dirZ = offsetZ / offsetLen;
+                    } else {
+                        double yawRadians = Math.toRadians(attackYaw + 180);
+                        dirX = Math.sin(yawRadians);
+                        dirZ = -Math.cos(yawRadians);
+                    }
+
+                    double cameraX = pointPos.x + dirX * backwardDistance;
+                    double cameraZ = pointPos.z + dirZ * backwardDistance;
+                    double cameraY = pointPos.y + cameraHeight;
+
+                    // 计算相机朝向：看向当前控制点
+                    float cameraYaw = calculateYawBetween(new Vector3(cameraX, cameraY, cameraZ), pointPos);
+
+                    // 准备标题
+                    String pointTitle = (point.isCaptured() ? "§a已占领" : "§c未占领")
+                            + " §7- §f" + zone.getName();
+                    String pointSubtitle = "§7控制点 " + ((char)('A' + (zone.getControlPoints().indexOf(point))));
+
+                    // 第一帧：移动到控制点斜后方（30 ticks = 1.5秒过渡时间）
+                    builder.addKeyframe(
+                            cameraX,
+                            cameraY,
+                            cameraZ,
+                            cameraYaw,
+                            45,
+                            30,     // 1.5秒过渡时间
+                            "",
+                            ""
+                    );
+
+                    // 第二帧：在斜后方停留观察（70 ticks = 3.5秒停留时间）
+                    builder.addKeyframe(
+                            cameraX,
+                            cameraY,
+                            cameraZ,
+                            cameraYaw,
+                            45,     // 向下45度俯视
+                            70,     // 3.5秒停留时间
+                            pointTitle,
+                            pointSubtitle
+                    );
+
+                    // 在这个控制点先生成蓝色遮盖实体
+                    final int finalControlPointIndex = controlPointIndex;
+                    final Vector3 finalPointPos = pointPos;
+                    final boolean isCaptured = point.isCaptured();
+
+                    // 相机移动到位后立即生成蓝色遮盖实体
+                    this.gunWar.getServer().getScheduler().scheduleDelayedTask(
+                            this.gunWar,
+                            () -> this.spawnSingleOvertimeCoverEntity(finalControlPointIndex, finalPointPos, false),
+                            currentTicksAccumulated + 30  // 在移动到位后生成
+                    );
+
+                    // 如果被占领，延迟40 ticks (2秒) 后更新为红色
+                    if (isCaptured) {
+                        this.gunWar.getServer().getScheduler().scheduleDelayedTask(
+                                this.gunWar,
+                                () -> this.updateCoverEntityColor(finalControlPointIndex, finalPointPos, true),
+                                currentTicksAccumulated + 30 + 40  // 移动到位30 + 等待40
+                        );
+                    }
+
+                    currentTicksAccumulated += 100;  // 30 (移动) + 70 (停留) = 100 ticks
+                    controlPointIndex++;
+                    previousPointPos = pointPos;  // 更新进攻来源位置
+                }
+            }
+
+            // 拉到上空（快速过渡）
             builder.addKeyframe(
                     battlefieldCenter.x,
                     battlefieldCenter.y + observationHeight,
                     battlefieldCenter.z,
                     overviewYaw,
                     75,
-                    40,     // 持续2秒
+                    40,     // 2秒过渡时间
                     "",
                     ""
             );
 
-            // 第四帧：在上空停留，等待激励文本和遮盖实体更新完成
+            // 在上空停留等待
             builder.addKeyframe(
                     battlefieldCenter.x,
                     battlefieldCenter.y + observationHeight,
                     battlefieldCenter.z,
                     overviewYaw,
                     75,
-                    frame4Duration,  // 动态计算的等待时间
+                    60,     // 3秒停留时间
                     "",
                     ""
             );
 
-            // 第五帧：显示加时赛标题
+            // 最终帧：显示加时赛标题
             builder.addKeyframe(
                     battlefieldCenter.x,
                     battlefieldCenter.y + observationHeight,
                     battlefieldCenter.z,
                     overviewYaw,
                     75,
-                    60,     // 持续3秒
+                    80,     // 4秒显示标题
                     overtimeTitle,
                     overtimeSubtitle
             );
 
             CameraAnimationTask task = builder.buildAndStart();
             this.playerCameraAnimations.put(player, task);
+        }
+    }
 
-            // 在空中阶段（第三、四帧）播放激励文本
-            this.scheduleMotivationalTips(player, motivationalTexts);
+    /**
+     * 计算朝向下一个控制点的偏航角
+     */
+    private float calculateNextPointYaw(Zone currentZone, ControlPoint currentPoint, Vector3 defenderSpawn) {
+        // 找到当前控制点在所有控制点中的位置
+        boolean foundCurrent = false;
+
+        for (Zone zone : this.zones) {
+            for (ControlPoint point : zone.getControlPoints()) {
+                if (foundCurrent) {
+                    // 找到了下一个控制点，朝向它
+                    return calculateYawBetween(currentPoint.getPosition(), point.getPosition());
+                }
+                if (point == currentPoint) {
+                    foundCurrent = true;
+                }
+            }
         }
 
-        // 在视角移动到上空后生成遮盖实体
-        // 第一帧40 ticks + 第二帧40 ticks = 80 ticks后开始拉高，在100 ticks时生成遮盖实体
-        this.gunWar.getServer().getScheduler().scheduleDelayedTask(this.gunWar, this::spawnOvertimeCoverEntities, 100);
+        // 如果是最后一个控制点，朝向防守方出生点
+        return calculateYawBetween(currentPoint.getPosition(), defenderSpawn);
+    }
+
+    /**
+     * 生成单个控制点的遮盖实体
+     */
+    private void spawnSingleOvertimeCoverEntity(int index, Vector3 pointPos, boolean isCaptured) {
+        // 计算遮盖实体高度
+        double coverY = pointPos.y + 10;
+        Vector3 position = new Vector3(pointPos.x, coverY, pointPos.z);
+
+        CompoundTag nbt = Entity.getDefaultNBT(position);
+
+        // 根据占领状态生成对应颜色的遮盖实体
+        Entity coverEntity;
+        if (isCaptured) {
+            coverEntity = new EntityGunWarCoverRed(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
+        } else {
+            coverEntity = new EntityGunWarCoverBlue(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
+        }
+
+        coverEntity.spawnToAll();
+
+        // 确保列表足够大
+        while (this.overtimeCoverEntities.size() <= index) {
+            this.overtimeCoverEntities.add(null);
+        }
+        this.overtimeCoverEntities.set(index, coverEntity);
+    }
+
+    /**
+     * 更新遮盖实体颜色
+     */
+    private void updateCoverEntityColor(int index, Vector3 pointPos, boolean toRed) {
+        if (index < 0) {
+            GunWar.getInstance().getLogger().warning("更新遮盖实体颜色失败：索引 " + index + " 小于0");
+            return;
+        }
+
+        // 确保列表足够大
+        while (this.overtimeCoverEntities.size() <= index) {
+            this.overtimeCoverEntities.add(null);
+        }
+
+        // 移除旧的遮盖实体
+        Entity oldEntity = this.overtimeCoverEntities.get(index);
+        if (oldEntity != null && !oldEntity.isClosed()) {
+            oldEntity.close();
+        } else if (oldEntity == null) {
+            GunWar.getInstance().getLogger().warning("更新遮盖实体颜色：索引 " + index + " 的旧实体为null");
+        }
+
+        // 计算遮盖实体高度
+        double coverY = pointPos.y + 10;
+        Vector3 position = new Vector3(pointPos.x, coverY, pointPos.z);
+
+        CompoundTag nbt = Entity.getDefaultNBT(position);
+
+        // 创建新的遮盖实体
+        Entity newEntity;
+        if (toRed) {
+            newEntity = new EntityGunWarCoverRed(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
+        } else {
+            newEntity = new EntityGunWarCoverBlue(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
+        }
+
+        newEntity.spawnToAll();
+        this.overtimeCoverEntities.set(index, newEntity);
     }
 
     /**
@@ -953,126 +1104,24 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         // 复活玩家到重生点（镜头会自动回到玩家身上）
         this.playerRespawn(player);
 
-        // 清除遮盖实体
-        this.clearOvertimeCoverEntities();
+        // 检查所有玩家的动画是否都完成
+        if (this.playerCameraAnimations.isEmpty()) {
+            // 清除遮盖实体
+            this.clearOvertimeCoverEntities();
 
-        // 进入加时赛状态
-        this.isOvertime = true;
-        this.attackerCurrentResource = this.overtimeResource;
-        this.gameTime = this.overtimeTime;
+            // 进入加时赛状态
+            this.isOvertime = true;
+            this.attackerCurrentResource = this.overtimeResource;
+            this.gameTime = this.overtimeTime;
+            this.pauseGameTime = false;  // 恢复游戏时间
 
-        // 广播加时赛开始消息
-        Tools.sendMessage(this, "§6§l========================================");
-        Tools.sendMessage(this, "§c§l加时赛开始！");
-        Tools.sendMessage(this, "§e进攻方获得 §6" + this.overtimeResource + " §e点资源");
-        Tools.sendMessage(this, "§e剩余时间：§6" + this.overtimeTime + " §e秒");
-        Tools.sendMessage(this, "§6§l========================================");
-    }
-
-    /**
-     * 生成加时赛遮盖实体
-     * 先全部显示为防守方颜色，然后根据占领情况逐个显示为进攻方颜色
-     */
-    private void spawnOvertimeCoverEntities() {
-        // 清除之前的遮盖实体
-        this.clearOvertimeCoverEntities();
-
-        // 计算战场中心点和观察高度
-        Vector3 battlefieldCenter = calculateBattlefieldCenter();
-        double observationHeight = calculateOvertimeObservationHeight();
-        double cameraY = battlefieldCenter.y + observationHeight;
-
-        // 第一阶段：所有占领点先生成蓝色遮盖（防守方）
-        for (Zone zone : this.zones) {
-            for (ControlPoint point : zone.getControlPoints()) {
-                Vector3 pointPos = point.getPosition();
-
-                double coverY = pointPos.y + (cameraY - pointPos.y) * 0.4;
-                Vector3 position = new Vector3(pointPos.x, coverY, pointPos.z);
-
-                CompoundTag nbt = Entity.getDefaultNBT(position);
-
-                // 先都生成蓝色遮盖
-                Entity coverEntity = new EntityGunWarCoverBlue(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
-                coverEntity.spawnToAll();
-                this.overtimeCoverEntities.add(coverEntity);
-            }
+            // 广播加时赛开始消息
+            Tools.sendMessage(this, "§6§l========================================");
+            Tools.sendMessage(this, "§c§l加时赛开始！");
+            Tools.sendMessage(this, "§e进攻方获得 §6" + this.overtimeResource + " §e点资源");
+            Tools.sendMessage(this, "§e剩余时间：§6" + this.overtimeTime + " §e秒");
+            Tools.sendMessage(this, "§6§l========================================");
         }
-
-        // 第二阶段：根据占领情况，逐个将已占领的点替换为红色遮盖
-        int delayTicks = 20; // 初始延迟1秒
-        int intervalTicks = 20; // 每个点之间间隔1秒
-        int currentDelay = delayTicks;
-
-        for (Zone zone : this.zones) {
-            for (int i = 0; i < zone.getControlPoints().size(); i++) {
-                ControlPoint point = zone.getControlPoints().get(i);
-
-                // 只替换已被占领的点
-                if (point.isCaptured()) {
-                    Vector3 pointPos = point.getPosition();
-
-                    // 计算遮盖实体高度（与上面相同的计算）
-                    double coverY = pointPos.y + (cameraY - pointPos.y) * 0.4;
-                    final Vector3 position = new Vector3(pointPos.x, coverY, pointPos.z);
-                    final int pointIndex = this.getControlPointIndex(point);
-
-                    // 延迟替换为红色遮盖
-                    this.gunWar.getServer().getScheduler().scheduleDelayedTask(this.gunWar, () -> {
-                        this.replaceCoverEntity(pointIndex, position, true);
-                    }, currentDelay);
-
-                    currentDelay += intervalTicks;
-                }
-            }
-        }
-    }
-
-    /**
-     * 获取控制点在遮盖实体列表中的索引
-     */
-    private int getControlPointIndex(ControlPoint targetPoint) {
-        int index = 0;
-        for (Zone zone : this.zones) {
-            for (ControlPoint point : zone.getControlPoints()) {
-                if (point == targetPoint) {
-                    return index;
-                }
-                index++;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * 替换指定索引的遮盖实体
-     *
-     * @param index 遮盖实体在列表中的索引
-     * @param position 位置
-     * @param toRed true=替换为红色，false=替换为蓝色
-     */
-    private void replaceCoverEntity(int index, Vector3 position, boolean toRed) {
-        if (index < 0 || index >= this.overtimeCoverEntities.size()) {
-            return;
-        }
-
-        // 移除旧的遮盖实体
-        Entity oldEntity = this.overtimeCoverEntities.get(index);
-        if (oldEntity != null && !oldEntity.isClosed()) {
-            oldEntity.close();
-        }
-
-        // 创建新的遮盖实体
-        CompoundTag nbt = Entity.getDefaultNBT(position);
-        Entity newEntity;
-        if (toRed) {
-            newEntity = new EntityGunWarCoverRed(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
-        } else {
-            newEntity = new EntityGunWarCoverBlue(this.level.getChunk((int) position.x >> 4, (int) position.z >> 4), nbt);
-        }
-
-        newEntity.spawnToAll();
-        this.overtimeCoverEntities.set(index, newEntity);
     }
 
     /**
@@ -1087,39 +1136,6 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         this.overtimeCoverEntities.clear();
     }
 
-    private void scheduleMotivationalTips(Player player, String[] motivationalTexts) {
-        if (motivationalTexts == null || motivationalTexts.length == 0) {
-            return;
-        }
-
-        this.gunWar.getServer().getScheduler().scheduleRepeatingTask(this.gunWar, new Task() {
-            private int counter = 0;
-
-            @Override
-            public void onRun(int currentTick) {
-                if (!player.isOnline()) {
-                    this.cancel();
-                    return;
-                }
-
-                this.counter++;
-                if (this.counter < 4) {
-                    return;
-                }
-
-                int index = this.counter - 4;
-                if (index >= motivationalTexts.length) {
-                    this.cancel();
-                    return;
-                }
-
-                player.sendTip(motivationalTexts[index]);
-                if (index >= motivationalTexts.length - 1) {
-                    this.cancel();
-                }
-            }
-        }, 40);
-    }
 
     /**
      * 摄像机动画完成回调
@@ -1133,6 +1149,7 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         // 检查所有玩家的动画是否都完成
         if (this.playerCameraAnimations.isEmpty()) {
             this.cameraAnimationPlaying = false;
+            this.pauseGameTime = false;  // 恢复游戏时间
         }
     }
 
@@ -1162,10 +1179,30 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
     /**
      * 测试加时赛动画（用于调试）
      * 为单个玩家播放加时赛动画，不影响游戏状态
+     * 会随机设置控制点的占领状态（按顺序）
      *
      * @param player 要播放动画的玩家
      */
     public void testOvertimeAnimation(Player player) {
+        // 随机设置控制点的占领状态（按顺序）
+        boolean continueCapture = true;
+        for (Zone zone : this.zones) {
+            for (ControlPoint point : zone.getControlPoints()) {
+                if (continueCapture) {
+                    // 50%的概率被占领
+                    boolean captured = Math.random() < 0.5;
+                    point.setCaptured(captured);
+                    // 如果这个点没被占领，后续的点也不会被占领
+                    if (!captured) {
+                        continueCapture = false;
+                    }
+                } else {
+                    // 后续点都不会被占领
+                    point.setCaptured(false);
+                }
+            }
+        }
+
         // 计算战场中心点
         Vector3 battlefieldCenter = calculateBattlefieldCenter();
 
@@ -1181,68 +1218,24 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
         double vz = defenderSpawn.z - attackerSpawn.z;
         float overviewYaw = (float) Math.toDegrees(Math.atan2(-vz, -vx));
 
-        // 计算被占领的点数，用于确定遮盖实体更新时间
-        int capturedPointsCount = 0;
-        for (Zone zone : this.zones) {
-            for (ControlPoint point : zone.getControlPoints()) {
-                if (point.isCaptured()) {
-                    capturedPointsCount++;
-                }
-            }
-        }
-
-        // 计算遮盖实体更新完成的时间
-        int coverUpdateCompleteTicks = 100 + 20;
-        if (capturedPointsCount > 0) {
-            coverUpdateCompleteTicks += (capturedPointsCount - 1) * 20;
-        }
-
-        // 激励文本结束时间
-        int motivationalTextEndTicks = 280;
-
-        // 取两者的最大值，确保都完成后再等待一小会（40 ticks）
-        int waitBeforeOvertitleTicks = Math.max(coverUpdateCompleteTicks, motivationalTextEndTicks) + 40;
-
-        // 当前累计时间：第一帧40 + 第二帧40 + 第三帧40 = 120 ticks
-        int currentTicks = 120;
-        // 计算第四帧需要的持续时间
-        int frame4Duration = waitBeforeOvertitleTicks - currentTicks;
-        frame4Duration = Math.max(frame4Duration, 30);
-
         // 获取玩家队伍
         Team team = this.getPlayerTeam(player);
+        team = Team.RED;
 
         // 准备不同阶段的标题
         String defeatTitle, defeatSubtitle;
         String overtimeTitle, overtimeSubtitle;
 
-        // 准备激励文本（根据队伍）
-        String[] motivationalTexts;
-
         if (team == Team.RED) {
-            // 进攻方：输了常规赛，进入最后攻势
             defeatTitle = "§c§l我们输了";
-            defeatSubtitle = "§7未能突破敌方防线！";
+            defeatSubtitle = "§7无法拿下本区域";
             overtimeTitle = "§c§l最后攻势";
-            overtimeSubtitle = "§e突破防线的最后机会！";
-            motivationalTexts = new String[] {
-                    "§c§l这是我们最后的机会...",
-                    "§e§l全力以赴，突破防线！",
-                    "§6§l为了胜利，不惜一切！",
-                    "§c§l是时候展现真正的实力了！"
-            };
+            overtimeSubtitle = "";
         } else {
-            // 防守方：赢了常规赛，进入最后防线
             defeatTitle = "§9§l我们赢了";
-            defeatSubtitle = "§7成功守住阵地！";
+            defeatSubtitle = "§7成功守住本区域";
             overtimeTitle = "§9§l最后防线";
-            overtimeSubtitle = "§e坚守阵地！";
-            motivationalTexts = new String[] {
-                    "§9§l敌人发起最后的进攻...",
-                    "§e§l坚守阵地，不让他们前进一步！",
-                    "§6§l胜利就在眼前，别放松警惕！",
-                    "§9§l守住这最后一波！"
-            };
+            overtimeSubtitle = "";
         }
 
         // 获取玩家当前位置
@@ -1279,56 +1272,144 @@ public class ActionModeRoom extends BaseRespawnModeRoom {
                 behindPlayer.z,
                 yawToPlayer,
                 10,
-                40,     // 持续2秒
+                60,     // 持续3秒
                 defeatTitle,
                 defeatSubtitle
         );
 
-        // 第三帧：拉高到战场上空
+        // 按照进攻顺序（zones顺序）逐个查看每个控制点
+        int currentTicksAccumulated = 100; // 前两帧总共100 ticks
+        int controlPointIndex = 0; // 全局控制点索引（用于遮盖实体）
+        Vector3 previousPointPos = attackerSpawn;  // 进攻来源起点
+
+        for (Zone zone : this.zones) {
+            for (ControlPoint point : zone.getControlPoints()) {
+                Vector3 pointPos = point.getPosition();
+
+                // 计算进攻方向（从上一个点到当前点）
+                double dx = pointPos.x - previousPointPos.x;
+                double dz = pointPos.z - previousPointPos.z;
+                float attackYaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
+
+                // 相机位置：在上一个进攻点附近，稍微抬高 + 稍微往后退
+                double backwardDistance = 5.0;   // 往后退5格（避免太近）
+                double cameraHeight = 20.0;      // 抬高20格
+
+                double offsetX = previousPointPos.x - pointPos.x;
+                double offsetZ = previousPointPos.z - pointPos.z;
+                double offsetLen = Math.sqrt(offsetX * offsetX + offsetZ * offsetZ);
+                double dirX;
+                double dirZ;
+                if (offsetLen > 0.0001) {
+                    dirX = offsetX / offsetLen;
+                    dirZ = offsetZ / offsetLen;
+                } else {
+                    double yawRadians = Math.toRadians(attackYaw + 180);
+                    dirX = Math.sin(yawRadians);
+                    dirZ = -Math.cos(yawRadians);
+                }
+
+                double cameraX = pointPos.x + dirX * backwardDistance;
+                double cameraZ = pointPos.z + dirZ * backwardDistance;
+                double cameraY = pointPos.y + cameraHeight;
+
+                // 计算相机朝向：看向当前控制点
+                float cameraYaw = calculateYawBetween(new Vector3(cameraX, cameraY, cameraZ), pointPos);
+
+                // 准备标题
+                String pointTitle = (point.isCaptured() ? "§a已占领" : "§c未占领")
+                        + " §7- §f" + zone.getName();
+                String pointSubtitle = "§7控制点 " + ((char)('A' + (zone.getControlPoints().indexOf(point))));
+
+                // 第一帧：移动到控制点斜后方（30 ticks = 1.5秒过渡时间）
+                builder.addKeyframe(
+                        cameraX,
+                        cameraY,
+                        cameraZ,
+                        cameraYaw,
+                        45,     // 向下45度俯视（角度减小以看清更多区域）
+                        30,     // 1.5秒过渡时间
+                        "",
+                        ""
+                );
+
+                // 第二帧：在斜后方停留观察（70 ticks = 3.5秒停留时间）
+                builder.addKeyframe(
+                        cameraX,
+                        cameraY,
+                        cameraZ,
+                        cameraYaw,
+                        45,     // 向下45度俯视
+                        70,     // 3.5秒停留时间
+                        pointTitle,
+                        pointSubtitle
+                );
+
+                // 在这个控制点先生成蓝色遮盖实体
+                final int finalControlPointIndex = controlPointIndex;
+                final Vector3 finalPointPos = pointPos;
+                final boolean isCaptured = point.isCaptured();
+
+                // 相机移动到位后立即生成蓝色遮盖实体
+                this.gunWar.getServer().getScheduler().scheduleDelayedTask(
+                        this.gunWar,
+                        () -> this.spawnSingleOvertimeCoverEntity(finalControlPointIndex, finalPointPos, false),
+                        currentTicksAccumulated + 30  // 在移动到位后生成
+                );
+
+                // 如果被占领，延迟40 ticks (2秒) 后更新为红色
+                if (isCaptured) {
+                    this.gunWar.getServer().getScheduler().scheduleDelayedTask(
+                            this.gunWar,
+                            () -> this.updateCoverEntityColor(finalControlPointIndex, finalPointPos, true),
+                            currentTicksAccumulated + 30 + 40  // 移动到位30 + 等待40
+                    );
+                }
+
+                currentTicksAccumulated += 100;  // 30 (移动) + 70 (停留) = 100 ticks
+                controlPointIndex++;
+                previousPointPos = pointPos;  // 更新进攻来源位置
+            }
+        }
+
+        // 拉到上空（快速过渡）
         builder.addKeyframe(
                 battlefieldCenter.x,
                 battlefieldCenter.y + observationHeight,
                 battlefieldCenter.z,
                 overviewYaw,
                 75,
-                40,     // 持续2秒
+                40,     // 2秒过渡时间
                 "",
                 ""
         );
 
-        // 第四帧：在上空停留，等待激励文本和遮盖实体更新完成
+        // 在上空停留等待
         builder.addKeyframe(
                 battlefieldCenter.x,
                 battlefieldCenter.y + observationHeight,
                 battlefieldCenter.z,
                 overviewYaw,
                 75,
-                frame4Duration,  // 动态计算的等待时间
+                60,     // 3秒停留时间
                 "",
                 ""
         );
 
-        // 第五帧：显示加时赛标题
+        // 最终帧：显示加时赛标题
         builder.addKeyframe(
                 battlefieldCenter.x,
                 battlefieldCenter.y + observationHeight,
                 battlefieldCenter.z,
                 overviewYaw,
                 75,
-                60,     // 持续3秒
+                80,     // 4秒显示标题
                 overtimeTitle,
                 overtimeSubtitle
         );
 
         // 构建并启动
         builder.buildAndStart();
-
-        // 在视角移动到上空后生成遮盖实体
-        // 第一帧40 ticks + 第二帧40 ticks = 80 ticks后开始拉高，在100 ticks时生成遮盖实体
-        this.gunWar.getServer().getScheduler().scheduleDelayedTask(this.gunWar, this::spawnOvertimeCoverEntities, 100);
-
-        // 在空中阶段（第三、四帧）播放激励文本
-        this.scheduleMotivationalTips(player, motivationalTexts);
     }
 
 }
